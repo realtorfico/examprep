@@ -1,0 +1,69 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #6b7280;
+  --card: #f5f5f7;
+  --border: #e2e2e6;
+  --accent: #2563eb;
+  --correct: #15803d;
+  --incorrect: #b91c1c;
+  --font-scale: 1;
+}
+:root[data-theme="dark"] {
+  --bg: #121214;
+  --fg: #f2f2f4;
+  --muted: #9a9aa2;
+  --card: #1c1c20;
+  --border: #2e2e33;
+  --accent: #60a5fa;
+  --correct: #4ade80;
+  --incorrect: #f87171;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121214; --fg: #f2f2f4; --muted: #9a9aa2; --card: #1c1c20;
+    --border: #2e2e33; --accent: #60a5fa; --correct: #4ade80; --incorrect: #f87171;
+  }
+}
+
+* { box-sizing: border-box; }
+html { font-size: calc(16px * var(--font-scale)); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+#app { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+h1, h2 { line-height: 1.25; }
+.muted { color: var(--muted); }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.25rem; margin-bottom: 1rem;
+}
+.btn {
+  display: inline-block; border: 1px solid var(--border); background: var(--card);
+  color: var(--fg); border-radius: 8px; padding: 0.6rem 1rem; font-size: 1rem;
+  cursor: pointer; text-decoration: none;
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.choice {
+  display: block; width: 100%; text-align: left; margin-bottom: 0.6rem;
+  border: 1px solid var(--border); background: var(--card); color: var(--fg);
+  border-radius: 10px; padding: 0.75rem 1rem; font-size: 1rem; cursor: pointer;
+}
+.choice[data-state="correct"] { border-color: var(--correct); background: color-mix(in srgb, var(--correct) 15%, var(--card)); }
+.choice[data-state="incorrect"] { border-color: var(--incorrect); background: color-mix(in srgb, var(--incorrect) 15%, var(--card)); }
+.choice:disabled { cursor: default; }
+
+input[type="text"] {
+  width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--fg); font-size: 1rem;
+}
+nav.tabs { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+nav.tabs a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.1rem; }
+nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom: 2px solid var(--accent); }
+.exam-card { display: flex; justify-content: space-between; align-items: center; }
+.badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--border); color: var(--muted); }

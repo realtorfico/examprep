@@ -1,0 +1,19 @@
+// Cloudflare Pages config: deploy wwwroot/ as static assets, worker.js adds the
+// /api/* proxy to examprep-api via Service Binding. Deploy via git-connected
+// Pages Builds (dashboard) — no local Wrangler needed.
+{
+  "name": "examprep",
+  "compatibility_date": "2026-07-01",
+  "services": [
+    // Configured in the dashboard too (Settings > Bindings > Service Binding) if this
+    // block isn't picked up by the Pages build — either way, no public hostname needed
+    // on examprep-api itself.
+    { "binding": "API", "service": "examprep-api" }
+  ],
+  "assets": {
+    "directory": "./wwwroot",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  }
+}
