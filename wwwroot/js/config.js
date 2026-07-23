@@ -5,4 +5,4 @@ var TURNSTILE_SITE_KEY = '0x4AAAAAAD7hWTbs8D6sVYQJ';
 
 // PayPal's Client ID is a public value (safe to expose client-side) — the Client Secret
 // never appears here, it only lives as a Worker secret. Set once the PayPal REST API app exists.
-var PAYPAL_CLIENT_ID = 'REPLACE_WITH_PAYPAL_CLIENT_ID';
+var PAYPAL_CLIENT_ID = 'ASZ0zyEhMgS4bRLJMe7tOXNhuLw7Syk6LnePeEX_RsZzxb29OPftFbahSFbDp2cKzfhp89DDFy8Erx4Y'; // Sandbox — swap to Live client-id before real launch
