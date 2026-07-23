@@ -23,19 +23,41 @@ function saveLocalPrefs(theme, fontScale) {
   localStorage.setItem('examprep_font', String(fontScale));
 }
 
-// ---- Shared chrome: top controls (theme/font) + identity bar --------------
+// ---- Site-wide chrome: header + footer, rendered once — NOT part of any page's
+// content, so theme/font controls and page navigation live above the content card
+// and stay put across every route change. ----------------------------------
 
-function renderTopControls() {
+function renderSiteHeader() {
+  document.getElementById('site-header').innerHTML =
+    '<div class="site-shell top-controls">' +
+    '<a href="/" class="btn-secondary btn-sm">← All exams</a>' +
+    '<div class="control-group">' +
+    '<span class="muted font-label">Font:</span>' +
+    '<button class="btn-secondary btn-sm" data-act="font-down">A-</button>' +
+    '<button class="btn-secondary btn-sm" data-act="font-up">A+</button>' +
+    '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
+    '</div></div>';
+  updateThemeButton();
+}
+
+function updateThemeButton() {
   var local = loadLocalPrefs();
   var nextTheme = local.theme === 'light' ? 'dark' : 'light';
-  // Label shows what clicking WILL switch to (the destination), not the current theme —
-  // e.g. while in light mode the button shows the moon, inviting a switch to dark.
-  return '<div class="top-controls">' +
-    '<div class="control-group"><button class="btn-secondary btn-sm" data-act="toggle-theme" data-next="' + nextTheme + '">' +
-    (nextTheme === 'dark' ? '🌙 Dark' : '☀️ Light') + '</button></div>' +
-    '<div class="control-group"><span class="muted" style="font-size:0.8rem">Font:</span>' +
-    '<button class="btn-secondary btn-sm" data-act="font-down">A-</button>' +
-    '<button class="btn-secondary btn-sm" data-act="font-up">A+</button></div>' +
+  var btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  // Label shows what clicking WILL switch to (the destination), not the current theme.
+  btn.textContent = nextTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+  btn.setAttribute('data-next', nextTheme);
+}
+
+var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this build pipeline
+
+function renderSiteFooter() {
+  document.getElementById('site-footer').innerHTML =
+    '<div class="site-shell footer-content">' +
+    '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
+    '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — not a guarantee of exam results.</div>' +
+    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a></nav>' +
     '</div>';
 }
 
@@ -46,39 +68,21 @@ function renderUserBar() {
     '<button class="btn-secondary btn-sm" data-act="log-out">Log out</button></div>';
 }
 
-// ---- Site-wide chrome: header + footer (every view) ------------------------
-
-function renderSiteHeader() {
-  return '<header class="site-header"><a href="/" class="site-brand">ExamPrep</a></header>';
-}
-
-var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this build pipeline
-
-function renderSiteFooter() {
-  return '<footer class="site-footer">' +
-    '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — not a guarantee of exam results.</div>' +
-    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a></nav>' +
-    '</footer>';
-}
-
 function renderTerms() {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
-    '<h1>Terms of Use</h1>' +
+  appEl.innerHTML = '<h1>Terms of Use</h1>' +
     '<p class="muted">ExamPrep provides original, independently-authored practice questions for exam preparation purposes only. ' +
     'It is not affiliated with, endorsed by, or sponsored by the California Secretary of State or any licensing body. ' +
     'Access codes are non-transferable and grant access to one exam track as specified at purchase. ' +
     'We make no guarantee of passing any official exam.</p>' +
-    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>' + renderSiteFooter();
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
 
 function renderPrivacy() {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
-    '<h1>Privacy</h1>' +
+  appEl.innerHTML = '<h1>Privacy</h1>' +
     '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
     'your quiz progress, and your theme/font preferences. We do not require or collect your name, email, or ' +
     'payment details through this site. Contact whoever issued your code with any privacy questions.</p>' +
-    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>' + renderSiteFooter();
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
 
 // ---- Views --------------------------------------------------------------
@@ -122,30 +126,30 @@ function renderHub() {
       '</div>';
     var cta = exam.active
       ? '<a class="btn-primary hub-cta" href="' + exam.route + '">Start Questionnaire →</a>' +
-        '<a class="btn-secondary hub-cta" href="/notary#/sample" style="margin-top:0.5rem">Try a free 5-question sample</a>'
+        '<a class="btn-secondary hub-cta" href="/notary#/sample">Try a free sample</a>'
       : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
 
     return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
       '<div class="exam-track-body">' +
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
       '<h3>' + exam.title + '</h3>' +
-      '<p class="muted" style="font-size:0.85rem">' + exam.description + '</p>' +
+      '<p class="muted exam-track-desc">' + exam.description + '</p>' +
       specs + breakdown +
       '</div><div class="exam-track-footer">' + cta + '</div></div>';
   }).join('');
 
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+  appEl.innerHTML =
     '<div class="hub-hero"><h1>Professional Licensing Exam Prep</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
     '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
-    '<p class="muted" style="font-size:0.85rem;margin:0.25rem 0 0">Need a code, or need yours renewed? Contact whoever issued your access.</p></div></div></div>' +
+    '<p class="muted access-banner-sub">Need a code, or need yours renewed? Contact whoever issued your access.</p></div></div></div>' +
     '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
-    '<div class="exam-track-grid">' + cards + '</div>' + renderSiteFooter();
+    '<div class="exam-track-grid">' + cards + '</div>';
 }
 
 function renderRedeem(error) {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+  appEl.innerHTML =
     '<h1>Enter your access code</h1>' +
     (error ? '<p class="error-text">' + error + '</p>' : '') +
     '<form data-act="redeem-submit" class="card">' +
@@ -153,8 +157,7 @@ function renderRedeem(error) {
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Unlock</button>' +
     '</form>' +
-    '<p class="muted" style="text-align:center;font-size:0.85rem">No code yet? <a href="#/sample">Try a free 5-question sample</a></p>' +
-    renderSiteFooter();
+    '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a></p>';
   renderTurnstileWidget();
 }
 
@@ -181,13 +184,13 @@ function renderTabs(active) {
 }
 
 async function renderQuiz() {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>' + renderSiteFooter();
+  appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>';
   try {
     state.question = await apiFetch('/questions/next');
     state.answered = null;
     drawQuestion();
   } catch (e) {
-    appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>' + renderSiteFooter();
+    appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
   }
 }
 
@@ -220,20 +223,20 @@ function drawQuestion() {
     ? '<div class="nav-controls"><button class="btn-primary" data-act="next-question">Next question →</button></div>'
     : '';
 
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') +
+  appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
-    '<div class="audio-actions" style="margin-top:0.75rem"><button class="btn-secondary btn-sm" data-act="listen">🔊 Read aloud</button></div>' +
+    '<div class="audio-actions"><button class="btn-secondary btn-sm" data-act="listen">🔊 Read aloud</button></div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
-    explanation + micZone + nav + renderSiteFooter();
+    explanation + micZone + nav;
 
   setupMic();
 }
 
 async function renderProgress() {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>' + renderSiteFooter();
+  appEl.innerHTML = renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
   var p = await apiFetch('/progress');
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
@@ -241,20 +244,20 @@ async function renderProgress() {
     var tPct = t.total ? Math.round((100 * t.correct) / t.total) : 0;
     return '<div class="card exam-card"><span>' + t.topic + '</span><span>' + tPct + '% (' + t.total + ')</span></div>';
   }).join('');
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('progress') +
+  appEl.innerHTML = renderUserBar() + renderTabs('progress') +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
-    '</div>' + rows + renderSiteFooter();
+    '</div>' + rows;
 }
 
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() + '<h1>Try a free sample</h1>' +
-    '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>' + renderSiteFooter();
+  appEl.innerHTML = '<h1>Try a free sample</h1>' +
+    '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>';
   if (!sampleState.questions) {
     try {
       var res = await apiFetch('/sample?examType=notary');
@@ -262,7 +265,7 @@ async function renderSample() {
       sampleState.index = 0;
       sampleState.answered = null;
     } catch (e) {
-      appEl.innerHTML = renderSiteHeader() + renderTopControls() + '<p>Could not load the sample. Try again shortly.</p>' + renderSiteFooter();
+      appEl.innerHTML = '<p>Could not load the sample. Try again shortly.</p>';
       return;
     }
   }
@@ -271,10 +274,10 @@ async function renderSample() {
 
 function drawSampleQuestion() {
   if (sampleState.index >= sampleState.questions.length) {
-    appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+    appEl.innerHTML =
       '<h1>That was the sample</h1>' +
       '<p class="muted">Enter an access code to unlock the full question bank and track your progress.</p>' +
-      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>' + renderSiteFooter();
+      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>';
     return;
   }
   var q = sampleState.questions[sampleState.index];
@@ -297,14 +300,14 @@ function drawSampleQuestion() {
       (sampleState.index + 1 < sampleState.questions.length ? 'Next question →' : 'See results →') + '</button></div>'
     : '';
 
-  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+  appEl.innerHTML =
     '<p class="muted">Free sample — question ' + (sampleState.index + 1) + ' of ' + sampleState.questions.length + '</p>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
-    explanation + renderSiteFooter();
+    explanation;
 }
 
 // ---- Speech recognition (voice answer picker) ------------------------------
@@ -371,8 +374,9 @@ async function submitAnswer(choice) {
 }
 
 // ---- Delegated event handling (CSP-safe: no inline handlers) --------------
+// Listens on document (not just #app) since the header now lives outside #app.
 
-appEl.addEventListener('submit', async function (e) {
+document.addEventListener('submit', async function (e) {
   var act = e.target.getAttribute && e.target.getAttribute('data-act');
   if (act === 'redeem-submit') {
     e.preventDefault();
@@ -395,7 +399,7 @@ appEl.addEventListener('submit', async function (e) {
   }
 });
 
-appEl.addEventListener('click', async function (e) {
+document.addEventListener('click', async function (e) {
   var el = e.target.closest && e.target.closest('[data-act]');
   if (!el) return;
   var act = el.getAttribute('data-act');
@@ -433,8 +437,8 @@ appEl.addEventListener('click', async function (e) {
     var local = loadLocalPrefs();
     saveLocalPrefs(nextTheme, local.fontScale);
     applyTheme(nextTheme, local.fontScale);
+    updateThemeButton();
     if (getToken()) apiFetch('/prefs', { method: 'POST', body: { theme: nextTheme } }).catch(function () {});
-    route();
   } else if (act === 'font-up' || act === 'font-down') {
     var l = loadLocalPrefs();
     var next = Math.max(0.85, Math.min(1.4, l.fontScale + (act === 'font-up' ? 0.05 : -0.05)));
@@ -453,5 +457,7 @@ appEl.addEventListener('click', async function (e) {
 (function boot() {
   var local = loadLocalPrefs();
   applyTheme(local.theme, local.fontScale);
+  renderSiteHeader();
+  renderSiteFooter();
   route();
 })();

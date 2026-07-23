@@ -34,11 +34,20 @@ body {
   margin: 0; background: var(--bg); color: var(--fg); min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.2s, color 0.2s;
-  display: flex; justify-content: center; padding: 1rem;
+  display: flex; flex-direction: column;
 }
+
+/* Site-wide chrome: full-width bars, independent of the page-content card below */
+#site-header, #site-footer {
+  width: 100%; background: var(--card);
+}
+#site-header { border-bottom: 1px solid var(--border); }
+#site-footer { border-top: 1px solid var(--border); margin-top: auto; }
+.site-shell { max-width: 1160px; margin: 0 auto; padding: 0.75rem 1.5rem; }
+
 #app {
   width: 100%; max-width: 580px; background: var(--card); border: 1px solid var(--border);
-  border-radius: 20px; padding: 1.5rem; margin: 1rem 0;
+  border-radius: 20px; padding: 1.5rem; margin: 1rem auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
   display: flex; flex-direction: column; gap: 1rem;
 }
@@ -138,15 +147,13 @@ input[type="text"], select {
   background: var(--bg); color: var(--fg); font-size: 1rem; font-family: inherit;
 }
 
-/* Site-wide header/footer */
-.site-header { display: flex; }
-.site-brand { font-weight: 800; font-size: 1.1rem; color: var(--fg); text-decoration: none; letter-spacing: -0.02em; }
-.site-footer {
-  border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;
-  font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem;
-}
+/* Site-wide header/footer content (bars themselves defined near #site-header above) */
+.footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; }
 .footer-links { display: flex; gap: 1rem; }
 .footer-links a { color: var(--muted); font-size: 0.8rem; }
+.font-label { font-size: 0.8rem; }
+.redeem-sample-hint { text-align: center; font-size: 0.85rem; }
+.access-banner-sub { font-size: 0.85rem; margin: 0.25rem 0 0; }
 
 /* Hub / exam-track landing page */
 .hub-hero { text-align: center; padding: 0.5rem 0 0.25rem; }
@@ -176,12 +183,16 @@ input[type="text"], select {
 }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
+.exam-track-desc { font-size: 0.8rem; }
 .exam-specs {
   display: flex; flex-direction: column; gap: 0.3rem; background: color-mix(in srgb, var(--fg) 3%, transparent);
-  border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.78rem; margin-bottom: 0.8rem;
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.72rem; margin-bottom: 0.8rem;
 }
-.breakdown-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
-.breakdown-list { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.78rem; }
+.breakdown-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
+.breakdown-list { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.72rem; }
 .breakdown-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
-.exam-track-footer { padding: 0.85rem 1.1rem; border-top: 1px solid var(--border); }
-.hub-cta { width: 100%; }
+.exam-track-footer {
+  padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
