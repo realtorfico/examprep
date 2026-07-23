@@ -50,12 +50,14 @@ function renderRedeem(error) {
 // renderRedeem() runs. We only render once window.onTurnstileLoad has actually fired
 // (turnstileReady, set in index.html's callback), and retry shortly if it hasn't yet,
 // since the redeem view can be shown before that callback lands.
-function renderTurnstileWidget() {
+function renderTurnstileWidget(attemptsLeft) {
   if (TURNSTILE_SITE_KEY.indexOf('REPLACE') !== -1) return;
+  attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s of retrying, then give up quietly
   if (window.turnstileReady && window.turnstile) {
-    window.turnstile.render('#turnstile-container', { sitekey: TURNSTILE_SITE_KEY });
-  } else {
-    setTimeout(renderTurnstileWidget, 200);
+    var el = document.querySelector('#turnstile-container');
+    if (el) window.turnstile.render(el, { sitekey: TURNSTILE_SITE_KEY });
+  } else if (attemptsLeft > 0 && document.querySelector('#turnstile-container')) {
+    setTimeout(function () { renderTurnstileWidget(attemptsLeft - 1); }, 200);
   }
 }
 
