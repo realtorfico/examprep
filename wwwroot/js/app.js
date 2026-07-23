@@ -186,7 +186,7 @@ function renderTurnstileWidget(attemptsLeft) {
 }
 
 function renderTabs(active) {
-  var tabs = [['quiz', 'Quiz'], ['progress', 'Progress'], ['resources', 'Resources']];
+  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['progress', 'Progress']];
   return '<nav class="tabs">' + tabs.map(function (t) {
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
   }).join('') + '</nav>';
