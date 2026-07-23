@@ -198,6 +198,8 @@ var MEDIA_BASE = 'https://media.softician.com/';
 
 var RESOURCES = {
   notary: [
+    { title: 'Official California Notary Public Handbook', type: 'pdf', url: 'https://notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf',
+      desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.' },
     { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
       desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.' },
     { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
@@ -215,14 +217,20 @@ var RESOURCES = {
 
 var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference' };
 
+var RESOURCES_DISCLAIMER =
+  '<div class="resources-disclaimer">This platform is a private educational service and is not affiliated with, ' +
+  'endorsed by, or sponsored by the California Secretary of State. The official California Notary Public Handbook ' +
+  'is available for free directly from the Secretary of State website.</div>';
+
 function renderResources() {
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
-    appEl.innerHTML = renderUserBar() + renderTabs('resources') + '<p class="muted">No study resources yet for this exam track.</p>';
+    appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
+      '<p class="muted">No study resources yet for this exam track.</p>';
     return;
   }
   var cards = items.map(function (r) {
-    var url = MEDIA_BASE + r.file;
+    var url = r.url || (MEDIA_BASE + r.file);
     var media = '';
     if (r.type === 'audio') media = '<audio class="resource-player" controls preload="none" src="' + url + '"></audio>';
     else if (r.type === 'video') media = '<video class="resource-player" controls preload="none" src="' + url + '"></video>';
@@ -237,7 +245,7 @@ function renderResources() {
       '</div>';
   }).join('');
 
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') +
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
     '<p class="muted resources-intro">Guided material to go with your practice questions.</p>' +
     '<div class="resource-grid">' + cards + '</div>';
 }
