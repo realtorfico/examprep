@@ -67,3 +67,9 @@ nav.tabs a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.1rem;
 nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom: 2px solid var(--accent); }
 .exam-card { display: flex; justify-content: space-between; align-items: center; }
 .badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--border); color: var(--muted); }
+.error-text { color: var(--incorrect); }
+#turnstile-container { margin: 0.75rem 0; }
+.result-correct { color: var(--correct); }
+.result-incorrect { color: var(--incorrect); }
+.btn-listen { margin-bottom: 1rem; }
+.feedback-block { margin-top: 1rem; }

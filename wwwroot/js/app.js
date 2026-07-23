@@ -37,14 +37,25 @@ function renderHub() {
 function renderRedeem(error) {
   appEl.innerHTML =
     '<h1>Enter your access code</h1>' +
-    (error ? '<p style="color:var(--incorrect)">' + error + '</p>' : '') +
+    (error ? '<p class="error-text">' + error + '</p>' : '') +
     '<form data-act="redeem-submit" class="card">' +
     '<input type="text" name="code" placeholder="XXXXX-XXXXX" autocapitalize="characters" required>' +
-    '<div id="turnstile-container" style="margin:0.75rem 0"></div>' +
+    '<div id="turnstile-container"></div>' +
     '<button class="btn btn-primary" type="submit">Unlock</button>' +
     '</form>';
-  if (window.turnstile && TURNSTILE_SITE_KEY.indexOf('REPLACE') === -1) {
+  renderTurnstileWidget();
+}
+
+// Turnstile's script loads async — window.turnstile may not exist yet the first time
+// renderRedeem() runs. We only render once window.onTurnstileLoad has actually fired
+// (turnstileReady, set in index.html's callback), and retry shortly if it hasn't yet,
+// since the redeem view can be shown before that callback lands.
+function renderTurnstileWidget() {
+  if (TURNSTILE_SITE_KEY.indexOf('REPLACE') !== -1) return;
+  if (window.turnstileReady && window.turnstile) {
     window.turnstile.render('#turnstile-container', { sitekey: TURNSTILE_SITE_KEY });
+  } else {
+    setTimeout(renderTurnstileWidget, 200);
   }
 }
 
@@ -80,7 +91,7 @@ function drawQuestion() {
 
   var feedback = '';
   if (state.answered) {
-    feedback = '<p style="color:var(--' + (state.answered.correct ? 'correct' : 'incorrect') + ')">' +
+    feedback = '<p class="' + (state.answered.correct ? 'result-correct' : 'result-incorrect') + '">' +
       (state.answered.correct ? 'Correct.' : 'Incorrect.') + '</p>' +
       '<p class="muted">' + state.answered.explanation + '</p>' +
       '<button class="btn btn-primary" data-act="next-question">Next question</button>';
@@ -89,9 +100,9 @@ function drawQuestion() {
   appEl.innerHTML = renderTabs('quiz') +
     '<p class="badge">' + q.topic + '</p>' +
     '<h2>' + q.question + '</h2>' +
-    '<button class="btn" data-act="listen" style="margin-bottom:1rem">Listen</button>' +
+    '<button class="btn btn-listen" data-act="listen">Listen</button>' +
     '<div>' + choiceHtml + '</div>' +
-    '<div style="margin-top:1rem">' + feedback + '</div>';
+    '<div class="feedback-block">' + feedback + '</div>';
 }
 
 async function renderProgress() {
@@ -146,7 +157,9 @@ appEl.addEventListener('submit', async function (e) {
   if (act === 'redeem-submit') {
     e.preventDefault();
     var code = e.target.code.value.trim();
-    var turnstileToken = window.turnstile ? window.turnstile.getResponse() : '';
+    var turnstileToken = '';
+    try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { turnstileToken = ''; }
     try {
       var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
       setToken(res.token);
