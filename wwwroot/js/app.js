@@ -89,8 +89,10 @@ function renderTerms() {
 function renderPrivacy() {
   appEl.innerHTML = '<h1>Privacy</h1>' +
     '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
-    'your quiz progress, and your theme/font preferences. We do not require or collect your name, email, or ' +
-    'payment details through this site. Contact whoever issued your code with any privacy questions.</p>' +
+    'your quiz progress, and your theme/font preferences. We only collect an email address if you choose to ' +
+    'provide one — for an optional backup copy of your access code at purchase. We never sell or share this data. ' +
+    'Payments are processed by PayPal directly; we don\'t see or store your payment details. Contact whoever ' +
+    'issued your code with any privacy questions.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
 
@@ -151,7 +153,7 @@ function renderHub() {
     '<div class="hub-hero"><h1>Professional Licensing Exam Prep</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
     '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
-    '<p class="muted access-banner-sub">Need a code, or need yours renewed? Contact whoever issued your access.</p></div></div></div>' +
+    '<p class="muted access-banner-sub">Need a code? <a href="/notary#/buy">Buy one instantly →</a></p></div></div></div>' +
     '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div class="exam-track-grid">' + cards + '</div>';
@@ -166,7 +168,8 @@ function renderRedeem(error) {
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Unlock</button>' +
     '</form>' +
-    '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a></p>';
+    '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a> or ' +
+    '<a href="#/buy">buy one instantly →</a></p>';
   renderTurnstileWidget();
 }
 
@@ -320,6 +323,101 @@ async function renderProgress() {
     '</div>' + rows;
 }
 
+// ---- Buy an access code (PayPal, no code needed to get started) -----------
+
+var paypalSdkLoading = false;
+function loadPayPalSdk(callback) {
+  if (window.paypal) { callback(); return; }
+  if (paypalSdkLoading) {
+    var check = setInterval(function () {
+      if (window.paypal) { clearInterval(check); callback(); }
+    }, 100);
+    return;
+  }
+  paypalSdkLoading = true;
+  var script = document.createElement('script');
+  script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) + '&currency=USD&intent=capture';
+  script.onload = function () { paypalSdkLoading = false; callback(); };
+  document.head.appendChild(script);
+}
+
+function renderBuy() {
+  appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
+  apiFetch('/pricing?examType=notary').then(function (p) {
+    drawBuyForm(p);
+  }).catch(function () {
+    appEl.innerHTML = '<h1>Get instant access</h1><p>Could not load pricing. Try again shortly.</p>';
+  });
+}
+
+function drawBuyForm(pricing) {
+  var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
+  appEl.innerHTML =
+    '<h1>Get instant access</h1>' +
+    '<p class="muted">' + priceLabel + ' one-time — unlocks the full California Notary question bank instantly.</p>' +
+    '<div class="card">' +
+    '<label class="muted buy-email-label">Email (optional — for a backup copy of your code)</label>' +
+    '<input type="email" id="buy-email" placeholder="you@example.com">' +
+    '<div id="turnstile-container"></div>' +
+    '<div id="paypal-button-container" class="paypal-container"></div>' +
+    '</div>' +
+    '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
+  renderTurnstileWidget();
+  if (PAYPAL_CLIENT_ID.indexOf('REPLACE') !== -1) {
+    var el = document.getElementById('paypal-button-container');
+    if (el) el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
+    return;
+  }
+  loadPayPalSdk(function () { renderPayPalButtons(); });
+}
+
+function renderPayPalButtons() {
+  var el = document.getElementById('paypal-button-container');
+  if (!el) return;
+  if (PAYPAL_CLIENT_ID.indexOf('REPLACE') !== -1) {
+    el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
+    return;
+  }
+  window.paypal.Buttons({
+    createOrder: function () {
+      var turnstileToken = '';
+      try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+      catch (ignored) { turnstileToken = ''; }
+      return apiFetch('/paypal/create-order', {
+        method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken },
+      }).then(function (r) { return r.orderId; });
+    },
+    onApprove: function (data) {
+      var emailEl = document.getElementById('buy-email');
+      var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
+      return apiFetch('/paypal/capture-order', {
+        method: 'POST', body: { orderId: data.orderID, examType: 'notary', email: email },
+      }).then(function (res) {
+        setToken(res.token);
+        state.examType = res.examType;
+        var local = loadLocalPrefs();
+        applyTheme(local.theme, local.fontScale);
+        renderPurchaseSuccess(res.code);
+      }).catch(function () {
+        appEl.innerHTML = '<h1>Something went wrong</h1>' +
+          '<p class="muted">Your payment may have gone through — contact whoever runs this site before trying ' +
+          'again, so you don\'t get charged twice.</p>';
+      });
+    },
+  }).render('#paypal-button-container');
+}
+
+function renderPurchaseSuccess(code) {
+  appEl.innerHTML =
+    '<h1>You\'re in! 🎉</h1>' +
+    '<div class="card purchase-success-card">' +
+    '<p class="muted">Your access code (keep it as a backup):</p>' +
+    '<div class="purchase-code">' + code + '</div>' +
+    '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
+    '</div>' +
+    '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>';
+}
+
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
@@ -413,6 +511,7 @@ function setupMic() {
 async function renderNotaryApp() {
   var view = (location.hash || '#/quiz').replace('#/', '');
   if (view === 'sample') { await renderSample(); return; }
+  if (view === 'buy') { renderBuy(); return; }
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
@@ -517,6 +616,11 @@ document.addEventListener('click', async function (e) {
     clearToken();
     location.hash = '';
     renderNotaryApp();
+  } else if (act === 'copy-code') {
+    var codeVal = el.getAttribute('data-code');
+    if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
+    el.textContent = 'Copied!';
+    setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
   }
 });
 

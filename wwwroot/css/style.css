@@ -153,9 +153,17 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom: 2px solid var
 .error-text { color: var(--incorrect); }
 #turnstile-container { margin: 0.5rem 0; }
 
-input[type="text"], select {
+input[type="text"], input[type="email"], select {
   width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
   background: var(--bg); color: var(--fg); font-size: 1rem; font-family: inherit;
+}
+.buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
+#buy-email { margin-bottom: 0.75rem; }
+.paypal-container { margin-top: 0.75rem; min-height: 45px; }
+.purchase-success-card { text-align: center; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
+.purchase-code {
+  font-size: 1.6rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);
+  padding: 0.6rem 1rem; border: 1px dashed var(--border); border-radius: 8px;
 }
 
 /* Site-wide header/footer content (bars themselves defined near #site-header above) */
