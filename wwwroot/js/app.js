@@ -204,6 +204,8 @@ var RESOURCES = {
       desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.' },
     { title: 'Surprising Rules for California Notaries', type: 'video', file: 'Surprising_Rules_for_California_Notaries.mp4',
       desc: 'A short video on lesser-known notary rules that trip up first-time applicants.' },
+    { title: 'California Notary Fees', type: 'video', file: 'California_Notary_Fees.mp4',
+      desc: 'A breakdown of statutory notary fees and how the exam tests them.' },
     { title: 'California Notary Blueprint', type: 'pdf', file: 'California_Notary_Blueprint.pdf',
       desc: 'A structured study reference covering the full exam blueprint.' },
     { title: 'California Notary 2026 Quick Guide', type: 'image', file: 'California_Notary_2026_Quick_Guide.png',
