@@ -186,10 +186,58 @@ function renderTurnstileWidget(attemptsLeft) {
 }
 
 function renderTabs(active) {
-  var tabs = [['quiz', 'Quiz'], ['progress', 'Progress']];
+  var tabs = [['quiz', 'Quiz'], ['progress', 'Progress'], ['resources', 'Resources']];
   return '<nav class="tabs">' + tabs.map(function (t) {
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
   }).join('') + '</nav>';
+}
+
+// ---- Study resources (audio/video/pdf/image guides, per exam type) --------
+
+var MEDIA_BASE = 'https://media.softician.com/';
+
+var RESOURCES = {
+  notary: [
+    { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
+      desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.' },
+    { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
+      desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.' },
+    { title: 'Surprising Rules for California Notaries', type: 'video', file: 'Surprising_Rules_for_California_Notaries.mp4',
+      desc: 'A short video on lesser-known notary rules that trip up first-time applicants.' },
+    { title: 'California Notary Blueprint', type: 'pdf', file: 'California_Notary_Blueprint.pdf',
+      desc: 'A structured study reference covering the full exam blueprint.' },
+    { title: 'California Notary 2026 Quick Guide', type: 'image', file: 'California_Notary_2026_Quick_Guide.png',
+      desc: 'A one-page visual cheat sheet for last-minute review.' },
+  ],
+};
+
+var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference' };
+
+function renderResources() {
+  var items = RESOURCES[state.examType] || [];
+  if (!items.length) {
+    appEl.innerHTML = renderUserBar() + renderTabs('resources') + '<p class="muted">No study resources yet for this exam track.</p>';
+    return;
+  }
+  var cards = items.map(function (r) {
+    var url = MEDIA_BASE + r.file;
+    var media = '';
+    if (r.type === 'audio') media = '<audio class="resource-player" controls preload="none" src="' + url + '"></audio>';
+    else if (r.type === 'video') media = '<video class="resource-player" controls preload="none" src="' + url + '"></video>';
+    else if (r.type === 'image') media = '<a href="' + url + '" target="_blank" rel="noopener"><img class="resource-thumb" src="' + url + '" alt="' + r.title + '"></a>';
+    else media = '<a class="btn-secondary btn-sm" href="' + url + '" target="_blank" rel="noopener">Open PDF ↗</a>';
+
+    return '<div class="card resource-card">' +
+      '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span></div>' +
+      '<h3 class="resource-title">' + r.title + '</h3>' +
+      '<p class="muted resource-desc">' + r.desc + '</p>' +
+      media +
+      '</div>';
+  }).join('');
+
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') +
+    '<p class="muted resources-intro">Guided material to go with your practice questions.</p>' +
+    '<div class="resource-grid">' + cards + '</div>';
 }
 
 async function renderQuiz() {
@@ -358,6 +406,7 @@ async function renderNotaryApp() {
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
+  else if (view === 'resources') renderResources();
   else await renderQuiz();
 }
 

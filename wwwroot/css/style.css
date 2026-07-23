@@ -207,3 +207,15 @@ input[type="text"], select {
   display: flex; flex-direction: column; gap: 0.5rem;
 }
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
+
+.resources-intro { margin-top: 0.5rem; }
+.resource-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.75rem; }
+@media (min-width: 900px) {
+  .resource-grid { grid-template-columns: 1fr 1fr; }
+}
+.resource-card { padding: 1rem; gap: 0.6rem; display: flex; flex-direction: column; }
+.resource-card-top { display: flex; }
+.resource-title { font-size: 0.95rem; }
+.resource-desc { font-size: 0.8rem; }
+.resource-player { width: 100%; }
+.resource-thumb { width: 100%; border-radius: 8px; border: 1px solid var(--border); }
