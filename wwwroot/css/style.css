@@ -137,3 +137,51 @@ input[type="text"], select {
   width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
   background: var(--bg); color: var(--fg); font-size: 1rem; font-family: inherit;
 }
+
+/* Site-wide header/footer */
+.site-header { display: flex; }
+.site-brand { font-weight: 800; font-size: 1.1rem; color: var(--fg); text-decoration: none; letter-spacing: -0.02em; }
+.site-footer {
+  border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;
+  font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem;
+}
+.footer-links { display: flex; gap: 1rem; }
+.footer-links a { color: var(--muted); font-size: 0.8rem; }
+
+/* Hub / exam-track landing page */
+.hub-hero { text-align: center; padding: 0.5rem 0 0.25rem; }
+.hub-hero p { color: var(--muted); max-width: 40rem; margin: 0.5rem auto 0; font-size: 0.95rem; }
+.access-banner {
+  background: color-mix(in srgb, var(--accent) 8%, transparent); border-left: 4px solid var(--accent);
+  border-radius: 0 12px 12px 0; padding: 0.9rem 1rem;
+}
+.access-banner-text { display: flex; gap: 0.75rem; align-items: flex-start; }
+.hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; }
+.exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 900px) {
+  .exam-track-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.exam-track-card {
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+  background: color-mix(in srgb, var(--fg) 2%, transparent);
+}
+.exam-track-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
+.exam-track-body { padding: 1.1rem; flex: 1; }
+.exam-track-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.exam-track-body h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+.status-badge {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted);
+  display: inline-flex; align-items: center; gap: 0.3rem;
+}
+.status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
+.pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
+.exam-specs {
+  display: flex; flex-direction: column; gap: 0.3rem; background: color-mix(in srgb, var(--fg) 3%, transparent);
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.78rem; margin-bottom: 0.8rem;
+}
+.breakdown-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
+.breakdown-list { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.78rem; }
+.breakdown-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+.exam-track-footer { padding: 0.85rem 1.1rem; border-top: 1px solid var(--border); }
+.hub-cta { width: 100%; }

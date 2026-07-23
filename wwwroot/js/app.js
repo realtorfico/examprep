@@ -1,6 +1,7 @@
 // Vanilla JS, no framework/bundler. Hash-routed within /notary; pathname-routed at the top level.
 var appEl = document.getElementById('app');
 var state = { question: null, answered: null, examType: 'notary' };
+var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
 
@@ -45,29 +46,115 @@ function renderUserBar() {
     '<button class="btn-secondary btn-sm" data-act="log-out">Log out</button></div>';
 }
 
+// ---- Site-wide chrome: header + footer (every view) ------------------------
+
+function renderSiteHeader() {
+  return '<header class="site-header"><a href="/" class="site-brand">ExamPrep</a></header>';
+}
+
+var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this build pipeline
+
+function renderSiteFooter() {
+  return '<footer class="site-footer">' +
+    '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
+    '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — not a guarantee of exam results.</div>' +
+    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a></nav>' +
+    '</footer>';
+}
+
+function renderTerms() {
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+    '<h1>Terms of Use</h1>' +
+    '<p class="muted">ExamPrep provides original, independently-authored practice questions for exam preparation purposes only. ' +
+    'It is not affiliated with, endorsed by, or sponsored by the California Secretary of State or any licensing body. ' +
+    'Access codes are non-transferable and grant access to one exam track as specified at purchase. ' +
+    'We make no guarantee of passing any official exam.</p>' +
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>' + renderSiteFooter();
+}
+
+function renderPrivacy() {
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+    '<h1>Privacy</h1>' +
+    '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
+    'your quiz progress, and your theme/font preferences. We do not require or collect your name, email, or ' +
+    'payment details through this site. Contact whoever issued your code with any privacy questions.</p>' +
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>' + renderSiteFooter();
+}
+
 // ---- Views --------------------------------------------------------------
 
+var HUB_EXAMS = [
+  {
+    title: 'California Notary Public Exam', category: 'State Licensing', active: true, route: '/notary',
+    duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
+    description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
+    breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
+  },
+  {
+    title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
+    duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
+    description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
+    breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
+  },
+  {
+    title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
+    duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
+    description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
+    breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
+  },
+];
+
 function renderHub() {
-  appEl.innerHTML = renderTopControls() +
-    '<h1>ExamPrep</h1>' +
-    '<p class="muted">Pick an exam to start practicing.</p>' +
-    '<div class="card exam-card"><div><strong>California Notary</strong></div>' +
-    '<a class="btn-primary" href="/notary">Start</a></div>' +
-    '<div class="card exam-card"><div><strong>California DRE</strong></div>' +
-    '<span class="badge">Coming soon</span></div>' +
-    '<div class="card exam-card"><div><strong>National MLO</strong></div>' +
-    '<span class="badge">Coming soon</span></div>';
+  var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
+  var upcomingCount = HUB_EXAMS.length - activeCount;
+
+  var cards = HUB_EXAMS.map(function (exam) {
+    var statusBadge = exam.active
+      ? '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>'
+      : '<span class="status-badge">Coming Soon</span>';
+    var specs = '<div class="exam-specs">' +
+      '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
+      '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
+      '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
+      '</div>';
+    var breakdown = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
+      exam.breakdown.map(function (b) { return '<div class="breakdown-row"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>'; }).join('') +
+      '</div>';
+    var cta = exam.active
+      ? '<a class="btn-primary hub-cta" href="' + exam.route + '">Start Questionnaire →</a>' +
+        '<a class="btn-secondary hub-cta" href="/notary#/sample" style="margin-top:0.5rem">Try a free 5-question sample</a>'
+      : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
+
+    return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
+      '<div class="exam-track-body">' +
+      '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
+      '<h3>' + exam.title + '</h3>' +
+      '<p class="muted" style="font-size:0.85rem">' + exam.description + '</p>' +
+      specs + breakdown +
+      '</div><div class="exam-track-footer">' + cta + '</div></div>';
+  }).join('');
+
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+    '<div class="hub-hero"><h1>Professional Licensing Exam Prep</h1>' +
+    '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
+    '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
+    '<p class="muted" style="font-size:0.85rem;margin:0.25rem 0 0">Need a code, or need yours renewed? Contact whoever issued your access.</p></div></div></div>' +
+    '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
+    '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
+    '<div class="exam-track-grid">' + cards + '</div>' + renderSiteFooter();
 }
 
 function renderRedeem(error) {
-  appEl.innerHTML = renderTopControls() +
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
     '<h1>Enter your access code</h1>' +
     (error ? '<p class="error-text">' + error + '</p>' : '') +
     '<form data-act="redeem-submit" class="card">' +
     '<input type="text" name="code" placeholder="XXXXX-XXXXX" autocapitalize="characters" required>' +
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Unlock</button>' +
-    '</form>';
+    '</form>' +
+    '<p class="muted" style="text-align:center;font-size:0.85rem">No code yet? <a href="#/sample">Try a free 5-question sample</a></p>' +
+    renderSiteFooter();
   renderTurnstileWidget();
 }
 
@@ -94,13 +181,13 @@ function renderTabs(active) {
 }
 
 async function renderQuiz() {
-  appEl.innerHTML = renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>';
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>' + renderSiteFooter();
   try {
     state.question = await apiFetch('/questions/next');
     state.answered = null;
     drawQuestion();
   } catch (e) {
-    appEl.innerHTML = renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
+    appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>' + renderSiteFooter();
   }
 }
 
@@ -133,20 +220,20 @@ function drawQuestion() {
     ? '<div class="nav-controls"><button class="btn-primary" data-act="next-question">Next question →</button></div>'
     : '';
 
-  appEl.innerHTML = renderTopControls() + renderUserBar() + renderTabs('quiz') +
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('quiz') +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
     '<div class="audio-actions" style="margin-top:0.75rem"><button class="btn-secondary btn-sm" data-act="listen">🔊 Read aloud</button></div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
-    explanation + micZone + nav;
+    explanation + micZone + nav + renderSiteFooter();
 
   setupMic();
 }
 
 async function renderProgress() {
-  appEl.innerHTML = renderTopControls() + renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>' + renderSiteFooter();
   var p = await apiFetch('/progress');
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
@@ -154,13 +241,70 @@ async function renderProgress() {
     var tPct = t.total ? Math.round((100 * t.correct) / t.total) : 0;
     return '<div class="card exam-card"><span>' + t.topic + '</span><span>' + tPct + '% (' + t.total + ')</span></div>';
   }).join('');
-  appEl.innerHTML = renderTopControls() + renderUserBar() + renderTabs('progress') +
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() + renderUserBar() + renderTabs('progress') +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
-    '</div>' + rows;
+    '</div>' + rows + renderSiteFooter();
+}
+
+// ---- Free sample (no access code needed) -----------------------------------
+
+async function renderSample() {
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() + '<h1>Try a free sample</h1>' +
+    '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>' + renderSiteFooter();
+  if (!sampleState.questions) {
+    try {
+      var res = await apiFetch('/sample?examType=notary');
+      sampleState.questions = res.questions;
+      sampleState.index = 0;
+      sampleState.answered = null;
+    } catch (e) {
+      appEl.innerHTML = renderSiteHeader() + renderTopControls() + '<p>Could not load the sample. Try again shortly.</p>' + renderSiteFooter();
+      return;
+    }
+  }
+  drawSampleQuestion();
+}
+
+function drawSampleQuestion() {
+  if (sampleState.index >= sampleState.questions.length) {
+    appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+      '<h1>That was the sample</h1>' +
+      '<p class="muted">Enter an access code to unlock the full question bank and track your progress.</p>' +
+      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>' + renderSiteFooter();
+    return;
+  }
+  var q = sampleState.questions[sampleState.index];
+  var prefixes = ['A', 'B', 'C', 'D'];
+  var choiceHtml = prefixes.map(function (k) {
+    var cls = 'option-btn';
+    if (sampleState.answered) {
+      if (k === q.correctChoice) cls += ' correct';
+      else if (k === sampleState.answered) cls += ' wrong';
+    }
+    return '<button class="' + cls + '" data-act="sample-answer" data-choice="' + k + '"' +
+      (sampleState.answered ? ' disabled' : '') + '>' + k + ') ' + q.choices[k] + '</button>';
+  }).join('');
+
+  var explanation = sampleState.answered
+    ? '<div class="explanation-box">' +
+      '<strong class="' + (sampleState.answered === q.correctChoice ? 'result-correct' : 'result-incorrect') + '">' +
+      (sampleState.answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
+      '<div class="nav-controls"><button class="btn-primary" data-act="sample-next">' +
+      (sampleState.index + 1 < sampleState.questions.length ? 'Next question →' : 'See results →') + '</button></div>'
+    : '';
+
+  appEl.innerHTML = renderSiteHeader() + renderTopControls() +
+    '<p class="muted">Free sample — question ' + (sampleState.index + 1) + ' of ' + sampleState.questions.length + '</p>' +
+    '<div class="card">' +
+    '<div class="question-topic">' + q.topic + '</div>' +
+    '<div class="question-text">' + q.question + '</div>' +
+    '</div>' +
+    '<div class="options-grid">' + choiceHtml + '</div>' +
+    explanation + renderSiteFooter();
 }
 
 // ---- Speech recognition (voice answer picker) ------------------------------
@@ -197,14 +341,18 @@ function setupMic() {
 // ---- Routing --------------------------------------------------------------
 
 async function renderNotaryApp() {
-  if (!getToken()) { renderRedeem(); return; }
   var view = (location.hash || '#/quiz').replace('#/', '');
+  if (view === 'sample') { await renderSample(); return; }
+  if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
   else await renderQuiz();
 }
 
 function route() {
+  var hashView = (location.hash || '').replace('#/', '');
+  if (hashView === 'terms') { renderTerms(); return; }
+  if (hashView === 'privacy') { renderPrivacy(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else if (location.pathname.indexOf('/notary') === 0) renderNotaryApp();
   else renderHub();
@@ -262,6 +410,15 @@ appEl.addEventListener('click', async function (e) {
   } else if (act === 'next-question') {
     stopSpeaking();
     renderQuiz();
+  } else if (act === 'go-back') {
+    history.back();
+  } else if (act === 'sample-answer') {
+    sampleState.answered = el.getAttribute('data-choice');
+    drawSampleQuestion();
+  } else if (act === 'sample-next') {
+    sampleState.index += 1;
+    sampleState.answered = null;
+    drawSampleQuestion();
   } else if (act === 'mic-toggle') {
     if (!recognition) return;
     if (!isRecording) {
