@@ -45,6 +45,17 @@ body {
 #site-footer { border-top: 1px solid var(--border); margin-top: auto; }
 .site-shell { max-width: 1160px; margin: 0 auto; padding: 0.75rem 1.5rem; }
 
+.site-logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
+.site-logo-icon {
+  width: 2.25rem; height: 2.25rem; border-radius: 0.65rem; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  display: flex; align-items: center; justify-content: center; color: #fff;
+}
+.site-logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+.site-logo-word { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--fg); }
+.site-logo-accent { color: var(--accent); }
+.site-logo-tagline { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
 #app {
   width: 100%; max-width: 580px; background: var(--card); border: 1px solid var(--border);
   border-radius: 20px; padding: 1.5rem; margin: 1rem auto;
