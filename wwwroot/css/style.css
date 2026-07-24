@@ -241,3 +241,17 @@ input[type="text"], input[type="email"], select {
 .resource-player { width: 100%; }
 .resource-thumb { width: 100%; border-radius: 8px; border: 1px solid var(--border); }
 .resource-pdf-frame { width: 100%; height: 420px; border-radius: 8px; border: 1px solid var(--border); }
+.resource-card-wide { grid-column: 1 / -1; }
+.resource-table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+.resource-table {
+  width: 100%; min-width: 720px; border-collapse: collapse; font-size: 0.82rem;
+}
+.resource-table th, .resource-table td {
+  text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top;
+}
+.resource-table th {
+  background: color-mix(in srgb, var(--fg) 4%, transparent); font-weight: 700;
+  text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; color: var(--muted);
+}
+.resource-table tbody tr:last-child td { border-bottom: none; }
+.resource-table-note { font-size: 0.75rem; }

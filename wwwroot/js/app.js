@@ -204,6 +204,25 @@ function renderTabs(active) {
 
 // ---- Study resources (audio/video/pdf/image guides, per exam type) --------
 
+// Notarial fee schedule per California Government Code § 8211 et seq. "Journal Entry
+// Requirements" and "Source" are identical for every row in the original data, so they're
+// pulled out as shared notes below the table instead of being repeated in every row.
+var NOTARY_FEE_TABLE = {
+  headers: ['Notarial Service or Document Type', 'Maximum Statutory Fee', 'Legal Exceptions or Conditions', 'Applicable Code Section'],
+  rows: [
+    ['Acknowledgments', '$15 for each signature', 'No fee shall be collected by notaries appointed to military/naval reservations; no fee for voting materials.', 'Government Code section 8211(a)'],
+    ['Jurats', '$15 for each signature', 'No fee for signatures on vote by mail ballot identification envelopes or other voting materials.', 'Government Code section 8211(b)'],
+    ['Oaths/Affirmations', '$15', "No fee for veterans' benefits claims or pension-related affidavits for public entity employees.", 'Government Code section 8211(b)'],
+    ['Deposition Services (Administering Oath, Certificate, and Other Services)', '$7 for oath; $7 for certificate; $30 for all other services', 'Total deposition services capped; see Code for full breakdown.', 'Government Code section 8211(c)'],
+    ['Certifying a copy of a Power of Attorney', '$15', 'Certified under Probate Code section 4307.', 'Government Code section 8211(e)'],
+    ['Immigration Forms', '$15 per individual per set of forms', 'Only if qualified/bonded as an immigration consultant; not applicable to attorneys rendering professional services.', 'Government Code section 8223'],
+    ['Voting Materials', '$0', 'Prohibited for vote by mail ballot identification envelopes or other voting materials.', 'Government Code section 8211(d) and Elections Code section 8080'],
+    ["Veteran's Benefits", '$0', 'Prohibited for application/claim for pension, allotment, allowance, compensation, or insurance.', 'Government Code section 6107'],
+    ['Military/Naval Reservation Notaries', '$0', 'No fees shall be collected for service rendered within the reservation.', 'Government Code section 8203.6'],
+  ],
+  journalNote: 'Journal entry requirement (every row above): the fee charged must be entered in the journal; if no fee is charged, enter "no fee" or "0".',
+  sourceNote: 'Source: [1] California Government Code, as compiled in the official CA Notary Public Handbook.',
+};
 
 var RESOURCES = {
   notary: [
@@ -229,15 +248,35 @@ var RESOURCES = {
       desc: 'The liability exposure behind misusing or mishandling your official seal.' },
     { title: 'Why Your Signature Is Just Ink', type: 'audio', file: 'Why_your_signature_is_just_ink.m4a',
       desc: 'What actually makes a notarization legally valid beyond the signature itself.' },
+    { title: 'California Notary Fee Schedule', type: 'table', table: NOTARY_FEE_TABLE,
+      desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.' },
   ],
 };
 
-var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference' };
+var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference', table: '📊 Reference Table' };
 
 var RESOURCES_DISCLAIMER =
   '<div class="resources-disclaimer">This platform is a private educational service and is not affiliated with, ' +
   'endorsed by, or sponsored by the California Secretary of State. The official California Notary Public Handbook ' +
   'is available for free directly from the Secretary of State website.</div>';
+
+function renderResourceTableCard(r) {
+  var t = r.table;
+  var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+  var bodyRows = t.rows.map(function (row) {
+    return '<tr>' + row.map(function (cell) { return '<td>' + cell + '</td>'; }).join('') + '</tr>';
+  }).join('');
+
+  return '<div class="card resource-card resource-card-wide">' +
+    '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span></div>' +
+    '<h3 class="resource-title">' + r.title + '</h3>' +
+    '<p class="muted resource-desc">' + r.desc + '</p>' +
+    '<div class="resource-table-scroll"><table class="resource-table">' +
+    '<thead>' + headerRow + '</thead><tbody>' + bodyRows + '</tbody></table></div>' +
+    (t.journalNote ? '<p class="muted resource-table-note">' + t.journalNote + '</p>' : '') +
+    (t.sourceNote ? '<p class="muted resource-table-note">' + t.sourceNote + '</p>' : '') +
+    '</div>';
+}
 
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
@@ -251,7 +290,8 @@ async function renderResources() {
 
   // Self-hosted (R2) files have no public URL anymore -- mint short-lived signed links for
   // this session in one batched call rather than per-card, then build the cards from those.
-  var filesToSign = items.filter(function (r) { return !r.url; }).map(function (r) { return r.file; });
+  // (Table-type resources have no file/url at all — data is inlined, nothing to sign.)
+  var filesToSign = items.filter(function (r) { return !r.url && r.file; }).map(function (r) { return r.file; });
   var signedUrls = {};
   if (filesToSign.length) {
     try {
@@ -265,6 +305,8 @@ async function renderResources() {
   }
 
   var cards = items.map(function (r) {
+    if (r.type === 'table') return renderResourceTableCard(r);
+
     var url = r.url || (API_BASE + signedUrls[r.file]);
     // Only the externally-linked official handbook (r.url) stays freely downloadable/openable --
     // everything we host ourselves (r.file, on R2, via a signed URL) has its download affordance stripped.
