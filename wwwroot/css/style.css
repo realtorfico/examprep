@@ -169,8 +169,9 @@ input[type="text"], input[type="email"], select {
   font-size: 1.6rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);
   padding: 0.6rem 1rem; border: 1px dashed var(--border); border-radius: 8px;
 }
-.points-check-card #points-email { margin: 0.5rem 0; }
-#points-result button { margin-top: 0.5rem; }
+#points-result { margin-top: 0.5rem; }
+.points-apply-label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; margin-top: 0.4rem; }
+.buy-total-line { font-weight: 700; margin: 0.75rem 0 0; }
 
 /* Site-wide header/footer content (bars themselves defined near #site-header above) */
 .footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; }

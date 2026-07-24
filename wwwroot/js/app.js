@@ -334,7 +334,7 @@ var RESOURCES_PROMO_BANNER =
 // with an expandable row for whichever item is currently open. Module-level so the sort/expand
 // click handlers (delegated, see the document click listener) can re-render without re-fetching.
 var resourcesRowsCache = [];
-var resourcesSort = { key: 'topic', dir: 1 };
+var resourcesSort = { key: 'status', dir: -1 }; // dir:-1 so unlocked/free rows (higher value) sort first
 var resourcesOpenIndex = null;
 
 async function renderResources() {
@@ -580,9 +580,12 @@ function loadPayPalSdk(callback) {
   document.head.appendChild(script);
 }
 
+var buyPricing = null; // stashed so the points-apply checkbox can recompute the displayed total
+
 function renderBuy() {
   appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
   apiFetch('/pricing?examType=notary').then(function (p) {
+    buyPricing = p;
     drawBuyForm(p);
   }).catch(function () {
     appEl.innerHTML = '<h1>Get instant access</h1><p>Could not load pricing. Try again shortly.</p>';
@@ -595,17 +598,14 @@ function drawBuyForm(pricing) {
     '<h1>Get instant access</h1>' +
     '<p class="muted">' + priceLabel + ' one-time — unlocks the full California Notary question bank instantly.</p>' +
     '<div class="card">' +
-    '<label class="muted buy-email-label">Email (optional — for a backup copy of your code)</label>' +
+    '<label class="muted buy-email-label">Email (optional — for a backup copy of your code, and to check ' +
+    'points you\'ve earned by <a href="#/refer">referring friends</a>)</label>' +
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
+    '<div id="points-result"></div>' +
+    '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
     '<div id="turnstile-container"></div>' +
     '<div id="paypal-button-container" class="paypal-container"></div>' +
-    '</div>' +
-    '<div class="card points-check-card">' +
-    '<p class="muted">Earned free access by referring friends? <a href="#/refer">Refer friends →</a></p>' +
-    '<label class="muted buy-email-label">Check your points balance</label>' +
-    '<input type="email" id="points-email" placeholder="you@example.com">' +
-    '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check balance</button>' +
-    '<div id="points-result"></div>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
   renderTurnstileWidget();
@@ -615,6 +615,16 @@ function drawBuyForm(pricing) {
     return;
   }
   loadPayPalSdk(function () { renderPayPalButtons(); });
+}
+
+function updateBuyTotalDisplay() {
+  var totalEl = document.getElementById('buy-total');
+  if (!totalEl || !buyPricing) return;
+  var checkbox = document.getElementById('apply-points-checkbox');
+  var applying = !!(checkbox && checkbox.checked);
+  var pointsAvailable = checkbox ? Number(checkbox.getAttribute('data-points-available') || 0) : 0;
+  var finalCents = applying ? Math.max(0, buyPricing.priceCents - pointsAvailable) : buyPricing.priceCents;
+  totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (applying ? ' (' + pointsAvailable + ' points applied)' : '');
 }
 
 function renderPayPalButtons() {
@@ -629,8 +639,12 @@ function renderPayPalButtons() {
       var turnstileToken = '';
       try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
       catch (ignored) { turnstileToken = ''; }
+      var emailEl = document.getElementById('buy-email');
+      var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
+      var applyCheckbox = document.getElementById('apply-points-checkbox');
+      var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
       return apiFetch('/paypal/create-order', {
-        method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken },
+        method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints },
       }).then(function (r) { return r.orderId; });
     },
     onApprove: function (data) {
@@ -643,7 +657,7 @@ function renderPayPalButtons() {
         state.examType = res.examType;
         var local = loadLocalPrefs();
         applyTheme(local.theme, local.fontScale);
-        renderPurchaseSuccess(res.code);
+        renderPurchaseSuccess(res.code, res.pointsApplied);
       }).catch(function () {
         appEl.innerHTML = '<h1>Something went wrong</h1>' +
           '<p class="muted">Your payment may have gone through — contact whoever runs this site before trying ' +
@@ -653,9 +667,10 @@ function renderPayPalButtons() {
   }).render('#paypal-button-container');
 }
 
-function renderPurchaseSuccess(code) {
+function renderPurchaseSuccess(code, pointsApplied) {
   appEl.innerHTML =
     '<h1>You\'re in! 🎉</h1>' +
+    (pointsApplied ? '<p class="muted">' + pointsApplied + ' points applied to this purchase.</p>' : '') +
     '<div class="card purchase-success-card">' +
     '<p class="muted">Your access code (keep it as a backup):</p>' +
     '<div class="purchase-code">' + code + '</div>' +
@@ -941,11 +956,13 @@ document.addEventListener('click', async function (e) {
     var toggleIdx = Number(el.getAttribute('data-index'));
     resourcesOpenIndex = (resourcesOpenIndex === toggleIdx) ? null : toggleIdx;
     renderResourcesTable();
+  } else if (act === 'toggle-apply-points') {
+    updateBuyTotalDisplay();
   } else if (act === 'check-points') {
-    var pointsEmailEl = document.getElementById('points-email');
+    var pointsEmailEl = document.getElementById('buy-email');
     var checkEmail = pointsEmailEl ? pointsEmailEl.value.trim() : '';
     var resultEl = document.getElementById('points-result');
-    if (!checkEmail) { if (resultEl) resultEl.innerHTML = '<p class="error-text">Enter your email first.</p>'; return; }
+    if (!checkEmail) { if (resultEl) resultEl.innerHTML = '<p class="error-text">Enter your email above first.</p>'; return; }
     if (resultEl) resultEl.innerHTML = '<p class="muted">Checking…</p>';
     try {
       var balanceRes = await apiFetch('/points/balance?email=' + encodeURIComponent(checkEmail));
@@ -955,10 +972,13 @@ document.addEventListener('click', async function (e) {
       if (required != null && balanceRes.points >= required) {
         resultEl.innerHTML = '<p class="result-correct">You have ' + balanceRes.points + ' points — enough for free access!</p>' +
           '<button class="btn-primary btn-sm" type="button" data-act="redeem-points" data-email="' + checkEmail + '">Redeem free with your points</button>';
+      } else if (balanceRes.points > 0) {
+        var discountLabel = '$' + (balanceRes.points / 100).toFixed(2);
+        resultEl.innerHTML = '<p class="muted">You have ' + balanceRes.points + ' points (' + discountLabel + ' value).</p>' +
+          '<label class="points-apply-label"><input type="checkbox" id="apply-points-checkbox" ' +
+          'data-points-available="' + balanceRes.points + '" data-act="toggle-apply-points"> Apply my points to this purchase (-' + discountLabel + ')</label>';
       } else {
-        var remaining = required != null ? (required - balanceRes.points) : null;
-        resultEl.innerHTML = '<p class="muted">You have ' + balanceRes.points + ' points' +
-          (remaining != null ? ' — ' + remaining + ' more needed for free access.' : '.') + '</p>';
+        resultEl.innerHTML = '<p class="muted">You have 0 points. <a href="#/refer">Refer friends to earn some →</a></p>';
       }
     } catch (err) {
       if (resultEl) resultEl.innerHTML = '<p class="error-text">Could not check your balance. Try again shortly.</p>';
