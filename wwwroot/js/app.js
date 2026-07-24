@@ -735,9 +735,18 @@ function renderReferForm() {
 function renderReferVerify(token) {
   appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
   apiFetch('/referrals/verify?token=' + encodeURIComponent(token)).then(function (res) {
-    appEl.innerHTML = res.alreadyVerified
-      ? '<h1>Already confirmed</h1><p class="muted">This referral was already confirmed — thanks!</p>'
-      : '<h1>You\'re confirmed! 🎉</h1><p class="muted">Thanks for confirming — your friend just earned points because of you.</p>';
+    var msg = res.alreadyVerified
+      ? 'This referral was already confirmed — thanks!'
+      : 'Thanks for confirming — your friend just earned points because of you.';
+    appEl.innerHTML =
+      '<div class="card refer-confirmed-card">' +
+      '<div class="refer-confirmed-emoji">🎉</div>' +
+      '<h1>You\'re confirmed!</h1>' +
+      '<p class="muted">' + msg + '</p>' +
+      '<div class="sample-done-cta">' +
+      '<a class="btn-primary hub-cta" href="#/sample">Try 5 free sample questions →</a>' +
+      '<a class="btn-secondary hub-cta" href="#/refer">Refer your own friends & earn free access →</a>' +
+      '</div></div>';
   }).catch(function () {
     appEl.innerHTML = '<h1>Something went wrong</h1><p class="muted">This link may be invalid or expired.</p>';
   });
