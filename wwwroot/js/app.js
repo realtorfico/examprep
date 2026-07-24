@@ -328,6 +328,7 @@ var RESOURCES_PROMO_BANNER =
   '<div class="resources-promo-cta">' +
   '<a class="btn-primary btn-sm" href="#/buy">Unlock everything →</a>' +
   '<a class="btn-secondary btn-sm" href="#/refer">Refer & earn free access →</a>' +
+  '<a class="btn-secondary btn-sm" href="#/sample">Try 5 sample questions →</a>' +
   '</div></div>';
 
 // Resources are listed as one sortable table (not a card grid) — Type/Name/Topic/Length/Status,
@@ -748,7 +749,10 @@ function drawSampleQuestion() {
     appEl.innerHTML =
       '<h1>That was the sample</h1>' +
       '<p class="muted">Enter an access code to unlock the full question bank and track your progress.</p>' +
-      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>';
+      '<div class="sample-done-cta">' +
+      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>' +
+      '<a class="btn-secondary hub-cta" href="#/resources">See free study resources →</a>' +
+      '</div>';
     return;
   }
   var q = sampleState.questions[sampleState.index];
