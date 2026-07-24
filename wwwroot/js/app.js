@@ -236,6 +236,26 @@ var NOTARY_FEE_TABLE = {
   sourceNote: 'Source: [1] California Government Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_FINES_TABLE = {
+  headers: ['Violation Type', 'Legal Reference', 'Administrative Sanction', 'Civil Penalty Amount', 'Criminal Classification', 'Grounds for Discipline', 'Source'],
+  rows: [
+    ['Willfully stating as true any material fact known to be false in a certificate of acknowledgment', 'Civil Code section 1189(a)(4)', 'Revocation or suspension of commission', 'Up to $10,000', 'Misdemeanor or Felony', 'Execution of a certificate containing a statement known to be false', '[1]'],
+    ['Failure to obtain satisfactory evidence for the identity of a credible witness', 'Civil Code section 1185(b)(1)(B)', 'Revocation or suspension of commission', 'Up to $10,000', 'Not in source', 'Failure to discharge fully and faithfully the duties of a notary public', '[1]'],
+    ['Willful failure to provide access to the sequential journal upon request by a peace officer', 'Government Code section 8214.21', 'Revocation or suspension of commission', 'Up to $2,500', 'Not in source', 'Willful failure to provide access to journal', '[1]'],
+    ['Failure to obtain required thumbprint in the sequential journal', 'Government Code section 8214.23', 'Not in source', 'Up to $2,500', 'Not in source', 'Failure to discharge fully and faithfully the duties of a notary public', '[1]'],
+    ['Illegal advertising in a foreign language or literal translation of "notary public" (non-attorney)', 'Government Code section 8219.5', 'Suspension for at least one year (1st offense); Permanent revocation (2nd offense)', 'Up to $1,500', 'Not in source', 'Violation of Section 8219.5; false or misleading advertising', '[1]'],
+    ['Charging more than the fees prescribed by law', 'Government Code section 8214.1(h)', 'Revocation or suspension of commission', 'Up to $750', 'Not in source', 'Charging more than fees prescribed', '[1]'],
+    ['Failure to complete acknowledgment at the time the seal and signature are affixed', 'Government Code section 8214.1(j)', 'Revocation or suspension of commission', 'Up to $750', 'Not in source', 'Failure to complete acknowledgment at the time of the act', '[1]'],
+    ['Failure to administer the oath or affirmation as required by law', 'Government Code section 8214.1(k)', 'Revocation or suspension of commission', 'Up to $750', 'Not in source', 'Failure to administer oath or affirmation', '[1]'],
+    ['Willful failure to notify the Secretary of State of a change of address', 'Government Code section 8213.5', 'Not in source', 'Up to $500', 'Infraction', 'Willful failure to notify of change of address', '[1]'],
+    ['Willful failure to notify the Secretary of State of a name change', 'Government Code section 8213.6', 'Not in source', 'Up to $500', 'Infraction', 'Willful failure to notify of name change', '[1]'],
+    ['Fraud relating to a deed of trust on a single-family residence', 'Government Code section 8214.2', 'Revocation of commission', 'Not in source', 'Felony', 'Knowing and willful intent to defraud', '[1]'],
+    ['Willful failure to deliver notarial records to the county clerk within 30 days of commission end', 'Government Code section 8209', 'Personal liability for damages', 'Not in source', 'Misdemeanor', 'Willful failure or refusal to deliver records', '[1]'],
+    ['Willful failure to keep the seal under direct and exclusive control', 'Government Code section 8228.1', 'Revocation or suspension of commission', 'Not in source', 'Misdemeanor', 'Failure to secure official seal', '[1]'],
+  ],
+  sourceNote: 'Source: [1] California Government Code and Civil Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -281,6 +301,9 @@ var RESOURCES = {
     { title: 'California Notary Fee Schedule', type: 'table', table: NOTARY_FEE_TABLE,
       desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.',
       topic: 'Fees, Misconduct & Conflict of Interest', free: true },
+    { title: 'California Notary Violations & Enforcement Table', type: 'table', table: NOTARY_FINES_TABLE,
+      desc: 'Common violations with legal references, administrative sanctions, civil penalties, and criminal classifications — a common exam topic.',
+      topic: 'Fines and Enforcements' },
   ],
 };
 
