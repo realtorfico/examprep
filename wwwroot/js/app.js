@@ -630,8 +630,19 @@ function updateBuyTotalDisplay() {
   var checkbox = document.getElementById('apply-points-checkbox');
   var applying = !!(checkbox && checkbox.checked);
   var pointsAvailable = checkbox ? Number(checkbox.getAttribute('data-points-available') || 0) : 0;
-  var finalCents = applying ? Math.max(0, buyPricing.priceCents - pointsAvailable) : buyPricing.priceCents;
-  totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (applying ? ' (' + pointsAvailable + ' points applied)' : '');
+  var pointsApplied = pointsAvailable;
+  var finalCents = buyPricing.priceCents;
+  if (applying) {
+    finalCents = Math.max(0, buyPricing.priceCents - pointsAvailable);
+    // Mirrors the server's floor (see /paypal/create-order) so the preview matches what
+    // actually gets charged -- a partial discount can't leave less than this payable via PayPal.
+    var minCents = buyPricing.minPaypalChargeCents || 0;
+    if (finalCents > 0 && finalCents < minCents) {
+      pointsApplied = Math.max(0, buyPricing.priceCents - minCents);
+      finalCents = buyPricing.priceCents - pointsApplied;
+    }
+  }
+  totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (applying ? ' (' + pointsApplied + ' points applied)' : '');
 }
 
 function renderPayPalButtons() {
@@ -1051,7 +1062,7 @@ document.addEventListener('click', async function (e) {
         var discountLabel = '$' + (balanceRes.points / 100).toFixed(2);
         resultEl.innerHTML = '<p class="muted">You have ' + balanceRes.points + ' points (' + discountLabel + ' value).</p>' +
           '<label class="points-apply-label"><input type="checkbox" id="apply-points-checkbox" ' +
-          'data-points-available="' + balanceRes.points + '" data-act="toggle-apply-points"> Apply my points to this purchase (-' + discountLabel + ')</label>';
+          'data-points-available="' + balanceRes.points + '" data-act="toggle-apply-points"> Apply my points to this purchase (up to -' + discountLabel + ')</label>';
       } else {
         resultEl.innerHTML = '<p class="muted">You have 0 points. <a href="#/refer">Refer friends to earn some →</a></p>';
       }
