@@ -681,22 +681,34 @@ function renderPurchaseSuccess(code, pointsApplied) {
 
 // ---- Refer a friend, earn points ------------------------------------------
 
+var referFriendRowCount = 0;
+
+function renderReferFriendRow(idx) {
+  return '<div class="referred-friend-row" data-row-index="' + idx + '">' +
+    '<input type="text" class="referred-friend-name" placeholder="Friend\'s name">' +
+    '<input type="email" class="referred-friend-email" placeholder="friend@example.com" required>' +
+    (idx > 0
+      ? '<button type="button" class="btn-secondary btn-sm" data-act="remove-referred-friend" data-row-index="' + idx + '">✕</button>'
+      : '') +
+    '</div>';
+}
+
 function renderReferForm() {
+  referFriendRowCount = 1;
   appEl.innerHTML =
     '<h1>Refer friends, earn free access</h1>' +
-    '<p class="muted">Refer a friend — you earn points once they confirm, and more once they sign up ' +
+    '<p class="muted">Refer friends — you earn points once each confirms, and more once they sign up ' +
     'for a course. Enough points covers a course with zero cash.</p>' +
     '<form data-act="refer-submit" class="card">' +
     '<label class="muted buy-email-label">Your name</label>' +
     '<input type="text" name="referrerName" placeholder="Your name">' +
     '<label class="muted buy-email-label">Your email</label>' +
     '<input type="email" name="referrerEmail" placeholder="you@example.com" required>' +
-    '<label class="muted buy-email-label">Friend\'s name</label>' +
-    '<input type="text" name="referredName" placeholder="Friend\'s name">' +
-    '<label class="muted buy-email-label">Friend\'s email</label>' +
-    '<input type="email" name="referredEmail" placeholder="friend@example.com" required>' +
+    '<label class="muted buy-email-label">Friends to refer</label>' +
+    '<div id="referred-friends-list">' + renderReferFriendRow(0) + '</div>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="add-referred-friend">+ Add another friend</button>' +
     '<div id="turnstile-container"></div>' +
-    '<button class="btn-primary" type="submit">Send referral</button>' +
+    '<button class="btn-primary" type="submit">Send referrals</button>' +
     '</form>';
   renderTurnstileWidget();
 }
@@ -865,25 +877,49 @@ document.addEventListener('submit', async function (e) {
     var referTurnstileToken = '';
     try { referTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
     catch (ignored) { referTurnstileToken = ''; }
+
+    var friendRows = document.querySelectorAll('.referred-friend-row');
+    var friends = [];
+    friendRows.forEach(function (row) {
+      var nameEl = row.querySelector('.referred-friend-name');
+      var emailEl = row.querySelector('.referred-friend-email');
+      var friendEmail = emailEl ? emailEl.value.trim() : '';
+      if (friendEmail) friends.push({ name: (nameEl && nameEl.value.trim()) || undefined, email: friendEmail });
+    });
+    if (!friends.length) {
+      var noFriendsForm = document.querySelector('form[data-act="refer-submit"]');
+      if (noFriendsForm) noFriendsForm.insertAdjacentHTML('beforebegin', '<p class="error-text">Enter at least one friend\'s email.</p>');
+      return;
+    }
+
     try {
-      await apiFetch('/referrals/invite', {
+      var inviteRes = await apiFetch('/referrals/invite', {
         method: 'POST',
         body: {
           referrerEmail: f.referrerEmail.value.trim(),
           referrerName: f.referrerName.value.trim() || undefined,
-          referredEmail: f.referredEmail.value.trim(),
-          referredName: f.referredName.value.trim() || undefined,
+          friends: friends,
           turnstileToken: referTurnstileToken,
         },
       });
+      var sentResults = inviteRes.results.filter(function (r) { return r.status === 'sent'; });
+      var issueResults = inviteRes.results.filter(function (r) { return r.status !== 'sent'; });
+      var issueLabel = { already_referred: 'already referred by someone', self: 'that\'s your own email', invalid: 'missing an email' };
+      var issuesHtml = issueResults.length
+        ? '<p class="muted">Couldn\'t send to:</p><ul class="muted">' + issueResults.map(function (r) {
+            return '<li>' + (r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
+          }).join('') + '</ul>'
+        : '';
       appEl.innerHTML = '<h1>Thanks!</h1>' +
-        '<p class="muted">We\'ve emailed your friend to confirm — you\'ll earn points once they do.</p>' +
-        '<a class="btn-secondary hub-cta" href="#/refer">Refer another friend</a>';
+        (sentResults.length
+          ? '<p class="muted">We\'ve emailed ' + sentResults.length + ' friend' + (sentResults.length === 1 ? '' : 's') +
+            ' to confirm — you\'ll earn points once each does.</p>'
+          : '') +
+        issuesHtml +
+        '<a class="btn-secondary hub-cta" href="#/refer">Refer more friends</a>';
     } catch (err) {
       var referErrCode = err.data && err.data.error;
-      var referMsg = referErrCode === 'already_referred' ? 'That email has already been referred by someone.' :
-        referErrCode === 'cannot_refer_yourself' ? "You can't refer yourself." :
-        referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
+      var referMsg = referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
         'Something went wrong. Please try again.';
       renderReferForm();
       var formEl = document.querySelector('form[data-act="refer-submit"]');
@@ -947,6 +983,13 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'add-referred-friend') {
+    var friendsListEl = document.getElementById('referred-friends-list');
+    if (friendsListEl) friendsListEl.insertAdjacentHTML('beforeend', renderReferFriendRow(referFriendRowCount++));
+  } else if (act === 'remove-referred-friend') {
+    var removeIdx = el.getAttribute('data-row-index');
+    var rowToRemove = document.querySelector('.referred-friend-row[data-row-index="' + removeIdx + '"]');
+    if (rowToRemove) rowToRemove.remove();
   } else if (act === 'sort-resources') {
     var sortKey = el.getAttribute('data-key');
     if (resourcesSort.key === sortKey) resourcesSort.dir *= -1;
