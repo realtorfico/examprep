@@ -288,8 +288,7 @@ var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄
 
 var RESOURCES_DISCLAIMER =
   '<div class="resources-disclaimer">This platform is a private educational service and is not affiliated with, ' +
-  'endorsed by, or sponsored by the California Secretary of State. The official California Notary Public Handbook ' +
-  'is available for free directly from the Secretary of State website.</div>';
+  'endorsed by, or sponsored by the California Secretary of State.</div>';
 
 function resourceTableInnerHtml(t) {
   var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
@@ -763,6 +762,24 @@ function renderReferVerify(token) {
   });
 }
 
+function renderPointsRedeemVerify(token) {
+  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  apiFetch('/points/redeem-verify?token=' + encodeURIComponent(token)).then(function (res) {
+    setToken(res.token);
+    state.examType = res.examType;
+    var local = loadLocalPrefs();
+    applyTheme(local.theme, local.fontScale);
+    renderPurchaseSuccess(res.code);
+  }).catch(function (err) {
+    var code = err.data && err.data.error;
+    var msg = code === 'insufficient_points'
+      ? 'Your points balance changed before this was confirmed, so it could no longer be redeemed.'
+      : 'This link may be invalid, already used, or expired (links are only good for 30 minutes).';
+    appEl.innerHTML = '<h1>Could not redeem</h1><p class="muted">' + msg + '</p>' +
+      '<a class="btn-secondary hub-cta" href="#/buy">Back to purchase page</a>';
+  });
+}
+
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
@@ -862,6 +879,7 @@ async function renderNotaryApp() {
   if (view === 'buy') { renderBuy(); return; }
   if (view === 'refer') { renderReferForm(); return; }
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
+  if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
@@ -947,7 +965,10 @@ document.addEventListener('submit', async function (e) {
       saveReferrerInfo(f.referrerName.value.trim(), f.referrerEmail.value.trim());
       var sentResults = inviteRes.results.filter(function (r) { return r.status === 'sent'; });
       var issueResults = inviteRes.results.filter(function (r) { return r.status !== 'sent'; });
-      var issueLabel = { already_referred: 'already referred by someone', self: 'that\'s your own email', invalid: 'missing an email' };
+      var issueLabel = {
+        already_referred: 'already referred by someone', self: 'that\'s your own email',
+        invalid: 'missing an email', disposable_email: 'looks like a throwaway address',
+      };
       var issuesHtml = issueResults.length
         ? '<p class="muted">Couldn\'t send to:</p><ul class="muted">' + issueResults.map(function (r) {
             return '<li>' + escapeHtml(r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
@@ -963,6 +984,7 @@ document.addEventListener('submit', async function (e) {
     } catch (err) {
       var referErrCode = err.data && err.data.error;
       var referMsg = referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
+        referErrCode === 'disposable_email' ? 'Please use a real, non-throwaway email address for yourself.' :
         'Something went wrong. Please try again.';
       renderReferForm();
       var formEl = document.querySelector('form[data-act="refer-submit"]');
@@ -1057,7 +1079,7 @@ document.addEventListener('click', async function (e) {
       var required = notaryReq ? notaryReq.pointsRequired : null;
       if (required != null && balanceRes.points >= required) {
         resultEl.innerHTML = '<p class="result-correct">You have ' + balanceRes.points + ' points — enough for free access!</p>' +
-          '<button class="btn-primary btn-sm" type="button" data-act="redeem-points" data-email="' + checkEmail + '">Redeem free with your points</button>';
+          '<button class="btn-primary btn-sm" type="button" data-act="redeem-points" data-email="' + checkEmail + '">Email me a redemption link</button>';
       } else if (balanceRes.points > 0) {
         var discountLabel = '$' + (balanceRes.points / 100).toFixed(2);
         resultEl.innerHTML = '<p class="muted">You have ' + balanceRes.points + ' points (' + discountLabel + ' value).</p>' +
@@ -1074,18 +1096,20 @@ document.addEventListener('click', async function (e) {
     var redeemTurnstileToken = '';
     try { redeemTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
     catch (ignored) { redeemTurnstileToken = ''; }
+    var pointsResultEl = document.getElementById('points-result');
     try {
-      var redeemRes = await apiFetch('/points/redeem', {
+      await apiFetch('/points/redeem', {
         method: 'POST', body: { email: redeemEmail, examType: 'notary', turnstileToken: redeemTurnstileToken },
       });
-      setToken(redeemRes.token);
-      state.examType = redeemRes.examType;
-      var local2 = loadLocalPrefs();
-      applyTheme(local2.theme, local2.fontScale);
-      renderPurchaseSuccess(redeemRes.code);
+      // Doesn't redeem instantly -- a confirmation link goes to that email first, so only
+      // someone who actually controls the inbox can complete the redemption.
+      if (pointsResultEl) pointsResultEl.innerHTML =
+        '<p class="result-correct">Check ' + escapeHtml(redeemEmail) + ' for a confirmation link — click it to get your code.</p>';
     } catch (err) {
-      var pointsResultEl = document.getElementById('points-result');
-      if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">Could not redeem — try again shortly.</p>';
+      var redeemErrCode = err.data && err.data.error;
+      var redeemMsg = redeemErrCode === 'insufficient_points' ? 'Your points balance changed — recheck it above.' :
+        'Could not redeem — try again shortly.';
+      if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">' + redeemMsg + '</p>';
     }
   }
 });
