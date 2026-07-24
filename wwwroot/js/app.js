@@ -222,6 +222,14 @@ var RESOURCES = {
       desc: 'A structured study reference covering the full exam blueprint.' },
     { title: 'California Notary 2026 Quick Guide', type: 'image', file: 'California_Notary_2026_Quick_Guide.png',
       desc: 'A one-page visual cheat sheet for last-minute review.' },
+    { title: 'Inside the 2026 California Notary Handbook', type: 'audio', file: 'Inside_the_2026_California_Notary_Handbook.m4a',
+      desc: 'A guided walkthrough of the current handbook\'s key sections and what changed for 2026.' },
+    { title: 'The Notary Toolkit', type: 'video', file: 'The_Notary_Toolkit.mp4',
+      desc: 'A video tour of the tools and records every California notary is required to keep.' },
+    { title: 'Why Your California Notary Stamp Is Dangerous', type: 'audio', file: 'Why_your_California_notary_stamp_is_dangerous.m4a',
+      desc: 'The liability exposure behind misusing or mishandling your official seal.' },
+    { title: 'Why Your Signature Is Just Ink', type: 'audio', file: 'Why_your_signature_is_just_ink.m4a',
+      desc: 'What actually makes a notarization legally valid beyond the signature itself.' },
   ],
 };
 
