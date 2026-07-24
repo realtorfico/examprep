@@ -151,6 +151,8 @@ nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom: 2px solid var
 .exam-card { display: flex; justify-content: space-between; align-items: center; }
 .badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--border); color: var(--muted); }
 .error-text { color: var(--incorrect); }
+.result-correct { color: var(--correct); }
+.result-incorrect { color: var(--incorrect); }
 #turnstile-container { margin: 0.5rem 0; }
 
 input[type="text"], input[type="email"], select {
@@ -165,6 +167,8 @@ input[type="text"], input[type="email"], select {
   font-size: 1.6rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);
   padding: 0.6rem 1rem; border: 1px dashed var(--border); border-radius: 8px;
 }
+.points-check-card #points-email { margin: 0.5rem 0; }
+#points-result button { margin-top: 0.5rem; }
 
 /* Site-wide header/footer content (bars themselves defined near #site-header above) */
 .footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; }

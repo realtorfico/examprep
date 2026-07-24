@@ -90,7 +90,9 @@ function renderPrivacy() {
   appEl.innerHTML = '<h1>Privacy</h1>' +
     '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
     'your quiz progress, and your theme/font preferences. We only collect an email address if you choose to ' +
-    'provide one — for an optional backup copy of your access code at purchase. We never sell or share this data. ' +
+    'provide one — for an optional backup copy of your access code at purchase, or to take part in the referral ' +
+    'program. If you refer a friend, we use their name/email only to send a one-time confirmation email on your ' +
+    'behalf; if you\'re referred by a friend, the same applies to you. We never sell or share this data. ' +
     'Payments are processed by PayPal directly; we don\'t see or store your payment details. Contact whoever ' +
     'issued your code with any privacy questions.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
@@ -153,7 +155,8 @@ function renderHub() {
     '<div class="hub-hero"><h1>Professional Licensing Exam Prep</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
     '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
-    '<p class="muted access-banner-sub">Need a code? <a href="/notary#/buy">Buy one instantly →</a></p></div></div></div>' +
+    '<p class="muted access-banner-sub">Need a code? <a href="/notary#/buy">Buy one instantly →</a> or ' +
+    '<a href="/notary#/refer">refer friends for free access →</a></p></div></div></div>' +
     '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div class="exam-track-grid">' + cards + '</div>';
@@ -361,6 +364,13 @@ function drawBuyForm(pricing) {
     '<div id="turnstile-container"></div>' +
     '<div id="paypal-button-container" class="paypal-container"></div>' +
     '</div>' +
+    '<div class="card points-check-card">' +
+    '<p class="muted">Earned free access by referring friends? <a href="#/refer">Refer friends →</a></p>' +
+    '<label class="muted buy-email-label">Check your points balance</label>' +
+    '<input type="email" id="points-email" placeholder="you@example.com">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check balance</button>' +
+    '<div id="points-result"></div>' +
+    '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
   renderTurnstileWidget();
   if (PAYPAL_CLIENT_ID.indexOf('REPLACE') !== -1) {
@@ -416,6 +426,39 @@ function renderPurchaseSuccess(code) {
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
     '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>';
+}
+
+// ---- Refer a friend, earn points ------------------------------------------
+
+function renderReferForm() {
+  appEl.innerHTML =
+    '<h1>Refer friends, earn free access</h1>' +
+    '<p class="muted">Refer a friend — you earn points once they confirm, and more once they sign up ' +
+    'for a course. Enough points covers a course with zero cash.</p>' +
+    '<form data-act="refer-submit" class="card">' +
+    '<label class="muted buy-email-label">Your name</label>' +
+    '<input type="text" name="referrerName" placeholder="Your name">' +
+    '<label class="muted buy-email-label">Your email</label>' +
+    '<input type="email" name="referrerEmail" placeholder="you@example.com" required>' +
+    '<label class="muted buy-email-label">Friend\'s name</label>' +
+    '<input type="text" name="referredName" placeholder="Friend\'s name">' +
+    '<label class="muted buy-email-label">Friend\'s email</label>' +
+    '<input type="email" name="referredEmail" placeholder="friend@example.com" required>' +
+    '<div id="turnstile-container"></div>' +
+    '<button class="btn-primary" type="submit">Send referral</button>' +
+    '</form>';
+  renderTurnstileWidget();
+}
+
+function renderReferVerify(token) {
+  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  apiFetch('/referrals/verify?token=' + encodeURIComponent(token)).then(function (res) {
+    appEl.innerHTML = res.alreadyVerified
+      ? '<h1>Already confirmed</h1><p class="muted">This referral was already confirmed — thanks!</p>'
+      : '<h1>You\'re confirmed! 🎉</h1><p class="muted">Thanks for confirming — your friend just earned points because of you.</p>';
+  }).catch(function () {
+    appEl.innerHTML = '<h1>Something went wrong</h1><p class="muted">This link may be invalid or expired.</p>';
+  });
 }
 
 // ---- Free sample (no access code needed) -----------------------------------
@@ -512,6 +555,8 @@ async function renderNotaryApp() {
   var view = (location.hash || '#/quiz').replace('#/', '');
   if (view === 'sample') { await renderSample(); return; }
   if (view === 'buy') { renderBuy(); return; }
+  if (view === 'refer') { renderReferForm(); return; }
+  if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
@@ -562,6 +607,36 @@ document.addEventListener('submit', async function (e) {
     } catch (err) {
       renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
         err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
+    }
+  } else if (act === 'refer-submit') {
+    e.preventDefault();
+    var f = e.target;
+    var referTurnstileToken = '';
+    try { referTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { referTurnstileToken = ''; }
+    try {
+      await apiFetch('/referrals/invite', {
+        method: 'POST',
+        body: {
+          referrerEmail: f.referrerEmail.value.trim(),
+          referrerName: f.referrerName.value.trim() || undefined,
+          referredEmail: f.referredEmail.value.trim(),
+          referredName: f.referredName.value.trim() || undefined,
+          turnstileToken: referTurnstileToken,
+        },
+      });
+      appEl.innerHTML = '<h1>Thanks!</h1>' +
+        '<p class="muted">We\'ve emailed your friend to confirm — you\'ll earn points once they do.</p>' +
+        '<a class="btn-secondary hub-cta" href="#/refer">Refer another friend</a>';
+    } catch (err) {
+      var referErrCode = err.data && err.data.error;
+      var referMsg = referErrCode === 'already_referred' ? 'That email has already been referred by someone.' :
+        referErrCode === 'cannot_refer_yourself' ? "You can't refer yourself." :
+        referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
+        'Something went wrong. Please try again.';
+      renderReferForm();
+      var formEl = document.querySelector('form[data-act="refer-submit"]');
+      if (formEl) formEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + referMsg + '</p>');
     }
   }
 });
@@ -621,6 +696,46 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'check-points') {
+    var pointsEmailEl = document.getElementById('points-email');
+    var checkEmail = pointsEmailEl ? pointsEmailEl.value.trim() : '';
+    var resultEl = document.getElementById('points-result');
+    if (!checkEmail) { if (resultEl) resultEl.innerHTML = '<p class="error-text">Enter your email first.</p>'; return; }
+    if (resultEl) resultEl.innerHTML = '<p class="muted">Checking…</p>';
+    try {
+      var balanceRes = await apiFetch('/points/balance?email=' + encodeURIComponent(checkEmail));
+      if (!resultEl) return;
+      var notaryReq = balanceRes.examTypes.filter(function (t) { return t.examType === 'notary'; })[0];
+      var required = notaryReq ? notaryReq.pointsRequired : null;
+      if (required != null && balanceRes.points >= required) {
+        resultEl.innerHTML = '<p class="result-correct">You have ' + balanceRes.points + ' points — enough for free access!</p>' +
+          '<button class="btn-primary btn-sm" type="button" data-act="redeem-points" data-email="' + checkEmail + '">Redeem free with your points</button>';
+      } else {
+        var remaining = required != null ? (required - balanceRes.points) : null;
+        resultEl.innerHTML = '<p class="muted">You have ' + balanceRes.points + ' points' +
+          (remaining != null ? ' — ' + remaining + ' more needed for free access.' : '.') + '</p>';
+      }
+    } catch (err) {
+      if (resultEl) resultEl.innerHTML = '<p class="error-text">Could not check your balance. Try again shortly.</p>';
+    }
+  } else if (act === 'redeem-points') {
+    var redeemEmail = el.getAttribute('data-email');
+    var redeemTurnstileToken = '';
+    try { redeemTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { redeemTurnstileToken = ''; }
+    try {
+      var redeemRes = await apiFetch('/points/redeem', {
+        method: 'POST', body: { email: redeemEmail, examType: 'notary', turnstileToken: redeemTurnstileToken },
+      });
+      setToken(redeemRes.token);
+      state.examType = redeemRes.examType;
+      var local2 = loadLocalPrefs();
+      applyTheme(local2.theme, local2.fontScale);
+      renderPurchaseSuccess(redeemRes.code);
+    } catch (err) {
+      var pointsResultEl = document.getElementById('points-result');
+      if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">Could not redeem — try again shortly.</p>';
+    }
   }
 });
 
