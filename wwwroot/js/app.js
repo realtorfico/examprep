@@ -318,7 +318,7 @@ var RESOURCES_PROMO_BANNER =
 // with an expandable row for whichever item is currently open. Module-level so the sort/expand
 // click handlers (delegated, see the document click listener) can re-render without re-fetching.
 var resourcesRowsCache = [];
-var resourcesSort = { key: 'title', dir: 1 };
+var resourcesSort = { key: 'topic', dir: 1 };
 var resourcesOpenIndex = null;
 
 async function renderResources() {
