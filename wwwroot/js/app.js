@@ -198,7 +198,11 @@ function renderTurnstileWidget(attemptsLeft) {
 }
 
 function renderTabs(active) {
-  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['progress', 'Progress']];
+  // Quiz/Progress require an access code -- only show them once actually logged in, so an
+  // anonymous visitor (previewing Resources) doesn't see tabs implying access they don't have.
+  var tabs = getToken()
+    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['progress', 'Progress']]
+    : [['resources', 'Resources']];
   return '<nav class="tabs">' + tabs.map(function (t) {
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
   }).join('') + '</nav>';
@@ -289,6 +293,8 @@ function renderLockedResourceCard(r) {
     '<span class="badge resource-locked-badge">🔒 Locked</span></div>' +
     '<h3 class="resource-title">' + r.title + '</h3>' +
     '<p class="muted resource-desc">' + r.desc + '</p>' +
+    '<div class="resource-locked-overlay">🔒 Not part of the free preview</div>' +
+    '<a class="btn-secondary btn-sm" href="#/buy">Unlock with access →</a>' +
     '</div>';
 }
 
