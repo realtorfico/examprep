@@ -233,32 +233,48 @@ var NOTARY_FEE_TABLE = {
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
+// `topic` maps each resource to the closest matching exam-breakdown category from HUB_EXAMS
+// below (or 'General Reference' for resources that span everything) -- a best-effort call based
+// on title/description, not verified against the actual audio/video content, so treat it as a
+// starting point to adjust rather than an authoritative tag.
 var RESOURCES = {
   notary: [
     { title: 'Official California Notary Public Handbook', type: 'pdf', url: 'https://notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf',
-      desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.', free: true },
+      desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.',
+      topic: 'General Reference', free: true },
     { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
-      desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.' },
+      desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.',
+      topic: 'Fees, Misconduct & Conflict of Interest' },
     { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
-      desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.' },
+      desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.',
+      topic: 'Fees, Misconduct & Conflict of Interest' },
     { title: 'Surprising Rules for California Notaries', type: 'video', file: 'Surprising_Rules_for_California_Notaries.mp4',
-      desc: 'A short video on lesser-known notary rules that trip up first-time applicants.' },
+      desc: 'A short video on lesser-known notary rules that trip up first-time applicants.',
+      topic: 'Application, Commission & Misc' },
     { title: 'California Notary Fees', type: 'video', file: 'California_Notary_Fees.mp4',
-      desc: 'A breakdown of statutory notary fees and how the exam tests them.', free: true },
+      desc: 'A breakdown of statutory notary fees and how the exam tests them.',
+      topic: 'Fees, Misconduct & Conflict of Interest', free: true },
     { title: 'California Notary Blueprint', type: 'pdf', file: 'California_Notary_Blueprint.pdf',
-      desc: 'A structured study reference covering the full exam blueprint.' },
+      desc: 'A structured study reference covering the full exam blueprint.',
+      topic: 'General Reference' },
     { title: 'California Notary 2026 Quick Guide', type: 'image', file: 'California_Notary_2026_Quick_Guide.png',
-      desc: 'A one-page visual cheat sheet for last-minute review.', free: true },
+      desc: 'A one-page visual cheat sheet for last-minute review.',
+      topic: 'General Reference', free: true },
     { title: 'Inside the 2026 California Notary Handbook', type: 'audio', file: 'Inside_the_2026_California_Notary_Handbook.m4a',
-      desc: 'A guided walkthrough of the current handbook\'s key sections and what changed for 2026.' },
+      desc: 'A guided walkthrough of the current handbook\'s key sections and what changed for 2026.',
+      topic: 'General Reference' },
     { title: 'The Notary Toolkit', type: 'video', file: 'The_Notary_Toolkit.mp4',
-      desc: 'A video tour of the tools and records every California notary is required to keep.' },
+      desc: 'A video tour of the tools and records every California notary is required to keep.',
+      topic: 'Acknowledgment, Jurat & Journal' },
     { title: 'Why Your California Notary Stamp Is Dangerous', type: 'audio', file: 'Why_your_California_notary_stamp_is_dangerous.m4a',
-      desc: 'The liability exposure behind misusing or mishandling your official seal.' },
+      desc: 'The liability exposure behind misusing or mishandling your official seal.',
+      topic: 'Fees, Misconduct & Conflict of Interest' },
     { title: 'Why Your Signature Is Just Ink', type: 'audio', file: 'Why_your_signature_is_just_ink.m4a',
-      desc: 'What actually makes a notarization legally valid beyond the signature itself.' },
+      desc: 'What actually makes a notarization legally valid beyond the signature itself.',
+      topic: 'Acknowledgment, Jurat & Journal' },
     { title: 'California Notary Fee Schedule', type: 'table', table: NOTARY_FEE_TABLE,
-      desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.', free: true },
+      desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.',
+      topic: 'Fees, Misconduct & Conflict of Interest', free: true },
   ],
 };
 
@@ -269,33 +285,23 @@ var RESOURCES_DISCLAIMER =
   'endorsed by, or sponsored by the California Secretary of State. The official California Notary Public Handbook ' +
   'is available for free directly from the Secretary of State website.</div>';
 
-function renderResourceTableCard(r) {
-  var t = r.table;
+function resourceTableInnerHtml(t) {
   var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
   var bodyRows = t.rows.map(function (row) {
     return '<tr>' + row.map(function (cell) { return '<td>' + cell + '</td>'; }).join('') + '</tr>';
   }).join('');
-
-  return '<div class="card resource-card resource-card-wide">' +
-    '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span></div>' +
-    '<h3 class="resource-title">' + r.title + '</h3>' +
-    '<p class="muted resource-desc">' + r.desc + '</p>' +
-    '<div class="resource-table-scroll"><table class="resource-table">' +
+  return '<div class="resource-table-scroll"><table class="resource-table">' +
     '<thead>' + headerRow + '</thead><tbody>' + bodyRows + '</tbody></table></div>' +
     (t.journalNote ? '<p class="muted resource-table-note">' + t.journalNote + '</p>' : '') +
-    (t.sourceNote ? '<p class="muted resource-table-note">' + t.sourceNote + '</p>' : '') +
-    '</div>';
+    (t.sourceNote ? '<p class="muted resource-table-note">' + t.sourceNote + '</p>' : '');
 }
 
-function renderLockedResourceCard(r) {
-  return '<div class="card resource-card resource-card-locked">' +
-    '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span>' +
-    '<span class="badge resource-locked-badge">🔒 Locked</span></div>' +
-    '<h3 class="resource-title">' + r.title + '</h3>' +
-    '<p class="muted resource-desc">' + r.desc + '</p>' +
-    '<div class="resource-locked-overlay">🔒 Not part of the free preview</div>' +
-    '<a class="btn-secondary btn-sm" href="#/buy">Unlock with access →</a>' +
-    '</div>';
+function formatDuration(seconds) {
+  if (seconds == null || isNaN(seconds)) return '—';
+  seconds = Math.round(seconds);
+  var m = Math.floor(seconds / 60);
+  var s = seconds % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
 var RESOURCES_PROMO_BANNER =
@@ -307,6 +313,13 @@ var RESOURCES_PROMO_BANNER =
   '<a class="btn-primary btn-sm" href="#/buy">Unlock everything →</a>' +
   '<a class="btn-secondary btn-sm" href="#/refer">Refer & earn free access →</a>' +
   '</div></div>';
+
+// Resources are listed as one sortable table (not a card grid) — Type/Name/Topic/Length/Status,
+// with an expandable row for whichever item is currently open. Module-level so the sort/expand
+// click handlers (delegated, see the document click listener) can re-render without re-fetching.
+var resourcesRowsCache = [];
+var resourcesSort = { key: 'title', dir: 1 };
+var resourcesOpenIndex = null;
 
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
@@ -340,48 +353,118 @@ async function renderResources() {
     return;
   }
 
-  var cards = items.map(function (r) {
+  resourcesOpenIndex = null;
+  resourcesRowsCache = items.map(function (r, i) {
     var unlocked = loggedIn || !!r.free;
-    if (!unlocked) return renderLockedResourceCard(r);
-    if (r.type === 'table') return renderResourceTableCard(r);
-
-    var url = r.url || (API_BASE + signedUrls[r.file]);
-    // Only the externally-linked official handbook (r.url) stays freely downloadable/openable --
-    // everything we host ourselves (r.file, on R2, via a signed URL) has its download affordance stripped.
-    var downloadable = !!r.url;
-    var media = '';
-    if (r.type === 'audio') {
-      media = '<audio class="resource-player" controls preload="none"' +
-        (downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + url + '"></audio>';
-    } else if (r.type === 'video') {
-      media = '<video class="resource-player" controls preload="none"' +
-        (downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + url + '"></video>';
-    } else if (r.type === 'image') {
-      media = downloadable
-        ? '<a href="' + url + '" target="_blank" rel="noopener"><img class="resource-thumb" src="' + url + '" alt="' + r.title + '"></a>'
-        : '<img class="resource-thumb" src="' + url + '" alt="' + r.title + '" oncontextmenu="return false">';
-    } else if (downloadable) {
-      media = '<a class="btn-secondary btn-sm" href="' + url + '" target="_blank" rel="noopener">Open PDF ↗</a>';
-    } else {
-      media = '<iframe class="resource-pdf-frame" src="' + url + '#toolbar=0" title="' + r.title + '"></iframe>';
-    }
-
-    return '<div class="card resource-card">' +
-      '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span>' +
-      (loggedIn ? '' : '<span class="badge resource-free-badge">Free sample</span>') + '</div>' +
-      '<h3 class="resource-title">' + r.title + '</h3>' +
-      '<p class="muted resource-desc">' + r.desc + '</p>' +
-      media +
-      '</div>';
-  }).join('');
+    var url = unlocked ? (r.url || (r.file ? (API_BASE + signedUrls[r.file]) : null)) : null;
+    return {
+      index: i, title: r.title, type: r.type, topic: r.topic || 'General Reference', desc: r.desc,
+      unlocked: unlocked, downloadable: !!r.url, url: url, table: r.table || null, lengthSeconds: null,
+    };
+  });
 
   var intro = loggedIn
     ? '<p class="muted resources-intro">Guided material to go with your practice questions.</p>'
     : '';
-
   appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + intro +
     (loggedIn ? '' : RESOURCES_PROMO_BANNER) +
-    '<div class="resource-grid">' + cards + '</div>';
+    '<div id="resources-table-container"></div>';
+  renderResourcesTable();
+
+  // Best-effort, lightweight duration lookups (the server's Range support means this only
+  // pulls the file's metadata atom, not the whole file) so Length is populated -- and sortable
+  // -- without the visitor needing to press Play first. Locked rows have no URL to probe.
+  resourcesRowsCache.forEach(function (row) {
+    if (!row.unlocked || !row.url || (row.type !== 'audio' && row.type !== 'video')) return;
+    var probe = document.createElement(row.type);
+    probe.preload = 'metadata';
+    probe.style.display = 'none';
+    probe.addEventListener('loadedmetadata', function () {
+      row.lengthSeconds = probe.duration;
+      renderResourcesTable();
+      probe.remove();
+    });
+    probe.addEventListener('error', function () { probe.remove(); });
+    probe.src = row.url;
+    document.body.appendChild(probe);
+  });
+}
+
+function sortedResourceRows() {
+  var rows = resourcesRowsCache.slice();
+  var key = resourcesSort.key, dir = resourcesSort.dir;
+  rows.sort(function (a, b) {
+    var av, bv;
+    if (key === 'length') { av = a.lengthSeconds == null ? -1 : a.lengthSeconds; bv = b.lengthSeconds == null ? -1 : b.lengthSeconds; }
+    else if (key === 'status') { av = a.unlocked ? 1 : 0; bv = b.unlocked ? 1 : 0; }
+    else { av = String(a[key] || '').toLowerCase(); bv = String(b[key] || '').toLowerCase(); }
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+  return rows;
+}
+
+function renderResourcesTable() {
+  var container = document.getElementById('resources-table-container');
+  if (!container) return; // navigated away before an async duration lookup resolved
+
+  var loggedIn = !!getToken();
+  var columns = [['type', 'Type'], ['title', 'Name'], ['topic', 'Topic'], ['length', 'Length'], ['status', 'Status']];
+  var headerCells = columns.map(function (c) {
+    var indicator = resourcesSort.key === c[0] ? (resourcesSort.dir === 1 ? ' ▲' : ' ▼') : '';
+    return '<th data-act="sort-resources" data-key="' + c[0] + '">' + c[1] + indicator + '</th>';
+  }).join('') + '<th></th>';
+
+  var bodyHtml = sortedResourceRows().map(function (row) {
+    var lengthLabel = (row.type === 'audio' || row.type === 'video') ? formatDuration(row.lengthSeconds) : '—';
+    var statusCell = !row.unlocked ? '<span class="badge resource-locked-badge">🔒 Locked</span>'
+      : loggedIn ? '<span class="badge">Included</span>'
+      : '<span class="badge resource-free-badge">Free sample</span>';
+
+    var actionCell;
+    if (!row.unlocked) {
+      actionCell = '<a class="btn-secondary btn-sm" href="#/buy">Unlock →</a>';
+    } else if (row.type === 'pdf' && row.downloadable) {
+      actionCell = '<a class="btn-secondary btn-sm" href="' + row.url + '" target="_blank" rel="noopener">Open ↗</a>';
+    } else {
+      var isOpen = resourcesOpenIndex === row.index;
+      actionCell = '<button class="btn-secondary btn-sm" type="button" data-act="toggle-resource-media" data-index="' + row.index + '">' +
+        (isOpen ? 'Hide' : row.type === 'table' ? '📊 Show' : row.type === 'image' ? '👁 View' : '▶ Play') + '</button>';
+    }
+
+    var mainRow = '<tr>' +
+      '<td>' + RESOURCE_TYPE_LABEL[row.type] + '</td>' +
+      '<td>' + row.title + '</td>' +
+      '<td class="muted">' + row.topic + '</td>' +
+      '<td>' + lengthLabel + '</td>' +
+      '<td>' + statusCell + '</td>' +
+      '<td>' + actionCell + '</td>' +
+      '</tr>';
+
+    if (resourcesOpenIndex !== row.index) return mainRow;
+
+    var inner = '';
+    if (row.type === 'audio') {
+      inner = '<audio class="resource-player" controls autoplay preload="metadata"' +
+        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></audio>';
+    } else if (row.type === 'video') {
+      inner = '<video class="resource-player" controls autoplay preload="metadata"' +
+        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></video>';
+    } else if (row.type === 'image') {
+      inner = '<img class="resource-thumb" src="' + row.url + '" alt="' + row.title + '" oncontextmenu="return false">';
+    } else if (row.type === 'table') {
+      inner = resourceTableInnerHtml(row.table);
+    } else if (row.type === 'pdf') {
+      inner = '<iframe class="resource-pdf-frame" src="' + row.url + '#toolbar=0" title="' + row.title + '"></iframe>';
+    }
+
+    return mainRow + '<tr class="resources-index-expand-row"><td colspan="6">' +
+      '<p class="muted resource-desc">' + row.desc + '</p>' + inner + '</td></tr>';
+  }).join('');
+
+  container.innerHTML = '<div class="resource-table-scroll"><table class="resource-table resources-index-table">' +
+    '<thead><tr>' + headerCells + '</tr></thead><tbody>' + bodyHtml + '</tbody></table></div>';
 }
 
 async function renderQuiz() {
@@ -824,6 +907,15 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'sort-resources') {
+    var sortKey = el.getAttribute('data-key');
+    if (resourcesSort.key === sortKey) resourcesSort.dir *= -1;
+    else { resourcesSort.key = sortKey; resourcesSort.dir = 1; }
+    renderResourcesTable();
+  } else if (act === 'toggle-resource-media') {
+    var toggleIdx = Number(el.getAttribute('data-index'));
+    resourcesOpenIndex = (resourcesOpenIndex === toggleIdx) ? null : toggleIdx;
+    renderResourcesTable();
   } else if (act === 'check-points') {
     var pointsEmailEl = document.getElementById('points-email');
     var checkEmail = pointsEmailEl ? pointsEmailEl.value.trim() : '';
