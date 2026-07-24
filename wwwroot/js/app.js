@@ -378,7 +378,10 @@ async function renderResources() {
     if (!row.unlocked || !row.url || (row.type !== 'audio' && row.type !== 'video')) return;
     var probe = document.createElement(row.type);
     probe.preload = 'metadata';
-    probe.style.display = 'none';
+    // display:none is unreliable for firing loadedmetadata in some browsers -- this keeps the
+    // element genuinely "rendered" (so loading actually proceeds) while staying invisible.
+    probe.style.cssText = 'position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; top:-9999px;';
+    probe.muted = true;
     probe.addEventListener('loadedmetadata', function () {
       row.lengthSeconds = probe.duration;
       renderResourcesTable();
