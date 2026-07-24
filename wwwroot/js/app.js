@@ -244,16 +244,16 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
       desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.',
-      topic: 'Fees, Misconduct & Conflict of Interest' },
+      topic: 'Fees, Misconduct & Conflict of Interest', sizeBytes: 109485209 },
     { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
       desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.',
-      topic: 'Fees, Misconduct & Conflict of Interest' },
+      topic: 'Fees, Misconduct & Conflict of Interest', sizeBytes: 104504457 },
     { title: 'Surprising Rules for California Notaries', type: 'video', file: 'Surprising_Rules_for_California_Notaries.mp4',
       desc: 'A short video on lesser-known notary rules that trip up first-time applicants.',
-      topic: 'Application, Commission & Misc' },
+      topic: 'Application, Commission & Misc', sizeBytes: 9272787 },
     { title: 'California Notary Fees', type: 'video', file: 'California_Notary_Fees.mp4',
       desc: 'A breakdown of statutory notary fees and how the exam tests them.',
-      topic: 'Fees, Misconduct & Conflict of Interest', free: true },
+      topic: 'Fees, Misconduct & Conflict of Interest', free: true, sizeBytes: 28354255 },
     { title: 'California Notary Blueprint', type: 'pdf', file: 'California_Notary_Blueprint.pdf',
       desc: 'A structured study reference covering the full exam blueprint.',
       topic: 'General Reference' },
@@ -262,16 +262,16 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Inside the 2026 California Notary Handbook', type: 'audio', file: 'Inside_the_2026_California_Notary_Handbook.m4a',
       desc: 'A guided walkthrough of the current handbook\'s key sections and what changed for 2026.',
-      topic: 'General Reference' },
+      topic: 'General Reference', sizeBytes: 99783675 },
     { title: 'The Notary Toolkit', type: 'video', file: 'The_Notary_Toolkit.mp4',
       desc: 'A video tour of the tools and records every California notary is required to keep.',
-      topic: 'Acknowledgment, Jurat & Journal' },
+      topic: 'Acknowledgment, Jurat & Journal', sizeBytes: 45767555 },
     { title: 'Why Your California Notary Stamp Is Dangerous', type: 'audio', file: 'Why_your_California_notary_stamp_is_dangerous.m4a',
       desc: 'The liability exposure behind misusing or mishandling your official seal.',
-      topic: 'Fees, Misconduct & Conflict of Interest' },
+      topic: 'Fees, Misconduct & Conflict of Interest', sizeBytes: 101147484 },
     { title: 'Why Your Signature Is Just Ink', type: 'audio', file: 'Why_your_signature_is_just_ink.m4a',
       desc: 'What actually makes a notarization legally valid beyond the signature itself.',
-      topic: 'Acknowledgment, Jurat & Journal' },
+      topic: 'Acknowledgment, Jurat & Journal', sizeBytes: 77632701 },
     { title: 'California Notary Fee Schedule', type: 'table', table: NOTARY_FEE_TABLE,
       desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.',
       topic: 'Fees, Misconduct & Conflict of Interest', free: true },
@@ -302,6 +302,22 @@ function formatDuration(seconds) {
   var m = Math.floor(seconds / 60);
   var s = seconds % 60;
   return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+// Rough estimate from file size alone (assumed bitrate per type) so Length has *something* to
+// show/sort by even for locked resources, where we deliberately never hand out a playable URL
+// to probe the real duration (that would double as a way to bypass the lock). Once a real,
+// exact duration is known (see the metadata probe for unlocked items), it replaces this estimate.
+var ASSUMED_BITRATE_BYTES_PER_SEC = { audio: 24000, video: 187500 }; // ~192kbps audio, ~1.5Mbps video
+function estimateDurationSeconds(type, sizeBytes) {
+  var rate = ASSUMED_BITRATE_BYTES_PER_SEC[type];
+  if (!rate || !sizeBytes) return null;
+  return sizeBytes / rate;
+}
+function formatApproxMinutes(seconds) {
+  if (seconds == null || isNaN(seconds)) return '—';
+  var m = Math.max(1, Math.round(seconds / 60));
+  return '~' + m + ' min';
 }
 
 var RESOURCES_PROMO_BANNER =
@@ -359,7 +375,8 @@ async function renderResources() {
     var url = unlocked ? (r.url || (r.file ? (API_BASE + signedUrls[r.file]) : null)) : null;
     return {
       index: i, title: r.title, type: r.type, topic: r.topic || 'General Reference', desc: r.desc,
-      unlocked: unlocked, downloadable: !!r.url, url: url, table: r.table || null, lengthSeconds: null,
+      unlocked: unlocked, downloadable: !!r.url, url: url, table: r.table || null,
+      lengthSeconds: null, estimatedLengthSeconds: estimateDurationSeconds(r.type, r.sizeBytes),
     };
   });
 
@@ -398,7 +415,10 @@ function sortedResourceRows() {
   var key = resourcesSort.key, dir = resourcesSort.dir;
   rows.sort(function (a, b) {
     var av, bv;
-    if (key === 'length') { av = a.lengthSeconds == null ? -1 : a.lengthSeconds; bv = b.lengthSeconds == null ? -1 : b.lengthSeconds; }
+    if (key === 'length') {
+      av = a.lengthSeconds != null ? a.lengthSeconds : (a.estimatedLengthSeconds != null ? a.estimatedLengthSeconds : -1);
+      bv = b.lengthSeconds != null ? b.lengthSeconds : (b.estimatedLengthSeconds != null ? b.estimatedLengthSeconds : -1);
+    }
     else if (key === 'status') { av = a.unlocked ? 1 : 0; bv = b.unlocked ? 1 : 0; }
     else { av = String(a[key] || '').toLowerCase(); bv = String(b[key] || '').toLowerCase(); }
     if (av < bv) return -1 * dir;
@@ -420,7 +440,9 @@ function renderResourcesTable() {
   }).join('') + '<th></th>';
 
   var bodyHtml = sortedResourceRows().map(function (row) {
-    var lengthLabel = (row.type === 'audio' || row.type === 'video') ? formatDuration(row.lengthSeconds) : '—';
+    var lengthLabel = row.type !== 'audio' && row.type !== 'video' ? '—'
+      : row.lengthSeconds != null ? formatDuration(row.lengthSeconds)
+      : formatApproxMinutes(row.estimatedLengthSeconds);
     var statusCell = !row.unlocked ? '<span class="badge resource-locked-badge">🔒 Locked</span>'
       : loggedIn ? '<span class="badge">Included</span>'
       : '<span class="badge resource-free-badge">Free sample</span>';
