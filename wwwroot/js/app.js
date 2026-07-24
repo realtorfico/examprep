@@ -5,6 +5,12 @@ var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
 
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
 function applyTheme(theme, fontScale) {
   var root = document.documentElement;
   if (theme && theme !== 'system') root.setAttribute('data-theme', theme);
@@ -682,6 +688,17 @@ function renderPurchaseSuccess(code, pointsApplied) {
 
 // ---- Refer a friend, earn points ------------------------------------------
 
+function loadReferrerInfo() {
+  return {
+    name: localStorage.getItem('examprep_referrer_name') || '',
+    email: localStorage.getItem('examprep_referrer_email') || '',
+  };
+}
+function saveReferrerInfo(name, email) {
+  localStorage.setItem('examprep_referrer_name', name || '');
+  localStorage.setItem('examprep_referrer_email', email || '');
+}
+
 var referFriendRowCount = 0;
 
 function renderReferFriendRow(idx) {
@@ -696,15 +713,16 @@ function renderReferFriendRow(idx) {
 
 function renderReferForm() {
   referFriendRowCount = 1;
+  var referrerInfo = loadReferrerInfo();
   appEl.innerHTML =
     '<h1>Refer friends, earn free access</h1>' +
     '<p class="muted">Refer friends — you earn points once each confirms, and more once they sign up ' +
     'for a course. Enough points covers a course with zero cash.</p>' +
     '<form data-act="refer-submit" class="card">' +
     '<label class="muted buy-email-label">Your name</label>' +
-    '<input type="text" name="referrerName" placeholder="Your name">' +
+    '<input type="text" name="referrerName" placeholder="Your name" value="' + escapeHtml(referrerInfo.name) + '">' +
     '<label class="muted buy-email-label">Your email</label>' +
-    '<input type="email" name="referrerEmail" placeholder="you@example.com" required>' +
+    '<input type="email" name="referrerEmail" placeholder="you@example.com" value="' + escapeHtml(referrerInfo.email) + '" required>' +
     '<label class="muted buy-email-label">Friends to refer</label>' +
     '<div id="referred-friends-list">' + renderReferFriendRow(0) + '</div>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="add-referred-friend">+ Add another friend</button>' +
@@ -906,12 +924,13 @@ document.addEventListener('submit', async function (e) {
           turnstileToken: referTurnstileToken,
         },
       });
+      saveReferrerInfo(f.referrerName.value.trim(), f.referrerEmail.value.trim());
       var sentResults = inviteRes.results.filter(function (r) { return r.status === 'sent'; });
       var issueResults = inviteRes.results.filter(function (r) { return r.status !== 'sent'; });
       var issueLabel = { already_referred: 'already referred by someone', self: 'that\'s your own email', invalid: 'missing an email' };
       var issuesHtml = issueResults.length
         ? '<p class="muted">Couldn\'t send to:</p><ul class="muted">' + issueResults.map(function (r) {
-            return '<li>' + (r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
+            return '<li>' + escapeHtml(r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
           }).join('') + '</ul>'
         : '';
       appEl.innerHTML = '<h1>Thanks!</h1>' +
