@@ -160,7 +160,9 @@ function renderHub() {
     '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
     '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
     '<p class="muted access-banner-sub">Need a code? <a href="/notary#/buy">Buy one instantly →</a> or ' +
-    '<a href="/notary#/refer">refer friends for free access →</a></p></div></div></div>' +
+    '<a href="/notary#/refer">refer friends for free access →</a></p>' +
+    '<p class="muted access-banner-sub">Not sure yet? <a href="/notary#/resources">Preview free study resources →</a></p>' +
+    '</div></div></div>' +
     '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div class="exam-track-grid">' + cards + '</div>';
@@ -224,32 +226,35 @@ var NOTARY_FEE_TABLE = {
   sourceNote: 'Source: [1] California Government Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+// `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
+// This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
+// in examprep-api, which must be kept in sync with this list by filename.
 var RESOURCES = {
   notary: [
     { title: 'Official California Notary Public Handbook', type: 'pdf', url: 'https://notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf',
-      desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.' },
+      desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.', free: true },
     { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
-      desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.' },
+      desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.', free: true },
     { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
       desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.' },
     { title: 'Surprising Rules for California Notaries', type: 'video', file: 'Surprising_Rules_for_California_Notaries.mp4',
-      desc: 'A short video on lesser-known notary rules that trip up first-time applicants.' },
+      desc: 'A short video on lesser-known notary rules that trip up first-time applicants.', free: true },
     { title: 'California Notary Fees', type: 'video', file: 'California_Notary_Fees.mp4',
       desc: 'A breakdown of statutory notary fees and how the exam tests them.' },
     { title: 'California Notary Blueprint', type: 'pdf', file: 'California_Notary_Blueprint.pdf',
-      desc: 'A structured study reference covering the full exam blueprint.' },
+      desc: 'A structured study reference covering the full exam blueprint.', free: true },
     { title: 'California Notary 2026 Quick Guide', type: 'image', file: 'California_Notary_2026_Quick_Guide.png',
       desc: 'A one-page visual cheat sheet for last-minute review.' },
     { title: 'Inside the 2026 California Notary Handbook', type: 'audio', file: 'Inside_the_2026_California_Notary_Handbook.m4a',
       desc: 'A guided walkthrough of the current handbook\'s key sections and what changed for 2026.' },
     { title: 'The Notary Toolkit', type: 'video', file: 'The_Notary_Toolkit.mp4',
-      desc: 'A video tour of the tools and records every California notary is required to keep.' },
+      desc: 'A video tour of the tools and records every California notary is required to keep.', free: true },
     { title: 'Why Your California Notary Stamp Is Dangerous', type: 'audio', file: 'Why_your_California_notary_stamp_is_dangerous.m4a',
       desc: 'The liability exposure behind misusing or mishandling your official seal.' },
     { title: 'Why Your Signature Is Just Ink', type: 'audio', file: 'Why_your_signature_is_just_ink.m4a',
-      desc: 'What actually makes a notarization legally valid beyond the signature itself.' },
+      desc: 'What actually makes a notarization legally valid beyond the signature itself.', free: true },
     { title: 'California Notary Fee Schedule', type: 'table', table: NOTARY_FEE_TABLE,
-      desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.' },
+      desc: 'Maximum statutory fees by service type, with legal exceptions and code citations — a common exam topic.', free: true },
   ],
 };
 
@@ -278,6 +283,25 @@ function renderResourceTableCard(r) {
     '</div>';
 }
 
+function renderLockedResourceCard(r) {
+  return '<div class="card resource-card resource-card-locked">' +
+    '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span>' +
+    '<span class="badge resource-locked-badge">🔒 Locked</span></div>' +
+    '<h3 class="resource-title">' + r.title + '</h3>' +
+    '<p class="muted resource-desc">' + r.desc + '</p>' +
+    '</div>';
+}
+
+var RESOURCES_PROMO_BANNER =
+  '<div class="card resources-promo-banner">' +
+  '<strong>🎓 You\'re previewing a sample of what\'s included</strong>' +
+  '<p class="muted">Unlock the full resource library plus the complete practice question bank — buy instant ' +
+  'access, or refer friends and earn it for free.</p>' +
+  '<div class="resources-promo-cta">' +
+  '<a class="btn-primary btn-sm" href="#/buy">Unlock everything →</a>' +
+  '<a class="btn-secondary btn-sm" href="#/refer">Refer & earn free access →</a>' +
+  '</div></div>';
+
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
@@ -286,25 +310,33 @@ async function renderResources() {
     return;
   }
 
+  var loggedIn = !!getToken();
   appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + '<p class="muted">Loading…</p>';
 
-  // Self-hosted (R2) files have no public URL anymore -- mint short-lived signed links for
-  // this session in one batched call rather than per-card, then build the cards from those.
-  // (Table-type resources have no file/url at all — data is inlined, nothing to sign.)
-  var filesToSign = items.filter(function (r) { return !r.url && r.file; }).map(function (r) { return r.file; });
+  // Logged-in sessions get everything signed; anonymous visitors only get the server's own
+  // free-sample allowlist signed (see FREE_RESOURCES in examprep-api) — nothing client-side
+  // decides what's actually unlockable.
   var signedUrls = {};
-  if (filesToSign.length) {
-    try {
-      var signRes = await apiFetch('/resources/sign-batch', { method: 'POST', body: { files: filesToSign } });
-      signedUrls = signRes.urls;
-    } catch (e) {
-      appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
-        '<p>Could not load resources. Try again shortly.</p>';
-      return;
+  try {
+    if (loggedIn) {
+      var filesToSign = items.filter(function (r) { return !r.url && r.file; }).map(function (r) { return r.file; });
+      if (filesToSign.length) {
+        var signRes = await apiFetch('/resources/sign-batch', { method: 'POST', body: { files: filesToSign } });
+        signedUrls = signRes.urls;
+      }
+    } else {
+      var freeRes = await apiFetch('/resources/free?examType=' + encodeURIComponent(state.examType));
+      signedUrls = freeRes.urls;
     }
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
+      '<p>Could not load resources. Try again shortly.</p>';
+    return;
   }
 
   var cards = items.map(function (r) {
+    var unlocked = loggedIn || !!r.free;
+    if (!unlocked) return renderLockedResourceCard(r);
     if (r.type === 'table') return renderResourceTableCard(r);
 
     var url = r.url || (API_BASE + signedUrls[r.file]);
@@ -329,15 +361,20 @@ async function renderResources() {
     }
 
     return '<div class="card resource-card">' +
-      '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span></div>' +
+      '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span>' +
+      (loggedIn ? '' : '<span class="badge resource-free-badge">Free sample</span>') + '</div>' +
       '<h3 class="resource-title">' + r.title + '</h3>' +
       '<p class="muted resource-desc">' + r.desc + '</p>' +
       media +
       '</div>';
   }).join('');
 
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
-    '<p class="muted resources-intro">Guided material to go with your practice questions.</p>' +
+  var intro = loggedIn
+    ? '<p class="muted resources-intro">Guided material to go with your practice questions.</p>'
+    : '';
+
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + intro +
+    (loggedIn ? '' : RESOURCES_PROMO_BANNER) +
     '<div class="resource-grid">' + cards + '</div>';
 }
 
@@ -642,10 +679,10 @@ async function renderNotaryApp() {
   if (view === 'buy') { renderBuy(); return; }
   if (view === 'refer') { renderReferForm(); return; }
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
+  if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
-  else if (view === 'resources') await renderResources();
   else await renderQuiz();
 }
 
