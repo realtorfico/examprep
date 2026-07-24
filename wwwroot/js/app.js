@@ -204,7 +204,6 @@ function renderTabs(active) {
 
 // ---- Study resources (audio/video/pdf/image guides, per exam type) --------
 
-var MEDIA_BASE = 'https://media.softician.com/';
 
 var RESOURCES = {
   notary: [
@@ -240,17 +239,35 @@ var RESOURCES_DISCLAIMER =
   'endorsed by, or sponsored by the California Secretary of State. The official California Notary Public Handbook ' +
   'is available for free directly from the Secretary of State website.</div>';
 
-function renderResources() {
+async function renderResources() {
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
     appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
       '<p class="muted">No study resources yet for this exam track.</p>';
     return;
   }
+
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + '<p class="muted">Loading…</p>';
+
+  // Self-hosted (R2) files have no public URL anymore -- mint short-lived signed links for
+  // this session in one batched call rather than per-card, then build the cards from those.
+  var filesToSign = items.filter(function (r) { return !r.url; }).map(function (r) { return r.file; });
+  var signedUrls = {};
+  if (filesToSign.length) {
+    try {
+      var signRes = await apiFetch('/resources/sign-batch', { method: 'POST', body: { files: filesToSign } });
+      signedUrls = signRes.urls;
+    } catch (e) {
+      appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
+        '<p>Could not load resources. Try again shortly.</p>';
+      return;
+    }
+  }
+
   var cards = items.map(function (r) {
-    var url = r.url || (MEDIA_BASE + r.file);
+    var url = r.url || (API_BASE + signedUrls[r.file]);
     // Only the externally-linked official handbook (r.url) stays freely downloadable/openable --
-    // everything we host ourselves (r.file, on R2) has its download affordance stripped.
+    // everything we host ourselves (r.file, on R2, via a signed URL) has its download affordance stripped.
     var downloadable = !!r.url;
     var media = '';
     if (r.type === 'audio') {
@@ -586,7 +603,7 @@ async function renderNotaryApp() {
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'progress') await renderProgress();
-  else if (view === 'resources') renderResources();
+  else if (view === 'resources') await renderResources();
   else await renderQuiz();
 }
 
