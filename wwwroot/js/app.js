@@ -83,6 +83,10 @@ function renderTerms() {
     'It is not affiliated with, endorsed by, or sponsored by the California Secretary of State or any licensing body. ' +
     'Access codes are non-transferable and grant access to one exam track as specified at purchase. ' +
     'We make no guarantee of passing any official exam.</p>' +
+    '<p class="muted">Referral points have no cash value and cannot be redeemed, exchanged, or refunded for cash ' +
+    'or any other payment method — they may only be applied toward a course through this site. Points may expire ' +
+    'or be adjusted, and the referral program itself may be modified, suspended, or discontinued, at any time. ' +
+    'We reserve the right to revoke points or access obtained through fraud, abuse, or violation of these terms.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
 
