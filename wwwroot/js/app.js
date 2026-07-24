@@ -249,11 +249,25 @@ function renderResources() {
   }
   var cards = items.map(function (r) {
     var url = r.url || (MEDIA_BASE + r.file);
+    // Only the externally-linked official handbook (r.url) stays freely downloadable/openable --
+    // everything we host ourselves (r.file, on R2) has its download affordance stripped.
+    var downloadable = !!r.url;
     var media = '';
-    if (r.type === 'audio') media = '<audio class="resource-player" controls preload="none" src="' + url + '"></audio>';
-    else if (r.type === 'video') media = '<video class="resource-player" controls preload="none" src="' + url + '"></video>';
-    else if (r.type === 'image') media = '<a href="' + url + '" target="_blank" rel="noopener"><img class="resource-thumb" src="' + url + '" alt="' + r.title + '"></a>';
-    else media = '<a class="btn-secondary btn-sm" href="' + url + '" target="_blank" rel="noopener">Open PDF ↗</a>';
+    if (r.type === 'audio') {
+      media = '<audio class="resource-player" controls preload="none"' +
+        (downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + url + '"></audio>';
+    } else if (r.type === 'video') {
+      media = '<video class="resource-player" controls preload="none"' +
+        (downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + url + '"></video>';
+    } else if (r.type === 'image') {
+      media = downloadable
+        ? '<a href="' + url + '" target="_blank" rel="noopener"><img class="resource-thumb" src="' + url + '" alt="' + r.title + '"></a>'
+        : '<img class="resource-thumb" src="' + url + '" alt="' + r.title + '" oncontextmenu="return false">';
+    } else if (downloadable) {
+      media = '<a class="btn-secondary btn-sm" href="' + url + '" target="_blank" rel="noopener">Open PDF ↗</a>';
+    } else {
+      media = '<iframe class="resource-pdf-frame" src="' + url + '#toolbar=0" title="' + r.title + '"></iframe>';
+    }
 
     return '<div class="card resource-card">' +
       '<div class="resource-card-top"><span class="badge">' + RESOURCE_TYPE_LABEL[r.type] + '</span></div>' +
