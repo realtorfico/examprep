@@ -164,6 +164,7 @@ input[type="text"], input[type="email"], select {
 .buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
 #buy-email { margin-bottom: 0.75rem; }
 .paypal-container { margin-top: 0.75rem; min-height: 45px; }
+.paypal-card-note { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; }
 .purchase-success-card { text-align: center; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
 .purchase-code {
   font-size: 1.6rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);

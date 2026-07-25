@@ -604,7 +604,11 @@ function loadPayPalSdk(callback) {
   }
   paypalSdkLoading = true;
   var script = document.createElement('script');
-  script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) + '&currency=USD&intent=capture';
+  // disable-funding=card hides PayPal's separate, barely-stylable "Debit or Credit Card" button --
+  // card payment is still available without a PayPal account via "Pay with Debit or Credit Card"
+  // inside the main button's own checkout popup, just not as its own ugly duplicate button.
+  script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) +
+    '&currency=USD&intent=capture&disable-funding=card';
   script.onload = function () { paypalSdkLoading = false; callback(); };
   document.head.appendChild(script);
 }
@@ -634,6 +638,8 @@ function drawBuyForm(pricing) {
     '<div id="points-result"></div>' +
     '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
     '<div id="turnstile-container"></div>' +
+    '<p class="muted paypal-card-note">💳 No PayPal account needed — click below and choose ' +
+    '"Pay with Debit or Credit Card" to check out as a guest.</p>' +
     '<div id="paypal-button-container" class="paypal-container"></div>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
@@ -675,6 +681,7 @@ function renderPayPalButtons() {
     return;
   }
   window.paypal.Buttons({
+    style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', height: 45 },
     createOrder: function () {
       var turnstileToken = '';
       try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
