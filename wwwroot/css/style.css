@@ -340,7 +340,7 @@ input[type="text"], input[type="email"], select {
 .breakdown-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.72rem; }
 .breakdown-row { display: flex; flex-direction: column; gap: 0.25rem; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
-.breakdown-bar { height: 3px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
+.breakdown-bar { height: 2px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
 .breakdown-bar-fill { height: 100%; background: var(--highlight); border-radius: 999px; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
