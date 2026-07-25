@@ -485,10 +485,12 @@ function renderResourcesTable() {
 
   var loggedIn = !!getToken();
   var columns = [['type', 'Type'], ['title', 'Name'], ['topic', 'Topic'], ['length', 'Length'], ['status', 'Status']];
-  var headerCells = columns.map(function (c) {
+  // Action column first -- so mobile users can see/tap Play/Show/Hide/Unlock without having to
+  // horizontally scroll the table to reach it.
+  var headerCells = '<th></th>' + columns.map(function (c) {
     var indicator = resourcesSort.key === c[0] ? (resourcesSort.dir === 1 ? ' ▲' : ' ▼') : '';
     return '<th data-act="sort-resources" data-key="' + c[0] + '">' + c[1] + indicator + '</th>';
-  }).join('') + '<th></th>';
+  }).join('');
 
   var bodyHtml = sortedResourceRows().map(function (row) {
     var lengthLabel = row.type !== 'audio' && row.type !== 'video' ? '—'
@@ -510,12 +512,12 @@ function renderResourcesTable() {
     }
 
     var mainRow = '<tr>' +
+      '<td>' + actionCell + '</td>' +
       '<td>' + RESOURCE_TYPE_LABEL[row.type] + '</td>' +
       '<td>' + row.title + '</td>' +
       '<td class="muted">' + row.topic + '</td>' +
       '<td>' + lengthLabel + '</td>' +
       '<td>' + statusCell + '</td>' +
-      '<td>' + actionCell + '</td>' +
       '</tr>';
 
     if (resourcesOpenIndex !== row.index) return mainRow;
