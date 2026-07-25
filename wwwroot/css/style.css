@@ -236,6 +236,7 @@ input[type="text"], input[type="email"], select {
 .buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
 .buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
 .buy-order-price { font-size: 1.3rem; color: var(--accent); }
+.buy-promo-note { font-size: 0.8rem; font-weight: 700; color: #f59e0b; margin: 0.3rem 0 0; }
 .buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
 .buy-guarantee-card { display: flex; flex-direction: column; gap: 0.9rem; }
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }

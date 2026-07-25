@@ -859,6 +859,7 @@ function drawBuyForm(pricing) {
     '<div class="buy-value-col">' +
     '<div class="card buy-order-summary">' +
     '<div class="buy-order-summary-top"><span>California Notary — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
+    '<p class="buy-promo-note">🔥 Promotional price — increasing soon</p>' +
     '<p class="muted">One-time payment, instant access — no subscription.</p>' +
     '<ul class="buy-feature-list">' +
     '<li>✓ Full practice question bank</li>' +
