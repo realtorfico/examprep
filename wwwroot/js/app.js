@@ -817,24 +817,27 @@ function renderExamResults(result) {
 
 // ---- Buy an access code (PayPal, no code needed to get started) -----------
 
-var paypalSdkLoading = false;
+// A single shared promise for the SDK script -- if renderBuy() ever fires twice in quick
+// succession (e.g. a double navigation event), both calls just attach to the same promise
+// instead of racing a polling loop against the script's own onload, which could previously
+// invoke both callers' callbacks and double-render the PayPal buttons into the same container.
+var paypalSdkPromise = null;
 function loadPayPalSdk(callback) {
   if (window.paypal) { callback(); return; }
-  if (paypalSdkLoading) {
-    var check = setInterval(function () {
-      if (window.paypal) { clearInterval(check); callback(); }
-    }, 100);
-    return;
+  if (!paypalSdkPromise) {
+    paypalSdkPromise = new Promise(function (resolve) {
+      var script = document.createElement('script');
+      // disable-funding=card hides PayPal's separate, barely-stylable "Debit or Credit Card"
+      // button -- card payment is still available without a PayPal account via "Pay with Debit
+      // or Credit Card" inside the main button's own checkout popup, just not as its own ugly
+      // duplicate button.
+      script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) +
+        '&currency=USD&intent=capture&disable-funding=card';
+      script.onload = function () { resolve(); };
+      document.head.appendChild(script);
+    });
   }
-  paypalSdkLoading = true;
-  var script = document.createElement('script');
-  // disable-funding=card hides PayPal's separate, barely-stylable "Debit or Credit Card" button --
-  // card payment is still available without a PayPal account via "Pay with Debit or Credit Card"
-  // inside the main button's own checkout popup, just not as its own ugly duplicate button.
-  script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) +
-    '&currency=USD&intent=capture&disable-funding=card';
-  script.onload = function () { paypalSdkLoading = false; callback(); };
-  document.head.appendChild(script);
+  paypalSdkPromise.then(callback);
 }
 
 var buyPricing = null; // stashed so the points-apply checkbox can recompute the displayed total
@@ -929,6 +932,10 @@ function renderPayPalButtons() {
     el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
     return;
   }
+  // PayPal's .render() appends into the container rather than replacing it -- clearing first
+  // guarantees only one button set ever shows, even if this gets called more than once for the
+  // same container (belt-and-suspenders alongside the shared-promise fix in loadPayPalSdk).
+  el.innerHTML = '';
   window.paypal.Buttons({
     style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', height: 45 },
     createOrder: function () {
