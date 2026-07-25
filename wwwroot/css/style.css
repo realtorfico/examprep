@@ -105,6 +105,12 @@ a { color: var(--accent); }
   background: color-mix(in srgb, var(--fg) 2%, transparent); border: 1px solid var(--border);
   border-radius: 12px; padding: 1.1rem;
 }
+.additional-info-card {
+  display: block; text-decoration: none; color: inherit; margin-bottom: 0.75rem; transition: border-color 0.15s;
+}
+.additional-info-card:hover { border-color: var(--accent); }
+.additional-info-title { font-weight: 700; color: var(--accent); margin-bottom: 0.3rem; }
+.additional-info-url { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; word-break: break-all; }
 .question-topic {
   font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent);
   margin-bottom: 0.5rem; font-weight: 700;

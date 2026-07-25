@@ -207,8 +207,8 @@ function renderTabs(active) {
   // Quiz/Progress require an access code -- only show them once actually logged in, so an
   // anonymous visitor (previewing Resources) doesn't see tabs implying access they don't have.
   var tabs = getToken()
-    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress']]
-    : [['resources', 'Resources']];
+    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']]
+    : [['resources', 'Resources'], ['info', 'Additional Information']];
   return '<nav class="tabs">' + tabs.map(function (t) {
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
   }).join('') + '</nav>';
@@ -589,6 +589,34 @@ async function renderProgress() {
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
     '</div>' + rows;
+}
+
+// ---- Additional information (official external links, per exam type) -----
+
+var ADDITIONAL_INFO_LINKS = {
+  notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.ca.gov/notary',
+      desc: 'The California Secretary of State\'s official notary public program page.' },
+    { title: 'Exam Registration', url: 'https://www.sos.ca.gov/notary/checklist/registration/',
+      desc: 'Official checklist and registration process for the state notary exam.' },
+    { title: 'Notary Exam Information', url: 'https://cpshr.us/services/california-notary-exam-2/notary-exam-information',
+      desc: 'CPS HR Consulting, the vendor that administers the exam on behalf of the state — format, scheduling, and testing-day details.' },
+  ],
+};
+
+function renderAdditionalInfo() {
+  var links = ADDITIONAL_INFO_LINKS[state.examType] || [];
+  var linkCards = links.map(function (l) {
+    return '<a class="card additional-info-card" href="' + l.url + '" target="_blank" rel="noopener noreferrer">' +
+      '<div class="additional-info-title">' + l.title + ' ↗</div>' +
+      '<p class="muted">' + l.desc + '</p>' +
+      '<div class="additional-info-url">' + l.url + '</div>' +
+      '</a>';
+  }).join('');
+  appEl.innerHTML = renderUserBar() + renderTabs('info') +
+    '<h1>Additional Information</h1>' +
+    '<p class="muted">Official, outside resources for the real exam — registration, scheduling, and state program details.</p>' +
+    linkCards;
 }
 
 // ---- Timed mock exam --------------------------------------------------
@@ -1083,6 +1111,7 @@ async function renderNotaryApp() {
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
+  if (view === 'info') { renderAdditionalInfo(); return; } // fully public
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'exam') await renderExam();
