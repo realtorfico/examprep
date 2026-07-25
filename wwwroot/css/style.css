@@ -9,6 +9,7 @@
   --correct: #22c55e;
   --incorrect: #ef4444;
   --voice-accent: #7c3aed;
+  --highlight: #f59e0b;
   --border: #334155;
   --font-scale: 1;
 }
@@ -23,13 +24,14 @@
   --correct: #16a34a;
   --incorrect: #dc2626;
   --voice-accent: #7c3aed;
+  --highlight: #f59e0b;
   --border: #cbd5e1;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg: #f8fafc; --card: #ffffff; --surface-2: #eef1f8; --accent: #4338ca; --accent-hover: #3730a3;
     --fg: #0f172a; --muted: #64748b; --correct: #16a34a; --incorrect: #dc2626;
-    --voice-accent: #7c3aed; --border: #cbd5e1;
+    --voice-accent: #7c3aed; --highlight: #f59e0b; --border: #cbd5e1;
   }
 }
 
@@ -236,7 +238,7 @@ input[type="text"], input[type="email"], select {
 .buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
 .buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
 .buy-order-price { font-size: 1.3rem; color: var(--accent); }
-.buy-promo-note { font-size: 0.8rem; font-weight: 700; color: #f59e0b; margin: 0.3rem 0 0; }
+.buy-promo-note { font-size: 0.8rem; font-weight: 700; color: var(--highlight); margin: 0.3rem 0 0; }
 .buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
 .buy-guarantee-card { display: flex; flex-direction: column; gap: 0.9rem; }
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
@@ -328,7 +330,7 @@ input[type="text"], input[type="email"], select {
 .breakdown-row { display: flex; flex-direction: column; gap: 0.25rem; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
 .breakdown-bar { height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
-.breakdown-bar-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.breakdown-bar-fill { height: 100%; background: var(--highlight); border-radius: 999px; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 0.5rem;
