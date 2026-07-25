@@ -207,7 +207,7 @@ function renderTabs(active) {
   // Quiz/Progress require an access code -- only show them once actually logged in, so an
   // anonymous visitor (previewing Resources) doesn't see tabs implying access they don't have.
   var tabs = getToken()
-    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['progress', 'Progress']]
+    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress']]
     : [['resources', 'Resources']];
   return '<nav class="tabs">' + tabs.map(function (t) {
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
@@ -591,6 +591,178 @@ async function renderProgress() {
     '</div>' + rows;
 }
 
+// ---- Timed mock exam --------------------------------------------------
+// A single-sitting, timed simulation of the real exam -- no per-question feedback, free
+// navigation between questions, and a countdown clock computed from the server's own
+// startedAt (not a client-only timer), so a refresh mid-sitting resumes in place rather than
+// restarting the clock or handing out a fresh question set.
+
+var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: null };
+
+async function renderExam() {
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading…</p>';
+  try {
+    var current = await apiFetch('/exam/current');
+    if (current.attempt) { enterExamSitting(current.attempt); return; }
+    await renderExamIntro();
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load the exam. Try again shortly.</p>';
+  }
+}
+
+async function renderExamIntro() {
+  var config = await apiFetch('/exam/config');
+  examState.config = config;
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+    '<h1>Timed Practice Exam</h1>' +
+    '<div class="card mockexam-intro-card">' +
+    '<p>This mimics the real exam format as closely as possible:</p>' +
+    '<ul class="mockexam-intro-list">' +
+    '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>' +
+    '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>' +
+    '<li>No answer feedback until you finish — just like the real thing</li>' +
+    '<li>Need <strong>' + config.passPercent + '%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
+    '</ul>' +
+    '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
+    'right where you left off, not restart. There\'s no pausing.</p>' +
+    '<button class="btn-primary" type="button" data-act="exam-begin">Begin Exam →</button>' +
+    '</div>';
+}
+
+async function beginExam() {
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Starting…</p>';
+  try {
+    var attempt = await apiFetch('/exam/start', { method: 'POST' });
+    enterExamSitting(attempt);
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not start the exam. Try again shortly.</p>';
+  }
+}
+
+function enterExamSitting(attempt) {
+  examState.attempt = attempt;
+  examState.currentIndex = 0;
+  drawExamSitting();
+  startExamTimer();
+}
+
+function examSecondsRemaining() {
+  var a = examState.attempt;
+  var elapsed = Math.floor(Date.now() / 1000) - a.startedAt;
+  return Math.max(0, a.durationSec - elapsed);
+}
+
+function formatClock(seconds) {
+  var m = Math.floor(seconds / 60), s = seconds % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function startExamTimer() {
+  if (examState.timerHandle) clearInterval(examState.timerHandle);
+  examState.timerHandle = setInterval(function () {
+    var el = document.getElementById('exam-timer-display');
+    if (!el) { clearInterval(examState.timerHandle); examState.timerHandle = null; return; } // navigated away
+    var remaining = examSecondsRemaining();
+    el.textContent = formatClock(remaining);
+    if (remaining <= 60) el.classList.add('mockexam-timer-low');
+    if (remaining <= 0) { clearInterval(examState.timerHandle); examState.timerHandle = null; submitExam(); }
+  }, 1000);
+}
+
+function drawExamSitting() {
+  var attempt = examState.attempt;
+  var q = attempt.questions[examState.currentIndex];
+  var answeredCount = Object.keys(attempt.answers).length;
+
+  var navGrid = attempt.questions.map(function (question, i) {
+    var cls = 'mockexam-nav-btn';
+    if (i === examState.currentIndex) cls += ' current';
+    if (attempt.answers[question.id]) cls += ' answered';
+    return '<button type="button" class="' + cls + '" data-act="exam-goto" data-index="' + i + '">' + (i + 1) + '</button>';
+  }).join('');
+
+  var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
+    var cls = 'option-btn';
+    if (attempt.answers[q.id] === k) cls += ' selected';
+    return '<button class="' + cls + '" type="button" data-act="exam-answer" data-choice="' + k + '">' + k + ') ' + q.choices[k] + '</button>';
+  }).join('');
+
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+    '<div class="mockexam-header">' +
+    '<div>Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length +
+    ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
+    '<div class="mockexam-timer" id="exam-timer-display">' + formatClock(examSecondsRemaining()) + '</div>' +
+    '</div>' +
+    '<div class="mockexam-nav-grid">' + navGrid + '</div>' +
+    '<div class="card">' +
+    '<div class="question-topic">' + q.topic + '</div>' +
+    '<div class="question-text">' + q.question + '</div>' +
+    '</div>' +
+    '<div class="options-grid">' + choiceHtml + '</div>' +
+    '<div class="nav-controls mockexam-controls">' +
+    '<button class="btn-secondary" type="button" data-act="exam-prev"' + (examState.currentIndex === 0 ? ' disabled' : '') + '>← Previous</button>' +
+    '<button class="btn-secondary" type="button" data-act="exam-next"' + (examState.currentIndex === attempt.questions.length - 1 ? ' disabled' : '') + '>Next →</button>' +
+    '<button class="btn-primary" type="button" data-act="exam-submit-confirm">Submit Exam</button>' +
+    '</div>';
+}
+
+async function selectExamAnswer(choice) {
+  var attempt = examState.attempt;
+  var q = attempt.questions[examState.currentIndex];
+  attempt.answers[q.id] = choice;
+  drawExamSitting();
+  try {
+    await apiFetch('/exam/answer', { method: 'POST', body: { attemptId: attempt.attemptId, questionId: q.id, choice: choice } });
+  } catch (e) {
+    // Best-effort -- if this was a time_expired rejection, the next timer tick (or Submit)
+    // will surface it; the locally-saved answer still gets included in the final submit call.
+  }
+}
+
+async function submitExam() {
+  var attempt = examState.attempt;
+  if (examState.timerHandle) { clearInterval(examState.timerHandle); examState.timerHandle = null; }
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Scoring your exam…</p>';
+  try {
+    var result = await apiFetch('/exam/submit', { method: 'POST', body: { attemptId: attempt.attemptId } });
+    renderExamResults(result);
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not submit the exam. Try again shortly.</p>';
+  }
+}
+
+function renderExamResults(result) {
+  var reviewHtml = result.review.map(function (r, i) {
+    var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
+      var cls = 'option-btn';
+      if (k === r.correctChoice) cls += ' correct';
+      else if (k === r.yourChoice) cls += ' wrong';
+      return '<button class="' + cls + '" disabled>' + k + ') ' + r.choices[k] + '</button>';
+    }).join('');
+    var yourAnswerNote = r.yourChoice
+      ? '<strong class="' + (r.correct ? 'result-correct' : 'result-incorrect') + '">' + (r.correct ? 'Correct.' : 'Incorrect.') + '</strong> '
+      : '<strong class="result-incorrect">Not answered.</strong> ';
+    return '<details class="card mockexam-review-item">' +
+      '<summary>Question ' + (i + 1) + ' — ' + (r.correct ? '✅' : '❌') + ' ' + r.topic + '</summary>' +
+      '<div class="question-text">' + r.question + '</div>' +
+      '<div class="options-grid">' + choiceHtml + '</div>' +
+      '<div class="explanation-box">' + yourAnswerNote + r.explanation + '</div>' +
+      '</details>';
+  }).join('');
+
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+    '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +
+    '<div class="stats-bar">' +
+    '<div class="stat-box"><div class="label">Score</div><div class="val">' + result.correct + ' / ' + result.total + '</div></div>' +
+    '<div class="stat-box"><div class="label">Percent</div><div class="val ' + (result.passed ? 'correct' : 'wrong') + '">' + result.percent + '%</div></div>' +
+    '<div class="stat-box"><div class="label">Time used</div><div class="val">' + formatClock(result.timeTakenSec) + '</div></div>' +
+    '</div>' +
+    '<p class="muted mockexam-result-note">Practice score only — the real exam reports a proprietary scaled score, not raw percent-correct.</p>' +
+    '<button class="btn-primary hub-cta" type="button" data-act="exam-restart">Take another practice exam →</button>' +
+    '<h3 class="mockexam-review-heading">Review your answers</h3>' +
+    reviewHtml;
+}
+
 // ---- Buy an access code (PayPal, no code needed to get started) -----------
 
 var paypalSdkLoading = false;
@@ -913,6 +1085,7 @@ async function renderNotaryApp() {
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (!getToken()) { renderRedeem(); return; }
   if (view === 'quiz') await renderQuiz();
+  else if (view === 'exam') await renderExam();
   else if (view === 'progress') await renderProgress();
   else await renderQuiz();
 }
@@ -1085,6 +1258,23 @@ document.addEventListener('click', async function (e) {
     var removeIdx = el.getAttribute('data-row-index');
     var rowToRemove = document.querySelector('.referred-friend-row[data-row-index="' + removeIdx + '"]');
     if (rowToRemove) rowToRemove.remove();
+  } else if (act === 'exam-begin' || act === 'exam-restart') {
+    await beginExam();
+  } else if (act === 'exam-goto') {
+    examState.currentIndex = Number(el.getAttribute('data-index'));
+    drawExamSitting();
+  } else if (act === 'exam-prev') {
+    examState.currentIndex = Math.max(0, examState.currentIndex - 1);
+    drawExamSitting();
+  } else if (act === 'exam-next') {
+    examState.currentIndex = Math.min(examState.attempt.questions.length - 1, examState.currentIndex + 1);
+    drawExamSitting();
+  } else if (act === 'exam-answer') {
+    await selectExamAnswer(el.getAttribute('data-choice'));
+  } else if (act === 'exam-submit-confirm') {
+    var unanswered = examState.attempt.questions.length - Object.keys(examState.attempt.answers).length;
+    if (unanswered > 0 && !window.confirm(unanswered + ' question' + (unanswered === 1 ? '' : 's') + ' unanswered. Submit anyway?')) return;
+    await submitExam();
   } else if (act === 'sort-resources') {
     var sortKey = el.getAttribute('data-key');
     if (resourcesSort.key === sortKey) resourcesSort.dir *= -1;

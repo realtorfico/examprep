@@ -132,6 +132,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 .option-btn.correct { background: color-mix(in srgb, var(--correct) 20%, var(--card)) !important; border-color: var(--correct) !important; color: var(--correct) !important; font-weight: 600; }
 .option-btn.wrong { background: color-mix(in srgb, var(--incorrect) 20%, var(--card)) !important; border-color: var(--incorrect) !important; color: var(--incorrect) !important; }
+.option-btn.selected { background: color-mix(in srgb, var(--accent) 18%, var(--card)) !important; border-color: var(--accent) !important; font-weight: 600; }
 
 .explanation-box {
   background: color-mix(in srgb, var(--accent) 10%, transparent); border: 1px solid var(--accent);
@@ -145,6 +146,34 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .nav-controls { display: flex; gap: 0.6rem; border-top: 1px solid var(--border); padding-top: 0.85rem; }
 .nav-controls button { flex: 1; }
+
+.mockexam-intro-list { margin: 0.75rem 0; padding-left: 1.2rem; line-height: 1.7; }
+.mockexam-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.mockexam-timer {
+  font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  padding: 0.3rem 0.75rem; border-radius: 8px; background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+.mockexam-timer.mockexam-timer-low { background: color-mix(in srgb, var(--incorrect) 20%, transparent); color: var(--incorrect); }
+.mockexam-nav-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(2.4rem, 1fr)); gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.mockexam-nav-btn {
+  padding: 0.4rem 0; border-radius: 6px; border: 1px solid var(--border); background: var(--card);
+  color: var(--fg); font-size: 0.8rem; font-weight: 600;
+}
+.mockexam-nav-btn.answered { background: color-mix(in srgb, var(--accent) 15%, var(--card)); border-color: var(--accent); }
+.mockexam-nav-btn.current { outline: 2px solid var(--accent); outline-offset: 1px; }
+.mockexam-controls { flex-wrap: wrap; }
+.mockexam-result-note { margin-top: 0.5rem; }
+.mockexam-review-heading { margin-top: 1.5rem; }
+.mockexam-review-item { margin-bottom: 0.75rem; }
+.mockexam-review-item summary { cursor: pointer; font-weight: 600; }
+.mockexam-review-item .question-text, .mockexam-review-item .options-grid, .mockexam-review-item .explanation-box { margin-top: 0.6rem; }
 
 nav.tabs { display: flex; gap: 0.75rem; }
 nav.tabs a { color: var(--muted); text-decoration: none; padding: 0.3rem 0.1rem; font-size: 0.9rem; }
