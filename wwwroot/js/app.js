@@ -79,7 +79,7 @@ function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — not a guarantee of exam results.</div>' +
+    '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — passing the real exam isn\'t guaranteed, though we back that risk with our 50% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a></nav>' +
     '</div>';
 }
