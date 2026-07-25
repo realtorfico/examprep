@@ -80,7 +80,7 @@ function renderSiteFooter() {
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
     '<div class="muted">Not affiliated with the California Secretary of State or any state licensing agency. Practice questions only — not a guarantee of exam results.</div>' +
-    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a></nav>' +
+    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a></nav>' +
     '</div>';
 }
 
@@ -855,10 +855,31 @@ function drawBuyForm(pricing) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
   appEl.innerHTML =
     '<h1>Get instant access</h1>' +
-    '<p class="muted">' + priceLabel + ' one-time — unlocks the full California Notary question bank instantly.</p>' +
+    '<div class="buy-layout">' +
+    '<div class="buy-value-col">' +
+    '<div class="card buy-order-summary">' +
+    '<div class="buy-order-summary-top"><span>California Notary — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
+    '<p class="muted">One-time payment, instant access — no subscription.</p>' +
+    '<ul class="buy-feature-list">' +
+    '<li>✓ Full practice question bank</li>' +
+    '<li>✓ Voice-enabled practice</li>' +
+    '<li>✓ Timed mock exam simulation</li>' +
+    '<li>✓ Progress tracking</li>' +
+    '<li>✓ Study resource library</li>' +
+    '<li>✓ Lifetime access</li>' +
+    '</ul>' +
+    '</div>' +
+    '<div class="card buy-guarantee-card">' +
+    '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
+    '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
+    '<div class="buy-guarantee-item"><strong>🎯 Pass or 50% Back</strong>' +
+    '<p class="muted">Take the real exam and don\'t pass? Get half your money back.</p></div>' +
+    '<p class="muted buy-guarantee-footnote"><a href="/notary#/refund">Refund request →</a></p>' +
+    '</div>' +
+    '</div>' +
+    '<div class="buy-payment-col">' +
     '<div class="card">' +
-    '<label class="muted buy-email-label">Email (optional — for a backup copy of your code, and to check ' +
-    'points you\'ve earned by <a href="#/refer">referring friends</a>)</label>' +
+    '<label class="muted buy-email-label">Email Address (to send your instant access receipt & code)</label>' +
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
     '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
     '<div id="points-result"></div>' +
@@ -867,6 +888,9 @@ function drawBuyForm(pricing) {
     '<p class="muted paypal-card-note">💳 No PayPal account needed — click below and choose ' +
     '"Pay with Debit or Credit Card" to check out as a guest.</p>' +
     '<div id="paypal-button-container" class="paypal-container"></div>' +
+    '<p class="muted buy-security-note">🔒 Secure, encrypted checkout via PayPal</p>' +
+    '</div>' +
+    '</div>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
   renderTurnstileWidget();
@@ -949,7 +973,44 @@ function renderPurchaseSuccess(code, pointsApplied) {
     '<div class="purchase-code">' + code + '</div>' +
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
-    '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>';
+    '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>' +
+    '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-50%-back guarantees — ' +
+    '<a href="#/refund">request one anytime →</a></p>';
+}
+
+// ---- Refund requests (7-day unconditional + pass-or-50%-back) -------------
+
+function renderRefundRequest() {
+  appEl.innerHTML =
+    '<div class="refer-page">' +
+    '<h1>Request a Refund</h1>' +
+    '<p class="muted">Covers real-money purchases only — free courses redeemed with points aren\'t eligible, ' +
+    'since no cash was paid.</p>' +
+    '<form data-act="refund-claim-submit" class="card">' +
+    '<label class="muted buy-email-label">Your access code</label>' +
+    '<input type="text" name="code" class="redeem-code-input" placeholder="XXXXX-XXXXX" autocapitalize="characters" required>' +
+    '<label class="muted buy-email-label refund-field-spacing">Your email</label>' +
+    '<input type="email" name="email" placeholder="you@example.com" required>' +
+    '<label class="muted buy-email-label refund-field-spacing">Which guarantee?</label>' +
+    '<div class="refund-claim-type-options">' +
+    '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="unconditional_7day" checked> ' +
+    '<span><strong>7-Day, No Questions Asked</strong><br><span class="muted">Full refund — must be within 7 days of purchase.</span></span></label>' +
+    '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="exam_failure_50pct"> ' +
+    '<span><strong>Pass or 50% Back</strong><br><span class="muted">Half refund if you took and failed the real exam.</span></span></label>' +
+    '</div>' +
+    '<div id="refund-failure-fields" class="refund-failure-fields" style="display:none">' +
+    '<label class="muted buy-email-label">Exam date</label>' +
+    '<input type="date" name="examDate">' +
+    '<label class="muted buy-email-label refund-field-spacing">Confirmation/candidate ID (optional)</label>' +
+    '<input type="text" name="confirmationNote" placeholder="e.g. your CPS HR confirmation number">' +
+    '</div>' +
+    '<label class="muted buy-email-label refund-field-spacing">Notes (optional)</label>' +
+    '<input type="text" name="notes" placeholder="Anything else we should know">' +
+    '<div id="turnstile-container"></div>' +
+    '<button class="btn-primary" type="submit">Submit Request</button>' +
+    '</form>' +
+    '</div>';
+  renderTurnstileWidget();
 }
 
 // ---- Refer a friend, earn points ------------------------------------------
@@ -1156,6 +1217,7 @@ async function renderNotaryApp() {
   if (view === 'sample') { await renderSample(); return; }
   if (view === 'buy') { renderBuy(); return; }
   if (view === 'refer') { renderReferForm(); return; }
+  if (view === 'refund') { renderRefundRequest(); return; }
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
@@ -1270,6 +1332,49 @@ document.addEventListener('submit', async function (e) {
       var formEl = document.querySelector('form[data-act="refer-submit"]');
       if (formEl) formEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + referMsg + '</p>');
     }
+  } else if (act === 'refund-claim-submit') {
+    e.preventDefault();
+    var refundForm = e.target;
+    var refundTurnstileToken = '';
+    try { refundTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { refundTurnstileToken = ''; }
+    var claimType = refundForm.claimType.value;
+    try {
+      var claimRes = await apiFetch('/refunds/claim', {
+        method: 'POST',
+        body: {
+          code: refundForm.code.value.trim(),
+          email: refundForm.email.value.trim(),
+          claimType: claimType,
+          examDate: refundForm.examDate ? refundForm.examDate.value : undefined,
+          confirmationNote: refundForm.confirmationNote ? refundForm.confirmationNote.value.trim() : undefined,
+          notes: refundForm.notes.value.trim(),
+          turnstileToken: refundTurnstileToken,
+        },
+      });
+      appEl.innerHTML = '<h1>Request submitted</h1>' +
+        '<p class="muted">We\'ll review it and get back to you at the email you provided. Approved refunds ' +
+        'of $' + (claimRes.refundCents / 100).toFixed(2) + ' are processed directly through PayPal.</p>' +
+        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+    } catch (err) {
+      var refundErrCode = err.data && err.data.error;
+      var refundMsg =
+        refundErrCode === 'not_a_paid_purchase' ? 'That code wasn\'t a paid purchase (free/points-redeemed courses aren\'t eligible).' :
+        refundErrCode === 'already_claimed' ? 'A refund request already exists for that code.' :
+        refundErrCode === 'window_expired' ? 'That code is outside the eligibility window for this guarantee.' :
+        refundErrCode === 'code_not_found' ? 'We couldn\'t find that access code.' :
+        'Something went wrong. Please try again.';
+      renderRefundRequest();
+      var refundFormEl = document.querySelector('form[data-act="refund-claim-submit"]');
+      if (refundFormEl) refundFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + refundMsg + '</p>');
+    }
+  }
+});
+
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.name === 'claimType') {
+    var failureFields = document.getElementById('refund-failure-fields');
+    if (failureFields) failureFields.style.display = e.target.value === 'exam_failure_50pct' ? '' : 'none';
   }
 });
 

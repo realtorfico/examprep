@@ -227,10 +227,22 @@ input[type="text"], input[type="email"], select {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent), 0 20px 35px -15px rgba(0, 0, 0, 0.4);
 }
 .redeem-code-input { text-align: center; text-transform: uppercase; letter-spacing: 0.25em; font-size: 1.1rem; font-weight: 700; }
+.buy-layout { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 800px) {
+  .buy-layout { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+.buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
+.buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
+.buy-order-price { font-size: 1.3rem; color: var(--accent); }
+.buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
+.buy-guarantee-card { display: flex; flex-direction: column; gap: 0.9rem; }
+.buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
+.buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
 .buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
 #buy-email { margin-bottom: 0.75rem; }
 .paypal-container { margin-top: 0.75rem; min-height: 45px; }
 .paypal-card-note { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; }
+.buy-security-note { margin-top: 0.6rem; margin-bottom: 0; font-size: 0.78rem; text-align: center; }
 .purchase-success-card { text-align: center; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
 .purchase-code {
   font-size: 1.6rem; font-weight: 800; letter-spacing: 0.08em; color: var(--accent);
@@ -249,6 +261,14 @@ input[type="text"], input[type="email"], select {
 .refer-progress-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 8%, transparent); overflow: hidden; }
 .refer-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
 .refer-progress-label { font-size: 0.78rem; margin-top: 0.35rem; text-align: right; }
+.refund-field-spacing { margin-top: 0.75rem; }
+.refund-claim-type-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.refund-claim-type-option {
+  display: flex; gap: 0.6rem; align-items: flex-start; border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.7rem 0.85rem; font-size: 0.9rem; cursor: pointer;
+}
+.refund-claim-type-option input { margin-top: 0.2rem; }
+.refund-failure-fields { margin-top: 0.75rem; }
 #referred-friends-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
 .referred-friend-row { display: flex; gap: 0.5rem; align-items: center; }
 .referred-friend-row input[type="text"] { flex: 1 1 40%; }
