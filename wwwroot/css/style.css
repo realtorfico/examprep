@@ -350,11 +350,6 @@ input[type="text"], input[type="email"], select {
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
 .refer-confirmed-card { text-align: center; }
 .refer-confirmed-emoji { font-size: 3rem; line-height: 1; margin-bottom: 0.4rem; }
-
-.resources-disclaimer {
-  background: color-mix(in srgb, var(--muted) 8%, transparent); border-left: 4px solid var(--muted);
-  border-radius: 0 12px 12px 0; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--muted); margin-top: 0.75rem;
-}
 .resources-intro { margin-top: 0.5rem; }
 .resource-desc { font-size: 0.8rem; }
 .resource-player { width: 100%; }

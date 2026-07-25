@@ -335,10 +335,6 @@ var RESOURCES = {
 
 var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference', table: '📊 Reference Table' };
 
-var RESOURCES_DISCLAIMER =
-  '<div class="resources-disclaimer">This platform is a private educational service and is not affiliated with, ' +
-  'endorsed by, or sponsored by the California Secretary of State.</div>';
-
 function resourceTableInnerHtml(t) {
   var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
   var bodyRows = t.rows.map(function (row) {
@@ -395,13 +391,13 @@ var resourcesOpenIndex = null;
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
-    appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
+    appEl.innerHTML = renderUserBar() + renderTabs('resources') +
       '<p class="muted">No study resources yet for this exam track.</p>';
     return;
   }
 
   var loggedIn = !!getToken();
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') + '<p class="muted">Loading…</p>';
 
   // Logged-in sessions get everything signed; anonymous visitors only get the server's own
   // free-sample allowlist signed (see FREE_RESOURCES in examprep-api) — nothing client-side
@@ -419,7 +415,7 @@ async function renderResources() {
       signedUrls = freeRes.urls;
     }
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER +
+    appEl.innerHTML = renderUserBar() + renderTabs('resources') +
       '<p>Could not load resources. Try again shortly.</p>';
     return;
   }
@@ -438,7 +434,7 @@ async function renderResources() {
   var intro = loggedIn
     ? '<p class="muted resources-intro">Guided material to go with your practice questions.</p>'
     : '';
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') + RESOURCES_DISCLAIMER + intro +
+  appEl.innerHTML = renderUserBar() + renderTabs('resources') + intro +
     (loggedIn ? '' : RESOURCES_PROMO_BANNER) +
     '<div id="resources-table-container"></div>';
   renderResourcesTable();
