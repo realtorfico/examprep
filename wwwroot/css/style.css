@@ -1,8 +1,9 @@
 :root {
   --bg: #0b0f17;
   --card: #161f30;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
+  --surface-2: #212c4a;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
   --fg: #ffffff;
   --muted: #94a3b8;
   --correct: #22c55e;
@@ -14,6 +15,7 @@
 :root[data-theme="light"] {
   --bg: #f8fafc;
   --card: #ffffff;
+  --surface-2: #eef1f8;
   --accent: #4338ca;
   --accent-hover: #3730a3;
   --fg: #0f172a;
@@ -25,7 +27,7 @@
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: #f8fafc; --card: #ffffff; --accent: #4338ca; --accent-hover: #3730a3;
+    --bg: #f8fafc; --card: #ffffff; --surface-2: #eef1f8; --accent: #4338ca; --accent-hover: #3730a3;
     --fg: #0f172a; --muted: #64748b; --correct: #16a34a; --incorrect: #dc2626;
     --voice-accent: #7c3aed; --border: #cbd5e1;
   }
@@ -95,7 +97,7 @@ a { color: var(--accent); }
 /* Stats grid (progress view) */
 .stats-bar {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; text-align: center;
 }
 .stat-box .label { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
@@ -105,7 +107,7 @@ a { color: var(--accent); }
 .stat-box .val.wrong { color: var(--incorrect); }
 
 .card {
-  background: color-mix(in srgb, var(--fg) 2%, transparent); border: 1px solid var(--border);
+  background: var(--surface-2); border: 1px solid var(--border);
   border-radius: 12px; padding: 1.1rem;
 }
 .additional-info-card {
@@ -126,8 +128,8 @@ button {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   font-family: inherit;
 }
-.btn-primary { background: var(--accent); color: #ffffff; }
-.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary { background: var(--accent); color: #ffffff; box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent); }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px -4px color-mix(in srgb, var(--accent) 60%, transparent); }
 .btn-secondary { background: transparent; color: var(--fg); border: 1.5px solid var(--border); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .btn-sm { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
@@ -135,7 +137,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .options-grid { display: flex; flex-direction: column; gap: 0.6rem; }
 .option-btn {
-  width: 100%; text-align: left; background: color-mix(in srgb, var(--fg) 3%, transparent);
+  width: 100%; text-align: left; background: var(--surface-2);
   border: 1px solid var(--border); color: var(--fg); padding: 0.7rem 1rem; border-radius: 10px;
   font-size: 0.95rem; line-height: 1.4; font-weight: 400; justify-content: flex-start;
   transition: border-color 0.15s, transform 0.15s;
@@ -144,7 +146,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .option-letter {
   flex-shrink: 0; width: 1.7rem; height: 1.7rem; border-radius: 6px; display: inline-flex;
   align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
-  background: color-mix(in srgb, var(--fg) 8%, transparent); color: var(--muted);
+  background: color-mix(in srgb, var(--fg) 15%, var(--surface-2)); color: var(--muted);
 }
 .option-text { flex: 1; }
 .option-btn.correct { background: color-mix(in srgb, var(--correct) 20%, var(--card)) !important; border-color: var(--correct) !important; color: var(--correct) !important; font-weight: 600; }
@@ -188,10 +190,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   margin-bottom: 1rem;
 }
 .mockexam-nav-btn {
-  padding: 0.4rem 0; border-radius: 6px; border: 1px solid var(--border); background: var(--card);
+  padding: 0.4rem 0; border-radius: 6px; border: 1px solid var(--border); background: var(--surface-2);
   color: var(--fg); font-size: 0.8rem; font-weight: 600;
 }
-.mockexam-nav-btn.answered { background: color-mix(in srgb, var(--accent) 15%, var(--card)); border-color: var(--accent); }
+.mockexam-nav-btn.answered { background: color-mix(in srgb, var(--accent) 15%, var(--surface-2)); border-color: var(--accent); }
 .mockexam-nav-btn.current { outline: 2px solid var(--accent); outline-offset: 1px; }
 .mockexam-controls { flex-wrap: wrap; }
 .mockexam-result-note { margin-top: 0.5rem; }
@@ -203,7 +205,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 nav.tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 nav.tabs a {
   color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; font-size: 0.85rem;
-  font-weight: 600; border-radius: 999px; background: color-mix(in srgb, var(--fg) 5%, transparent);
+  font-weight: 600; border-radius: 999px; background: var(--surface-2);
   transition: background-color 0.15s, color 0.15s;
 }
 nav.tabs a:hover { color: var(--fg); }
@@ -258,7 +260,7 @@ input[type="text"], input[type="email"], select {
   .refer-name-email-grid > div { flex: 1; }
 }
 .refer-progress { margin: 1rem 0; }
-.refer-progress-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 8%, transparent); overflow: hidden; }
+.refer-progress-bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
 .refer-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
 .refer-progress-label { font-size: 0.78rem; margin-top: 0.35rem; text-align: right; }
 .refund-field-spacing { margin-top: 0.75rem; }
@@ -302,7 +304,7 @@ input[type="text"], input[type="email"], select {
 }
 .exam-track-card {
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
-  background: color-mix(in srgb, var(--fg) 2%, transparent);
+  background: var(--surface-2);
 }
 .exam-track-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
 .exam-track-body { padding: 1.1rem; flex: 1; }
@@ -317,14 +319,14 @@ input[type="text"], input[type="email"], select {
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
 .exam-track-desc { font-size: 0.8rem; }
 .exam-specs {
-  display: flex; flex-direction: column; gap: 0.3rem; background: color-mix(in srgb, var(--fg) 3%, transparent);
+  display: flex; flex-direction: column; gap: 0.3rem; background: color-mix(in srgb, var(--fg) 8%, var(--surface-2));
   border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.72rem; margin-bottom: 0.8rem;
 }
 .breakdown-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
 .breakdown-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.72rem; }
 .breakdown-row { display: flex; flex-direction: column; gap: 0.25rem; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
-.breakdown-bar { height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 8%, transparent); overflow: hidden; }
+.breakdown-bar { height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
 .breakdown-bar-fill { height: 100%; background: var(--accent); border-radius: 999px; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
@@ -352,7 +354,7 @@ input[type="text"], input[type="email"], select {
   text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top;
 }
 .resource-table th {
-  background: color-mix(in srgb, var(--fg) 4%, transparent); font-weight: 700;
+  background: var(--surface-2); font-weight: 700;
   text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; color: var(--muted);
 }
 .resource-table tbody tr:last-child td { border-bottom: none; }
@@ -363,7 +365,7 @@ input[type="text"], input[type="email"], select {
 /* Resources index table (Type/Name/Topic/Length/Status/Action) — sortable headers, expandable rows */
 .resources-index-table th[data-act="sort-resources"] { cursor: pointer; user-select: none; }
 .resources-index-table th[data-act="sort-resources"]:hover { color: var(--fg); }
-.resources-index-expand-row td { background: color-mix(in srgb, var(--fg) 2%, transparent); padding: 1rem 0.75rem; }
+.resources-index-expand-row td { background: var(--surface-2); padding: 1rem 0.75rem; }
 
 .resources-promo-banner {
   background: color-mix(in srgb, var(--accent) 8%, transparent); border-left: 4px solid var(--accent);
