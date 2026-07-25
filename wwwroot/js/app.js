@@ -11,6 +11,14 @@ function escapeHtml(s) {
   });
 }
 
+// Shared markup for every A/B/C/D choice button (quiz, sample, exam sitting, exam review) --
+// a letter badge on the left plus the choice text, so all four call sites stay visually
+// consistent instead of each hand-rolling "A) text".
+function optionButtonHtml(letter, text, cls, attrs) {
+  return '<button class="' + cls + '" ' + (attrs || '') + '>' +
+    '<span class="option-letter">' + letter + '</span><span class="option-text">' + text + '</span></button>';
+}
+
 function applyTheme(theme, fontScale) {
   var root = document.documentElement;
   if (theme && theme !== 'system') root.setAttribute('data-theme', theme);
@@ -145,7 +153,13 @@ function renderHub() {
       '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
       '</div>';
     var breakdown = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
-      exam.breakdown.map(function (b) { return '<div class="breakdown-row"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>'; }).join('') +
+      exam.breakdown.map(function (b) {
+        var pct = parseInt(b[1], 10) || 0;
+        return '<div class="breakdown-row">' +
+          '<div class="breakdown-row-top"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>' +
+          '<div class="breakdown-bar"><div class="breakdown-bar-fill" style="width:' + pct + '%"></div></div>' +
+          '</div>';
+      }).join('') +
       '</div>';
     var cta = exam.active
       ? '<a class="btn-primary hub-cta" href="' + exam.route + '">Start Questionnaire →</a>' +
@@ -162,29 +176,41 @@ function renderHub() {
   }).join('');
 
   appEl.innerHTML =
-    '<div class="hub-hero"><h1>Professional Licensing Exam Prep</h1>' +
-    '<p>Practice question sets modeled after official state and national licensing standards. Select an active exam track below to begin.</p></div>' +
-    '<div class="access-banner"><div class="access-banner-text">🔑 <div><strong>Access Token Required</strong>' +
-    '<p class="muted access-banner-sub">Need a code? <a href="/notary#/buy">Buy one instantly →</a> or ' +
-    '<a href="/notary#/refer">refer friends for free access →</a></p>' +
-    '<p class="muted access-banner-sub">Not sure yet? <a href="/notary#/resources">Preview free study resources →</a></p>' +
-    '</div></div></div>' +
-    '<div class="hub-section-header"><h2>Licensing Tracks</h2>' +
+    '<div class="hub-hero">' +
+    '<h1>Pass Your California Licensing Exams on the First Try</h1>' +
+    '<p>Practice question sets modeled after official state and national licensing standards, with ' +
+    'voice-enabled practice and instant online access.</p>' +
+    '<div class="hub-trust-badges">' +
+    '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
+    '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
+    '<span class="hub-trust-badge">✓ Instant Access</span>' +
+    '</div>' +
+    '<div class="hub-hero-cta">' +
+    '<a class="btn-primary hub-hero-btn" href="/notary#/sample">Try Free Sample</a>' +
+    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
+    '</div>' +
+    '<p class="muted hub-hero-subtext">Already have a code? <a href="/notary">Enter it here</a> · ' +
+    'No code yet? <a href="/notary#/buy">Buy instant access</a> or <a href="/notary#/refer">refer friends for free access</a></p>' +
+    '</div>' +
+    '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div class="exam-track-grid">' + cards + '</div>';
 }
 
 function renderRedeem(error) {
   appEl.innerHTML =
+    '<div class="redeem-page">' +
+    '<div class="redeem-icon">🔐</div>' +
     '<h1>Enter your access code</h1>' +
     (error ? '<p class="error-text">' + error + '</p>' : '') +
-    '<form data-act="redeem-submit" class="card">' +
-    '<input type="text" name="code" placeholder="XXXXX-XXXXX" autocapitalize="characters" required>' +
+    '<form data-act="redeem-submit" class="card redeem-card">' +
+    '<input type="text" name="code" class="redeem-code-input" placeholder="XXXXX-XXXXX" autocapitalize="characters" required>' +
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Unlock</button>' +
     '</form>' +
     '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a> or ' +
-    '<a href="#/buy">buy one instantly →</a></p>';
+    '<a href="#/buy">buy one instantly →</a></p>' +
+    '</div>';
   renderTurnstileWidget();
 }
 
@@ -541,8 +567,8 @@ function drawQuestion() {
       if (k === state.answered.correctChoice) cls += ' correct';
       else if (k === state.answered.picked) cls += ' wrong';
     }
-    return '<button class="' + cls + '" data-act="answer" data-choice="' + k + '"' +
-      (state.answered ? ' disabled' : '') + '>' + k + ') ' + q.choices[k] + '</button>';
+    return optionButtonHtml(k, q.choices[k], cls,
+      'data-act="answer" data-choice="' + k + '"' + (state.answered ? ' disabled' : ''));
   }).join('');
 
   var explanation = state.answered
@@ -553,7 +579,7 @@ function drawQuestion() {
 
   var micZone = !state.answered
     ? '<div class="mic-zone">' +
-      '<button class="btn-mic" data-act="mic-toggle">🎙️ Speak choice (e.g. "Option A")</button>' +
+      '<button class="btn-mic" data-act="mic-toggle">🎙️ Voice Answer</button>' +
       '<div class="transcript-box" id="mic-transcript"></div></div>'
     : '';
 
@@ -712,7 +738,7 @@ function drawExamSitting() {
   var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
     var cls = 'option-btn';
     if (attempt.answers[q.id] === k) cls += ' selected';
-    return '<button class="' + cls + '" type="button" data-act="exam-answer" data-choice="' + k + '">' + k + ') ' + q.choices[k] + '</button>';
+    return optionButtonHtml(k, q.choices[k], cls, 'type="button" data-act="exam-answer" data-choice="' + k + '"');
   }).join('');
 
   appEl.innerHTML = renderUserBar() + renderTabs('exam') +
@@ -765,7 +791,7 @@ function renderExamResults(result) {
       var cls = 'option-btn';
       if (k === r.correctChoice) cls += ' correct';
       else if (k === r.yourChoice) cls += ' wrong';
-      return '<button class="' + cls + '" disabled>' + k + ') ' + r.choices[k] + '</button>';
+      return optionButtonHtml(k, r.choices[k], cls, 'disabled');
     }).join('');
     var yourAnswerNote = r.yourChoice
       ? '<strong class="' + (r.correct ? 'result-correct' : 'result-incorrect') + '">' + (r.correct ? 'Correct.' : 'Incorrect.') + '</strong> '
@@ -951,24 +977,46 @@ function renderReferFriendRow(idx) {
     '</div>';
 }
 
-function renderReferForm() {
+async function renderReferForm() {
   referFriendRowCount = 1;
   var referrerInfo = loadReferrerInfo();
+  appEl.innerHTML = '<h1>Refer friends, earn free access</h1><p class="muted">Loading…</p>';
+
+  // Live values from the admin's actual point-rule/price settings, so this copy never drifts
+  // out of sync -- falls back to sane defaults if the fetch fails, rather than blocking the page.
+  var rules = { referralVerifiedPoints: 25, referralConvertedPoints: 100 };
+  var pricing = { priceCents: 499 };
+  try {
+    var results = await Promise.all([apiFetch('/points/rules'), apiFetch('/pricing?examType=notary')]);
+    rules = results[0];
+    pricing = results[1];
+  } catch (e) { /* use the fallback defaults above */ }
+  var required = pricing.priceCents;
+
   appEl.innerHTML =
+    '<div class="refer-page">' +
     '<h1>Refer friends, earn free access</h1>' +
-    '<p class="muted">Refer friends — you earn points once each confirms, and more once they sign up ' +
-    'for a course. Enough points covers a course with zero cash.</p>' +
+    '<p class="muted">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
+    'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
+    '<strong>' + required + ' points</strong> to unlock the California Notary course completely free.</p>' +
+    '<div class="refer-progress">' +
+    '<div class="refer-progress-bar"><div class="refer-progress-fill" style="width:0%"></div></div>' +
+    '<div class="refer-progress-label muted">0 / ' + required + ' points — <a href="#/buy">check your real balance →</a></div>' +
+    '</div>' +
     '<form data-act="refer-submit" class="card">' +
-    '<label class="muted buy-email-label">Your name</label>' +
-    '<input type="text" name="referrerName" placeholder="Your name" value="' + escapeHtml(referrerInfo.name) + '">' +
-    '<label class="muted buy-email-label">Your email</label>' +
-    '<input type="email" name="referrerEmail" placeholder="you@example.com" value="' + escapeHtml(referrerInfo.email) + '" required>' +
+    '<div class="refer-name-email-grid">' +
+    '<div><label class="muted buy-email-label">Your name</label>' +
+    '<input type="text" name="referrerName" placeholder="Your name" value="' + escapeHtml(referrerInfo.name) + '"></div>' +
+    '<div><label class="muted buy-email-label">Your email</label>' +
+    '<input type="email" name="referrerEmail" placeholder="you@example.com" value="' + escapeHtml(referrerInfo.email) + '" required></div>' +
+    '</div>' +
     '<label class="muted buy-email-label">Friends to refer</label>' +
     '<div id="referred-friends-list">' + renderReferFriendRow(0) + '</div>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="add-referred-friend">+ Add another friend</button>' +
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Send referrals</button>' +
-    '</form>';
+    '</form>' +
+    '</div>';
   renderTurnstileWidget();
 }
 
@@ -1048,8 +1096,8 @@ function drawSampleQuestion() {
       if (k === q.correctChoice) cls += ' correct';
       else if (k === sampleState.answered) cls += ' wrong';
     }
-    return '<button class="' + cls + '" data-act="sample-answer" data-choice="' + k + '"' +
-      (sampleState.answered ? ' disabled' : '') + '>' + k + ') ' + q.choices[k] + '</button>';
+    return optionButtonHtml(k, q.choices[k], cls,
+      'data-act="sample-answer" data-choice="' + k + '"' + (sampleState.answered ? ' disabled' : ''));
   }).join('');
 
   var explanation = sampleState.answered
@@ -1097,7 +1145,7 @@ function setupMic() {
   };
   recognition.onend = function () {
     isRecording = false;
-    if (micBtn) micBtn.textContent = '🎙️ Speak choice (e.g. "Option A")';
+    if (micBtn) { micBtn.textContent = '🎙️ Voice Answer'; micBtn.classList.remove('listening'); }
   };
 }
 
@@ -1253,11 +1301,15 @@ document.addEventListener('click', async function (e) {
     if (!recognition) return;
     if (!isRecording) {
       isRecording = true;
-      el.textContent = '🎤 Listening… say "Option A, B, C, or D"';
+      el.textContent = '🎙️ Listening…';
+      el.classList.add('listening');
       recognition.start();
     } else {
       recognition.stop();
     }
+  } else if (act === 'scroll-to-tracks') {
+    var tracksEl = document.getElementById('tracks');
+    if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else if (act === 'toggle-theme') {
     var nextTheme = el.getAttribute('data-next');
     var local = loadLocalPrefs();
