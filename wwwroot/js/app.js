@@ -230,13 +230,16 @@ function renderTurnstileWidget(attemptsLeft) {
 }
 
 function renderTabs(active) {
-  // Quiz/Progress require an access code -- only show them once actually logged in, so an
-  // anonymous visitor (previewing Resources) doesn't see tabs implying access they don't have.
-  var tabs = getToken()
-    ? [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']]
-    : [['resources', 'Resources'], ['info', 'Additional Information']];
+  // Quiz/Exam/Progress are shown to everyone (with a 🔒 marker when logged out) so an anonymous
+  // visitor gets a sense of the layout -- clicking one still only shows a locked preview, never
+  // the real content/data (see renderLockedTabPreview and the guard in renderNotaryApp).
+  var loggedIn = !!getToken();
+  var gated = { quiz: true, exam: true, progress: true };
+  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']];
   return '<nav class="tabs">' + tabs.map(function (t) {
-    return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' + t[1] + '</a>';
+    var locked = gated[t[0]] && !loggedIn;
+    return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' +
+      (locked ? '🔒 ' : '') + t[1] + '</a>';
   }).join('') + '</nav>';
 }
 
@@ -330,6 +333,9 @@ var RESOURCES = {
     { title: 'California Notary Violations & Enforcement Table', type: 'table', table: NOTARY_FINES_TABLE,
       desc: 'Common violations with legal references, administrative sanctions, civil penalties, and criminal classifications — a common exam topic.',
       topic: 'Fines and Enforcements' },
+    { title: 'California Notary Rules', type: 'video', file: 'California_Notary_Rules.mp4',
+      desc: 'A video overview of key California notary rules every applicant should know.',
+      topic: 'Application, Commission & Misc', sizeBytes: 29605729 },
   ],
 };
 
@@ -613,6 +619,74 @@ async function renderProgress() {
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
     '</div>' + rows;
+}
+
+// ---- Locked previews (Quiz/Exam/Progress, logged-out visitors) -----------
+// Real content/data always requires a token -- these are non-interactive mockups purely so an
+// anonymous visitor can see what each tab looks like before buying/referring their way in.
+
+function renderLockedTabPreview(tabKey, title, mockupHtml, blurb, extraCta) {
+  appEl.innerHTML = renderUserBar() + renderTabs(tabKey) +
+    '<h1>' + title + '</h1>' +
+    '<div class="locked-preview-wrap">' +
+    '<div class="locked-preview-mockup" aria-hidden="true" inert>' + mockupHtml + '</div>' +
+    '<div class="locked-preview-overlay">' +
+    '<div class="locked-preview-icon">🔒</div>' +
+    '<p>' + blurb + '</p>' +
+    '<div class="sample-done-cta">' +
+    '<a class="btn-primary hub-cta" href="#/buy">Unlock full access →</a>' +
+    '<a class="btn-secondary hub-cta" href="#/refer">Refer & earn free access →</a>' +
+    (extraCta || '') +
+    '</div>' +
+    '</div>' +
+    '</div>';
+}
+
+function renderLockedQuizPreview() {
+  var mockup = '<div class="card">' +
+    '<div class="question-topic">Sample Topic</div>' +
+    '<div class="question-text">This is what a real practice question looks like — topic, question text, then four lettered choices.</div>' +
+    '</div>' +
+    '<div class="options-grid">' + ['A', 'B', 'C', 'D'].map(function (k) {
+      return optionButtonHtml(k, 'Answer choice ' + k, 'option-btn', 'disabled');
+    }).join('') + '</div>' +
+    '<div class="mic-zone"><button class="btn-mic" disabled>🎙️ Voice Answer</button></div>';
+  renderLockedTabPreview('quiz', 'Quiz',
+    mockup,
+    'Sign in or unlock full access to start practicing with the real question bank — voice answers included.',
+    '<a class="btn-secondary hub-cta" href="#/sample">Try 5 free sample questions →</a>');
+}
+
+function renderLockedExamPreview() {
+  // Same numbers HUB_EXAMS already shows publicly on the landing page -- no account/API call
+  // needed just to preview what the timed exam looks like.
+  var mockup = '<div class="card mockexam-intro-card">' +
+    '<p>This mimics the real exam format as closely as possible:</p>' +
+    '<ul class="mockexam-intro-list">' +
+    '<li><strong>45 questions</strong>, drawn at random from the full question bank</li>' +
+    '<li><strong>60-minute</strong> timer, running continuously in one sitting</li>' +
+    '<li>No answer feedback until you finish — just like the real thing</li>' +
+    '<li>Need <strong>70%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
+    '</ul>' +
+    '<button class="btn-primary" type="button" disabled>Begin Exam →</button>' +
+    '</div>';
+  renderLockedTabPreview('exam', 'Timed Practice Exam',
+    mockup,
+    'Sign in or unlock full access to take the real timed mock exam.');
+}
+
+function renderLockedProgressPreview() {
+  var mockup = '<div class="stats-bar">' +
+    '<div class="stat-box"><div class="label">Total</div><div class="val">42</div></div>' +
+    '<div class="stat-box"><div class="label">Correct</div><div class="val correct">31</div></div>' +
+    '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">11</div></div>' +
+    '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">74%</div></div>' +
+    '</div>' +
+    '<div class="card exam-card"><span>Fees, Misconduct &amp; Conflict of Interest</span><span>78% (18)</span></div>' +
+    '<div class="card exam-card"><span>Acknowledgment, Jurat &amp; Journal</span><span>69% (14)</span></div>';
+  renderLockedTabPreview('progress', 'Progress',
+    mockup,
+    'Sign in or unlock full access to track your own real progress by topic.');
 }
 
 // ---- Additional information (official external links, per exam type) -----
@@ -1219,6 +1293,8 @@ function setupMic() {
 // ---- Routing --------------------------------------------------------------
 
 async function renderNotaryApp() {
+  var hadExplicitHash = !!location.hash; // so "no hash yet" keeps defaulting to the redeem page,
+                                          // not the quiz view's fallback lock-preview, for anon visitors
   var view = (location.hash || '#/quiz').replace('#/', '');
   if (view === 'sample') { await renderSample(); return; }
   if (view === 'buy') { renderBuy(); return; }
@@ -1228,7 +1304,12 @@ async function renderNotaryApp() {
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
-  if (!getToken()) { renderRedeem(); return; }
+  if (!getToken()) {
+    if (hadExplicitHash && view === 'quiz') { renderLockedQuizPreview(); return; }
+    if (view === 'exam') { renderLockedExamPreview(); return; }
+    if (view === 'progress') { renderLockedProgressPreview(); return; }
+    renderRedeem(); return;
+  }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'exam') await renderExam();
   else if (view === 'progress') await renderProgress();

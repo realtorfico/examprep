@@ -348,6 +348,16 @@ input[type="text"], input[type="email"], select {
 }
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+.locked-preview-wrap { position: relative; min-height: 320px; border-radius: 12px; overflow: hidden; }
+.locked-preview-mockup { filter: blur(1.5px) grayscale(0.4); opacity: 0.4; pointer-events: none; user-select: none; }
+.locked-preview-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; gap: 0.4rem; padding: 1.5rem;
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+}
+.locked-preview-overlay p { max-width: 32rem; color: var(--fg); font-weight: 500; }
+.locked-preview-icon { font-size: 2.5rem; }
+.locked-preview-overlay .sample-done-cta { align-items: center; width: 100%; max-width: 20rem; }
 .refer-confirmed-card { text-align: center; }
 .refer-confirmed-emoji { font-size: 3rem; line-height: 1; margin-bottom: 0.4rem; }
 .resources-intro { margin-top: 0.5rem; }
