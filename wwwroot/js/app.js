@@ -830,7 +830,7 @@ async function renderExamIntro() {
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
     '<button class="btn-primary" type="button" data-act="exam-begin">Begin Exam →</button>' +
-    ' <a class="btn-secondary" href="#/exam-history">View past attempts →</a>' +
+    '<a class="btn-secondary exam-history-link" href="#/exam-history">View past attempts →</a>' +
     '</div>';
 }
 
