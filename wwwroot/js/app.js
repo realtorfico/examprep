@@ -15,8 +15,12 @@ function escapeHtml(s) {
 // a letter badge on the left plus the choice text, so all four call sites stay visually
 // consistent instead of each hand-rolling "A) text".
 function optionButtonHtml(letter, text, cls, attrs) {
+  // Correct/wrong get an explicit check/X icon too -- color alone (the border/badge tint)
+  // shouldn't be the only signal of state.
+  var icon = / correct(\s|$)/.test(' ' + cls + ' ') ? '<span class="option-state-icon">✓</span>'
+    : / wrong(\s|$)/.test(' ' + cls + ' ') ? '<span class="option-state-icon">✕</span>' : '';
   return '<button class="' + cls + '" ' + (attrs || '') + '>' +
-    '<span class="option-letter">' + letter + '</span><span class="option-text">' + text + '</span></button>';
+    '<span class="option-letter">' + letter + '</span><span class="option-text">' + text + '</span>' + icon + '</button>';
 }
 
 function applyTheme(theme, fontScale) {
@@ -56,8 +60,10 @@ function renderSiteHeader() {
     logo +
     '<div class="control-group">' +
     '<span class="muted font-label">Font:</span>' +
-    '<button class="btn-secondary btn-sm" data-act="font-down">A-</button>' +
-    '<button class="btn-secondary btn-sm" data-act="font-up">A+</button>' +
+    '<div class="font-size-pill">' +
+    '<button data-act="font-down">A-</button>' +
+    '<button data-act="font-up">A+</button>' +
+    '</div>' +
     '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
     '</div></div>';
   updateThemeButton();
@@ -339,7 +345,15 @@ var RESOURCES = {
   ],
 };
 
-var RESOURCE_TYPE_LABEL = { audio: '🎧 Audio', video: '🎥 Video', pdf: '📄 PDF Guide', image: '🖼️ Quick Reference', table: '📊 Reference Table' };
+var RESOURCE_TYPE_LABEL = {
+  audio: { icon: '🎧', label: 'Audio' }, video: { icon: '🎥', label: 'Video' },
+  pdf: { icon: '📄', label: 'PDF Guide' }, image: { icon: '🖼️', label: 'Quick Reference' },
+  table: { icon: '📊', label: 'Reference Table' },
+};
+function resourceTypeCellHtml(type) {
+  var t = RESOURCE_TYPE_LABEL[type];
+  return '<span class="resource-type-cell"><span>' + t.icon + '</span><span>' + t.label + '</span></span>';
+}
 
 function resourceTableInnerHtml(t) {
   var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
@@ -508,18 +522,22 @@ function renderResourcesTable() {
 
     var actionCell;
     if (!row.unlocked) {
+      // Unlock stays a real, prominent button -- it's the primary CTA, unlike the minimal
+      // icon-only triggers below for already-unlocked play/show/hide/open actions.
       actionCell = '<a class="btn-secondary btn-sm" href="#/buy">Unlock →</a>';
     } else if (row.type === 'pdf' && row.downloadable) {
-      actionCell = '<a class="btn-secondary btn-sm" href="' + row.url + '" target="_blank" rel="noopener">Open ↗</a>';
+      actionCell = '<a class="resource-action-icon-btn" href="' + row.url + '" target="_blank" rel="noopener" title="Open" aria-label="Open">↗</a>';
     } else {
       var isOpen = resourcesOpenIndex === row.index;
-      actionCell = '<button class="btn-secondary btn-sm" type="button" data-act="toggle-resource-media" data-index="' + row.index + '">' +
-        (isOpen ? 'Hide' : row.type === 'table' ? '📊 Show' : row.type === 'image' ? '👁 View' : '▶ Play') + '</button>';
+      var actionLabel = isOpen ? 'Hide' : row.type === 'table' ? 'Show' : row.type === 'image' ? 'View' : 'Play';
+      var actionIcon = isOpen ? '✕' : row.type === 'table' ? '📊' : row.type === 'image' ? '👁' : '▶';
+      actionCell = '<button class="resource-action-icon-btn" type="button" data-act="toggle-resource-media" data-index="' + row.index +
+        '" title="' + actionLabel + '" aria-label="' + actionLabel + '">' + actionIcon + '</button>';
     }
 
     var mainRow = '<tr>' +
       '<td>' + actionCell + '</td>' +
-      '<td>' + RESOURCE_TYPE_LABEL[row.type] + '</td>' +
+      '<td>' + resourceTypeCellHtml(row.type) + '</td>' +
       '<td>' + row.title + '</td>' +
       '<td class="muted">' + row.topic + '</td>' +
       '<td>' + lengthLabel + '</td>' +
@@ -713,7 +731,7 @@ function renderAdditionalInfo() {
   }).join('');
   appEl.innerHTML = renderUserBar() + renderTabs('info') +
     '<h1>Additional Information</h1>' +
-    '<p class="muted">Official, outside resources for the real exam — registration, scheduling, and state program details.</p>' +
+    '<p class="muted page-intro-text">Official, outside resources for the real exam — registration, scheduling, and state program details.</p>' +
     linkCards;
 }
 
@@ -1137,7 +1155,7 @@ async function renderReferForm() {
   appEl.innerHTML =
     '<div class="refer-page">' +
     '<h1>Refer friends, earn free access</h1>' +
-    '<p class="muted">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
+    '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
     '<strong>' + required + ' points</strong> to unlock the California Notary course completely free.</p>' +
     '<div class="refer-progress">' +
