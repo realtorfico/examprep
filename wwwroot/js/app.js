@@ -407,6 +407,15 @@ var RESOURCES_PROMO_BANNER =
 var resourcesRowsCache = [];
 var resourcesSort = { key: 'status', dir: -1 }; // dir:-1 so unlocked/free rows (higher value) sort first
 var resourcesOpenIndex = null;
+var resourceProgressCache = {}; // resourceKey -> {percent, timesOpened}, logged-in users only
+
+// Best-effort -- a tracking hiccup should never block the resource itself from playing.
+function postResourceProgress(resourceKey, type, percent, isNewOpen) {
+  if (!getToken() || !resourceKey) return;
+  apiFetch('/resources/progress', {
+    method: 'POST', body: { file: resourceKey, type: type, percent: percent, isNewOpen: !!isNewOpen },
+  }).catch(function () {});
+}
 
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
@@ -430,6 +439,13 @@ async function renderResources() {
         var signRes = await apiFetch('/resources/sign-batch', { method: 'POST', body: { files: filesToSign } });
         signedUrls = signRes.urls;
       }
+      // Best-effort -- a failed progress fetch just means "no progress shown yet", not a
+      // blocker for the resources list itself.
+      try {
+        var progressRes = await apiFetch('/resources/progress');
+        resourceProgressCache = {};
+        progressRes.items.forEach(function (p) { resourceProgressCache[p.resource_file] = p; });
+      } catch (e) { resourceProgressCache = {}; }
     } else {
       var freeRes = await apiFetch('/resources/free?examType=' + encodeURIComponent(state.examType));
       signedUrls = freeRes.urls;
@@ -447,6 +463,7 @@ async function renderResources() {
     return {
       index: i, title: r.title, type: r.type, topic: r.topic || 'General Reference', desc: r.desc,
       unlocked: unlocked, downloadable: !!r.url, url: url, table: r.table || null,
+      resourceKey: r.file || r.url, // stable identifier for progress tracking, regardless of R2 vs external
       lengthSeconds: null, estimatedLengthSeconds: estimateDurationSeconds(r.type, r.sizeBytes),
     };
   });
@@ -516,9 +533,16 @@ function renderResourcesTable() {
     var lengthLabel = row.type !== 'audio' && row.type !== 'video' ? '—'
       : row.lengthSeconds != null ? formatDuration(row.lengthSeconds)
       : formatApproxMinutes(row.estimatedLengthSeconds);
-    var statusCell = !row.unlocked ? '<span class="badge resource-locked-badge">🔒 Locked</span>'
+    var progress = resourceProgressCache[row.resourceKey];
+    var progressNote = '';
+    if (row.unlocked && loggedIn && progress) {
+      progressNote = (row.type === 'audio' || row.type === 'video')
+        ? '<div class="resource-progress-note muted">' + (progress.percent >= 95 ? '✓ Watched' : progress.percent + '% watched') + '</div>'
+        : '<div class="resource-progress-note muted">✓ Viewed</div>';
+    }
+    var statusCell = (!row.unlocked ? '<span class="badge resource-locked-badge">🔒 Locked</span>'
       : loggedIn ? '<span class="badge">Included</span>'
-      : '<span class="badge resource-free-badge">Free sample</span>';
+      : '<span class="badge resource-free-badge">Free sample</span>') + progressNote;
 
     var actionCell;
     if (!row.unlocked) {
@@ -548,10 +572,10 @@ function renderResourcesTable() {
 
     var inner = '';
     if (row.type === 'audio') {
-      inner = '<audio class="resource-player" controls autoplay preload="metadata"' +
+      inner = '<audio class="resource-player" controls autoplay preload="metadata" data-resource-key="' + row.resourceKey + '" data-resource-type="audio"' +
         (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></audio>';
     } else if (row.type === 'video') {
-      inner = '<video class="resource-player" controls autoplay preload="metadata"' +
+      inner = '<video class="resource-player" controls autoplay preload="metadata" data-resource-key="' + row.resourceKey + '" data-resource-type="video"' +
         (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></video>';
     } else if (row.type === 'image') {
       inner = '<img class="resource-thumb" src="' + row.url + '" alt="' + row.title + '" oncontextmenu="return false">';
@@ -567,6 +591,27 @@ function renderResourcesTable() {
 
   container.innerHTML = '<div class="resource-table-scroll"><table class="resource-table resources-index-table">' +
     '<thead><tr>' + headerCells + '</tr></thead><tbody>' + bodyHtml + '</tbody></table></div>';
+
+  // Track audio/video watch progress -- throttled to avoid posting on every timeupdate tick
+  // (which fires several times a second), and always send a final update on pause/end so the
+  // last few seconds of a session aren't lost to the throttle window.
+  var player = container.querySelector('.resource-player[data-resource-key]');
+  if (player && loggedIn) {
+    var lastSent = 0;
+    var sendPlayerProgress = function () {
+      if (!player.duration || isNaN(player.duration)) return;
+      var pct = Math.round((player.currentTime / player.duration) * 100);
+      postResourceProgress(player.getAttribute('data-resource-key'), player.getAttribute('data-resource-type'), pct, false);
+    };
+    player.addEventListener('timeupdate', function () {
+      var t = Date.now();
+      if (t - lastSent < 15000) return;
+      lastSent = t;
+      sendPlayerProgress();
+    });
+    player.addEventListener('pause', sendPlayerProgress);
+    player.addEventListener('ended', function () { postResourceProgress(player.getAttribute('data-resource-key'), player.getAttribute('data-resource-type'), 100, false); });
+  }
 }
 
 async function renderQuiz() {
@@ -1573,7 +1618,22 @@ document.addEventListener('click', async function (e) {
     renderResourcesTable();
   } else if (act === 'toggle-resource-media') {
     var toggleIdx = Number(el.getAttribute('data-index'));
-    resourcesOpenIndex = (resourcesOpenIndex === toggleIdx) ? null : toggleIdx;
+    var opening = resourcesOpenIndex !== toggleIdx;
+    resourcesOpenIndex = opening ? toggleIdx : null;
+    if (opening) {
+      var openedRow = resourcesRowsCache[toggleIdx];
+      if (openedRow) {
+        // pdf/image/table have no meaningful "extent" -- opening them is the whole interaction,
+        // so mark 100% immediately. Audio/video start at 0 and update via timeupdate below.
+        var initialPercent = (openedRow.type === 'audio' || openedRow.type === 'video') ? 0 : 100;
+        postResourceProgress(openedRow.resourceKey, openedRow.type, initialPercent, true);
+        if (resourceProgressCache[openedRow.resourceKey]) {
+          resourceProgressCache[openedRow.resourceKey].percent = Math.max(resourceProgressCache[openedRow.resourceKey].percent, initialPercent);
+        } else {
+          resourceProgressCache[openedRow.resourceKey] = { percent: initialPercent, times_opened: 1 };
+        }
+      }
+    }
     renderResourcesTable();
   } else if (act === 'toggle-apply-points') {
     updateBuyTotalDisplay();
