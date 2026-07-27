@@ -227,6 +227,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .mockexam-review-item { margin-bottom: 0.75rem; }
 .mockexam-review-item summary { cursor: pointer; font-weight: 600; }
 .mockexam-review-item .question-text, .mockexam-review-item .options-grid, .mockexam-review-item .explanation-box { margin-top: 0.6rem; }
+.wrong-only-toggle { display: block; margin: 0.75rem 0; font-size: 0.85rem; color: var(--muted); }
+.review-wrong-only .mockexam-review-item[data-correct="true"] { display: none; }
+
+.exam-history-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.exam-history-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  text-decoration: none; color: var(--fg); flex-wrap: wrap;
+}
+.exam-history-row:hover { border-color: var(--accent); }
 
 nav.tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 nav.tabs a {
@@ -323,6 +332,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:first-child { border-right: 1px solid var(--border); }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; }
+
+.quiz-difficulty-pill {
+  display: flex; max-width: 100%; overflow-x: auto; border: 1.5px solid var(--border); border-radius: 999px;
+  margin-bottom: 0.85rem;
+}
+.quiz-difficulty-pill button {
+  border: none; border-radius: 0; background: transparent; color: var(--muted); white-space: nowrap;
+  padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; border-right: 1px solid var(--border);
+}
+.quiz-difficulty-pill button:last-child { border-right: none; }
+.quiz-difficulty-pill button:hover { color: var(--accent); }
+.quiz-difficulty-pill button.active { background: var(--accent); color: #fff; }
 
 /* Hub / exam-track landing page */
 .hub-hero { text-align: center; padding: 1.5rem 0 1rem; }

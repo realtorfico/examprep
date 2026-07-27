@@ -1,6 +1,7 @@
 // Vanilla JS, no framework/bundler. Hash-routed within /notary; pathname-routed at the top level.
 var appEl = document.getElementById('app');
-var state = { question: null, answered: null, examType: 'notary' };
+var state = { question: null, answered: null, examType: 'notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
+var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -617,12 +618,25 @@ function renderResourcesTable() {
 async function renderQuiz() {
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>';
   try {
-    state.question = await apiFetch('/questions/next');
+    var qs = state.quizDifficulty ? '?difficulty=' + state.quizDifficulty : '';
+    state.question = await apiFetch('/questions/next' + qs);
     state.answered = null;
     drawQuestion();
   } catch (e) {
     appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
   }
+}
+
+// Difficulty here isn't manually tagged -- the server buckets each question by how everyone has
+// actually done on it so far (see DIFFICULTY_CASE in the Worker), so this filter improves as more
+// people answer questions rather than needing upkeep.
+function renderQuizDifficultyPicker() {
+  return '<div class="quiz-difficulty-pill" role="group" aria-label="Difficulty">' +
+    QUIZ_DIFFICULTIES.map(function (d) {
+      var active = state.quizDifficulty === d[0];
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="quiz-difficulty" data-difficulty="' + d[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + d[1] + '</button>';
+    }).join('') + '</div>';
 }
 
 function drawQuestion() {
@@ -655,6 +669,7 @@ function drawQuestion() {
     : '';
 
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
+    renderQuizDifficultyPicker() +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
@@ -815,7 +830,47 @@ async function renderExamIntro() {
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
     '<button class="btn-primary" type="button" data-act="exam-begin">Begin Exam →</button>' +
+    ' <a class="btn-secondary" href="#/exam-history">View past attempts →</a>' +
     '</div>';
+}
+
+async function renderExamHistory() {
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading past attempts…</p>';
+  try {
+    var res = await apiFetch('/exam/history');
+    if (!res.attempts.length) {
+      appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<h1>Past Attempts</h1>' +
+        '<p class="muted">You haven\'t completed a practice exam yet.</p>' +
+        '<a class="btn-primary hub-cta" href="#/exam">Take one now →</a>';
+      return;
+    }
+    var rows = res.attempts.map(function (a) {
+      var date = new Date(a.submittedAt * 1000).toLocaleString();
+      return '<a class="card exam-history-row" href="#/exam-history/' + a.attemptId + '">' +
+        '<span>' + date + '</span>' +
+        '<span>' + a.correct + ' / ' + a.total + '</span>' +
+        '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
+        '</a>';
+    }).join('');
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+      '<h1>Past Attempts</h1>' +
+      '<p class="muted page-intro-text">Every practice exam you\'ve completed, most recent first. Tap one to review your answers.</p>' +
+      '<div class="exam-history-list">' + rows + '</div>' +
+      '<a class="btn-secondary hub-cta" href="#/exam">← Back to exam</a>';
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load your past attempts. Try again shortly.</p>';
+  }
+}
+
+async function renderExamAttemptDetailView(attemptId) {
+  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading…</p>';
+  try {
+    var result = await apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId));
+    renderExamResults(result, { fromHistory: true });
+  } catch (e) {
+    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load this attempt.</p>' +
+      '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>';
+  }
 }
 
 async function beginExam() {
@@ -920,7 +975,8 @@ async function submitExam() {
   }
 }
 
-function renderExamResults(result) {
+function renderExamResults(result, opts) {
+  opts = opts || {};
   var reviewHtml = result.review.map(function (r, i) {
     var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
       var cls = 'option-btn';
@@ -931,7 +987,7 @@ function renderExamResults(result) {
     var yourAnswerNote = r.yourChoice
       ? '<strong class="' + (r.correct ? 'result-correct' : 'result-incorrect') + '">' + (r.correct ? 'Correct.' : 'Incorrect.') + '</strong> '
       : '<strong class="result-incorrect">Not answered.</strong> ';
-    return '<details class="card mockexam-review-item">' +
+    return '<details class="card mockexam-review-item" data-correct="' + (r.correct ? 'true' : 'false') + '">' +
       '<summary>Question ' + (i + 1) + ' — ' + (r.correct ? '✅' : '❌') + ' ' + r.topic + '</summary>' +
       '<div class="question-text">' + r.question + '</div>' +
       '<div class="options-grid">' + choiceHtml + '</div>' +
@@ -939,17 +995,25 @@ function renderExamResults(result) {
       '</details>';
   }).join('');
 
+  var dateNote = opts.fromHistory && result.submittedAt
+    ? '<p class="muted">Taken ' + new Date(result.submittedAt * 1000).toLocaleString() + '</p>' : '';
+  var ctaHtml = opts.fromHistory
+    ? '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>'
+    : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart">Take another practice exam →</button>';
+
   appEl.innerHTML = renderUserBar() + renderTabs('exam') +
     '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +
+    dateNote +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Score</div><div class="val">' + result.correct + ' / ' + result.total + '</div></div>' +
     '<div class="stat-box"><div class="label">Percent</div><div class="val ' + (result.passed ? 'correct' : 'wrong') + '">' + result.percent + '%</div></div>' +
     '<div class="stat-box"><div class="label">Time used</div><div class="val">' + formatClock(result.timeTakenSec) + '</div></div>' +
     '</div>' +
     '<p class="muted mockexam-result-note">Practice score only — the real exam reports a proprietary scaled score, not raw percent-correct.</p>' +
-    '<button class="btn-primary hub-cta" type="button" data-act="exam-restart">Take another practice exam →</button>' +
+    ctaHtml +
     '<h3 class="mockexam-review-heading">Review your answers</h3>' +
-    reviewHtml;
+    '<label class="wrong-only-toggle"><input type="checkbox" data-act="toggle-wrong-only"> Show only questions I got wrong</label>' +
+    '<div id="mockexam-review-list">' + reviewHtml + '</div>';
 }
 
 // ---- Buy an access code (PayPal, no code needed to get started) -----------
@@ -1369,12 +1433,14 @@ async function renderNotaryApp() {
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
   if (!getToken()) {
     if (hadExplicitHash && view === 'quiz') { renderLockedQuizPreview(); return; }
-    if (view === 'exam') { renderLockedExamPreview(); return; }
+    if (view === 'exam' || view.indexOf('exam-history') === 0) { renderLockedExamPreview(); return; }
     if (view === 'progress') { renderLockedProgressPreview(); return; }
     renderRedeem(); return;
   }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'exam') await renderExam();
+  else if (view === 'exam-history') await renderExamHistory();
+  else if (view.indexOf('exam-history/') === 0) await renderExamAttemptDetailView(view.slice('exam-history/'.length));
   else if (view === 'progress') await renderProgress();
   else await renderQuiz();
 }
@@ -1543,6 +1609,13 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'next-question') {
     stopSpeaking();
     renderQuiz();
+  } else if (act === 'quiz-difficulty') {
+    var newDifficulty = el.getAttribute('data-difficulty');
+    if (newDifficulty === state.quizDifficulty) return;
+    state.quizDifficulty = newDifficulty;
+    localStorage.setItem('examprep_quiz_difficulty', newDifficulty);
+    stopSpeaking();
+    renderQuiz();
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'sample-answer') {
@@ -1611,6 +1684,9 @@ document.addEventListener('click', async function (e) {
     var unanswered = examState.attempt.questions.length - Object.keys(examState.attempt.answers).length;
     if (unanswered > 0 && !window.confirm(unanswered + ' question' + (unanswered === 1 ? '' : 's') + ' unanswered. Submit anyway?')) return;
     await submitExam();
+  } else if (act === 'toggle-wrong-only') {
+    var reviewListEl = document.getElementById('mockexam-review-list');
+    if (reviewListEl) reviewListEl.classList.toggle('review-wrong-only', el.checked);
   } else if (act === 'sort-resources') {
     var sortKey = el.getAttribute('data-key');
     if (resourcesSort.key === sortKey) resourcesSort.dir *= -1;
