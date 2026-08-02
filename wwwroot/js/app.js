@@ -9,6 +9,10 @@ var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate']
 var quizAutoAdvance = localStorage.getItem('examprep_quiz_autoadvance') === '1';
 var quizRenderToken = 0;
 var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" before moving on
+// Exam mode never reveals correct/incorrect, so this one's simpler: advance regardless of the
+// answer, right after the /exam/answer save completes -- no artificial delay needed, the
+// network round-trip already gives a brief natural pause before the screen changes.
+var examAutoAdvance = localStorage.getItem('examprep_exam_autoadvance') === '1';
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -669,7 +673,7 @@ function renderQuizDifficultyPicker() {
 }
 
 function renderQuizAutoAdvanceToggle() {
-  return '<label class="quiz-autoadvance-toggle">' +
+  return '<label class="auto-advance-toggle">' +
     '<input type="checkbox" data-act="toggle-quiz-autoadvance"' + (quizAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance when I answer correctly</label>';
 }
@@ -1065,6 +1069,9 @@ function drawExamSitting() {
     ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
     '<div class="mockexam-timer" id="exam-timer-display">' + formatClock(examSecondsRemaining()) + '</div>' +
     '</div>' +
+    '<label class="auto-advance-toggle">' +
+    '<input type="checkbox" data-act="toggle-exam-autoadvance"' + (examAutoAdvance ? ' checked' : '') + '> ' +
+    'Auto-advance after I answer</label>' +
     '<div class="mockexam-nav-grid">' + navGrid + '</div>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
@@ -1088,6 +1095,13 @@ async function selectExamAnswer(choice) {
   } catch (e) {
     // Best-effort -- if this was a time_expired rejection, the next timer tick (or Submit)
     // will surface it; the locally-saved answer still gets included in the final submit call.
+  }
+  // Regardless of right/wrong -- the exam never reveals that anyway -- just moves navigation
+  // forward one step, same as manually clicking Next →. Stays put on the last question (nothing
+  // to advance to; Submit is the natural next action there).
+  if (examAutoAdvance && examState.currentIndex < attempt.questions.length - 1) {
+    examState.currentIndex++;
+    drawExamSitting();
   }
 }
 
@@ -1810,6 +1824,9 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'toggle-quiz-autoadvance') {
     quizAutoAdvance = el.checked;
     localStorage.setItem('examprep_quiz_autoadvance', quizAutoAdvance ? '1' : '0');
+  } else if (act === 'toggle-exam-autoadvance') {
+    examAutoAdvance = el.checked;
+    localStorage.setItem('examprep_exam_autoadvance', examAutoAdvance ? '1' : '0');
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'sample-answer') {
