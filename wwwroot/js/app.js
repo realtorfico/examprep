@@ -91,6 +91,23 @@ function renderSiteFooter() {
     '</div>';
 }
 
+// ---- Site news banner ------------------------------------------------------
+// Dismissible via localStorage keyed by id, so a future announcement (new id) reappears
+// for everyone even if they dismissed an older one. Rendered on the hub (home page) and
+// inside the notary app's tab bar (renderTabs) so both new visitors and existing users see it.
+var SITE_NEWS = {
+  id: 'notary-500-2026-08',
+  text: '🎉 Big update: 500+ new California Notary practice questions just added — the bank has nearly tripled to 750+ questions!',
+};
+function renderNewsBanner() {
+  if (localStorage.getItem('examprep_news_dismissed') === SITE_NEWS.id) return '';
+  return '<div class="news-flash-banner" data-news-id="' + SITE_NEWS.id + '">' +
+    '<span class="news-flash-badge">New</span>' +
+    '<span class="news-flash-text">' + SITE_NEWS.text + '</span>' +
+    '<button class="news-flash-dismiss" type="button" data-act="dismiss-news" aria-label="Dismiss">✕</button>' +
+    '</div>';
+}
+
 function renderUserBar() {
   if (!getToken()) return '';
   return '<div class="user-bar"><div class="user-info"><span class="label">Studying</span>' +
@@ -173,7 +190,10 @@ function renderHub() {
         '<a class="btn-secondary hub-cta" href="/notary#/sample">Try a free sample</a>'
       : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
 
+    var newsRibbon = exam.title.indexOf('Notary') !== -1 ? '<div class="exam-track-news-ribbon">New</div>' : '';
+
     return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
+      newsRibbon +
       '<div class="exam-track-body">' +
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
       '<h3>' + exam.title + '</h3>' +
@@ -183,6 +203,7 @@ function renderHub() {
   }).join('');
 
   appEl.innerHTML =
+    renderNewsBanner() +
     '<div class="hub-hero">' +
     '<h1>Pass Your California Licensing Exams on the First Try</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards, with ' +
@@ -243,7 +264,7 @@ function renderTabs(active) {
   var loggedIn = !!getToken();
   var gated = { quiz: true, exam: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']];
-  return '<nav class="tabs">' + tabs.map(function (t) {
+  return renderNewsBanner() + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' +
       (locked ? '🔒 ' : '') + t[1] + '</a>';
@@ -1635,6 +1656,10 @@ document.addEventListener('click', async function (e) {
     } else {
       recognition.stop();
     }
+  } else if (act === 'dismiss-news') {
+    localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
+    var bannerEl = el.closest('.news-flash-banner');
+    if (bannerEl) bannerEl.remove();
   } else if (act === 'scroll-to-tracks') {
     var tracksEl = document.getElementById('tracks');
     if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });

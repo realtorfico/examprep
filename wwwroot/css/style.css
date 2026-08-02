@@ -394,6 +394,43 @@ input::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 0.5rem;
 }
+/* News/announcement banner -- reused on the hub (home page) and inside the notary app's
+   tab bar. Uses --highlight (amber) rather than --accent so it reads as "news", not as a
+   primary CTA, and pulses gently rather than hard-blinking (accessibility: no flashing >3Hz). */
+.news-flash-banner {
+  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+  background: color-mix(in srgb, var(--highlight) 14%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--highlight) 45%, var(--border));
+  border-radius: 12px; padding: 0.7rem 1rem; margin-bottom: 1rem;
+  animation: news-glow 2.4s ease-in-out infinite;
+}
+.news-flash-badge {
+  flex-shrink: 0; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem; border-radius: 999px; background: var(--highlight); color: #1a1203;
+  animation: news-pulse-scale 1.8s ease-in-out infinite;
+}
+.news-flash-text { flex: 1; min-width: 12rem; font-size: 0.88rem; font-weight: 600; }
+.news-flash-dismiss {
+  flex-shrink: 0; background: transparent; border: none; color: var(--muted); cursor: pointer;
+  font-size: 1rem; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 6px;
+}
+.news-flash-dismiss:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
+@keyframes news-glow {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--highlight) 35%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--highlight) 0%, transparent); }
+}
+@keyframes news-pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.exam-track-card { position: relative; }
+.exam-track-news-ribbon {
+  position: absolute; top: 0.7rem; right: -1.9rem; transform: rotate(35deg);
+  background: var(--highlight); color: #1a1203; font-size: 0.62rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.03em; padding: 0.25rem 2.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); animation: news-pulse-scale 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
 .locked-preview-wrap { position: relative; min-height: 320px; border-radius: 12px; overflow: hidden; }
