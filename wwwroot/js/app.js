@@ -755,7 +755,7 @@ async function renderProgress() {
     }).join('');
     var yourAnswerNote = r.yourChoice
       ? '<strong class="result-incorrect">Your answer: ' + r.yourChoice + '.</strong> '
-      : '<strong class="muted">Answered before we started recording your pick — retake it to see it here.</strong> ';
+      : '<strong class="muted">No answer on record (skipped, or answered before we tracked picks) — retake it to see your answer here.</strong> ';
     return '<details class="card mockexam-review-item">' +
       '<summary>' + r.topic + ' — ' + r.question.slice(0, 80) + (r.question.length > 80 ? '…' : '') + '</summary>' +
       '<div class="question-text">' + r.question + '</div>' +
