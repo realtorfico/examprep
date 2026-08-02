@@ -284,8 +284,10 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
 .buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
 #buy-email { margin-bottom: 0.75rem; }
-.paypal-container { margin-top: 0.75rem; min-height: 45px; }
-.paypal-card-note { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; }
+.stripe-card-note { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; }
+.stripe-container { margin-top: 0.75rem; min-height: 45px; }
+#stripe-pay-button { width: 100%; margin-top: 0.85rem; }
+#stripe-pay-error { min-height: 1.1em; font-size: 0.82rem; margin: 0.5rem 0 0; }
 .buy-security-note { margin-top: 0.6rem; margin-bottom: 0; font-size: 0.78rem; text-align: center; }
 .purchase-success-card { text-align: center; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
 .purchase-code {

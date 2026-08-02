@@ -135,7 +135,7 @@ function renderPrivacy() {
     'provide one — for an optional backup copy of your access code at purchase, or to take part in the referral ' +
     'program. If you refer a friend, we use their name/email only to send a one-time confirmation email on your ' +
     'behalf; if you\'re referred by a friend, the same applies to you. We never sell or share this data. ' +
-    'Payments are processed by PayPal directly; we don\'t see or store your payment details. Contact whoever ' +
+    'Payments are processed by Stripe directly; we don\'t see or store your payment details. Contact whoever ' +
     'issued your code with any privacy questions.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
@@ -1037,29 +1037,39 @@ function renderExamResults(result, opts) {
     '<div id="mockexam-review-list">' + reviewHtml + '</div>';
 }
 
-// ---- Buy an access code (PayPal, no code needed to get started) -----------
+// ---- Buy an access code (Stripe, no code needed to get started) -----------
+// Card, Apple Pay, and Google Pay all go through one Payment Element -- Stripe decides which
+// to actually show based on the buyer's device/browser (see `automatic_payment_methods` on the
+// server side), so there's no separate wallet-specific button to wire up here.
 
 // A single shared promise for the SDK script -- if renderBuy() ever fires twice in quick
 // succession (e.g. a double navigation event), both calls just attach to the same promise
-// instead of racing a polling loop against the script's own onload, which could previously
-// invoke both callers' callbacks and double-render the PayPal buttons into the same container.
-var paypalSdkPromise = null;
-function loadPayPalSdk(callback) {
-  if (window.paypal) { callback(); return; }
-  if (!paypalSdkPromise) {
-    paypalSdkPromise = new Promise(function (resolve) {
+// instead of racing a polling loop against the script's own onload.
+var stripeSdkPromise = null;
+function loadStripeSdk(callback) {
+  if (window.Stripe) { callback(); return; }
+  if (!stripeSdkPromise) {
+    stripeSdkPromise = new Promise(function (resolve) {
       var script = document.createElement('script');
-      // disable-funding=card hides PayPal's separate, barely-stylable "Debit or Credit Card"
-      // button -- card payment is still available without a PayPal account via "Pay with Debit
-      // or Credit Card" inside the main button's own checkout popup, just not as its own ugly
-      // duplicate button.
-      script.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(PAYPAL_CLIENT_ID) +
-        '&currency=USD&intent=capture&disable-funding=card';
+      script.src = 'https://js.stripe.com/v3/';
       script.onload = function () { resolve(); };
       document.head.appendChild(script);
     });
   }
-  paypalSdkPromise.then(callback);
+  stripeSdkPromise.then(callback);
+}
+
+// Turnstile's widget can take a moment to auto-resolve (or need a click) after the buy page
+// first renders -- since Stripe needs a real PaymentIntent (and therefore a valid Turnstile
+// token) before it can mount the Payment Element, this polls briefly rather than firing the
+// create-intent call too early and failing closed. Mirrors renderTurnstileWidget's own retry loop.
+function waitForTurnstileToken(callback, attemptsLeft) {
+  attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s, then give up and let the server reject
+  var token = '';
+  try { token = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+  catch (ignored) { token = ''; }
+  if (token || attemptsLeft <= 0) { callback(token); return; }
+  setTimeout(function () { waitForTurnstileToken(callback, attemptsLeft - 1); }, 200);
 }
 
 var buyPricing = null; // stashed so the points-apply checkbox can recompute the displayed total
@@ -1109,21 +1119,24 @@ function drawBuyForm(pricing) {
     '<div id="points-result"></div>' +
     '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
     '<div id="turnstile-container"></div>' +
-    '<p class="muted paypal-card-note">💳 No PayPal account needed — click below and choose ' +
-    '"Pay with Debit or Credit Card" to check out as a guest.</p>' +
-    '<div id="paypal-button-container" class="paypal-container"></div>' +
-    '<p class="muted buy-security-note">🔒 Secure, encrypted checkout via PayPal</p>' +
+    '<p class="muted stripe-card-note">💳 Pay by card, Apple Pay, or Google Pay — whichever your device supports shows up automatically below.</p>' +
+    '<form id="stripe-payment-form" data-act="stripe-pay-submit">' +
+    '<div id="stripe-payment-element" class="stripe-container"><p class="muted">Loading payment options…</p></div>' +
+    '<p class="error-text" id="stripe-pay-error"></p>' +
+    '<button class="btn-primary" id="stripe-pay-button" type="submit" disabled>Pay now</button>' +
+    '</form>' +
+    '<p class="muted buy-security-note">🔒 Secure, encrypted checkout via Stripe</p>' +
     '</div>' +
     '</div>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
   renderTurnstileWidget();
-  if (PAYPAL_CLIENT_ID.indexOf('REPLACE') !== -1) {
-    var el = document.getElementById('paypal-button-container');
+  if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
+    var el = document.getElementById('stripe-payment-element');
     if (el) el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
     return;
   }
-  loadPayPalSdk(function () { renderPayPalButtons(); });
+  loadStripeSdk(function () { mountStripePaymentElement(); });
 }
 
 function updateBuyTotalDisplay() {
@@ -1136,8 +1149,8 @@ function updateBuyTotalDisplay() {
   var finalCents = buyPricing.priceCents;
   if (applying) {
     finalCents = Math.max(0, buyPricing.priceCents - pointsAvailable);
-    // Mirrors the server's floor (see /paypal/create-order) so the preview matches what
-    // actually gets charged -- a partial discount can't leave less than this payable via PayPal.
+    // Mirrors the server's floor (see quoteCheckout) so the preview matches what actually gets
+    // charged -- a partial discount can't leave less than this payable through the processor.
     var minCents = buyPricing.minPaypalChargeCents || 0;
     if (finalCents > 0 && finalCents < minCents) {
       pointsApplied = Math.max(0, buyPricing.priceCents - minCents);
@@ -1147,49 +1160,86 @@ function updateBuyTotalDisplay() {
   totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (applying ? ' (' + pointsApplied + ' points applied)' : '');
 }
 
-function renderPayPalButtons() {
-  var el = document.getElementById('paypal-button-container');
+var stripeObj = null;         // the Stripe(publishableKey) instance, created once and reused
+var stripeElementsObj = null; // current Elements group, re-created whenever the quoted amount changes
+
+// Fetches a fresh PaymentIntent (reflecting the current email/points-checkbox state -- same
+// "just-in-time, always current" idea as PayPal's createOrder callback, just triggered by
+// mount/re-mount instead of a button click, since Stripe's Payment Element needs a real
+// clientSecret up front rather than lazily on click) and mounts the Payment Element into it.
+function mountStripePaymentElement() {
+  var el = document.getElementById('stripe-payment-element');
   if (!el) return;
-  if (PAYPAL_CLIENT_ID.indexOf('REPLACE') !== -1) {
+  if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
     el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
     return;
   }
-  // PayPal's .render() appends into the container rather than replacing it -- clearing first
-  // guarantees only one button set ever shows, even if this gets called more than once for the
-  // same container (belt-and-suspenders alongside the shared-promise fix in loadPayPalSdk).
-  el.innerHTML = '';
-  window.paypal.Buttons({
-    style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', height: 45 },
-    createOrder: function () {
-      var turnstileToken = '';
-      try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-      catch (ignored) { turnstileToken = ''; }
-      var emailEl = document.getElementById('buy-email');
-      var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
-      var applyCheckbox = document.getElementById('apply-points-checkbox');
-      var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
-      return apiFetch('/paypal/create-order', {
-        method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints },
-      }).then(function (r) { return r.orderId; });
-    },
-    onApprove: function (data) {
-      var emailEl = document.getElementById('buy-email');
-      var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
-      return apiFetch('/paypal/capture-order', {
-        method: 'POST', body: { orderId: data.orderID, examType: 'notary', email: email },
-      }).then(function (res) {
-        setToken(res.token);
-        state.examType = res.examType;
-        var local = loadLocalPrefs();
-        applyTheme(local.theme, local.fontScale);
-        renderPurchaseSuccess(res.code, res.pointsApplied);
-      }).catch(function () {
-        appEl.innerHTML = '<h1>Something went wrong</h1>' +
-          '<p class="muted">Your payment may have gone through — contact whoever runs this site before trying ' +
-          'again, so you don\'t get charged twice.</p>';
+  var payBtn = document.getElementById('stripe-pay-button');
+  if (payBtn) payBtn.disabled = true;
+  waitForTurnstileToken(function (turnstileToken) {
+    var emailEl = document.getElementById('buy-email');
+    var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
+    var applyCheckbox = document.getElementById('apply-points-checkbox');
+    var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
+    apiFetch('/stripe/create-intent', {
+      method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints },
+    }).then(function (r) {
+      stripeObj = stripeObj || Stripe(STRIPE_PUBLISHABLE_KEY);
+      var local = loadLocalPrefs();
+      var isDark = local.theme === 'dark' || (local.theme === 'system' &&
+        window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      stripeElementsObj = stripeObj.elements({
+        clientSecret: r.clientSecret,
+        appearance: {
+          theme: isDark ? 'night' : 'stripe',
+          variables: { colorPrimary: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() },
+        },
       });
-    },
-  }).render('#paypal-button-container');
+      var paymentElement = stripeElementsObj.create('payment');
+      el.innerHTML = '';
+      paymentElement.mount('#stripe-payment-element');
+      if (payBtn) payBtn.disabled = false;
+    }).catch(function () {
+      el.innerHTML = '<p class="error-text">Could not load payment options. Try again shortly.</p>';
+    });
+  });
+}
+
+async function submitStripePayment() {
+  var errorEl = document.getElementById('stripe-pay-error');
+  var payBtn = document.getElementById('stripe-pay-button');
+  if (errorEl) errorEl.textContent = '';
+  if (!stripeObj || !stripeElementsObj) return;
+  if (payBtn) payBtn.disabled = true;
+
+  var result = await stripeObj.confirmPayment({
+    elements: stripeElementsObj,
+    redirect: 'if_required', // card/wallet payments confirm in place; only 3rd-party-redirect
+                              // methods (not offered here) would ever need the full-page bounce.
+  });
+
+  if (result.error) {
+    if (errorEl) errorEl.textContent = result.error.message || 'Payment failed. Please try again.';
+    if (payBtn) payBtn.disabled = false;
+    return;
+  }
+
+  var emailEl = document.getElementById('buy-email');
+  var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
+  try {
+    var res = await apiFetch('/stripe/confirm', {
+      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: 'notary', email: email },
+    });
+    setToken(res.token);
+    state.examType = res.examType;
+    var local = loadLocalPrefs();
+    applyTheme(local.theme, local.fontScale);
+    renderPurchaseSuccess(res.code, res.pointsApplied);
+  } catch (err) {
+    appEl.innerHTML = '<h1>Something went wrong</h1>' +
+      '<p class="muted">Your payment may have gone through — contact whoever runs this site before trying ' +
+      'again, so you don\'t get charged twice.</p>';
+  }
 }
 
 function renderPurchaseSuccess(code, pointsApplied) {
@@ -1492,7 +1542,10 @@ async function submitAnswer(choice) {
 
 document.addEventListener('submit', async function (e) {
   var act = e.target.getAttribute && e.target.getAttribute('data-act');
-  if (act === 'redeem-submit') {
+  if (act === 'stripe-pay-submit') {
+    e.preventDefault();
+    await submitStripePayment();
+  } else if (act === 'redeem-submit') {
     e.preventDefault();
     var code = e.target.code.value.trim();
     var turnstileToken = '';
@@ -1591,7 +1644,7 @@ document.addEventListener('submit', async function (e) {
       });
       appEl.innerHTML = '<h1>Request submitted</h1>' +
         '<p class="muted">We\'ll review it and get back to you at the email you provided. Approved refunds ' +
-        'of $' + (claimRes.refundCents / 100).toFixed(2) + ' are processed directly through PayPal.</p>' +
+        'of $' + (claimRes.refundCents / 100).toFixed(2) + ' are processed directly through your original payment method.</p>' +
         '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
     } catch (err) {
       var refundErrCode = err.data && err.data.error;
@@ -1738,6 +1791,7 @@ document.addEventListener('click', async function (e) {
     renderResourcesTable();
   } else if (act === 'toggle-apply-points') {
     updateBuyTotalDisplay();
+    if (document.getElementById('stripe-payment-form')) mountStripePaymentElement();
   } else if (act === 'check-points') {
     var pointsEmailEl = document.getElementById('buy-email');
     var checkEmail = pointsEmailEl ? pointsEmailEl.value.trim() : '';
