@@ -750,8 +750,34 @@ function progressTopicsTableHtml() {
     '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
+var progressResetPending = null; // null | 'quiz' | 'all' -- which scope (if any) is awaiting confirmation
+
+// In-page confirmation instead of a native confirm() popup, matching this app's own design
+// system rather than an OS-native dialog for a destructive action.
+function progressResetSectionHtml() {
+  if (progressResetPending) {
+    var scopeLabel = progressResetPending === 'all'
+      ? 'your quiz progress AND all past Mock Exam attempts/scores'
+      : 'your quiz progress (topic stats and wrong-questions list)';
+    return '<div class="card progress-reset-card">' +
+      '<p><strong class="result-incorrect">Reset ' + scopeLabel + '? This can\'t be undone.</strong></p>' +
+      '<div class="progress-reset-actions">' +
+      '<button class="btn-primary" type="button" data-act="progress-reset-confirm" data-scope="' + progressResetPending + '">Yes, reset</button>' +
+      '<button class="btn-secondary" type="button" data-act="progress-reset-cancel">Cancel</button>' +
+      '</div></div>';
+  }
+  return '<div class="card progress-reset-card">' +
+    '<h3>Reset Progress</h3>' +
+    '<p class="muted">Start fresh on the question rotation and wrong-questions list.</p>' +
+    '<div class="progress-reset-actions">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="progress-reset-select" data-scope="quiz">Reset quiz progress</button>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="progress-reset-select" data-scope="all">Reset everything (incl. exam history)</button>' +
+    '</div></div>';
+}
+
 async function renderProgress() {
   appEl.innerHTML = renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
+  progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
   var p = await apiFetch('/progress');
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
@@ -792,7 +818,8 @@ async function renderProgress() {
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
     '</div>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
-    wrongQuestionsSection;
+    wrongQuestionsSection +
+    '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
 
 // ---- Locked previews (Quiz/Exam/Progress, logged-out visitors) -----------
@@ -1816,6 +1843,25 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'progress-reset-select') {
+    progressResetPending = el.getAttribute('data-scope');
+    var resetWrapSelect = document.getElementById('progress-reset-wrap');
+    if (resetWrapSelect) resetWrapSelect.innerHTML = progressResetSectionHtml();
+  } else if (act === 'progress-reset-cancel') {
+    progressResetPending = null;
+    var resetWrapCancel = document.getElementById('progress-reset-wrap');
+    if (resetWrapCancel) resetWrapCancel.innerHTML = progressResetSectionHtml();
+  } else if (act === 'progress-reset-confirm') {
+    var resetScope = el.getAttribute('data-scope');
+    el.disabled = true;
+    try {
+      await apiFetch('/progress/reset', { method: 'POST', body: { scope: resetScope } });
+      renderProgress();
+    } catch (err) {
+      el.disabled = false;
+      var resetWrapErr = document.getElementById('progress-reset-wrap');
+      if (resetWrapErr) resetWrapErr.insertAdjacentHTML('beforeend', '<p class="error-text">Could not reset. Try again shortly.</p>');
+    }
   } else if (act === 'scroll-to-tracks') {
     var tracksEl = document.getElementById('tracks');
     if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
