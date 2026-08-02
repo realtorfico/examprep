@@ -704,6 +704,9 @@ function drawQuestion() {
 
 var progressByTopic = null; // stashed so the table can be re-sorted without a re-fetch
 var progressSort = { key: 'topic', dir: 'asc' };
+var progressTopicsExpanded = false; // collapsed by default -- a full topic list (30+ rows for
+// notary) otherwise pushes the wrong-questions section below the fold, especially on mobile.
+var PROGRESS_TOPICS_COLLAPSED_COUNT = 5;
 
 function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
 
@@ -716,15 +719,21 @@ function progressTopicsTableHtml() {
     if (av > bv) return dir === 'asc' ? 1 : -1;
     return 0;
   });
+  var truncated = !progressTopicsExpanded && sorted.length > PROGRESS_TOPICS_COLLAPSED_COUNT;
+  var visible = truncated ? sorted.slice(0, PROGRESS_TOPICS_COLLAPSED_COUNT) : sorted;
   var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
-  var rows = sorted.map(function (t) {
+  var rows = visible.map(function (t) {
     return '<tr><td>' + t.topic + '</td><td>' + progressTopicPct(t) + '%</td><td>' + t.total + '</td></tr>';
   }).join('');
+  var toggleHtml = sorted.length > PROGRESS_TOPICS_COLLAPSED_COUNT
+    ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-progress-topics">' +
+      (truncated ? 'Show all ' + sorted.length + ' topics ▾' : 'Show fewer ▴') + '</button>'
+    : '';
   return '<table class="progress-topics-table"><thead><tr>' +
     '<th data-act="sort-progress-topics" data-sort-key="topic">Topic' + arrow('topic') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="pct">Accuracy' + arrow('pct') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="total">Questions' + arrow('total') + '</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+    '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
 async function renderProgress() {
@@ -1775,6 +1784,10 @@ document.addEventListener('click', async function (e) {
     else { progressSort.key = sortKey; progressSort.dir = sortKey === 'topic' ? 'asc' : 'desc'; }
     var topicsWrap = document.getElementById('progress-topics-wrap');
     if (topicsWrap) topicsWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'toggle-progress-topics') {
+    progressTopicsExpanded = !progressTopicsExpanded;
+    var toggleWrap = document.getElementById('progress-topics-wrap');
+    if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
   } else if (act === 'scroll-to-tracks') {
     var tracksEl = document.getElementById('tracks');
     if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });

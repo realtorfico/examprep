@@ -469,7 +469,8 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .resource-free-badge { background: color-mix(in srgb, var(--correct) 18%, transparent); color: var(--correct); border-color: color-mix(in srgb, var(--correct) 35%, transparent); }
 .resource-progress-note { font-size: 0.7rem; margin-top: 0.3rem; }
 
-.progress-topics-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0 1.25rem; }
+.progress-topics-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0 0; }
+.progress-topics-toggle { margin: 0.6rem 0 1.25rem; }
 .progress-topics-table th, .progress-topics-table td {
   text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border);
 }
