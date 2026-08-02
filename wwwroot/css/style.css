@@ -348,9 +348,16 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .quiz-difficulty-pill button:hover { color: var(--accent); }
 .quiz-difficulty-pill button.active { background: var(--accent); color: #fff; }
 .quiz-autoadvance-toggle {
-  display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted);
-  margin-bottom: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--fg);
+  margin-bottom: 0.85rem; cursor: pointer; width: fit-content;
+  padding: 0.45rem 0.9rem; border: 1.5px solid var(--border); border-radius: 999px;
+  transition: border-color 0.15s, background-color 0.15s;
 }
+.quiz-autoadvance-toggle:hover { border-color: var(--accent); }
+.quiz-autoadvance-toggle:has(input:checked) {
+  border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.quiz-autoadvance-toggle input[type="checkbox"] { width: 1.05em; height: 1.05em; accent-color: var(--accent); }
 
 /* Hub / exam-track landing page */
 .hub-hero { text-align: center; padding: 1.5rem 0 1rem; }
