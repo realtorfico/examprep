@@ -2,6 +2,13 @@
 var appEl = document.getElementById('app');
 var state = { question: null, answered: null, examType: 'notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
 var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
+// Off by default -- matches pre-existing behavior unless the user opts in. Persisted like the
+// difficulty filter. quizRenderToken invalidates any pending auto-advance timer as soon as a new
+// question loads through ANY path (manual Next click, tab re-entry, difficulty change, ...), so
+// a stale timer can never yank the user forward into a question they didn't mean to skip to.
+var quizAutoAdvance = localStorage.getItem('examprep_quiz_autoadvance') === '1';
+var quizRenderToken = 0;
+var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" before moving on
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -637,6 +644,7 @@ function renderResourcesTable() {
 }
 
 async function renderQuiz() {
+  quizRenderToken++; // invalidates any pending auto-advance timer scheduled for a prior question
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>';
   try {
     var qs = state.quizDifficulty ? '?difficulty=' + state.quizDifficulty : '';
@@ -658,6 +666,12 @@ function renderQuizDifficultyPicker() {
       return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="quiz-difficulty" data-difficulty="' + d[0] + '"' +
         (active ? ' aria-current="true"' : '') + '>' + d[1] + '</button>';
     }).join('') + '</div>';
+}
+
+function renderQuizAutoAdvanceToggle() {
+  return '<label class="quiz-autoadvance-toggle">' +
+    '<input type="checkbox" data-act="toggle-quiz-autoadvance"' + (quizAutoAdvance ? ' checked' : '') + '> ' +
+    'Auto-advance when I answer correctly</label>';
 }
 
 function drawQuestion() {
@@ -691,6 +705,7 @@ function drawQuestion() {
 
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
     renderQuizDifficultyPicker() +
+    renderQuizAutoAdvanceToggle() +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
@@ -1601,6 +1616,16 @@ async function submitAnswer(choice) {
   var res = await apiFetch('/answer', { method: 'POST', body: { questionId: state.question.id, choice: choice } });
   state.answered = { picked: choice, correct: res.correct, correctChoice: res.correctChoice, explanation: res.explanation };
   drawQuestion();
+
+  if (res.correct && quizAutoAdvance) {
+    var tokenAtSchedule = quizRenderToken;
+    setTimeout(function () {
+      // Only advance if nothing else has already loaded a new question in the meantime (manual
+      // Next click, tab switch and back, difficulty change, ...) -- renderQuiz() bumps the token
+      // on every call, so a stale timer just becomes a no-op instead of yanking the user forward.
+      if (quizRenderToken === tokenAtSchedule) renderQuiz();
+    }, QUIZ_AUTO_ADVANCE_DELAY_MS);
+  }
 }
 
 // ---- Delegated event handling (CSP-safe: no inline handlers) --------------
@@ -1756,6 +1781,9 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_quiz_difficulty', newDifficulty);
     stopSpeaking();
     renderQuiz();
+  } else if (act === 'toggle-quiz-autoadvance') {
+    quizAutoAdvance = el.checked;
+    localStorage.setItem('examprep_quiz_autoadvance', quizAutoAdvance ? '1' : '0');
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'sample-answer') {

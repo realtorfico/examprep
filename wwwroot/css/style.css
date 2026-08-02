@@ -347,6 +347,10 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .quiz-difficulty-pill button:last-child { border-right: none; }
 .quiz-difficulty-pill button:hover { color: var(--accent); }
 .quiz-difficulty-pill button.active { background: var(--accent); color: #fff; }
+.quiz-autoadvance-toggle {
+  display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted);
+  margin-bottom: 0.85rem; cursor: pointer;
+}
 
 /* Hub / exam-track landing page */
 .hub-hero { text-align: center; padding: 1.5rem 0 1rem; }
