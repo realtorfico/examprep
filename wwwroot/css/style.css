@@ -336,9 +336,12 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; }
 
+.quiz-controls-row { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.85rem; }
+@media (min-width: 640px) {
+  .quiz-controls-row { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+}
 .quiz-difficulty-pill {
   display: flex; max-width: 100%; overflow-x: auto; border: 1.5px solid var(--border); border-radius: 999px;
-  margin-bottom: 0.85rem;
 }
 .quiz-difficulty-pill button {
   border: none; border-radius: 0; background: transparent; color: var(--muted); white-space: nowrap;
@@ -349,7 +352,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .quiz-difficulty-pill button.active { background: var(--accent); color: #fff; }
 .quiz-autoadvance-toggle {
   display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--fg);
-  margin-bottom: 0.85rem; cursor: pointer; width: fit-content;
+  cursor: pointer; width: fit-content;
   padding: 0.45rem 0.9rem; border: 1.5px solid var(--border); border-radius: 999px;
   transition: border-color 0.15s, background-color 0.15s;
 }

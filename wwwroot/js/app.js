@@ -704,8 +704,7 @@ function drawQuestion() {
     : '';
 
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
-    renderQuizDifficultyPicker() +
-    renderQuizAutoAdvanceToggle() +
+    '<div class="quiz-controls-row">' + renderQuizDifficultyPicker() + renderQuizAutoAdvanceToggle() + '</div>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
