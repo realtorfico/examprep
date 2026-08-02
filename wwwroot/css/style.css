@@ -469,6 +469,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .resource-free-badge { background: color-mix(in srgb, var(--correct) 18%, transparent); color: var(--correct); border-color: color-mix(in srgb, var(--correct) 35%, transparent); }
 .resource-progress-note { font-size: 0.7rem; margin-top: 0.3rem; }
 
+.progress-topics-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0 1.25rem; }
+.progress-topics-table th, .progress-topics-table td {
+  text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border);
+}
+.progress-topics-table th {
+  background: var(--surface-2); font-weight: 700; cursor: pointer; user-select: none;
+  text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; color: var(--muted);
+}
+.progress-topics-table th:hover { color: var(--fg); }
+.progress-topics-table tbody tr:last-child td { border-bottom: none; }
+.progress-topics-table tbody tr:hover { background: color-mix(in srgb, var(--fg) 4%, transparent); }
+
 /* Resources index table (Type/Name/Topic/Length/Status/Action) — sortable headers, expandable rows */
 .resources-index-table th[data-act="sort-resources"] { cursor: pointer; user-select: none; }
 .resources-index-table th[data-act="sort-resources"]:hover { color: var(--fg); }

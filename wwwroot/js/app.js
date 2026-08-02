@@ -702,22 +702,73 @@ function drawQuestion() {
   setupMic();
 }
 
+var progressByTopic = null; // stashed so the table can be re-sorted without a re-fetch
+var progressSort = { key: 'topic', dir: 'asc' };
+
+function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
+
+function progressTopicsTableHtml() {
+  var key = progressSort.key, dir = progressSort.dir;
+  var sorted = (progressByTopic || []).slice().sort(function (a, b) {
+    var av = key === 'pct' ? progressTopicPct(a) : key === 'total' ? a.total : a.topic.toLowerCase();
+    var bv = key === 'pct' ? progressTopicPct(b) : key === 'total' ? b.total : b.topic.toLowerCase();
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
+  var rows = sorted.map(function (t) {
+    return '<tr><td>' + t.topic + '</td><td>' + progressTopicPct(t) + '%</td><td>' + t.total + '</td></tr>';
+  }).join('');
+  return '<table class="progress-topics-table"><thead><tr>' +
+    '<th data-act="sort-progress-topics" data-sort-key="topic">Topic' + arrow('topic') + '</th>' +
+    '<th data-act="sort-progress-topics" data-sort-key="pct">Accuracy' + arrow('pct') + '</th>' +
+    '<th data-act="sort-progress-topics" data-sort-key="total">Questions' + arrow('total') + '</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
 async function renderProgress() {
   appEl.innerHTML = renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
   var p = await apiFetch('/progress');
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
-  var rows = p.byTopic.map(function (t) {
-    var tPct = t.total ? Math.round((100 * t.correct) / t.total) : 0;
-    return '<div class="card exam-card"><span>' + t.topic + '</span><span>' + tPct + '% (' + t.total + ')</span></div>';
+  progressByTopic = p.byTopic;
+
+  // Reuses the exact same review-item markup as the mock exam's answer review (question text,
+  // A-D options with correct/wrong highlighting, explanation box) -- each <details> is the
+  // "clickable" part, collapsed by default so the list stays scannable at a glance.
+  var wrongQuestionsHtml = (p.wrongQuestions || []).map(function (r) {
+    var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
+      var cls = 'option-btn';
+      if (k === r.correctChoice) cls += ' correct';
+      else if (k === r.yourChoice) cls += ' wrong';
+      return optionButtonHtml(k, r.choices[k], cls, 'disabled');
+    }).join('');
+    var yourAnswerNote = r.yourChoice
+      ? '<strong class="result-incorrect">Your answer: ' + r.yourChoice + '.</strong> '
+      : '<strong class="muted">Answered before we started recording your pick — retake it to see it here.</strong> ';
+    return '<details class="card mockexam-review-item">' +
+      '<summary>' + r.topic + ' — ' + r.question.slice(0, 80) + (r.question.length > 80 ? '…' : '') + '</summary>' +
+      '<div class="question-text">' + r.question + '</div>' +
+      '<div class="options-grid">' + choiceHtml + '</div>' +
+      '<div class="explanation-box">' + yourAnswerNote + r.explanation + '</div>' +
+      '</details>';
   }).join('');
+  var wrongQuestionsSection = wrong > 0
+    ? '<h3 class="mockexam-review-heading">Questions you got wrong (' + (p.wrongQuestions || []).length + ')</h3>' +
+      '<p class="muted">Click any question below to see your answer, the correct one, and why.</p>' +
+      wrongQuestionsHtml
+    : '';
+
   appEl.innerHTML = renderUserBar() + renderTabs('progress') +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
-    '</div>' + rows;
+    '</div>' +
+    '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
+    wrongQuestionsSection;
 }
 
 // ---- Locked previews (Quiz/Exam/Progress, logged-out visitors) -----------
@@ -781,11 +832,16 @@ function renderLockedProgressPreview() {
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">11</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">74%</div></div>' +
     '</div>' +
-    '<div class="card exam-card"><span>Fees, Misconduct &amp; Conflict of Interest</span><span>78% (18)</span></div>' +
-    '<div class="card exam-card"><span>Acknowledgment, Jurat &amp; Journal</span><span>69% (14)</span></div>';
+    '<table class="progress-topics-table"><thead><tr><th>Topic ▲</th><th>Accuracy</th><th>Questions</th></tr></thead>' +
+    '<tbody>' +
+    '<tr><td>Acknowledgment, Jurat &amp; Journal</td><td>69%</td><td>14</td></tr>' +
+    '<tr><td>Fees, Misconduct &amp; Conflict of Interest</td><td>78%</td><td>18</td></tr>' +
+    '</tbody></table>' +
+    '<h3 class="mockexam-review-heading">Questions you got wrong (11)</h3>' +
+    '<details class="card mockexam-review-item"><summary>Fees — A notary is asked to notarize…</summary></details>';
   renderLockedTabPreview('progress', 'Progress',
     mockup,
-    'Sign in or unlock full access to track your own real progress by topic.');
+    'Sign in or unlock full access to track your own real progress by topic, and review every question you got wrong.');
 }
 
 // ---- Additional information (official external links, per exam type) -----
@@ -1713,6 +1769,12 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
     var bannerEl = el.closest('.news-flash-banner');
     if (bannerEl) bannerEl.remove();
+  } else if (act === 'sort-progress-topics') {
+    var sortKey = el.getAttribute('data-sort-key');
+    if (progressSort.key === sortKey) progressSort.dir = progressSort.dir === 'asc' ? 'desc' : 'asc';
+    else { progressSort.key = sortKey; progressSort.dir = sortKey === 'topic' ? 'asc' : 'desc'; }
+    var topicsWrap = document.getElementById('progress-topics-wrap');
+    if (topicsWrap) topicsWrap.innerHTML = progressTopicsTableHtml();
   } else if (act === 'scroll-to-tracks') {
     var tracksEl = document.getElementById('tracks');
     if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
