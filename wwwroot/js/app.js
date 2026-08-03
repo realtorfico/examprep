@@ -1068,10 +1068,10 @@ function drawExamSitting() {
     '<div>Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length +
     ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
     '<div class="mockexam-timer" id="exam-timer-display">' + formatClock(examSecondsRemaining()) + '</div>' +
-    '</div>' +
     '<label class="auto-advance-toggle">' +
     '<input type="checkbox" data-act="toggle-exam-autoadvance"' + (examAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance after I answer</label>' +
+    '</div>' +
     '<div class="mockexam-nav-grid">' + navGrid + '</div>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
