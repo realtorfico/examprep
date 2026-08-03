@@ -336,6 +336,14 @@ var NOTARY_POA_TABLE = {
   sourceNote: 'Source: [1] California Government Code, Civil Code, and Probate Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_TANGIBLE_COPY_TABLE = {
+  headers: ['Certified Entity', 'Custodian Requirements', 'Certification Content', 'Execution Method', 'Legal Basis'],
+  rows: [
+    ['Tangible copy of an electronic record', 'A disinterested custodian who does not directly benefit from the electronic record and is not a grantee or beneficiary.', 'Document title, date of document, and page count; statement that the copy is an accurate reproduction; confirmation that the electronic record was accessed with tamper-evident security procedures intact; statement that no changes or errors occurred after creation, execution, or notarization; signed under penalty of perjury.', 'The certification must be subscribed and sworn to, or affirmed, by the disinterested custodian before a notary public and accompanied by a jurat.', 'California Government Code sections 27201.1 and 8202'],
+  ],
+  sourceNote: 'Source: [1] California Government Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -387,6 +395,9 @@ var RESOURCES = {
     { title: 'Power of Attorney Notarial Acts and Requirements', type: 'table', table: NOTARY_POA_TABLE,
       desc: 'Notarial acts involving powers of attorney — acknowledgment, journal entry, and certified-copy requirements, with legal code references.',
       topic: 'Powers Of Attorney' },
+    { title: 'Tangible Copy of an Electronic Record Certification', type: 'table', table: NOTARY_TANGIBLE_COPY_TABLE,
+      desc: 'Custodian and certification requirements for producing a tangible copy of an electronic record, with legal code references.',
+      topic: 'Tangible Copy Certification' },
     { title: 'California Notary Rules', type: 'video', file: 'California_Notary_Rules.mp4',
       desc: 'A video overview of key California notary rules every applicant should know.',
       topic: 'Application, Commission & Misc', sizeBytes: 29605729 },
