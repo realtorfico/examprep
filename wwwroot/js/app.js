@@ -498,6 +498,7 @@ var RESOURCES_PROMO_BANNER =
 var resourcesRowsCache = [];
 var resourcesSort = { key: 'status', dir: -1 }; // dir:-1 so unlocked/free rows (higher value) sort first
 var resourcesOpenIndex = null;
+var currentResourcesTopic = null; // null = "All"
 var resourceProgressCache = {}; // resourceKey -> {percent, timesOpened}, logged-in users only
 
 // Best-effort -- a tracking hiccup should never block the resource itself from playing.
@@ -558,6 +559,10 @@ async function renderResources() {
       lengthSeconds: null, estimatedLengthSeconds: estimateDurationSeconds(r.type, r.sizeBytes),
     };
   });
+  // A stale filter (e.g. left over from a different exam track) shouldn't hide everything.
+  if (currentResourcesTopic && !resourcesRowsCache.some(function (r) { return r.topic === currentResourcesTopic; })) {
+    currentResourcesTopic = null;
+  }
 
   var intro = loggedIn
     ? '<p class="muted resources-intro">Guided material to go with your practice questions.</p>'
@@ -589,8 +594,34 @@ async function renderResources() {
   });
 }
 
+function distinctResourceTopics() {
+  var seen = {}, topics = [];
+  resourcesRowsCache.forEach(function (r) { if (!seen[r.topic]) { seen[r.topic] = true; topics.push(r.topic); } });
+  topics.sort();
+  return topics;
+}
+
+function resourceTopicCounts() {
+  var counts = {};
+  resourcesRowsCache.forEach(function (r) { counts[r.topic] = (counts[r.topic] || 0) + 1; });
+  return counts;
+}
+
+function renderResourceTopicSubTabs() {
+  var counts = resourceTopicCounts();
+  var tabs = [null].concat(distinctResourceTopics());
+  return '<nav class="tabs sub-tabs topic-sub-tabs">' + tabs.map(function (t) {
+    var count = t === null ? resourcesRowsCache.length : (counts[t] || 0);
+    return '<a href="#" data-act="select-resource-topic-tab" data-topic="' + (t === null ? '' : t) + '"' +
+      (t === currentResourcesTopic ? ' aria-current="page"' : '') + '>' +
+      (t === null ? 'All' : t) + ' (' + count + ')</a>';
+  }).join('') + '</nav>';
+}
+
 function sortedResourceRows() {
-  var rows = resourcesRowsCache.slice();
+  var rows = currentResourcesTopic
+    ? resourcesRowsCache.filter(function (r) { return r.topic === currentResourcesTopic; })
+    : resourcesRowsCache.slice();
   var key = resourcesSort.key, dir = resourcesSort.dir;
   rows.sort(function (a, b) {
     var av, bv;
@@ -680,7 +711,9 @@ function renderResourcesTable() {
       '<p class="muted resource-desc">' + row.desc + '</p>' + inner + '</td></tr>';
   }).join('');
 
-  container.innerHTML = '<div class="resource-table-scroll"><table class="resource-table resources-index-table">' +
+  var empty = bodyHtml ? '' : '<p class="muted">No resources yet for this topic.</p>';
+  container.innerHTML = renderResourceTopicSubTabs() + empty +
+    '<div class="resource-table-scroll"><table class="resource-table resources-index-table">' +
     '<thead><tr>' + headerCells + '</tr></thead><tbody>' + bodyHtml + '</tbody></table></div>';
 
   // Track audio/video watch progress -- throttled to avoid posting on every timeupdate tick
@@ -1867,6 +1900,10 @@ document.addEventListener('change', function (e) {
 document.addEventListener('click', async function (e) {
   var el = e.target.closest && e.target.closest('[data-act]');
   if (!el) return;
+  // Sub-tab links are real <a href="#"> (for the pill styling), but are handled entirely here --
+  // without this, the browser's own navigation to "#" would fire the hashchange listener and
+  // the router would fall back to the default tab, undoing the tab switch this handler just made.
+  if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
   var act = el.getAttribute('data-act');
   if (act === 'listen') {
     var text = state.question.question + '. ' +
@@ -2003,6 +2040,10 @@ document.addEventListener('click', async function (e) {
     var sortKey = el.getAttribute('data-key');
     if (resourcesSort.key === sortKey) resourcesSort.dir *= -1;
     else { resourcesSort.key = sortKey; resourcesSort.dir = 1; }
+    renderResourcesTable();
+  } else if (act === 'select-resource-topic-tab') {
+    currentResourcesTopic = el.getAttribute('data-topic') || null;
+    resourcesOpenIndex = null; // avoid a now-hidden row staying "expanded" behind the scenes
     renderResourcesTable();
   } else if (act === 'toggle-resource-media') {
     var toggleIdx = Number(el.getAttribute('data-index'));
