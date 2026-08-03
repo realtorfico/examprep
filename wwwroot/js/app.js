@@ -811,7 +811,7 @@ async function renderProgress() {
   var wrongQuestionsSection = wrong > 0
     ? '<h3 class="mockexam-review-heading">Questions you got wrong (' + (p.wrongQuestions || []).length + ')</h3>' +
       '<p class="muted">Click any question below to see your answer, the correct one, and why.</p>' +
-      wrongQuestionsHtml
+      '<div class="progress-wrong-list">' + wrongQuestionsHtml + '</div>'
     : '';
 
   appEl.innerHTML = renderUserBar() + renderTabs('progress') +

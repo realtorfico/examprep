@@ -230,6 +230,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .mockexam-review-item .question-text, .mockexam-review-item .options-grid, .mockexam-review-item .explanation-box { margin-top: 0.6rem; }
 .wrong-only-toggle { display: block; margin: 0.75rem 0; font-size: 0.85rem; color: var(--muted); }
 .review-wrong-only .mockexam-review-item[data-correct="true"] { display: none; }
+.progress-wrong-list .mockexam-review-item summary { font-size: 0.85rem; }
+.progress-wrong-list .mockexam-review-item .question-text,
+.progress-wrong-list .mockexam-review-item .options-grid,
+.progress-wrong-list .mockexam-review-item .explanation-box { font-size: 0.85rem; }
 
 .exam-history-list { display: flex; flex-direction: column; gap: 0.6rem; }
 .exam-history-row {
