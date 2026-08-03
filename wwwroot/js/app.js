@@ -344,6 +344,17 @@ var NOTARY_TANGIBLE_COPY_TABLE = {
   sourceNote: 'Source: [1] California Government Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_IMMIGRATION_TABLE = {
+  headers: ['Regulation Type', 'Permitted Actions', 'Prohibited Actions', 'Maximum Fee', 'Legal Authority/Code Reference', 'Penalty for Violation'],
+  rows: [
+    ['Data Entry on Forms', 'A notary public qualified and bonded as an immigration consultant may enter data, provided by the client, on immigration forms provided by a federal or state agency.', 'A notary public who is not qualified and bonded as an immigration consultant may not enter data provided by a client on immigration forms nor otherwise perform the services of an immigration consultant.', '$15 per individual for each set of forms', 'Government Code section 8223; Business and Professions Code section 22440', 'Revocation or suspension of commission'],
+    ['Advertising Restrictions', 'Notarizing immigration documents is not prohibited.', 'A notary public is legally barred from advertising in any manner whatsoever as a notary public if the notary public promotes themself as an immigration specialist or consultant.', 'Not in source', 'Government Code section 8223', 'Revocation or suspension of commission'],
+    ['Foreign Language Advertising', 'Non-attorney notaries advertising in a language other than English must post a notice in English and the other language stating they are not an attorney and cannot give legal advice about immigration.', 'A notary public may not translate into Spanish the term "Notary Public" as "notario publico" or "notario," even if the prescribed notice is posted.', 'Must list the fees set by statute that a notary public may charge', 'Government Code section 8219.5', 'First offense: suspension or revocation of commission. Second offense: permanent revocation of commission.'],
+    ['Deferred Action for Childhood Arrivals (DACA)', 'Notaries public are authorized to charge fees for providing notary public services associated with filing a DACA application.', 'Participating in price gouging (pressuring clients to purchase services immediately to avoid higher future prices).', '$15 per signature (statutory notary fee)', 'Business and Professions Code section 22449', 'Revocation or suspension of commission'],
+  ],
+  sourceNote: 'Source: [1] California Government Code and Business and Professions Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -404,6 +415,9 @@ var RESOURCES = {
     { title: 'Tangible Copy Certification', type: 'video', file: 'Tangible_Copy_Certification.mp4',
       desc: 'A video overview of the custodian and certification requirements for tangible copies of electronic records.',
       topic: 'Tangible Copy Certification', sizeBytes: 28459208 },
+    { title: 'Immigration Document Regulations', type: 'table', table: NOTARY_IMMIGRATION_TABLE,
+      desc: 'Permitted and prohibited notary conduct around immigration documents — data entry, advertising, and DACA fee rules — with legal code references.',
+      topic: 'Immigration Documents' },
     { title: 'California Notary Rules', type: 'video', file: 'California_Notary_Rules.mp4',
       desc: 'A video overview of key California notary rules every applicant should know.',
       topic: 'Application, Commission & Misc', sizeBytes: 29605729 },
