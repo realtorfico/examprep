@@ -99,7 +99,7 @@ function renderSiteFooter() {
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
     '<div class="muted">Not affiliated with, endorsed by, or sponsored by the California Secretary of State or any state licensing agency. Practice questions only — passing the real exam isn\'t guaranteed, though we back that risk with our 50% refund guarantee.</div>' +
-    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a></nav>' +
+    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
 
@@ -150,6 +150,25 @@ function renderPrivacy() {
     'Payments are processed by Stripe directly; we don\'t see or store your payment details. Contact whoever ' +
     'issued your code with any privacy questions.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
+}
+
+function renderContact() {
+  appEl.innerHTML =
+    '<div class="refer-page">' +
+    '<h1>Contact Us</h1>' +
+    '<p class="muted">Questions about your account, a purchase, or anything else — send us a note and we\'ll reply to your email.</p>' +
+    '<form data-act="contact-submit" class="card">' +
+    '<label class="muted buy-email-label">Your name (optional)</label>' +
+    '<input type="text" name="name" placeholder="Jane Doe">' +
+    '<label class="muted buy-email-label refund-field-spacing">Your email</label>' +
+    '<input type="email" name="email" placeholder="you@example.com" required>' +
+    '<label class="muted buy-email-label refund-field-spacing">Message</label>' +
+    '<textarea name="message" rows="5" placeholder="How can we help?" required></textarea>' +
+    '<div id="turnstile-container"></div>' +
+    '<button class="btn-primary" type="submit">Send message</button>' +
+    '</form>' +
+    '</div>';
+  renderTurnstileWidget();
 }
 
 // ---- Views --------------------------------------------------------------
@@ -1752,6 +1771,7 @@ function route() {
   var hashView = (location.hash || '').replace('#/', '');
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
+  if (hashView === 'contact') { renderContact(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else if (location.pathname.indexOf('/notary') === 0) renderNotaryApp();
   else renderHub();
@@ -1899,6 +1919,34 @@ document.addEventListener('submit', async function (e) {
       renderRefundRequest();
       var refundFormEl = document.querySelector('form[data-act="refund-claim-submit"]');
       if (refundFormEl) refundFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + refundMsg + '</p>');
+    }
+  } else if (act === 'contact-submit') {
+    e.preventDefault();
+    var contactForm = e.target;
+    var contactTurnstileToken = '';
+    try { contactTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { contactTurnstileToken = ''; }
+    try {
+      await apiFetch('/contact', {
+        method: 'POST',
+        body: {
+          name: contactForm.name.value.trim() || undefined,
+          email: contactForm.email.value.trim(),
+          message: contactForm.message.value.trim(),
+          turnstileToken: contactTurnstileToken,
+        },
+      });
+      appEl.innerHTML = '<h1>Message sent</h1>' +
+        '<p class="muted">Thanks for reaching out — we\'ll reply to your email as soon as we can.</p>' +
+        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+    } catch (err) {
+      var contactErrCode = err.data && err.data.error;
+      var contactMsg = contactErrCode === 'contact_not_configured' || contactErrCode === 'send_failed'
+        ? 'Sorry, something went wrong on our end sending this — please try again shortly.'
+        : 'Something went wrong. Please try again.';
+      renderContact();
+      var contactFormEl = document.querySelector('form[data-act="contact-submit"]');
+      if (contactFormEl) contactFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + contactMsg + '</p>');
     }
   }
 });

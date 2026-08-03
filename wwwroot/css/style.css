@@ -274,11 +274,12 @@ nav.sub-tabs a[aria-current="page"] {
 .result-incorrect { color: var(--incorrect); }
 #turnstile-container { margin: 0.5rem 0; }
 
-input[type="text"], input[type="email"], input[type="date"], input[type="number"], select {
+input[type="text"], input[type="email"], input[type="date"], input[type="number"], select, textarea {
   width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
   background: var(--surface-2); color: var(--fg); font-size: 1rem; font-family: inherit;
 }
-input::placeholder { color: var(--muted); opacity: 1; }
+textarea { resize: vertical; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .redeem-page { text-align: center; max-width: 420px; margin: 1.5rem auto 0; }
 .redeem-icon { font-size: 2.5rem; margin-bottom: 0.25rem; }
 .redeem-card {
