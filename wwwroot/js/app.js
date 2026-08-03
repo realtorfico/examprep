@@ -325,6 +325,17 @@ var NOTARY_FINES_TABLE = {
   sourceNote: 'Source: [1] California Government Code and Civil Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_POA_TABLE = {
+  headers: ['Act Type', 'Requirement or Description', 'Maximum Fee', 'Legal Code Reference', 'Thumbprint Required (Inferred)'],
+  rows: [
+    ['Acknowledgment (Power of Attorney)', 'Notaries may take the acknowledgment of powers of attorney. The signer must personally appear and be identified via satisfactory evidence. The notary must include a specific boxed notice at the top of the certificate.', '$15 for each signature', 'Government Code section 8205(a)(2); Government Code section 8211(a); Civil Code section 1189', 'Yes'],
+    ['Journal Entry (Power of Attorney)', 'The notary public shall require the party signing a power of attorney document to place their right thumbprint (or other finger if unavailable) in the sequential journal.', 'Not in source', 'Government Code section 8206(a)(2)(G)', 'Yes'],
+    ['Certifying Copies of Power of Attorney', "A notary public can certify copies of powers of attorney. The notary must examine the original and the copy to certify that the copy is true and correct. The certification must state the notary's name, the date of appearance, and that they compared the documents.", '$15', 'Probate Code section 4307; Government Code section 8211(e)', 'No'],
+    ['Subscribing Witness Restriction', 'A proof of execution by a subscribing witness cannot be used in conjunction with any power of attorney.', 'N/A', 'Civil Code section 1195(b)(1); Government Code section 27287', 'No'],
+  ],
+  sourceNote: 'Source: [1] California Government Code, Civil Code, and Probate Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -373,6 +384,9 @@ var RESOURCES = {
     { title: 'California Notary Violations & Enforcement Table', type: 'table', table: NOTARY_FINES_TABLE,
       desc: 'Common violations with legal references, administrative sanctions, civil penalties, and criminal classifications — a common exam topic.',
       topic: 'Fines and Enforcements' },
+    { title: 'Power of Attorney Notarial Acts and Requirements', type: 'table', table: NOTARY_POA_TABLE,
+      desc: 'Notarial acts involving powers of attorney — acknowledgment, journal entry, and certified-copy requirements, with legal code references.',
+      topic: 'Acknowledgment, Jurat & Journal' },
     { title: 'California Notary Rules', type: 'video', file: 'California_Notary_Rules.mp4',
       desc: 'A video overview of key California notary rules every applicant should know.',
       topic: 'Application, Commission & Misc', sizeBytes: 29605729 },
