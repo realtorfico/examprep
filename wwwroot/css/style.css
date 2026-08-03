@@ -211,6 +211,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   color: var(--accent);
 }
 .mockexam-timer.mockexam-timer-low { background: color-mix(in srgb, var(--incorrect) 20%, transparent); color: var(--incorrect); }
+.exam-nav-toggle { margin-bottom: 0.75rem; }
 .mockexam-nav-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(2.4rem, 1fr)); gap: 0.4rem;
   margin-bottom: 1rem;

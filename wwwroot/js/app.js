@@ -13,6 +13,7 @@ var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" befo
 // answer, right after the /exam/answer save completes -- no artificial delay needed, the
 // network round-trip already gives a brief natural pause before the screen changes.
 var examAutoAdvance = localStorage.getItem('examprep_exam_autoadvance') === '1';
+var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -1050,12 +1051,19 @@ function drawExamSitting() {
   var q = attempt.questions[examState.currentIndex];
   var answeredCount = Object.keys(attempt.answers).length;
 
-  var navGrid = attempt.questions.map(function (question, i) {
-    var cls = 'mockexam-nav-btn';
-    if (i === examState.currentIndex) cls += ' current';
-    if (attempt.answers[question.id]) cls += ' answered';
-    return '<button type="button" class="' + cls + '" data-act="exam-goto" data-index="' + i + '">' + (i + 1) + '</button>';
-  }).join('');
+  // Collapsed by default -- a 45-box grid eats a lot of vertical space, especially on mobile
+  // where it can push the actual question below the fold before the user scrolls.
+  var navGridHtml = '<button class="btn-secondary btn-sm exam-nav-toggle" type="button" data-act="toggle-exam-nav">' +
+    (examNavExpanded ? 'Hide question list ▲' : 'Jump to a question ▾') + '</button>';
+  if (examNavExpanded) {
+    var navGrid = attempt.questions.map(function (question, i) {
+      var cls = 'mockexam-nav-btn';
+      if (i === examState.currentIndex) cls += ' current';
+      if (attempt.answers[question.id]) cls += ' answered';
+      return '<button type="button" class="' + cls + '" data-act="exam-goto" data-index="' + i + '">' + (i + 1) + '</button>';
+    }).join('');
+    navGridHtml += '<div class="mockexam-nav-grid">' + navGrid + '</div>';
+  }
 
   var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
     var cls = 'option-btn';
@@ -1072,7 +1080,7 @@ function drawExamSitting() {
     '<input type="checkbox" data-act="toggle-exam-autoadvance"' + (examAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance after I answer</label>' +
     '</div>' +
-    '<div class="mockexam-nav-grid">' + navGrid + '</div>' +
+    navGridHtml +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
@@ -1827,6 +1835,9 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'toggle-exam-autoadvance') {
     examAutoAdvance = el.checked;
     localStorage.setItem('examprep_exam_autoadvance', examAutoAdvance ? '1' : '0');
+  } else if (act === 'toggle-exam-nav') {
+    examNavExpanded = !examNavExpanded;
+    drawExamSitting();
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'sample-answer') {
