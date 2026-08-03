@@ -118,6 +118,7 @@ a { color: var(--accent); }
 .stat-box .val.accuracy { color: var(--accent); }
 .stat-box .val.correct { color: var(--correct); }
 .stat-box .val.wrong { color: var(--incorrect); }
+.progress-breakdown-note { margin-top: 0.5rem; }
 
 .card {
   background: var(--surface-2); border: 1px solid var(--border);

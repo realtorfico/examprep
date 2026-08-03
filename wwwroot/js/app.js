@@ -873,10 +873,22 @@ function progressResetSectionHtml() {
 async function renderProgress() {
   appEl.innerHTML = renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
-  var p = await apiFetch('/progress');
+  var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history')]);
+  var p = results[0];
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
   progressByTopic = p.byTopic;
+
+  // The totals above are a "last attempt wins" snapshot shared by quiz and mock exam (a question
+  // answered in both only reflects whichever happened most recently) -- exam_attempts has no such
+  // ambiguity per attempt, so it's the only way to show an exact mock-exam-only figure alongside.
+  var examTotals = (results[1].attempts || []).reduce(function (acc, a) {
+    acc.correct += a.correct; acc.total += a.total; return acc;
+  }, { correct: 0, total: 0 });
+  var examPct = examTotals.total ? Math.round((100 * examTotals.correct) / examTotals.total) : 0;
+  var examBreakdownNote = examTotals.total
+    ? 'Includes both quiz and mock exam questions — mock exam: ' + examTotals.correct + '/' + examTotals.total + ' (' + examPct + '%).'
+    : 'Includes both quiz and mock exam questions — no mock exam attempts yet.';
 
   // Reuses the exact same review-item markup as the mock exam's answer review (question text,
   // A-D options with correct/wrong highlighting, explanation box) -- each <details> is the
@@ -912,6 +924,7 @@ async function renderProgress() {
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
     '</div>' +
+    '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
     wrongQuestionsSection +
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
