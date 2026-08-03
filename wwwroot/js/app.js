@@ -392,7 +392,7 @@ var RESOURCES = {
       topic: 'Application, Commission & Misc', sizeBytes: 29605729 },
     { title: 'Why California Notaries Demand Your Thumbprint', type: 'audio', file: 'Why_California_Notaries_Demand_Your_Thumbprint.m4a',
       desc: 'A guided audio walkthrough of when and why California notaries require a right thumbprint in the journal.',
-      topic: 'Acknowledgment, Jurat & Journal', sizeBytes: 46611248 },
+      topic: 'Powers Of Attorney', sizeBytes: 46611248 },
     { title: 'California Powers of Attorney', type: 'video', file: 'CA_Powers_of_Attorney.mp4',
       desc: 'A video overview of notarial acts involving powers of attorney — acknowledgment, journal entry, and certified-copy rules.',
       topic: 'Powers Of Attorney', sizeBytes: 34638651 },
