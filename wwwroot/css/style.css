@@ -96,9 +96,10 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   /* Icon-only theme toggle on phones -- saves header width where the logo, track badge, and
-     profile icon are already competing for space. */
+     profile icon are already competing for space. 600px (not a tighter 480px) to also cover
+     foldables/larger phones that report a wider CSS viewport than a typical phone. */
   .theme-toggle-label { display: none; }
 }
 .header-logo-group { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
