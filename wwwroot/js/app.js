@@ -74,8 +74,7 @@ function renderSiteHeader() {
     '<div class="site-shell top-controls">' +
     '<div class="header-logo-group">' + logo + (loggedIn ? '<span class="header-track-badge">California Notary</span>' : '') + '</div>' +
     '<div class="control-group">' +
-    '<span class="muted font-label">Font:</span>' +
-    '<div class="font-size-pill">' +
+    '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +
     '<button data-act="font-up">A+</button>' +
     '</div>' +
@@ -90,9 +89,13 @@ function updateThemeButton() {
   var nextTheme = local.theme === 'light' ? 'dark' : 'light';
   var btn = document.getElementById('theme-toggle-btn');
   if (!btn) return;
-  // Label shows what clicking WILL switch to (the destination), not the current theme.
-  btn.textContent = nextTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+  // Label shows what clicking WILL switch to (the destination), not the current theme. The word
+  // itself is hidden on narrow screens via CSS to save header space -- the icon alone still works.
+  var icon = nextTheme === 'dark' ? '🌙' : '☀️';
+  var label = nextTheme === 'dark' ? 'Dark' : 'Light';
+  btn.innerHTML = icon + ' <span class="theme-toggle-label">' + label + '</span>';
   btn.setAttribute('data-next', nextTheme);
+  btn.setAttribute('aria-label', 'Switch to ' + label + ' mode');
 }
 
 var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this build pipeline

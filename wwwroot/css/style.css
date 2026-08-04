@@ -96,6 +96,11 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
+@media (max-width: 480px) {
+  /* Icon-only theme toggle on phones -- saves header width where the logo, track badge, and
+     profile icon are already competing for space. */
+  .theme-toggle-label { display: none; }
+}
 .header-logo-group { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 
 .header-track-badge {
@@ -361,7 +366,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; }
 .footer-links { display: flex; gap: 1rem; }
 .footer-links a { color: var(--muted); font-size: 0.8rem; }
-.font-label { font-size: 0.8rem; }
 .font-size-pill { display: inline-flex; border: 1.5px solid var(--border); border-radius: 999px; overflow: hidden; }
 .font-size-pill button {
   border: none; border-radius: 0; background: transparent; color: var(--fg);
