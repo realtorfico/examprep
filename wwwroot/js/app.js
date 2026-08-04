@@ -37,11 +37,18 @@ function optionButtonHtml(letter, text, cls, attrs) {
     '<span class="option-letter">' + letter + '</span><span class="option-text">' + text + '</span>' + icon + '</button>';
 }
 
+// CSP (style-src 'self', no unsafe-inline) blocks inline styles set via JS too, not just
+// style="..." attributes -- so --font-scale can't be set with style.setProperty(). fontScale is
+// bounded [0.85, 1.4] in 0.05 steps (12 values, see font-up/down below), so a small fixed set of
+// font-scale-NN classes (see style.css) covers it instead.
 function applyTheme(theme, fontScale) {
   var root = document.documentElement;
   if (theme && theme !== 'system') root.setAttribute('data-theme', theme);
   else root.removeAttribute('data-theme');
-  if (fontScale) root.style.setProperty('--font-scale', fontScale);
+  if (fontScale) {
+    root.className = root.className.replace(/\bfont-scale-\d+\b/g, '').trim();
+    root.classList.add('font-scale-' + Math.round(fontScale * 100));
+  }
 }
 
 function loadLocalPrefs() {
@@ -219,9 +226,12 @@ function renderHub() {
     var breakdown = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
       exam.breakdown.map(function (b) {
         var pct = parseInt(b[1], 10) || 0;
+        // CSP blocks inline style="width:X%" -- pct-N classes (see style.css) cover the exact
+        // set of breakdown percentages used across HUB_EXAMS instead. Add a new .pct-N rule
+        // there if a future breakdown introduces a percentage not already covered.
         return '<div class="breakdown-row">' +
           '<div class="breakdown-row-top"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>' +
-          '<div class="breakdown-bar"><div class="breakdown-bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
           '</div>';
       }).join('') +
       '</div>';
@@ -610,7 +620,8 @@ async function renderResources() {
     probe.preload = 'metadata';
     // display:none is unreliable for firing loadedmetadata in some browsers -- this keeps the
     // element genuinely "rendered" (so loading actually proceeds) while staying invisible.
-    probe.style.cssText = 'position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; top:-9999px;';
+    // CSP blocks inline style.cssText, hence a class (see .resource-duration-probe in style.css).
+    probe.classList.add('resource-duration-probe');
     probe.muted = true;
     probe.addEventListener('loadedmetadata', function () {
       row.lengthSeconds = probe.duration;
@@ -1585,7 +1596,7 @@ function renderRefundRequest() {
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="exam_failure_50pct"> ' +
     '<span><strong>Pass or 50% Back</strong><br><span class="muted">Half refund if you took and failed the real exam.</span></span></label>' +
     '</div>' +
-    '<div id="refund-failure-fields" class="refund-failure-fields" style="display:none">' +
+    '<div id="refund-failure-fields" class="refund-failure-fields">' +
     '<label class="muted buy-email-label">Exam date</label>' +
     '<input type="date" name="examDate">' +
     '<label class="muted buy-email-label refund-field-spacing">Confirmation/candidate ID (optional)</label>' +
@@ -1648,7 +1659,7 @@ async function renderReferForm() {
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
     '<strong>' + required + ' points</strong> to unlock the California Notary course completely free.</p>' +
     '<div class="refer-progress">' +
-    '<div class="refer-progress-bar"><div class="refer-progress-fill" style="width:0%"></div></div>' +
+    '<div class="refer-progress-bar"><div class="refer-progress-fill"></div></div>' +
     '<div class="refer-progress-label muted">0 / ' + required + ' points — <a href="#/buy">check your real balance →</a></div>' +
     '</div>' +
     '<form data-act="refer-submit" class="card">' +
@@ -2021,7 +2032,7 @@ document.addEventListener('submit', async function (e) {
 document.addEventListener('change', function (e) {
   if (e.target && e.target.name === 'claimType') {
     var failureFields = document.getElementById('refund-failure-fields');
-    if (failureFields) failureFields.style.display = e.target.value === 'exam_failure_50pct' ? '' : 'none';
+    if (failureFields) failureFields.classList.toggle('shown', e.target.value === 'exam_failure_50pct');
   }
 });
 

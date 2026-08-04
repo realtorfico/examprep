@@ -37,6 +37,21 @@
 
 * { box-sizing: border-box; }
 html { font-size: calc(16px * var(--font-scale)); }
+/* CSP (style-src 'self') blocks setting --font-scale via JS (style.setProperty) -- these classes
+   cover the fixed 12-value range the A-/A+ control steps through (0.85-1.4 in 0.05 increments;
+   see applyTheme() in app.js), toggled on <html> instead. */
+:root.font-scale-85 { --font-scale: 0.85; }
+:root.font-scale-90 { --font-scale: 0.9; }
+:root.font-scale-95 { --font-scale: 0.95; }
+:root.font-scale-100 { --font-scale: 1; }
+:root.font-scale-105 { --font-scale: 1.05; }
+:root.font-scale-110 { --font-scale: 1.1; }
+:root.font-scale-115 { --font-scale: 1.15; }
+:root.font-scale-120 { --font-scale: 1.2; }
+:root.font-scale-125 { --font-scale: 1.25; }
+:root.font-scale-130 { --font-scale: 1.3; }
+:root.font-scale-135 { --font-scale: 1.35; }
+:root.font-scale-140 { --font-scale: 1.4; }
 body {
   margin: 0; background: var(--bg); color: var(--fg); min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -341,7 +356,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .refer-progress { margin: 1rem 0; }
 .refer-progress-bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-.refer-progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.refer-progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 999px; }
 .refer-progress-label { font-size: 0.78rem; margin-top: 0.35rem; text-align: right; }
 .refund-field-spacing { margin-top: 0.75rem; }
 .refund-claim-type-options { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -350,7 +365,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.7rem 0.85rem; font-size: 0.9rem; cursor: pointer;
 }
 .refund-claim-type-option input { margin-top: 0.2rem; }
-.refund-failure-fields { margin-top: 0.75rem; }
+/* CSP blocks inline style.display -- hidden by default, .shown toggled via classList instead. */
+.refund-failure-fields { display: none; margin-top: 0.75rem; }
+.refund-failure-fields.shown { display: block; }
 #referred-friends-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
 .referred-friend-row { display: flex; gap: 0.5rem; align-items: center; }
 .referred-friend-row input[type="text"] { flex: 1 1 40%; }
@@ -442,6 +459,19 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
 .breakdown-bar { height: 2px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
 .breakdown-bar-fill { height: 100%; background: var(--highlight); border-radius: 999px; }
+/* CSP blocks inline style="width:X%" -- one class per distinct percentage actually used across
+   HUB_EXAMS's breakdown arrays (app.js). Add a new .pct-N here if a future breakdown value isn't
+   already covered. */
+.pct-15 { width: 15%; }
+.pct-17 { width: 17%; }
+.pct-18 { width: 18%; }
+.pct-20 { width: 20%; }
+.pct-23 { width: 23%; }
+.pct-24 { width: 24%; }
+.pct-25 { width: 25%; }
+.pct-27 { width: 27%; }
+.pct-30 { width: 30%; }
+.pct-35 { width: 35%; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 0.5rem;
@@ -540,6 +570,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .resources-index-table th[data-act="sort-resources"] { cursor: pointer; user-select: none; }
 .resources-index-table th[data-act="sort-resources"]:hover { color: var(--fg); }
 .resources-index-expand-row td { background: var(--surface-2); padding: 1rem 0.75rem; }
+/* CSP blocks inline style.cssText -- hidden but still "rendered" duration probe (see resources.js). */
+.resource-duration-probe { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; top: -9999px; }
 .resource-type-cell { display: inline-flex; align-items: center; gap: 0.35rem; }
 .resource-action-icon-btn {
   width: 2.1rem; height: 2.1rem; padding: 0; border-radius: 999px; flex-shrink: 0;
