@@ -847,6 +847,19 @@ function renderQuizToggles() {
   return '<div class="quiz-toggles-group">' + renderQuizAutoAdvanceToggle() + renderQuizAutoReadToggle() + '</div>';
 }
 
+// Mobile-only collapse (CSS media query) -- desktop always shows the content regardless of this
+// flag, since there's room for it there. Re-rendered via drawQuestion() on toggle, not a fresh
+// question fetch, so answered state/etc. is untouched.
+var quizControlsExpanded = false;
+function renderQuizControlsSection() {
+  return '<div class="quiz-controls-row">' +
+    '<button class="quiz-controls-toggle" type="button" data-act="toggle-quiz-controls">' +
+    'Quiz settings ' + (quizControlsExpanded ? '▴' : '▾') + '</button>' +
+    '<div class="quiz-controls-content' + (quizControlsExpanded ? ' expanded' : '') + '">' +
+    renderQuizDifficultyPicker() + renderQuizToggles() + '</div>' +
+    '</div>';
+}
+
 // Shared by the manual "Read aloud" button and auto-read, so both stay in sync.
 function questionReadText(q) {
   return q.question + '. ' + ['A', 'B', 'C', 'D'].map(function (k) { return k + '. ' + q.choices[k]; }).join('. ');
@@ -886,7 +899,7 @@ function drawQuestion() {
 
   appEl.innerHTML = renderTabs('quiz') +
     renderQuizStatsBarHtml() +
-    '<div class="quiz-controls-row">' + renderQuizDifficultyPicker() + renderQuizToggles() + '</div>' +
+    renderQuizControlsSection() +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
@@ -2060,6 +2073,9 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_quiz_difficulty', newDifficulty);
     stopSpeaking();
     renderQuiz();
+  } else if (act === 'toggle-quiz-controls') {
+    quizControlsExpanded = !quizControlsExpanded;
+    drawQuestion();
   } else if (act === 'toggle-quiz-autoadvance') {
     quizAutoAdvance = el.checked;
     localStorage.setItem('examprep_quiz_autoadvance', quizAutoAdvance ? '1' : '0');

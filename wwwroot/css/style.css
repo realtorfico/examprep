@@ -400,9 +400,22 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; }
 
-.quiz-controls-row { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.85rem; }
-@media (min-width: 640px) {
-  .quiz-controls-row { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.quiz-controls-row { margin-bottom: 0.85rem; }
+.quiz-controls-content { display: flex; flex-direction: column; gap: 0.6rem; }
+@media (min-width: 600px) {
+  .quiz-controls-content { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+}
+.quiz-controls-toggle { display: none; }
+@media (max-width: 599px) {
+  /* Collapsed by default on mobile only -- difficulty/auto-advance/auto-read is a set-once-and-
+     forget choice, not something worth 3 always-visible rows above every single question. */
+  .quiz-controls-toggle {
+    display: block; width: 100%; text-align: left; background: var(--surface-2);
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 0.55rem 0.9rem;
+    font-size: 0.85rem; font-weight: 700; color: var(--fg); cursor: pointer;
+  }
+  .quiz-controls-content { display: none; margin-top: 0.6rem; }
+  .quiz-controls-content.expanded { display: flex; }
 }
 .quiz-difficulty-pill {
   display: flex; max-width: 100%; overflow-x: auto; border: 1.5px solid var(--border); border-radius: 999px;
