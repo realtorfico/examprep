@@ -522,6 +522,15 @@ function resourceTypeCellHtml(type) {
   return '<span class="resource-type-cell"><span>' + t.icon + '</span><span>' + t.label + '</span></span>';
 }
 
+// Native <audio controls>/<video controls> has a draggable scrubber but no dedicated skip
+// buttons in any browser -- these fill that gap for long lecture-style recordings.
+function resourcePlayerSkipControlsHtml() {
+  return '<div class="resource-player-skip">' +
+    '<button type="button" class="btn-secondary btn-sm" data-act="skip-resource-player" data-seek="-15">⏪ 15s</button>' +
+    '<button type="button" class="btn-secondary btn-sm" data-act="skip-resource-player" data-seek="15">15s ⏩</button>' +
+    '</div>';
+}
+
 function resourceTableInnerHtml(t) {
   var headerRow = '<tr>' + t.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
   var bodyRows = t.rows.map(function (row) {
@@ -772,10 +781,10 @@ function renderResourcesTable() {
     var inner = '';
     if (row.type === 'audio') {
       inner = '<audio class="resource-player" controls autoplay preload="metadata" data-resource-key="' + row.resourceKey + '" data-resource-type="audio"' +
-        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></audio>';
+        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></audio>' + resourcePlayerSkipControlsHtml();
     } else if (row.type === 'video') {
       inner = '<video class="resource-player" controls autoplay preload="metadata" data-resource-key="' + row.resourceKey + '" data-resource-type="video"' +
-        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></video>';
+        (row.downloadable ? '' : ' controlsList="nodownload" oncontextmenu="return false"') + ' src="' + row.url + '"></video>' + resourcePlayerSkipControlsHtml();
     } else if (row.type === 'image') {
       inner = '<img class="resource-thumb" src="' + row.url + '" alt="' + row.title + '" oncontextmenu="return false">';
     } else if (row.type === 'table') {
@@ -2269,6 +2278,9 @@ document.addEventListener('click', async function (e) {
       }
     }
     renderResourcesTable();
+  } else if (act === 'skip-resource-player') {
+    var seekPlayer = document.querySelector('.resource-player[data-resource-key]');
+    if (seekPlayer) seekPlayer.currentTime = Math.max(0, seekPlayer.currentTime + (Number(el.getAttribute('data-seek')) || 0));
   } else if (act === 'toggle-apply-points') {
     updateBuyTotalDisplay();
     if (document.getElementById('stripe-payment-form')) mountStripePaymentElement();

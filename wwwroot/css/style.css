@@ -572,6 +572,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .resources-intro { margin-top: 0.5rem; }
 .resource-desc { font-size: 0.8rem; }
 .resource-player { width: 100%; }
+.resource-player-skip { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
 .resource-thumb { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
 .resource-pdf-frame { width: 100%; height: 420px; border-radius: 8px; border: 1px solid var(--border); }
 .resource-table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
