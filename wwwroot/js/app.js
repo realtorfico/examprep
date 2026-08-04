@@ -313,7 +313,7 @@ function renderTabs(active) {
   // the real content/data (see renderLockedTabPreview and the guard in renderNotaryApp).
   var loggedIn = !!getToken();
   var gated = { quiz: true, exam: true, progress: true };
-  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']];
+  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">California Notary</div>' : '';
   return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
@@ -2097,6 +2097,12 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
     var bannerEl = el.closest('.news-flash-banner');
     if (bannerEl) bannerEl.remove();
+  } else if (act === 'reload-for-update') {
+    location.reload();
+  } else if (act === 'dismiss-update-banner') {
+    updateBannerDismissed = true;
+    var updateBannerEl = document.getElementById('update-available-banner');
+    if (updateBannerEl) updateBannerEl.remove();
   } else if (act === 'sort-progress-topics') {
     var sortKey = el.getAttribute('data-sort-key');
     if (progressSort.key === sortKey) progressSort.dir = progressSort.dir === 'asc' ? 'desc' : 'asc';
@@ -2267,6 +2273,43 @@ document.addEventListener('click', function (e) {
   var openMenu = document.querySelector('.profile-menu.open');
   if (openMenu && !openMenu.contains(e.target)) openMenu.classList.remove('open');
 });
+
+// ---- Update checker ---------------------------------------------------
+// index.html itself is served with max-age=0 (always revalidated on a real page load), but this
+// is a long-lived SPA -- someone who leaves a tab open for hours/days never re-fetches it on
+// their own, so they can sit on stale JS/CSS indefinitely without knowing. Periodically re-fetch
+// it in the background and compare app.js's cache-bust version; if it changed, show a dismissible
+// banner with a Refresh button rather than force-reloading (which could interrupt something like
+// an in-progress mock exam, even though exam state itself would survive the reload).
+var UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
+var updateBannerDismissed = false;
+
+function currentAppJsVersion() {
+  var el = document.querySelector('script[src*="/js/app.js"]');
+  var m = el && el.src.match(/[?&]v=(\d+)/);
+  return m ? m[1] : null;
+}
+
+function checkForUpdate() {
+  if (updateBannerDismissed || document.getElementById('update-available-banner')) return;
+  fetch('/', { cache: 'no-store' }).then(function (res) { return res.text(); }).then(function (html) {
+    var m = html.match(/\/js\/app\.js\?v=(\d+)/);
+    var latest = m ? m[1] : null;
+    var current = currentAppJsVersion();
+    if (!latest || !current || latest === current) return;
+    document.body.insertAdjacentHTML('afterbegin',
+      '<div class="update-available-banner" id="update-available-banner">' +
+      '<span>A new version of ExamPrep is available.</span>' +
+      '<button class="btn-primary btn-sm" type="button" data-act="reload-for-update">Refresh</button>' +
+      '<button class="update-available-dismiss" type="button" data-act="dismiss-update-banner" aria-label="Dismiss">✕</button>' +
+      '</div>');
+  }).catch(function () {}); // best-effort -- never disrupts the app itself
+}
+
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') checkForUpdate();
+});
+setInterval(function () { if (document.visibilityState === 'visible') checkForUpdate(); }, UPDATE_CHECK_INTERVAL_MS);
 
 // ---- Boot -------------------------------------------------------------
 
