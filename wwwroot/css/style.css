@@ -119,7 +119,7 @@ a { color: var(--accent); }
 }
 
 /* Which exam track, shown above the tab nav on every view -- compact single line, not a banner. */
-.track-heading { font-weight: 800; font-size: 0.95rem; color: var(--accent); letter-spacing: -0.01em; }
+.track-heading { font-weight: 800; font-size: 1.15rem; color: var(--accent); letter-spacing: -0.01em; text-align: center; }
 
 /* Account menu: profile icon button + dropdown, replaces the old always-visible log-out bar */
 .profile-menu { position: relative; }
