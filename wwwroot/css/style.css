@@ -116,6 +116,10 @@ a { color: var(--accent); }
      already competing for space. 600px (not a tighter 480px) to also cover foldables/larger
      phones that report a wider CSS viewport than a typical phone. */
   .theme-toggle-label { display: none; }
+  /* Below this width the logo and control-group don't reliably fit on one line -- rather than
+     leaving it to flex-wrap + space-between (which, once wrapped, can leave odd leading space
+     on the wrapped line in some engines), stack them as a plain left-aligned column instead. */
+  .top-controls { flex-direction: column; align-items: flex-start; }
 }
 
 /* Which exam track, shown above the tab nav on every view -- compact single line, not a banner. */
