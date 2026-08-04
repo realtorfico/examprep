@@ -433,6 +433,35 @@ var NOTARY_SIGNATURE_BY_MARK_TABLE = {
   sourceNote: 'Source: [1] California Civil Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_SUBSCRIBING_WITNESS_TABLE = {
+  headers: ['Term/Party Name', 'Definition/Role', 'Legal Requirements', 'Establishment of Identity', 'Restricted Document Types', 'Authorized Form/Wording'],
+  rows: [
+    ['Subscribing Witness',
+      'A person who appears on the principal\'s behalf to prove the principal signed (executed) the document.',
+      'Must see the principal sign or hear them acknowledge the signature; must be requested by the principal to sign as a witness and do so; must sign the notary\'s journal; must take an oath/affirmation before the notary.',
+      'Established by the oath of a credible witness whom the notary personally knows and who personally knows the subscribing witness.',
+      'Power of attorney, quitclaim deed, grant deed (except certain foreclosure/reconveyance deeds), mortgage, deed of trust, security agreement, any instrument affecting real property, or documents requiring a thumbprint.',
+      'Must swear/affirm that they personally know the principal, saw the principal sign (or heard acknowledgment), and signed at the principal\'s request.'],
+    ['Proof of Execution Certificate',
+      'The statutory notarial certificate attached to the document to verify the execution by a subscribing witness.',
+      'Must include the boxed consumer notice at the top; must be executed under penalty of perjury; must be signed and sealed by the notary.',
+      'Not in source', 'Not in source',
+      '"A notary public or other officer completing this certificate verifies only the identity of the individual who signed the document to which this certificate is attached, and not the truthfulness, accuracy, or validity of that document. ... personally appeared [Name of subscribing witness], proved to me to be the person whose name is subscribed to the within instrument, as a witness thereto, on the oath of [Name of credible witness]..."'],
+    ['Principal',
+      'The person who has signed a document but does not personally appear before a notary public.',
+      'Must have signed the document; must request the subscribing witness to sign the document as a witness; must either be seen signing by the witness or acknowledge the signature to the witness in person.',
+      'Proved by the subscribing witness under oath, who must swear they personally know the principal.',
+      'Not in source', 'Not in source'],
+    ['Credible Witness',
+      'An individual used to establish the identity of the subscribing witness to the notary public.',
+      'Must be personally known by the notary public; must personally know the subscribing witness; must not have a financial interest and not be named in the document; must sign the notary\'s journal.',
+      'Must present an identification document satisfying Civil Code section 1185(b)(3) or (4) (e.g., current driver\'s license or passport).',
+      'Not in source',
+      'Under oath or affirmation, the witness swears or affirms that they personally know the subscribing witness, that said witness signed the document as a subscribing witness, and the credible witness does not have a financial interest and is not named in the document.'],
+  ],
+  sourceNote: 'Source: [1] California Civil Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -508,6 +537,9 @@ var RESOURCES = {
     { title: 'Signature by Mark Requirements', type: 'table', table: NOTARY_SIGNATURE_BY_MARK_TABLE,
       desc: 'Identity verification, witness, and journal requirements when a signer cannot write their name.',
       topic: 'Signature By Mark' },
+    { title: 'Subscribing Witness Requirements', type: 'table', table: NOTARY_SUBSCRIBING_WITNESS_TABLE,
+      desc: 'Roles, requirements, and authorized wording for proof of execution by a subscribing witness.',
+      topic: 'Subscribing Witness' },
     { title: 'Rules for Immigration Documents', type: 'audio', file: 'Rules_for_Immigration_Documents.m4a',
       desc: 'A guided audio walkthrough of what California notaries can and cannot do with immigration documents.',
       topic: 'Immigration Documents', sizeBytes: 73243720 },
