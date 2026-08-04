@@ -7,6 +7,7 @@ var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate']
 // question loads through ANY path (manual Next click, tab re-entry, difficulty change, ...), so
 // a stale timer can never yank the user forward into a question they didn't mean to skip to.
 var quizAutoAdvance = localStorage.getItem('examprep_quiz_autoadvance') === '1';
+var quizAutoRead = localStorage.getItem('examprep_quiz_autoread') === '1';
 var quizRenderToken = 0;
 var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" before moving on
 // Exam mode never reveals correct/incorrect, so this one's simpler: advance regardless of the
@@ -765,6 +766,7 @@ async function renderQuiz() {
     state.question = await apiFetch('/questions/next' + qs);
     state.answered = null;
     drawQuestion();
+    if (quizAutoRead) speak(questionReadText(state.question));
   } catch (e) {
     appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
   }
@@ -786,6 +788,26 @@ function renderQuizAutoAdvanceToggle() {
   return '<label class="auto-advance-toggle">' +
     '<input type="checkbox" data-act="toggle-quiz-autoadvance"' + (quizAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance when I answer correctly</label>';
+}
+
+function renderQuizAutoReadToggle() {
+  return '<label class="auto-advance-toggle">' +
+    '<input type="checkbox" data-act="toggle-quiz-autoread"' + (quizAutoRead ? ' checked' : '') + '> ' +
+    'Auto-read question and answer</label>';
+}
+
+// Grouped so both toggles sit on the same line/pill row instead of quiz-controls-row's own
+// space-between splitting them apart from each other.
+function renderQuizToggles() {
+  return '<div class="quiz-toggles-group">' + renderQuizAutoAdvanceToggle() + renderQuizAutoReadToggle() + '</div>';
+}
+
+// Shared by the manual "Read aloud" button and auto-read, so both stay in sync.
+function questionReadText(q) {
+  return q.question + '. ' + ['A', 'B', 'C', 'D'].map(function (k) { return k + '. ' + q.choices[k]; }).join('. ');
+}
+function answerReadText(answered) {
+  return (answered.correct ? 'Correct. ' : 'Incorrect. ') + answered.explanation;
 }
 
 function drawQuestion() {
@@ -818,7 +840,7 @@ function drawQuestion() {
     : '';
 
   appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
-    '<div class="quiz-controls-row">' + renderQuizDifficultyPicker() + renderQuizAutoAdvanceToggle() + '</div>' +
+    '<div class="quiz-controls-row">' + renderQuizDifficultyPicker() + renderQuizToggles() + '</div>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
@@ -1788,7 +1810,8 @@ async function submitAnswer(choice) {
   state.answered = { picked: choice, correct: res.correct, correctChoice: res.correctChoice, explanation: res.explanation };
   drawQuestion();
 
-  if (res.correct && quizAutoAdvance) {
+  var scheduleAutoAdvance = function () {
+    if (!(res.correct && quizAutoAdvance)) return;
     var tokenAtSchedule = quizRenderToken;
     setTimeout(function () {
       // Only advance if nothing else has already loaded a new question in the meantime (manual
@@ -1796,7 +1819,12 @@ async function submitAnswer(choice) {
       // on every call, so a stale timer just becomes a no-op instead of yanking the user forward.
       if (quizRenderToken === tokenAtSchedule) renderQuiz();
     }, QUIZ_AUTO_ADVANCE_DELAY_MS);
-  }
+  };
+
+  // With auto-read on, wait for the explanation to actually finish speaking before auto-advancing
+  // -- QUIZ_AUTO_ADVANCE_DELAY_MS is far too short for that and would cut the speech off mid-word.
+  if (quizAutoRead) speak(answerReadText(state.answered), scheduleAutoAdvance);
+  else scheduleAutoAdvance();
 }
 
 // ---- Delegated event handling (CSP-safe: no inline handlers) --------------
@@ -1967,9 +1995,7 @@ document.addEventListener('click', async function (e) {
   if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
   var act = el.getAttribute('data-act');
   if (act === 'listen') {
-    var text = state.question.question + '. ' +
-      ['A', 'B', 'C', 'D'].map(function (k) { return k + '. ' + state.question.choices[k]; }).join('. ');
-    speak(text);
+    speak(questionReadText(state.question));
   } else if (act === 'answer') {
     stopSpeaking();
     if (recognition && isRecording) recognition.stop();
@@ -1987,6 +2013,11 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'toggle-quiz-autoadvance') {
     quizAutoAdvance = el.checked;
     localStorage.setItem('examprep_quiz_autoadvance', quizAutoAdvance ? '1' : '0');
+  } else if (act === 'toggle-quiz-autoread') {
+    quizAutoRead = el.checked;
+    localStorage.setItem('examprep_quiz_autoread', quizAutoRead ? '1' : '0');
+    if (!quizAutoRead) { stopSpeaking(); }
+    else if (state.question) { speak(state.answered ? answerReadText(state.answered) : questionReadText(state.question)); }
   } else if (act === 'toggle-exam-autoadvance') {
     examAutoAdvance = el.checked;
     localStorage.setItem('examprep_exam_autoadvance', examAutoAdvance ? '1' : '0');

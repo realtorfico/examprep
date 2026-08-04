@@ -378,6 +378,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .auto-advance-toggle input[type="checkbox"] { width: 1.05em; height: 1.05em; accent-color: var(--accent); }
+.quiz-toggles-group { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
 
 /* Hub / exam-track landing page */
 .hub-hero { text-align: center; padding: 1.5rem 0 1rem; }
