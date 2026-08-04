@@ -97,19 +97,14 @@ a { color: var(--accent); }
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
 @media (max-width: 600px) {
-  /* Icon-only theme toggle on phones -- saves header width where the logo, track badge, and
-     profile icon are already competing for space. 600px (not a tighter 480px) to also cover
-     foldables/larger phones that report a wider CSS viewport than a typical phone. */
+  /* Icon-only theme toggle on phones -- saves header width where the logo and profile icon are
+     already competing for space. 600px (not a tighter 480px) to also cover foldables/larger
+     phones that report a wider CSS viewport than a typical phone. */
   .theme-toggle-label { display: none; }
 }
-.header-logo-group { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 
-.header-track-badge {
-  font-size: 0.72rem; font-weight: 700; color: var(--accent); white-space: nowrap;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: 999px; padding: 0.3rem 0.7rem;
-}
+/* Which exam track, shown above the tab nav on every view -- compact single line, not a banner. */
+.track-heading { font-weight: 800; font-size: 0.95rem; color: var(--accent); letter-spacing: -0.01em; }
 
 /* Account menu: profile icon button + dropdown, replaces the old always-visible log-out bar */
 .profile-menu { position: relative; }

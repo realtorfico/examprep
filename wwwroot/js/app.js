@@ -72,7 +72,7 @@ function renderSiteHeader() {
 
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
-    '<div class="header-logo-group">' + logo + (loggedIn ? '<span class="header-track-badge">California Notary</span>' : '') + '</div>' +
+    logo +
     '<div class="control-group">' +
     '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +
@@ -304,7 +304,8 @@ function renderTabs(active) {
   var loggedIn = !!getToken();
   var gated = { quiz: true, exam: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Additional Information']];
-  return renderNewsBanner() + '<nav class="tabs">' + tabs.map(function (t) {
+  var trackHeading = loggedIn ? '<div class="track-heading">California Notary</div>' : '';
+  return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' +
       (locked ? '🔒 ' : '') + t[1] + '</a>';
