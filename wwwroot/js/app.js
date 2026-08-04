@@ -394,6 +394,34 @@ var NOTARY_IMMIGRATION_TABLE = {
   sourceNote: 'Source: [1] California Government Code and Business and Professions Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_STATUTORY_CODE_TABLE = {
+  headers: ['Code Section', 'Subject', 'Key Provisions', 'Relevant Code Type'],
+  rows: [
+    ['8200', 'Appointment and commission; number; jurisdiction', 'The Secretary of State appoints and commissions notaries public; notaries may act in any part of the state.', 'Government Code'],
+    ['8201', 'Qualifications to be a notary public; proof of course completion; reappointment', 'Requirements include being a legal resident, aged 18+ years, completing a 6-hour approved course (3-hour for renewals), and passing a written exam.', 'Government Code'],
+    ['8201.1', 'Additional qualifications; determination; identification; fingerprints', 'The Secretary of State must determine applicant honesty and integrity; requires fingerprinting for background checks.', 'Government Code'],
+    ['8202', 'Execution of jurat; administration of oath or affirmation to affiant; attachment to affidavit', 'Requires administering an oath or affirmation, verifying identity via satisfactory evidence, and using a specific boxed notice.', 'Government Code'],
+    ['8205', 'Duties', 'Notaries may demand payment of bills (financial institutions only), take acknowledgments and proofs, take depositions, and certify powers of attorney.', 'Government Code'],
+    ['8206', 'Sequential journal; contents; thumbprint; loss of journal', 'Notaries must maintain one active sequential journal in a locked area; includes specific data requirements and thumbprints for real property or power of attorney transactions.', 'Government Code'],
+    ['8207', 'Seal', 'Notaries must keep and use an official seal; the seal must be photographically reproducible and kept in a secured, locked area.', 'Government Code'],
+    ['8209', 'Resignation, disqualification or removal; records delivered to clerk', 'All notary records must be delivered to the county clerk within 30 days of commission termination or resignation.', 'Government Code'],
+    ['8211', 'Fees', 'Sets maximum fees for acknowledgments ($15), jurats ($15), and other services; $0 fee is required for voting materials.', 'Government Code'],
+    ['8213', 'Bonds and oaths; filing; transfer to new county', 'Notaries must file a $15,000 bond and oath of office with the county clerk within 30 days of commission commencement.', 'Government Code'],
+    ['8214.1', 'Grounds for refusal, revocation or suspension of commission', 'Establishes 21 grounds for discipline, including misstatements on applications, felony convictions, and failure to perform duties.', 'Government Code'],
+    ['8219.5', 'Advertising in language other than English', 'Establishes a required notice for non-attorneys and prohibits the literal translation of "Notary Public" into "Notario".', 'Government Code'],
+    ['8224', 'Conflict of interest; financial or beneficial interest', 'Prohibits notarizing documents if the notary is named individually as a principal in financial or real property transactions.', 'Government Code'],
+    ['1185', 'Acknowledgments; requisites', 'Establishes that taking an acknowledgment requires satisfactory evidence of identity via identification documents or the oaths of credible witnesses.', 'Civil Code'],
+    ['1189', 'Certificate of acknowledgment; form', 'Specifies the required wording and mandatory boxed notice for acknowledgment certificates performed within California.', 'Civil Code'],
+    ['1195', 'Proof of execution; methods; certificate form', 'Establishes procedures for proving execution by a subscribing witness; restricted for certain real property documents.', 'Civil Code'],
+    ['14', 'Words and phrases; signature by mark', 'Defines signature to include a mark if witnessed by two people who sign the document as witnesses.', 'Civil Code'],
+    ['1935', 'Subscribing witness defined', 'Defines a subscribing witness as one who sees a writing executed and signs as a witness at the party\'s request.', 'Code of Civil Procedure'],
+    ['8080', 'Fee for verification', 'Prohibits collecting a fee for verifying nomination documents or circulator\'s affidavits.', 'Elections Code'],
+    ['4307', 'Certified copies of power of attorney', 'Authorizes notaries public to certify copies of power of attorney documents.', 'Probate Code'],
+    ['115.5', 'Filing false or forged documents; false statement to notary', 'Establishes that making a false statement to a notary to induce an improper act regarding a single-family residence is a felony.', 'Penal Code'],
+  ],
+  sourceNote: 'Source: [1] California Government Code, Civil Code, Code of Civil Procedure, Elections Code, Probate Code, and Penal Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -457,6 +485,9 @@ var RESOURCES = {
     { title: 'Immigration Document Regulations', type: 'table', table: NOTARY_IMMIGRATION_TABLE,
       desc: 'Permitted and prohibited notary conduct around immigration documents — data entry, advertising, and DACA fee rules — with legal code references.',
       topic: 'Immigration Documents' },
+    { title: 'Notary Statutory Code Reference', type: 'table', table: NOTARY_STATUTORY_CODE_TABLE,
+      desc: 'Key California Government Code, Civil Code, and other statutory provisions governing notaries public, section by section.',
+      topic: 'Statutory Code' },
     { title: 'Rules for Immigration Documents', type: 'audio', file: 'Rules_for_Immigration_Documents.m4a',
       desc: 'A guided audio walkthrough of what California notaries can and cannot do with immigration documents.',
       topic: 'Immigration Documents', sizeBytes: 73243720 },
