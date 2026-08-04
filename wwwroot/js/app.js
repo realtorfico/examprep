@@ -422,6 +422,17 @@ var NOTARY_STATUTORY_CODE_TABLE = {
   sourceNote: 'Source: [1] California Government Code, Civil Code, Code of Civil Procedure, Elections Code, Probate Code, and Penal Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+var NOTARY_SIGNATURE_BY_MARK_TABLE = {
+  headers: ['Signer Capability', 'Requirement Type', 'Detailed Instruction', 'Witness Involvement', 'Journal Entry Requirements'],
+  rows: [
+    ['Unable to write name', 'Identity and Verification',
+      'The signer by mark must be identified by the notary public through satisfactory evidence as described in Civil Code section 1185. Witnesses are only verifying that they witnessed the individual make their mark on the document.',
+      'Two witnesses must subscribe their own names to the document. One witness writes the signer\'s name next to the mark and then signs their own name. A notary is not required to identify the witnesses or have them sign the journal unless they act as credible witnesses.',
+      'The signer must include their mark in the journal. An individual must write the signer\'s name next to the mark and sign their own name as a witness to the journal mark. Witness signatures are only required in the journal if they are also serving as credible witnesses to establish the signer\'s identity.'],
+  ],
+  sourceNote: 'Source: [1] California Civil Code, as compiled in the official CA Notary Public Handbook.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -494,6 +505,9 @@ var RESOURCES = {
     { title: 'CA Notary Public Lifecycle', type: 'video', file: 'CA_Notary_Public_Lifecycle.mp4',
       desc: 'A video overview of the statutory lifecycle of a California notary commission — appointment through resignation or removal.',
       topic: 'Statutory Code', sizeBytes: 43566439 },
+    { title: 'Signature by Mark Requirements', type: 'table', table: NOTARY_SIGNATURE_BY_MARK_TABLE,
+      desc: 'Identity verification, witness, and journal requirements when a signer cannot write their name.',
+      topic: 'Signature By Mark' },
     { title: 'Rules for Immigration Documents', type: 'audio', file: 'Rules_for_Immigration_Documents.m4a',
       desc: 'A guided audio walkthrough of what California notaries can and cannot do with immigration documents.',
       topic: 'Immigration Documents', sizeBytes: 73243720 },
