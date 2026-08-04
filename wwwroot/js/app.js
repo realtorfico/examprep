@@ -60,6 +60,7 @@ function saveLocalPrefs(theme, fontScale) {
 // and stay put across every route change. ----------------------------------
 
 function renderSiteHeader() {
+  var loggedIn = !!getToken();
   var logo = '<a href="/" class="site-logo">' +
     '<span class="site-logo-icon">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
@@ -71,7 +72,7 @@ function renderSiteHeader() {
 
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
-    logo +
+    '<div class="header-logo-group">' + logo + (loggedIn ? '<span class="header-track-badge">California Notary</span>' : '') + '</div>' +
     '<div class="control-group">' +
     '<span class="muted font-label">Font:</span>' +
     '<div class="font-size-pill">' +
@@ -79,6 +80,7 @@ function renderSiteHeader() {
     '<button data-act="font-up">A+</button>' +
     '</div>' +
     '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
+    (loggedIn ? renderProfileMenu() : '') +
     '</div></div>';
   updateThemeButton();
 }
@@ -121,11 +123,14 @@ function renderNewsBanner() {
     '</div>';
 }
 
-function renderUserBar() {
-  if (!getToken()) return '';
-  return '<div class="user-bar"><div class="user-info"><span class="label">Studying</span>' +
-    '<span class="value">California Notary</span></div>' +
-    '<button class="btn-secondary btn-sm" data-act="log-out">Log out</button></div>';
+// Account menu: just Log out today, but a real dropdown (not a bare button) so there's somewhere
+// to add more account-level actions later without another header redesign.
+function renderProfileMenu() {
+  return '<div class="profile-menu">' +
+    '<button class="profile-menu-btn" type="button" data-act="toggle-profile-menu" aria-label="Account menu" aria-haspopup="true">👤</button>' +
+    '<div class="profile-menu-dropdown">' +
+    '<button class="profile-menu-item" type="button" data-act="log-out">Log out</button>' +
+    '</div></div>';
 }
 
 function renderTerms() {
@@ -532,13 +537,13 @@ function postResourceProgress(resourceKey, type, percent, isNewOpen) {
 async function renderResources() {
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
-    appEl.innerHTML = renderUserBar() + renderTabs('resources') +
+    appEl.innerHTML = renderTabs('resources') +
       '<p class="muted">No study resources yet for this exam track.</p>';
     return;
   }
 
   var loggedIn = !!getToken();
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('resources') + '<p class="muted">Loading…</p>';
 
   // Logged-in sessions get everything signed; anonymous visitors only get the server's own
   // free-sample allowlist signed (see FREE_RESOURCES in examprep-api) — nothing client-side
@@ -563,7 +568,7 @@ async function renderResources() {
       signedUrls = freeRes.urls;
     }
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('resources') +
+    appEl.innerHTML = renderTabs('resources') +
       '<p>Could not load resources. Try again shortly.</p>';
     return;
   }
@@ -587,7 +592,7 @@ async function renderResources() {
   var intro = loggedIn
     ? '<p class="muted resources-intro">Guided material to go with your practice questions.</p>'
     : '';
-  appEl.innerHTML = renderUserBar() + renderTabs('resources') + intro +
+  appEl.innerHTML = renderTabs('resources') + intro +
     (loggedIn ? '' : RESOURCES_PROMO_BANNER) +
     '<div id="resources-table-container"></div>';
   renderResourcesTable();
@@ -760,16 +765,41 @@ function renderResourcesTable() {
 
 async function renderQuiz() {
   quizRenderToken++; // invalidates any pending auto-advance timer scheduled for a prior question
-  appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p class="muted">Loading question…</p>';
+  appEl.innerHTML = renderTabs('quiz') + '<p class="muted">Loading question…</p>';
   try {
     var qs = state.quizDifficulty ? '?difficulty=' + state.quizDifficulty : '';
     state.question = await apiFetch('/questions/next' + qs);
     state.answered = null;
     drawQuestion();
     if (quizAutoRead) speak(questionReadText(state.question));
+    refreshQuizStats(); // best-effort re-sync (e.g. picks up progress made via a mock exam elsewhere)
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs('quiz') + '<p>Could not load a question. Try again shortly.</p>';
   }
+}
+
+// Compact version of the Progress tab's stats-bar, kept live on the Quiz tab itself so accuracy
+// is visible continuously instead of only on a separate tab. state.quizStats is refreshed from
+// /progress/summary on every new question (self-healing, e.g. after a mock exam elsewhere) and
+// updated instantly from each /answer response in between (no extra round-trip needed for that).
+function renderQuizStatsBarHtml() {
+  var s = state.quizStats || { totalAnswered: 0, totalCorrect: 0 };
+  var wrong = s.totalAnswered - s.totalCorrect;
+  var pct = s.totalAnswered ? Math.round((100 * s.totalCorrect) / s.totalAnswered) : 0;
+  return '<div class="stats-bar quiz-stats-bar" id="quiz-stats-bar">' +
+    '<div class="stat-box"><div class="label">Total</div><div class="val">' + s.totalAnswered + '</div></div>' +
+    '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + s.totalCorrect + '</div></div>' +
+    '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
+    '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
+    '</div>';
+}
+
+function refreshQuizStats() {
+  apiFetch('/progress/summary').then(function (s) {
+    state.quizStats = s;
+    var bar = document.getElementById('quiz-stats-bar');
+    if (bar) bar.outerHTML = renderQuizStatsBarHtml();
+  }).catch(function () {}); // best-effort -- the quiz itself must never depend on this succeeding
 }
 
 // Difficulty here isn't manually tagged -- the server buckets each question by how everyone has
@@ -839,7 +869,8 @@ function drawQuestion() {
     ? '<div class="nav-controls"><button class="btn-primary" data-act="next-question">Next question →</button></div>'
     : '';
 
-  appEl.innerHTML = renderUserBar() + renderTabs('quiz') +
+  appEl.innerHTML = renderTabs('quiz') +
+    renderQuizStatsBarHtml() +
     '<div class="quiz-controls-row">' + renderQuizDifficultyPicker() + renderQuizToggles() + '</div>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
@@ -912,7 +943,7 @@ function progressResetSectionHtml() {
 }
 
 async function renderProgress() {
-  appEl.innerHTML = renderUserBar() + renderTabs('progress') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('progress') + '<p class="muted">Loading…</p>';
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
   var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history')]);
   var p = results[0];
@@ -958,7 +989,7 @@ async function renderProgress() {
       '<div class="progress-wrong-list">' + wrongQuestionsHtml + '</div>'
     : '';
 
-  appEl.innerHTML = renderUserBar() + renderTabs('progress') +
+  appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
@@ -976,7 +1007,7 @@ async function renderProgress() {
 // anonymous visitor can see what each tab looks like before buying/referring their way in.
 
 function renderLockedTabPreview(tabKey, title, mockupHtml, blurb, extraCta) {
-  appEl.innerHTML = renderUserBar() + renderTabs(tabKey) +
+  appEl.innerHTML = renderTabs(tabKey) +
     '<h1>' + title + '</h1>' +
     '<div class="locked-preview-wrap">' +
     '<div class="locked-preview-mockup" aria-hidden="true" inert>' + mockupHtml + '</div>' +
@@ -1066,7 +1097,7 @@ function renderAdditionalInfo() {
       '<div class="additional-info-url">' + l.url + '</div>' +
       '</a>';
   }).join('');
-  appEl.innerHTML = renderUserBar() + renderTabs('info') +
+  appEl.innerHTML = renderTabs('info') +
     '<h1>Additional Information</h1>' +
     '<p class="muted page-intro-text">Official, outside resources for the real exam — registration, scheduling, and state program details.</p>' +
     linkCards;
@@ -1081,20 +1112,20 @@ function renderAdditionalInfo() {
 var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: null };
 
 async function renderExam() {
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading…</p>';
   try {
     var current = await apiFetch('/exam/current');
     if (current.attempt) { enterExamSitting(current.attempt); return; }
     await renderExamIntro();
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs('exam') + '<p>Could not load the exam. Try again shortly.</p>';
   }
 }
 
 async function renderExamIntro() {
   var config = await apiFetch('/exam/config');
   examState.config = config;
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+  appEl.innerHTML = renderTabs('exam') +
     '<h1>Timed Practice Exam</h1>' +
     '<div class="card mockexam-intro-card">' +
     '<p>This mimics the real exam format as closely as possible:</p>' +
@@ -1112,11 +1143,11 @@ async function renderExamIntro() {
 }
 
 async function renderExamHistory() {
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading past attempts…</p>';
+  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading past attempts…</p>';
   try {
     var res = await apiFetch('/exam/history');
     if (!res.attempts.length) {
-      appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<h1>Past Attempts</h1>' +
+      appEl.innerHTML = renderTabs('exam') + '<h1>Past Attempts</h1>' +
         '<p class="muted">You haven\'t completed a practice exam yet.</p>' +
         '<a class="btn-primary hub-cta" href="#/exam">Take one now →</a>';
       return;
@@ -1129,34 +1160,34 @@ async function renderExamHistory() {
         '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
         '</a>';
     }).join('');
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+    appEl.innerHTML = renderTabs('exam') +
       '<h1>Past Attempts</h1>' +
       '<p class="muted page-intro-text">Every practice exam you\'ve completed, most recent first. Tap one to review your answers.</p>' +
       '<div class="exam-history-list">' + rows + '</div>' +
       '<a class="btn-secondary hub-cta" href="#/exam">← Back to exam</a>';
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load your past attempts. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs('exam') + '<p>Could not load your past attempts. Try again shortly.</p>';
   }
 }
 
 async function renderExamAttemptDetailView(attemptId) {
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading…</p>';
   try {
     var result = await apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId));
     renderExamResults(result, { fromHistory: true });
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not load this attempt.</p>' +
+    appEl.innerHTML = renderTabs('exam') + '<p>Could not load this attempt.</p>' +
       '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>';
   }
 }
 
 async function beginExam() {
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Starting…</p>';
+  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Starting…</p>';
   try {
     var attempt = await apiFetch('/exam/start', { method: 'POST' });
     enterExamSitting(attempt);
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not start the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs('exam') + '<p>Could not start the exam. Try again shortly.</p>';
   }
 }
 
@@ -1215,7 +1246,7 @@ function drawExamSitting() {
     return optionButtonHtml(k, q.choices[k], cls, 'type="button" data-act="exam-answer" data-choice="' + k + '"');
   }).join('');
 
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+  appEl.innerHTML = renderTabs('exam') +
     '<div class="mockexam-header">' +
     '<div>Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length +
     ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
@@ -1260,12 +1291,12 @@ async function selectExamAnswer(choice) {
 async function submitExam() {
   var attempt = examState.attempt;
   if (examState.timerHandle) { clearInterval(examState.timerHandle); examState.timerHandle = null; }
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p class="muted">Scoring your exam…</p>';
+  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Scoring your exam…</p>';
   try {
     var result = await apiFetch('/exam/submit', { method: 'POST', body: { attemptId: attempt.attemptId } });
     renderExamResults(result);
   } catch (e) {
-    appEl.innerHTML = renderUserBar() + renderTabs('exam') + '<p>Could not submit the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs('exam') + '<p>Could not submit the exam. Try again shortly.</p>';
   }
 }
 
@@ -1295,7 +1326,7 @@ function renderExamResults(result, opts) {
     ? '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>'
     : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart">Take another practice exam →</button>';
 
-  appEl.innerHTML = renderUserBar() + renderTabs('exam') +
+  appEl.innerHTML = renderTabs('exam') +
     '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +
     dateNote +
     '<div class="stats-bar">' +
@@ -1504,6 +1535,7 @@ async function submitStripePayment() {
       method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: 'notary', email: email },
     });
     setToken(res.token);
+    renderSiteHeader();
     state.examType = res.examType;
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
@@ -1656,6 +1688,7 @@ function renderPointsRedeemVerify(token) {
   appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
   apiFetch('/points/redeem-verify?token=' + encodeURIComponent(token)).then(function (res) {
     setToken(res.token);
+    renderSiteHeader();
     state.examType = res.examType;
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
@@ -1808,6 +1841,7 @@ async function submitAnswer(choice) {
   if (state.answered) return;
   var res = await apiFetch('/answer', { method: 'POST', body: { questionId: state.question.id, choice: choice } });
   state.answered = { picked: choice, correct: res.correct, correctChoice: res.correctChoice, explanation: res.explanation };
+  state.quizStats = { totalAnswered: res.totalAnswered, totalCorrect: res.totalCorrect };
   drawQuestion();
 
   var scheduleAutoAdvance = function () {
@@ -1844,6 +1878,7 @@ document.addEventListener('submit', async function (e) {
     try {
       var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
       setToken(res.token);
+      renderSiteHeader();
       state.examType = res.examType;
       var local = loadLocalPrefs();
       applyTheme(local.theme, local.fontScale);
@@ -2094,8 +2129,12 @@ document.addEventListener('click', async function (e) {
     if (getToken()) apiFetch('/prefs', { method: 'POST', body: { fontScale: next } }).catch(function () {});
   } else if (act === 'log-out') {
     clearToken();
+    renderSiteHeader();
     location.hash = '';
     renderNotaryApp();
+  } else if (act === 'toggle-profile-menu') {
+    var profileMenuEl = el.closest('.profile-menu');
+    if (profileMenuEl) profileMenuEl.classList.toggle('open');
   } else if (act === 'copy-code') {
     var codeVal = el.getAttribute('data-code');
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
@@ -2205,6 +2244,13 @@ document.addEventListener('click', async function (e) {
       if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">' + redeemMsg + '</p>';
     }
   }
+});
+
+// The toggle itself lives inside .profile-menu (so this never fights the toggle-profile-menu
+// handler above), this only needs to catch clicks anywhere else while the menu is open.
+document.addEventListener('click', function (e) {
+  var openMenu = document.querySelector('.profile-menu.open');
+  if (openMenu && !openMenu.contains(e.target)) openMenu.classList.remove('open');
 });
 
 // ---- Boot -------------------------------------------------------------

@@ -16,7 +16,7 @@ async function apiFetch(path, opts) {
     headers: headers,
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
-  if (res.status === 401) { clearToken(); }
+  if (res.status === 401) { clearToken(); renderSiteHeader(); }
   var data = await res.json().catch(function () { return {}; });
   if (!res.ok) throw Object.assign(new Error(data.error || 'request_failed'), { status: res.status, data: data });
   return data;
