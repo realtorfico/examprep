@@ -408,7 +408,7 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'The Power Behind California Notary Stamps', type: 'audio', file: 'The_Power_Behind_California_Notary_Stamps.m4a',
       desc: 'A guided audio walkthrough of what your notary seal legally represents and how it’s misused.',
-      topic: 'Fees, Misconduct & Conflict of Interest', sizeBytes: 109485209 },
+      topic: 'Notary Public Seal', sizeBytes: 109485209 },
     { title: 'Legal Minefields for California Notaries', type: 'audio', file: 'Legal_Minefields_for_California_Notaries.m4a',
       desc: 'Common notarial mistakes that carry civil or criminal exposure, explained in plain language.',
       topic: 'Fees, Misconduct & Conflict of Interest', sizeBytes: 104504457 },
