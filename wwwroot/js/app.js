@@ -913,8 +913,19 @@ function renderQuizStatsBarHtml() {
     '</div>';
 }
 
+// quizStatsToken guards against a stale response clobbering fresher data -- refreshQuizStats()
+// is fire-and-forget (not awaited), so its /progress/summary fetch can still be in flight when
+// the user answers the question it was requested for. submitAnswer() already has the correct
+// post-answer totals straight from /answer's own response; if this fetch's response lands after
+// that, applying it would silently roll the stats bar (esp. the Wrong count) back to pre-answer
+// numbers. Every write to state.quizStats bumps the token first, so a fetch only applies if
+// nothing newer has written to quizStats since it was kicked off.
+var quizStatsToken = 0;
+
 function refreshQuizStats() {
+  var tokenAtFetch = ++quizStatsToken;
   apiFetch('/progress/summary').then(function (s) {
+    if (quizStatsToken !== tokenAtFetch) return; // superseded by a newer answer/question load
     state.quizStats = s;
     var bar = document.getElementById('quiz-stats-bar');
     if (bar) bar.outerHTML = renderQuizStatsBarHtml();
@@ -1973,6 +1984,7 @@ async function submitAnswer(choice) {
   if (state.answered) return;
   var res = await apiFetch('/answer', { method: 'POST', body: { questionId: state.question.id, choice: choice } });
   state.answered = { picked: choice, correct: res.correct, correctChoice: res.correctChoice, explanation: res.explanation };
+  quizStatsToken++; // supersede any in-flight refreshQuizStats() fetch from before this answer
   state.quizStats = { totalAnswered: res.totalAnswered, totalCorrect: res.totalCorrect };
   drawQuestion();
 
