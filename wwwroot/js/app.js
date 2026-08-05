@@ -979,9 +979,6 @@ function renderQuizControlsSection() {
 function questionReadText(q) {
   return q.question + '. ' + ['A', 'B', 'C', 'D'].map(function (k) { return k + '. ' + q.choices[k]; }).join('. ');
 }
-function answerReadText(answered) {
-  return (answered.correct ? 'Correct. ' : 'Incorrect. ') + answered.explanation;
-}
 
 function drawQuestion() {
   var q = state.question;
@@ -1999,10 +1996,9 @@ async function submitAnswer(choice) {
     }, QUIZ_AUTO_ADVANCE_DELAY_MS);
   };
 
-  // With auto-read on, wait for the explanation to actually finish speaking before auto-advancing
-  // -- QUIZ_AUTO_ADVANCE_DELAY_MS is far too short for that and would cut the speech off mid-word.
-  if (quizAutoRead) speak(answerReadText(state.answered), scheduleAutoAdvance);
-  else scheduleAutoAdvance();
+  // Correct/incorrect + explanation is shown on screen but intentionally not read aloud -- it just
+  // delayed auto-advance for no benefit. Auto-read still covers the question + choices themselves.
+  scheduleAutoAdvance();
 }
 
 // ---- Delegated event handling (CSP-safe: no inline handlers) --------------
@@ -2199,7 +2195,7 @@ document.addEventListener('click', async function (e) {
     quizAutoRead = el.checked;
     localStorage.setItem('examprep_quiz_autoread', quizAutoRead ? '1' : '0');
     if (!quizAutoRead) { stopSpeaking(); }
-    else if (state.question) { speak(state.answered ? answerReadText(state.answered) : questionReadText(state.question)); }
+    else if (state.question && !state.answered) { speak(questionReadText(state.question)); }
   } else if (act === 'toggle-exam-autoadvance') {
     examAutoAdvance = el.checked;
     localStorage.setItem('examprep_exam_autoadvance', examAutoAdvance ? '1' : '0');
