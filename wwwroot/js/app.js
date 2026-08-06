@@ -2030,6 +2030,11 @@ async function submitAnswer(choice) {
   quizStatsToken++; // supersede any in-flight refreshQuizStats() fetch from before this answer
   state.quizStats = { totalAnswered: res.totalAnswered, totalCorrect: res.totalCorrect };
   drawQuestion();
+  // The explanation box pushes "Next question" further down -- on a short phone screen it can
+  // land below the fold. block:'nearest' scrolls only the minimum distance needed to bring it
+  // into view (none at all if it's already visible), instead of yanking the question off-screen.
+  var nextBtn = document.querySelector('.nav-controls');
+  if (nextBtn) nextBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   var scheduleAutoAdvance = function () {
     if (!(res.correct && quizAutoAdvance)) return;
