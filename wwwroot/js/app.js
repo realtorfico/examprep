@@ -27,6 +27,15 @@ function escapeHtml(s) {
   });
 }
 
+// Called after a new question is loaded (quiz's Next/auto-advance, exam's prev/next/jump/auto-
+// advance) so the question text lands at the top of the viewport instead of leaving the user
+// wherever they'd scrolled to on the previous question (e.g. partway down a long explanation).
+function scrollToQuestion() {
+  var el = document.querySelector('.question-text');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // Shared markup for every A/B/C/D choice button (quiz, sample, exam sitting, exam review) --
 // a letter badge on the left plus the choice text, so all four call sites stay visually
 // consistent instead of each hand-rolling "A) text".
@@ -892,6 +901,7 @@ async function renderQuiz() {
     state.question = await apiFetch('/questions/next' + qs);
     state.answered = null;
     drawQuestion();
+    scrollToQuestion();
     if (quizAutoRead) speak(questionReadText(state.question));
     refreshQuizStats(); // best-effort re-sync (e.g. picks up progress made via a mock exam elsewhere)
   } catch (e) {
@@ -1459,6 +1469,7 @@ async function selectExamAnswer(choice) {
   if (examAutoAdvance && examState.currentIndex < attempt.questions.length - 1) {
     examState.currentIndex++;
     drawExamSitting();
+    scrollToQuestion();
     speakCurrentExamQuestion();
   }
 }
@@ -2337,16 +2348,19 @@ document.addEventListener('click', async function (e) {
     stopSpeaking();
     examState.currentIndex = Number(el.getAttribute('data-index'));
     drawExamSitting();
+    scrollToQuestion();
     speakCurrentExamQuestion();
   } else if (act === 'exam-prev') {
     stopSpeaking();
     examState.currentIndex = Math.max(0, examState.currentIndex - 1);
     drawExamSitting();
+    scrollToQuestion();
     speakCurrentExamQuestion();
   } else if (act === 'exam-next') {
     stopSpeaking();
     examState.currentIndex = Math.min(examState.attempt.questions.length - 1, examState.currentIndex + 1);
     drawExamSitting();
+    scrollToQuestion();
     speakCurrentExamQuestion();
   } else if (act === 'exam-answer') {
     stopSpeaking();

@@ -187,7 +187,9 @@ a { color: var(--accent); }
   font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
   margin-bottom: 0.5rem; font-weight: 600; opacity: 0.85;
 }
-.question-text { font-size: 1.1rem; line-height: 1.5; font-weight: 500; max-width: 68ch; }
+/* scroll-margin-top: cushion for scrollToQuestion() (app.js) landing under the sticky
+   update-available banner, when it's showing, instead of right at the viewport edge. */
+.question-text { font-size: 1.1rem; line-height: 1.5; font-weight: 500; max-width: 68ch; scroll-margin-top: 4rem; }
 
 button {
   cursor: pointer; border: none; border-radius: 10px; padding: 0.6rem 0.9rem;
