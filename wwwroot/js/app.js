@@ -1040,6 +1040,49 @@ function drawQuestion() {
   setupMic();
 }
 
+var progressExamAttempts = null; // stashed so toggling an attempt open/closed doesn't re-fetch
+var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time)
+var examAttemptDetailCache = {}; // attemptId -> { review } | { error: true }, fetched lazily on first open
+
+// Per-attempt exam history for the Progress tab -- same attempts list as the Exam tab's own
+// history page, but each row expands in place to show just the wrong questions (with the correct
+// answer + explanation), mirroring the admin console's user → attempt → per-question drill-down.
+// The full per-question detail (/exam/attempt) isn't in the /exam/history list response, so it's
+// fetched lazily the first time a row opens rather than upfront for every attempt.
+function examAttemptDetailHtml(attemptId) {
+  var cached = examAttemptDetailCache[attemptId];
+  if (!cached) return '<p class="muted">Loading…</p>';
+  if (cached.error) return '<p class="error-text">Could not load this attempt. Try again shortly.</p>';
+  var wrongOnly = cached.review
+    .map(function (r, i) { return { r: r, i: i }; })
+    .filter(function (x) { return !x.r.correct; });
+  if (!wrongOnly.length) return '<p class="muted">All correct on this attempt — nice work! 🎉</p>';
+  return '<div class="exam-attempt-wrong-list">' +
+    wrongOnly.map(function (x) { return examReviewItemHtml(x.r, x.i); }).join('') + '</div>';
+}
+
+function examAttemptsSectionHtml() {
+  var attempts = progressExamAttempts || [];
+  if (!attempts.length) return '';
+  var rows = attempts.map(function (a) {
+    var isOpen = examAttemptOpenId === a.attemptId;
+    var date = new Date(a.submittedAt * 1000).toLocaleString();
+    return '<div class="exam-attempt-item">' +
+      '<button class="card exam-history-row exam-attempt-summary" type="button" ' +
+      'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '">' +
+      '<span>' + date + '</span>' +
+      '<span>' + a.correct + ' / ' + a.total + '</span>' +
+      '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
+      '<span class="exam-attempt-caret">' + (isOpen ? '▲' : '▾') + '</span>' +
+      '</button>' +
+      (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
+      '</div>';
+  }).join('');
+  return '<h3 class="mockexam-review-heading">Exam Attempts (' + attempts.length + ')</h3>' +
+    '<p class="muted">Tap an attempt to see the questions you missed, with the correct answer and why.</p>' +
+    '<div class="exam-history-list exam-attempts-list">' + rows + '</div>';
+}
+
 var progressByTopic = null; // stashed so the table can be re-sorted without a re-fetch
 var progressSort = { key: 'topic', dir: 'asc' };
 var progressTopicsExpanded = false; // collapsed by default -- a full topic list (30+ rows for
@@ -1102,11 +1145,14 @@ function progressResetSectionHtml() {
 async function renderProgress() {
   appEl.innerHTML = renderTabs('progress') + '<p class="muted">Loading…</p>';
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
+  examAttemptOpenId = null;
+  examAttemptDetailCache = {};
   var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history')]);
   var p = results[0];
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
   progressByTopic = p.byTopic;
+  progressExamAttempts = results[1].attempts || [];
 
   // The totals above are a "last attempt wins" snapshot shared by quiz and mock exam (a question
   // answered in both only reflects whichever happened most recently) -- exam_attempts has no such
@@ -1155,6 +1201,7 @@ async function renderProgress() {
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
+    '<div id="exam-attempts-wrap">' + examAttemptsSectionHtml() + '</div>' +
     wrongQuestionsSection +
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
@@ -1491,25 +1538,29 @@ async function submitExam() {
   }
 }
 
+// Shared by the mock exam's own review (full attempt, all questions) and the Progress tab's
+// per-attempt exam history (wrong questions only) -- one attempt's question-review card.
+function examReviewItemHtml(r, i) {
+  var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
+    var cls = 'option-btn';
+    if (k === r.correctChoice) cls += ' correct';
+    else if (k === r.yourChoice) cls += ' wrong';
+    return optionButtonHtml(k, r.choices[k], cls, 'disabled');
+  }).join('');
+  var yourAnswerNote = r.yourChoice
+    ? '<strong class="' + (r.correct ? 'result-correct' : 'result-incorrect') + '">' + (r.correct ? 'Correct.' : 'Incorrect.') + '</strong> '
+    : '<strong class="result-incorrect">Not answered.</strong> ';
+  return '<details class="card mockexam-review-item" data-correct="' + (r.correct ? 'true' : 'false') + '">' +
+    '<summary>Question ' + (i + 1) + ' — ' + (r.correct ? '✅' : '❌') + ' ' + r.topic + '</summary>' +
+    '<div class="question-text">' + r.question + '</div>' +
+    '<div class="options-grid">' + choiceHtml + '</div>' +
+    '<div class="explanation-box">' + yourAnswerNote + r.explanation + '</div>' +
+    '</details>';
+}
+
 function renderExamResults(result, opts) {
   opts = opts || {};
-  var reviewHtml = result.review.map(function (r, i) {
-    var choiceHtml = ['A', 'B', 'C', 'D'].map(function (k) {
-      var cls = 'option-btn';
-      if (k === r.correctChoice) cls += ' correct';
-      else if (k === r.yourChoice) cls += ' wrong';
-      return optionButtonHtml(k, r.choices[k], cls, 'disabled');
-    }).join('');
-    var yourAnswerNote = r.yourChoice
-      ? '<strong class="' + (r.correct ? 'result-correct' : 'result-incorrect') + '">' + (r.correct ? 'Correct.' : 'Incorrect.') + '</strong> '
-      : '<strong class="result-incorrect">Not answered.</strong> ';
-    return '<details class="card mockexam-review-item" data-correct="' + (r.correct ? 'true' : 'false') + '">' +
-      '<summary>Question ' + (i + 1) + ' — ' + (r.correct ? '✅' : '❌') + ' ' + r.topic + '</summary>' +
-      '<div class="question-text">' + r.question + '</div>' +
-      '<div class="options-grid">' + choiceHtml + '</div>' +
-      '<div class="explanation-box">' + yourAnswerNote + r.explanation + '</div>' +
-      '</details>';
-  }).join('');
+  var reviewHtml = result.review.map(examReviewItemHtml).join('');
 
   var dateNote = opts.fromHistory && result.submittedAt
     ? '<p class="muted">Taken ' + new Date(result.submittedAt * 1000).toLocaleString() + '</p>' : '';
@@ -2303,6 +2354,26 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'toggle-exam-attempt') {
+    var attemptId = el.getAttribute('data-attempt-id');
+    examAttemptOpenId = examAttemptOpenId === attemptId ? null : attemptId;
+    if (examAttemptOpenId && !examAttemptDetailCache[attemptId]) {
+      apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId)).then(function (result) {
+        examAttemptDetailCache[attemptId] = { review: result.review };
+        if (examAttemptOpenId === attemptId) {
+          var attemptsWrap = document.getElementById('exam-attempts-wrap');
+          if (attemptsWrap) attemptsWrap.innerHTML = examAttemptsSectionHtml();
+        }
+      }).catch(function () {
+        examAttemptDetailCache[attemptId] = { error: true };
+        if (examAttemptOpenId === attemptId) {
+          var attemptsWrapErr = document.getElementById('exam-attempts-wrap');
+          if (attemptsWrapErr) attemptsWrapErr.innerHTML = examAttemptsSectionHtml();
+        }
+      });
+    }
+    var attemptsWrapNow = document.getElementById('exam-attempts-wrap');
+    if (attemptsWrapNow) attemptsWrapNow.innerHTML = examAttemptsSectionHtml();
   } else if (act === 'progress-reset-select') {
     progressResetPending = el.getAttribute('data-scope');
     var resetWrapSelect = document.getElementById('progress-reset-wrap');

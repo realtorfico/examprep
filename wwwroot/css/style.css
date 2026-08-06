@@ -307,6 +307,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .exam-history-row:hover { border-color: var(--accent); }
 .exam-history-link { margin-left: 1rem; }
 
+/* Progress tab's per-attempt exam history -- exam-attempt-summary reuses .exam-history-row's
+   row layout (same look as the Exam tab's own history list) but on a <button> (in-place expand)
+   instead of an <a> (navigates away), so it needs its own width/text-align/weight reset. */
+.exam-attempt-summary { width: 100%; text-align: left; font-weight: 400; background: var(--surface-2); }
+.exam-attempt-summary:hover { border-color: var(--accent); }
+.exam-attempt-caret { flex-shrink: 0; color: var(--muted); }
+.exam-attempt-detail { margin-top: 0.5rem; }
+.exam-attempt-wrong-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
 nav.tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 nav.tabs a {
   color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; font-size: 0.85rem;
