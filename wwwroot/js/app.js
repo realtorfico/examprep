@@ -895,7 +895,12 @@ function renderResourcesTable() {
 
 async function renderQuiz() {
   quizRenderToken++; // invalidates any pending auto-advance timer scheduled for a prior question
-  appEl.innerHTML = renderTabs('quiz') + '<p class="muted">Loading question…</p>';
+  // Only blank to the loading placeholder on a genuinely empty screen (first tab entry) -- doing
+  // it unconditionally (including Next/auto-advance, when a question is already showing) collapsed
+  // the page to one line and forced an instant scroll-to-0 snap, right before scrollToQuestion()
+  // below smooth-scrolled back down -- a jarring snap-then-rebound on every question change.
+  // Leaving the current question mounted during the fetch keeps the page height stable instead.
+  if (!state.question) appEl.innerHTML = renderTabs('quiz') + '<p class="muted">Loading question…</p>';
   try {
     var qs = state.quizDifficulty ? '?difficulty=' + state.quizDifficulty : '';
     state.question = await apiFetch('/questions/next' + qs);
@@ -2033,8 +2038,14 @@ async function submitAnswer(choice) {
   // The explanation box pushes "Next question" further down -- on a short phone screen it can
   // land below the fold. block:'nearest' scrolls only the minimum distance needed to bring it
   // into view (none at all if it's already visible), instead of yanking the question off-screen.
-  var nextBtn = document.querySelector('.nav-controls');
-  if (nextBtn) nextBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // Skipped when auto-advance is about to fire (correct answer + quizAutoAdvance on) -- the page
+  // fully re-renders for the next question ~700ms later anyway (renderQuiz() + scrollToQuestion()),
+  // so scrolling here first just adds a pointless, visible extra motion right before that happens.
+  var willAutoAdvance = res.correct && quizAutoAdvance;
+  if (!willAutoAdvance) {
+    var nextBtn = document.querySelector('.nav-controls');
+    if (nextBtn) nextBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
   var scheduleAutoAdvance = function () {
     if (!(res.correct && quizAutoAdvance)) return;
