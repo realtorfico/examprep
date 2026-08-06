@@ -14,7 +14,9 @@ var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" befo
 // answer, right after the /exam/answer save completes -- no artificial delay needed, the
 // network round-trip already gives a brief natural pause before the screen changes.
 var examAutoAdvance = localStorage.getItem('examprep_exam_autoadvance') === '1';
+var examAutoRead = localStorage.getItem('examprep_exam_autoread') === '1';
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
+var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -1334,7 +1336,9 @@ async function beginExam() {
 function enterExamSitting(attempt) {
   examState.attempt = attempt;
   examState.currentIndex = 0;
+  examSubmitConfirmPending = false;
   drawExamSitting();
+  speakCurrentExamQuestion();
   startExamTimer();
 }
 
@@ -1359,6 +1363,21 @@ function startExamTimer() {
     if (remaining <= 60) el.classList.add('mockexam-timer-low');
     if (remaining <= 0) { clearInterval(examState.timerHandle); examState.timerHandle = null; submitExam(); }
   }, 1000);
+}
+
+// In-page (non-native) confirmation instead of window.confirm(), matching the Reset Progress
+// pattern (progressResetSectionHtml) -- only shown once Submit is clicked with questions still
+// unanswered; hidden otherwise.
+function examSubmitConfirmHtml(attempt) {
+  if (!examSubmitConfirmPending) return '';
+  var unanswered = attempt.questions.length - Object.keys(attempt.answers).length;
+  return '<div class="card progress-reset-card">' +
+    '<p><strong class="result-incorrect">' + unanswered + ' question' + (unanswered === 1 ? '' : 's') +
+    ' unanswered. Submit anyway?</strong></p>' +
+    '<div class="progress-reset-actions">' +
+    '<button class="btn-primary" type="button" data-act="exam-submit-confirmed">Yes, submit</button>' +
+    '<button class="btn-secondary" type="button" data-act="exam-submit-cancel">Cancel</button>' +
+    '</div></div>';
 }
 
 function drawExamSitting() {
@@ -1394,18 +1413,33 @@ function drawExamSitting() {
     '<label class="auto-advance-toggle">' +
     '<input type="checkbox" data-act="toggle-exam-autoadvance"' + (examAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance after I answer</label>' +
+    '<label class="auto-advance-toggle">' +
+    '<input type="checkbox" data-act="toggle-exam-autoread"' + (examAutoRead ? ' checked' : '') + '> ' +
+    'Auto-read question</label>' +
     '</div>' +
     navGridHtml +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
+    '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="exam-listen">🔊 Read aloud</button></div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
     '<div class="nav-controls mockexam-controls">' +
     '<button class="btn-secondary" type="button" data-act="exam-prev"' + (examState.currentIndex === 0 ? ' disabled' : '') + '>← Previous</button>' +
     '<button class="btn-secondary" type="button" data-act="exam-next"' + (examState.currentIndex === attempt.questions.length - 1 ? ' disabled' : '') + '>Next →</button>' +
     '<button class="btn-primary" type="button" data-act="exam-submit-confirm">Submit Exam</button>' +
-    '</div>';
+    '</div>' +
+    examSubmitConfirmHtml(attempt);
+}
+
+// Called explicitly from question-navigation actions (goto/prev/next/begin/auto-advance), NOT
+// from drawExamSitting() itself -- that also re-renders for reasons that aren't a new question
+// (selecting an answer, toggling a checkbox), which would otherwise re-read the same question
+// from the start every time.
+function speakCurrentExamQuestion() {
+  if (!examAutoRead) return;
+  var attempt = examState.attempt;
+  speak(questionReadText(attempt.questions[examState.currentIndex]));
 }
 
 async function selectExamAnswer(choice) {
@@ -1425,6 +1459,7 @@ async function selectExamAnswer(choice) {
   if (examAutoAdvance && examState.currentIndex < attempt.questions.length - 1) {
     examState.currentIndex++;
     drawExamSitting();
+    speakCurrentExamQuestion();
   }
 }
 
@@ -2299,20 +2334,44 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'exam-begin' || act === 'exam-restart') {
     await beginExam();
   } else if (act === 'exam-goto') {
+    stopSpeaking();
     examState.currentIndex = Number(el.getAttribute('data-index'));
     drawExamSitting();
+    speakCurrentExamQuestion();
   } else if (act === 'exam-prev') {
+    stopSpeaking();
     examState.currentIndex = Math.max(0, examState.currentIndex - 1);
     drawExamSitting();
+    speakCurrentExamQuestion();
   } else if (act === 'exam-next') {
+    stopSpeaking();
     examState.currentIndex = Math.min(examState.attempt.questions.length - 1, examState.currentIndex + 1);
     drawExamSitting();
+    speakCurrentExamQuestion();
   } else if (act === 'exam-answer') {
+    stopSpeaking();
     await selectExamAnswer(el.getAttribute('data-choice'));
+  } else if (act === 'exam-listen') {
+    speak(questionReadText(examState.attempt.questions[examState.currentIndex]));
+  } else if (act === 'toggle-exam-autoread') {
+    examAutoRead = el.checked;
+    localStorage.setItem('examprep_exam_autoread', examAutoRead ? '1' : '0');
+    if (!examAutoRead) stopSpeaking();
+    else speakCurrentExamQuestion();
   } else if (act === 'exam-submit-confirm') {
     var unanswered = examState.attempt.questions.length - Object.keys(examState.attempt.answers).length;
-    if (unanswered > 0 && !window.confirm(unanswered + ' question' + (unanswered === 1 ? '' : 's') + ' unanswered. Submit anyway?')) return;
+    if (unanswered > 0) {
+      examSubmitConfirmPending = true;
+      drawExamSitting();
+      return;
+    }
     await submitExam();
+  } else if (act === 'exam-submit-confirmed') {
+    examSubmitConfirmPending = false;
+    await submitExam();
+  } else if (act === 'exam-submit-cancel') {
+    examSubmitConfirmPending = false;
+    drawExamSitting();
   } else if (act === 'toggle-wrong-only') {
     var reviewListEl = document.getElementById('mockexam-review-list');
     if (reviewListEl) reviewListEl.classList.toggle('review-wrong-only', el.checked);

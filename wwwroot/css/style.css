@@ -230,7 +230,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .option-btn.wrong { border-left-color: var(--incorrect) !important; }
 .option-btn.wrong .option-state-icon { color: var(--incorrect); }
 .option-btn.wrong .option-letter { background: var(--incorrect); color: #fff; }
-.option-btn.selected { background: color-mix(in srgb, var(--accent) 18%, var(--card)) !important; border-color: var(--accent) !important; font-weight: 600; }
+/* Mixed with --surface-2 (the option buttons' own base), not --card -- --card is darker in dark
+   mode, so mixing with it washed the tint out to nearly the same shade as an unselected button,
+   leaving only the letter badge looking "selected". 30% + a visible border/shadow reads clearly
+   as the whole box now, in both themes. */
+.option-btn.selected {
+  background: color-mix(in srgb, var(--accent) 30%, var(--surface-2)) !important;
+  border-color: var(--accent) !important; font-weight: 600;
+  box-shadow: 0 0 0 1px var(--accent);
+}
 .option-btn.selected .option-letter { background: var(--accent); color: #fff; }
 
 .explanation-box {
