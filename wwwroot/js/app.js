@@ -1080,7 +1080,7 @@ function examAttemptsSectionHtml(mode) {
       '<button class="card exam-history-row exam-attempt-summary" type="button" ' +
       'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '" data-mode="' + mode + '">' +
       '<span>' + date + '</span>' +
-      '<span class="' + (a.passed ? '' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
+      '<span class="' + (a.passed ? 'exam-attempt-score-passed' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
       '<span class="exam-attempt-caret">' + (isOpen ? '▲' : '▾') + '</span>' +
       '</button>' +
       (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
@@ -1100,6 +1100,7 @@ var progressSort = { key: 'topic', dir: 'asc' };
 var progressTopicsExpanded = false; // collapsed by default -- a full topic list (30+ rows for
 // notary) otherwise pushes the wrong-questions section below the fold, especially on mobile.
 var PROGRESS_TOPICS_COLLAPSED_COUNT = 5;
+var PROGRESS_ACCURACY_PASS_PCT = 70; // red/bold below this, green/bold at or above -- matches the exam's own passPercent
 
 function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
 
@@ -1116,7 +1117,9 @@ function progressTopicsTableHtml() {
   var visible = truncated ? sorted.slice(0, PROGRESS_TOPICS_COLLAPSED_COUNT) : sorted;
   var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
   var rows = visible.map(function (t) {
-    return '<tr><td>' + t.topic + '</td><td>' + progressTopicPct(t) + '%</td><td>' + t.total + '</td></tr>';
+    var pct = progressTopicPct(t);
+    var rowCls = pct < PROGRESS_ACCURACY_PASS_PCT ? 'progress-row-low' : 'progress-row-good';
+    return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td><td>' + t.total + '</td></tr>';
   }).join('');
   var toggleHtml = sorted.length > PROGRESS_TOPICS_COLLAPSED_COUNT
     ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-progress-topics">' +
@@ -1192,7 +1195,10 @@ async function renderProgress() {
       ? '<strong class="result-incorrect">Your answer: ' + r.yourChoice + '.</strong> '
       : '<strong class="muted">You got this wrong on a past attempt, but we don\'t have your exact answer on file (from before we tracked ' +
         'picks, or it was skipped) — retake it to see your answer here.</strong> ';
-    return '<details class="card mockexam-review-item">' +
+    // name= groups these into a native exclusive accordion (browser closes any other open one in
+    // the same group automatically) -- no JS needed, unlike the Exam Attempts sections which had
+    // to be hand-rolled for the same effect since they need lazy-fetched detail on open.
+    return '<details class="card mockexam-review-item" name="progress-wrong-questions">' +
       '<summary>' + r.topic + ' — ' + r.question.slice(0, 80) + (r.question.length > 80 ? '…' : '') + '</summary>' +
       '<div class="question-text">' + r.question + '</div>' +
       '<div class="options-grid">' + choiceHtml + '</div>' +
@@ -1427,7 +1433,7 @@ async function renderExamHistory(mode) {
       var date = new Date(a.submittedAt * 1000).toLocaleString();
       return '<a class="card exam-history-row" href="' + examHistoryHash(mode) + '/' + a.attemptId + '">' +
         '<span>' + date + '</span>' +
-        '<span class="' + (a.passed ? '' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
+        '<span class="' + (a.passed ? 'exam-attempt-score-passed' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
         '</a>';
     }).join('');
     appEl.innerHTML = renderTabs(examTabKey(mode)) +

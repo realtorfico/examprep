@@ -318,6 +318,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .exam-attempt-detail { margin-top: 0.5rem; }
 .exam-attempt-wrong-list { display: flex; flex-direction: column; gap: 0.6rem; }
 .exam-attempt-score-failed { color: var(--incorrect); font-weight: 700; }
+.exam-attempt-score-passed { color: var(--correct); font-weight: 700; }
+.progress-row-low { color: var(--incorrect); font-weight: 700; }
+.progress-row-good { color: var(--correct); font-weight: 700; }
 
 nav.tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 nav.tabs a {
