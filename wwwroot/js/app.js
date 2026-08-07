@@ -1101,12 +1101,14 @@ var progressTopicsExpanded = false; // collapsed by default -- a full topic list
 // notary) otherwise pushes the wrong-questions section below the fold, especially on mobile.
 var PROGRESS_TOPICS_COLLAPSED_COUNT = 5;
 var PROGRESS_ACCURACY_PASS_PCT = 70; // per-topic table only, red/bold below this, green/bold at or above -- matches the exam's own passPercent
-var PROGRESS_COVERAGE_PASS_PCT = 50; // per-topic table only, same idea, separate threshold, for % of the topic's questions ever attempted
-// The headline stats-bar's own Accuracy/Coverage thresholds are admin-configurable (progress_accuracy_pass_pct /
-// progress_coverage_pass_pct in app_settings) and come back on the /progress payload -- these are just the
-// client-side fallback if that's ever missing, matching the API's own defaults.
+// Coverage threshold is admin-configurable (progress_coverage_pass_pct in app_settings) and comes
+// back on the /progress payload -- shared by both the headline stat box and the per-topic table's
+// own Coverage column. This is just the client-side fallback if that's ever missing, matching the
+// API's own default.
+var progressCoveragePassPct = 50;
+// The headline stats-bar's own Accuracy threshold is admin-configurable too (progress_accuracy_pass_pct
+// in app_settings); this is its client-side fallback, matching the API's own default.
 var PROGRESS_STATSBAR_ACCURACY_PASS_PCT_DEFAULT = 80;
-var PROGRESS_STATSBAR_COVERAGE_PASS_PCT_DEFAULT = 50;
 
 function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
 function progressTopicCoveragePct(t) { return t.topicTotal ? Math.round((100 * t.seen) / t.topicTotal) : 0; }
@@ -1130,7 +1132,7 @@ function progressTopicsTableHtml() {
     // Coverage gets its own cell-level color, independent of the row's accuracy-based color above
     // (a topic can be low-accuracy but well-covered, or vice versa -- two separate signals, can't
     // both be expressed as one row color).
-    var coverageCls = coverage < PROGRESS_COVERAGE_PASS_PCT ? 'progress-row-low' : 'progress-row-good';
+    var coverageCls = coverage < progressCoveragePassPct ? 'progress-row-low' : 'progress-row-good';
     return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td>' +
       '<td><span class="' + coverageCls + '">' + coverage + '%</span></td><td>' + t.total + '</td></tr>';
   }).join('');
@@ -1232,9 +1234,9 @@ async function renderProgress() {
   var totalPossible = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.topicTotal || 0); }, 0);
   var coveragePct = totalPossible ? Math.round((100 * totalSeen) / totalPossible) : 0;
   var accuracyPassPct = typeof p.accuracyPassPct === 'number' ? p.accuracyPassPct : PROGRESS_STATSBAR_ACCURACY_PASS_PCT_DEFAULT;
-  var coveragePassPct = typeof p.coveragePassPct === 'number' ? p.coveragePassPct : PROGRESS_STATSBAR_COVERAGE_PASS_PCT_DEFAULT;
+  if (typeof p.coveragePassPct === 'number') progressCoveragePassPct = p.coveragePassPct;
   var accuracyValCls = pct < accuracyPassPct ? 'wrong' : 'correct';
-  var coverageValCls = coveragePct < coveragePassPct ? 'wrong' : 'correct';
+  var coverageValCls = coveragePct < progressCoveragePassPct ? 'wrong' : 'correct';
 
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar progress-stats-bar">' +
