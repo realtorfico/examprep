@@ -1355,6 +1355,18 @@ function examTabKey(mode) { return mode === 'toughest45' ? 'toughest45' : 'exam'
 function examHistoryHash(mode) { return mode === 'toughest45' ? '#/toughest45-history' : '#/exam-history'; }
 function examMainHash(mode) { return mode === 'toughest45' ? '#/toughest45' : '#/exam'; }
 
+// A failed apiFetch on any exam load/action was showing the same generic "try again shortly" text
+// regardless of cause -- including a plain expired/invalidated session (401, e.g. the same access
+// code redeemed on another device), which looks like a mysterious server error instead of the
+// ordinary "please log in again" it actually is. apiFetch's 401 path already clears the token
+// before throwing, so reloading naturally lands back on the redeem/login page.
+function examErrorHtml(e, genericMsg) {
+  return e && e.status === 401
+    ? '<p>Your session has ended (often just means this access code was used to log in somewhere ' +
+      'else). <button class="btn-primary btn-sm" type="button" data-act="reload-for-update">Log in again</button></p>'
+    : genericMsg;
+}
+
 var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: null, mode: 'standard' };
 
 async function renderExam(mode) {
@@ -1365,7 +1377,7 @@ async function renderExam(mode) {
     if (current.attempt) { enterExamSitting(current.attempt, mode); return; }
     await renderExamIntro(mode);
   } catch (e) {
-    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + examErrorHtml(e, '<p>Could not load the exam. Try again shortly.</p>');
   }
 }
 
@@ -1426,7 +1438,7 @@ async function renderExamHistory(mode) {
       '<div class="exam-history-list">' + rows + '</div>' +
       '<a class="btn-secondary hub-cta" href="' + examMainHash(mode) + '">← Back to exam</a>';
   } catch (e) {
-    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load your past attempts. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + examErrorHtml(e, '<p>Could not load your past attempts. Try again shortly.</p>');
   }
 }
 
@@ -1437,8 +1449,8 @@ async function renderExamAttemptDetailView(attemptId, mode) {
     var result = await apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId));
     renderExamResults(result, { fromHistory: true, mode: mode });
   } catch (e) {
-    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load this attempt.</p>' +
-      '<a class="btn-secondary hub-cta" href="' + examHistoryHash(mode) + '">← Back to past attempts</a>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) +
+      examErrorHtml(e, '<p>Could not load this attempt.</p><a class="btn-secondary hub-cta" href="' + examHistoryHash(mode) + '">← Back to past attempts</a>');
   }
 }
 
@@ -1460,7 +1472,7 @@ async function beginExam(mode) {
       : errCode === 'no_questions' && mode === 'toughest45'
       ? '<p>You don\'t have any wrongly-answered questions right now -- nothing to drill on yet. ' +
         'Take the Quiz or the regular Exam first, and missed questions will show up here.</p>'
-      : '<p>Could not start the exam. Try again shortly.</p>';
+      : examErrorHtml(e, '<p>Could not start the exam. Try again shortly.</p>');
     appEl.innerHTML = renderTabs(examTabKey(mode)) + msg;
   }
 }
@@ -1628,7 +1640,7 @@ async function submitExam() {
     var result = await apiFetch('/exam/submit', { method: 'POST', body: { attemptId: attempt.attemptId } });
     renderExamResults(result, { mode: mode });
   } catch (e) {
-    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not submit the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + examErrorHtml(e, '<p>Could not submit the exam. Try again shortly.</p>');
   }
 }
 
