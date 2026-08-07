@@ -1543,6 +1543,24 @@ function speakCurrentExamQuestion() {
   speak(questionReadText(attempt.questions[examState.currentIndex]));
 }
 
+// Stops a sitting whose attempt has died server-side (already submitted, or expired past its
+// duration_sec) -- e.g. resumed on a second device/tab that then submitted it, or a stale tab
+// reopened well after the timer ran out elsewhere. Every /exam/answer from here on would silently
+// fail to save (server rejects with 'already_submitted'/'attempt_not_found'), so this must stop
+// the sitting immediately rather than let the user keep answering into a session that's no longer
+// being recorded -- see the 2026-08-06 incident where 45 minutes of real answers were silently
+// dropped this way after a stale in-progress attempt got resumed and submitted from elsewhere.
+function examSittingDied() {
+  if (examState.timerHandle) { clearInterval(examState.timerHandle); examState.timerHandle = null; }
+  appEl.innerHTML = renderTabs(examTabKey(examState.mode)) +
+    '<h1>This exam session ended</h1>' +
+    '<p class="error-text">This attempt was already submitted or has expired -- possibly resumed and ' +
+    'finished from another device or browser tab on this account. Answers entered after that point ' +
+    'were not saved, sorry about that.</p>' +
+    '<a class="btn-primary hub-cta" href="' + examMainHash(examState.mode) + '">← Back to ' +
+    (examState.mode === 'toughest45' ? 'Toughest 45' : 'Exam') + '</a>';
+}
+
 async function selectExamAnswer(choice) {
   var attempt = examState.attempt;
   var q = attempt.questions[examState.currentIndex];
@@ -1551,8 +1569,12 @@ async function selectExamAnswer(choice) {
   try {
     await apiFetch('/exam/answer', { method: 'POST', body: { attemptId: attempt.attemptId, questionId: q.id, choice: choice } });
   } catch (e) {
-    // Best-effort -- if this was a time_expired rejection, the next timer tick (or Submit)
-    // will surface it; the locally-saved answer still gets included in the final submit call.
+    if (e.data && (e.data.error === 'already_submitted' || e.data.error === 'attempt_not_found')) {
+      examSittingDied();
+      return;
+    }
+    // Anything else (e.g. time_expired in the final seconds) is best-effort -- the countdown
+    // timer's own auto-submit-at-zero will surface it within moments regardless.
   }
   // Regardless of right/wrong -- the exam never reveals that anyway -- just moves navigation
   // forward one step, same as manually clicking Next →. Stays put on the last question (nothing
