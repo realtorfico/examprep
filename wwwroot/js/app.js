@@ -1080,8 +1080,7 @@ function examAttemptsSectionHtml(mode) {
       '<button class="card exam-history-row exam-attempt-summary" type="button" ' +
       'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '" data-mode="' + mode + '">' +
       '<span>' + date + '</span>' +
-      '<span>' + a.correct + ' / ' + a.total + '</span>' +
-      '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
+      '<span class="' + (a.passed ? '' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
       '<span class="exam-attempt-caret">' + (isOpen ? '▲' : '▾') + '</span>' +
       '</button>' +
       (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
@@ -1428,8 +1427,7 @@ async function renderExamHistory(mode) {
       var date = new Date(a.submittedAt * 1000).toLocaleString();
       return '<a class="card exam-history-row" href="' + examHistoryHash(mode) + '/' + a.attemptId + '">' +
         '<span>' + date + '</span>' +
-        '<span>' + a.correct + ' / ' + a.total + '</span>' +
-        '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
+        '<span class="' + (a.passed ? '' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
         '</a>';
     }).join('');
     appEl.innerHTML = renderTabs(examTabKey(mode)) +
