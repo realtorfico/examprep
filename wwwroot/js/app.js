@@ -18,6 +18,7 @@ var examAutoRead = localStorage.getItem('examprep_exam_autoread') === '1';
 var examUnseenOnly = localStorage.getItem('examprep_exam_unseenonly') === '1'; // regular exam only -- biases question selection toward questions never seen in quiz or exam before
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
+var examDiscardConfirmPending = false; // in-page confirmation for "discard this attempt and start over?"
 var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
@@ -1581,6 +1582,7 @@ function enterExamSitting(attempt, mode) {
   examState.mode = mode || attempt.mode || 'standard';
   examState.currentIndex = 0;
   examSubmitConfirmPending = false;
+  examDiscardConfirmPending = false;
   drawExamSitting();
   speakCurrentExamQuestion();
   startExamTimer();
@@ -1621,6 +1623,20 @@ function examSubmitConfirmHtml(attempt) {
     '<div class="progress-reset-actions">' +
     '<button class="btn-primary" type="button" data-act="exam-submit-confirmed">Yes, submit</button>' +
     '<button class="btn-secondary" type="button" data-act="exam-submit-cancel">Cancel</button>' +
+    '</div></div>';
+}
+
+// Same in-page confirmation pattern -- for interruptions (an emergency, needing a break, etc.)
+// where the user wants to bail on this sitting entirely rather than finish or wait out the clock.
+// Deliberately vanishes with no trace (not kept as an "abandoned" attempt) -- this is a practice
+// exam, not a certification, so there's nothing to lose by not recording a bailed-on attempt.
+function examDiscardConfirmHtml() {
+  if (!examDiscardConfirmPending) return '';
+  return '<div class="card progress-reset-card">' +
+    '<p><strong class="result-incorrect">Discard this attempt and start over? Your answers so far will be lost -- this can\'t be undone.</strong></p>' +
+    '<div class="progress-reset-actions">' +
+    '<button class="btn-primary" type="button" data-act="exam-discard-confirmed">Yes, discard</button>' +
+    '<button class="btn-secondary" type="button" data-act="exam-discard-cancel">Cancel</button>' +
     '</div></div>';
 }
 
@@ -1677,7 +1693,10 @@ function drawExamSitting() {
     '<button class="btn-secondary" type="button" data-act="exam-next"' + (examState.currentIndex === attempt.questions.length - 1 ? ' disabled' : '') + '>Next →</button>' +
     '<button class="btn-primary" type="button" data-act="exam-submit-confirm">Submit Exam</button>' +
     '</div>' +
-    examSubmitConfirmHtml(attempt);
+    '<div class="exam-discard-actions">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="exam-discard-confirm">Discard &amp; Restart</button>' +
+    '</div>' +
+    examSubmitConfirmHtml(attempt) + examDiscardConfirmHtml();
 }
 
 // Called explicitly from question-navigation actions (goto/prev/next/begin/auto-advance), NOT
@@ -1745,6 +1764,22 @@ async function submitExam() {
   } catch (e) {
     appEl.innerHTML = renderTabs(examTabKey(mode)) + examErrorHtml(e, '<p>Could not submit the exam. Try again shortly.</p>');
   }
+}
+
+async function discardExam() {
+  var attempt = examState.attempt;
+  var mode = examState.mode;
+  if (examState.timerHandle) { clearInterval(examState.timerHandle); examState.timerHandle = null; }
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Discarding…</p>';
+  try {
+    await apiFetch('/exam/discard', { method: 'POST', body: { attemptId: attempt.attemptId } });
+  } catch (e) {
+    // already_submitted/attempt_not_found just means there's nothing left to discard (e.g. it
+    // finished on another tab first) -- either way, falling through to a fresh intro screen is
+    // the right outcome, so this isn't treated as an error worth surfacing.
+  }
+  examState.attempt = null;
+  await renderExamIntro(mode);
 }
 
 // Shared by the mock exam's own review (full attempt, all questions) and the Progress tab's
@@ -2689,6 +2724,7 @@ document.addEventListener('click', async function (e) {
     examUnseenOnly = el.checked;
     localStorage.setItem('examprep_exam_unseenonly', examUnseenOnly ? '1' : '0');
   } else if (act === 'exam-submit-confirm') {
+    examDiscardConfirmPending = false;
     var unanswered = examState.attempt.questions.length - Object.keys(examState.attempt.answers).length;
     if (unanswered > 0) {
       examSubmitConfirmPending = true;
@@ -2701,6 +2737,16 @@ document.addEventListener('click', async function (e) {
     await submitExam();
   } else if (act === 'exam-submit-cancel') {
     examSubmitConfirmPending = false;
+    drawExamSitting();
+  } else if (act === 'exam-discard-confirm') {
+    examSubmitConfirmPending = false;
+    examDiscardConfirmPending = true;
+    drawExamSitting();
+  } else if (act === 'exam-discard-confirmed') {
+    examDiscardConfirmPending = false;
+    await discardExam();
+  } else if (act === 'exam-discard-cancel') {
+    examDiscardConfirmPending = false;
     drawExamSitting();
   } else if (act === 'toggle-wrong-only') {
     var reviewListEl = document.getElementById('mockexam-review-list');

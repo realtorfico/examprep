@@ -278,6 +278,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .nav-controls { display: flex; gap: 0.6rem; border-top: 1px solid var(--border); padding-top: 0.85rem; }
 .nav-controls button { flex: 1; }
+.exam-discard-actions { margin-top: 0.75rem; text-align: right; }
 
 .mockexam-intro-card { max-width: 65ch; }
 .mockexam-intro-list { margin: 0.75rem 0; padding-left: 1.2rem; line-height: 1.7; }
