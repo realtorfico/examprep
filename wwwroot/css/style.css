@@ -173,6 +173,13 @@ a { color: var(--accent); }
 .quiz-stats-bar .stat-box .label, .progress-stats-bar .stat-box .label { font-size: 0.6rem; }
 .quiz-stats-bar .stat-box .val, .progress-stats-bar .stat-box .val { font-size: 0.95rem; }
 .progress-stats-bar { grid-template-columns: repeat(3, 1fr); }
+/* Attempts count (desktop only, for now) -- hidden on mobile rather than squeezed into a 4th
+   narrow column, so it doesn't disturb the 3-box layout that's tuned to fit one row there. */
+.progress-attempts-stat { display: none; }
+@media (min-width: 900px) {
+  .progress-attempts-stat { display: block; }
+  .progress-stats-bar { grid-template-columns: repeat(4, 1fr); }
+}
 .stat-box .val.stat-triple { display: flex; justify-content: center; align-items: baseline; gap: 0.15rem; }
 .stat-box .val.stat-triple .sep { color: var(--muted); font-weight: 700; }
 .stat-box .val.stat-triple .correct { color: var(--correct); }

@@ -1287,6 +1287,9 @@ async function renderProgress() {
   var accuracyValCls = pct < accuracyPassPct ? 'wrong' : 'correct';
   var coverageValCls = coveragePct < progressCoveragePassPct ? 'wrong' : 'correct';
 
+  var standardAttemptsCount = standardAttempts.length;
+  var toughest45AttemptsCount = toughest45Attempts.length;
+
   var examAttemptsHtml = examAttemptsSectionHtml();
 
   appEl.innerHTML = renderTabs('progress') +
@@ -1297,6 +1300,8 @@ async function renderProgress() {
     '<span class="total">' + p.totalAnswered + '</span></div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val ' + accuracyValCls + '">' + pct + '%</div></div>' +
     '<div class="stat-box"><div class="label">Coverage</div><div class="val ' + coverageValCls + '">' + coveragePct + '%</div></div>' +
+    '<div class="stat-box progress-attempts-stat"><div class="label">Attempts</div><div class="val">' +
+    progressExamAttempts.length + ' (' + standardAttemptsCount + '+' + toughest45AttemptsCount + ')</div></div>' +
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
     '<div class="progress-tables-grid">' +
