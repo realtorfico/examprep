@@ -166,14 +166,18 @@ a { color: var(--accent); }
 .stat-box .val.wrong { color: var(--incorrect); }
 .progress-breakdown-note { margin-top: 0.5rem; }
 /* Smaller than the base .stats-bar -- the quiz one repeats on every question so it shouldn't
-   compete with the question card for vertical space; the Progress tab's grew to 5 boxes (Coverage
-   added alongside Total/Correct/Wrong/Accuracy) so needs its own column count too, not the base's
-   hardcoded repeat(4, 1fr) -- 5 boxes in a 4-column grid would orphan the 5th onto its own row. */
+   compete with the question card for vertical space. The Progress tab collapses Total/Correct/Wrong
+   into one Right/Wrong/Total box alongside Accuracy and Coverage -- 3 boxes total, so it gets its
+   own column count instead of the base's hardcoded repeat(4, 1fr), and stays on one row at any width. */
 .quiz-stats-bar, .progress-stats-bar { padding: 0.4rem; gap: 0.3rem; }
 .quiz-stats-bar .stat-box .label, .progress-stats-bar .stat-box .label { font-size: 0.6rem; }
 .quiz-stats-bar .stat-box .val, .progress-stats-bar .stat-box .val { font-size: 0.95rem; }
-.progress-stats-bar { grid-template-columns: repeat(5, 1fr); }
-@media (max-width: 500px) { .progress-stats-bar { grid-template-columns: repeat(3, 1fr); } }
+.progress-stats-bar { grid-template-columns: repeat(3, 1fr); }
+.stat-box .val.stat-triple { display: flex; justify-content: center; align-items: baseline; gap: 0.15rem; }
+.stat-box .val.stat-triple .sep { color: var(--muted); font-weight: 700; }
+.stat-box .val.stat-triple .correct { color: var(--correct); }
+.stat-box .val.stat-triple .wrong { color: var(--incorrect); }
+.stat-box .val.stat-triple .total { color: var(--fg); }
 
 .card {
   background: var(--surface-2); border: 1px solid var(--border);

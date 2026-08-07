@@ -1230,9 +1230,10 @@ async function renderProgress() {
 
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar progress-stats-bar">' +
-    '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
-    '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
-    '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
+    '<div class="stat-box"><div class="label">Right/Wrong/Total</div><div class="val stat-triple">' +
+    '<span class="correct">' + p.totalCorrect + '</span><span class="sep">/</span>' +
+    '<span class="wrong">' + wrong + '</span><span class="sep">/</span>' +
+    '<span class="total">' + p.totalAnswered + '</span></div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
     '<div class="stat-box"><div class="label">Coverage</div><div class="val ' + coverageValCls + '">' + coveragePct + '%</div></div>' +
     '</div>' +
