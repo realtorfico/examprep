@@ -1131,8 +1131,8 @@ function progressTopicsTableHtml() {
     // (a topic can be low-accuracy but well-covered, or vice versa -- two separate signals, can't
     // both be expressed as one row color).
     var coverageCls = coverage < PROGRESS_COVERAGE_PASS_PCT ? 'progress-row-low' : 'progress-row-good';
-    return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td><td>' + t.total + '</td>' +
-      '<td><span class="' + coverageCls + '">' + coverage + '%</span></td></tr>';
+    return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td>' +
+      '<td><span class="' + coverageCls + '">' + coverage + '%</span></td><td>' + t.total + '</td></tr>';
   }).join('');
   var toggleHtml = sorted.length > PROGRESS_TOPICS_COLLAPSED_COUNT
     ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-progress-topics">' +
@@ -1141,8 +1141,8 @@ function progressTopicsTableHtml() {
   return '<table class="progress-topics-table"><thead><tr>' +
     '<th data-act="sort-progress-topics" data-sort-key="topic">Topic' + arrow('topic') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="pct">Accuracy' + arrow('pct') + '</th>' +
-    '<th data-act="sort-progress-topics" data-sort-key="total">Questions' + arrow('total') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="coverage">Coverage' + arrow('coverage') + '</th>' +
+    '<th data-act="sort-progress-topics" data-sort-key="total">Questions' + arrow('total') + '</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
