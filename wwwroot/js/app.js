@@ -253,10 +253,7 @@ function renderHub() {
         '<a class="btn-secondary hub-cta" href="/notary#/sample">Try a free sample</a>'
       : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
 
-    var newsRibbon = exam.title.indexOf('Notary') !== -1 ? '<div class="exam-track-news-ribbon">New</div>' : '';
-
     return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
-      newsRibbon +
       '<div class="exam-track-body">' +
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
       '<h3>' + exam.title + '</h3>' +

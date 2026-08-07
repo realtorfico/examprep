@@ -507,10 +507,19 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .exam-track-card {
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
-  background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s;
+  background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s, filter 0.15s;
 }
-.exam-track-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
+.exam-track-card.is-active {
+  border-color: var(--accent); border-width: 2px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+}
 .exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
+/* Upcoming (not yet active) tracks read as clearly secondary to the one you can actually use --
+   dimmed and desaturated at rest, easing back toward full color on hover so the content is still
+   readable if someone's curious what's coming. */
+.exam-track-card:not(.is-active) { opacity: 0.6; filter: grayscale(0.5); }
+.exam-track-card:not(.is-active):hover { opacity: 0.85; filter: grayscale(0.15); }
 .exam-track-body { padding: 1.1rem; flex: 1; }
 .exam-track-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
 .exam-track-body h3 { font-size: 1rem; margin-bottom: 0.4rem; }
@@ -589,14 +598,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @keyframes news-pulse-scale {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
-}
-.exam-track-card { position: relative; }
-.exam-track-news-ribbon {
-  position: absolute; top: 0.7rem; right: -1.9rem; transform: rotate(35deg);
-  background: var(--highlight); color: #1a1203; font-size: 0.62rem; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.03em; padding: 0.25rem 2.2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); animation: news-pulse-scale 1.8s ease-in-out infinite;
-  pointer-events: none;
 }
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
