@@ -1229,7 +1229,7 @@ async function renderProgress() {
   var coverageValCls = coveragePct < PROGRESS_COVERAGE_PASS_PCT ? 'wrong' : 'correct';
 
   appEl.innerHTML = renderTabs('progress') +
-    '<div class="stats-bar">' +
+    '<div class="stats-bar progress-stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
