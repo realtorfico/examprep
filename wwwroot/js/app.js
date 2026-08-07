@@ -1101,14 +1101,16 @@ var progressTopicsExpanded = false; // collapsed by default -- a full topic list
 // notary) otherwise pushes the wrong-questions section below the fold, especially on mobile.
 var PROGRESS_TOPICS_COLLAPSED_COUNT = 5;
 var PROGRESS_ACCURACY_PASS_PCT = 70; // red/bold below this, green/bold at or above -- matches the exam's own passPercent
+var PROGRESS_COVERAGE_PASS_PCT = 50; // same idea, separate threshold, for % of the topic's questions ever attempted
 
 function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
+function progressTopicCoveragePct(t) { return t.topicTotal ? Math.round((100 * t.seen) / t.topicTotal) : 0; }
 
 function progressTopicsTableHtml() {
   var key = progressSort.key, dir = progressSort.dir;
   var sorted = (progressByTopic || []).slice().sort(function (a, b) {
-    var av = key === 'pct' ? progressTopicPct(a) : key === 'total' ? a.total : a.topic.toLowerCase();
-    var bv = key === 'pct' ? progressTopicPct(b) : key === 'total' ? b.total : b.topic.toLowerCase();
+    var av = key === 'pct' ? progressTopicPct(a) : key === 'coverage' ? progressTopicCoveragePct(a) : key === 'total' ? a.total : a.topic.toLowerCase();
+    var bv = key === 'pct' ? progressTopicPct(b) : key === 'coverage' ? progressTopicCoveragePct(b) : key === 'total' ? b.total : b.topic.toLowerCase();
     if (av < bv) return dir === 'asc' ? -1 : 1;
     if (av > bv) return dir === 'asc' ? 1 : -1;
     return 0;
@@ -1118,8 +1120,14 @@ function progressTopicsTableHtml() {
   var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
   var rows = visible.map(function (t) {
     var pct = progressTopicPct(t);
+    var coverage = progressTopicCoveragePct(t);
     var rowCls = pct < PROGRESS_ACCURACY_PASS_PCT ? 'progress-row-low' : 'progress-row-good';
-    return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td><td>' + t.total + '</td></tr>';
+    // Coverage gets its own cell-level color, independent of the row's accuracy-based color above
+    // (a topic can be low-accuracy but well-covered, or vice versa -- two separate signals, can't
+    // both be expressed as one row color).
+    var coverageCls = coverage < PROGRESS_COVERAGE_PASS_PCT ? 'progress-row-low' : 'progress-row-good';
+    return '<tr class="' + rowCls + '"><td>' + t.topic + '</td><td>' + pct + '%</td><td>' + t.total + '</td>' +
+      '<td><span class="' + coverageCls + '">' + coverage + '%</span></td></tr>';
   }).join('');
   var toggleHtml = sorted.length > PROGRESS_TOPICS_COLLAPSED_COUNT
     ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-progress-topics">' +
@@ -1129,6 +1137,7 @@ function progressTopicsTableHtml() {
     '<th data-act="sort-progress-topics" data-sort-key="topic">Topic' + arrow('topic') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="pct">Accuracy' + arrow('pct') + '</th>' +
     '<th data-act="sort-progress-topics" data-sort-key="total">Questions' + arrow('total') + '</th>' +
+    '<th data-act="sort-progress-topics" data-sort-key="coverage">Coverage' + arrow('coverage') + '</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
@@ -1211,12 +1220,21 @@ async function renderProgress() {
       '<div class="progress-wrong-list">' + wrongQuestionsHtml + '</div>'
     : '';
 
+  // Overall coverage across every topic in the exam (sum of the same seen/topicTotal fields the
+  // per-topic table uses) -- distinct questions ever attempted, not attempt count, so retrying a
+  // question you've already seen doesn't inflate it.
+  var totalSeen = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.seen || 0); }, 0);
+  var totalPossible = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.topicTotal || 0); }, 0);
+  var coveragePct = totalPossible ? Math.round((100 * totalSeen) / totalPossible) : 0;
+  var coverageValCls = coveragePct < PROGRESS_COVERAGE_PASS_PCT ? 'wrong' : 'correct';
+
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">' + p.totalAnswered + '</div></div>' +
     '<div class="stat-box"><div class="label">Correct</div><div class="val correct">' + p.totalCorrect + '</div></div>' +
     '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">' + wrong + '</div></div>' +
     '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
+    '<div class="stat-box"><div class="label">Coverage</div><div class="val ' + coverageValCls + '">' + coveragePct + '%</div></div>' +
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
