@@ -303,6 +303,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .exam-history-row {
   display: flex; justify-content: space-between; align-items: center; gap: 1rem;
   text-decoration: none; color: var(--fg); flex-wrap: wrap;
+  padding: 0.6rem 1rem; /* tighter than .card's default 1.1rem -- each row is just date + score now */
 }
 .exam-history-row:hover { border-color: var(--accent); }
 .exam-history-link { margin-left: 1rem; }
