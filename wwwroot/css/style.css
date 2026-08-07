@@ -631,13 +631,22 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 900px) {
   .progress-tables-grid { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
 }
+/* Grid items default to min-width: auto, which lets a wide table's intrinsic min-content size
+   (driven by its longest unbreakable word, e.g. a long topic name) push the item -- and the whole
+   page -- wider than the viewport instead of shrinking to the track. min-width: 0 lets the card
+   shrink to fit; table-layout: fixed + word-break below then let the table's own columns shrink
+   and wrap instead of forcing a minimum width. No horizontal scroll anywhere as a result -- not a
+   scroll container papering over it, since scroll strips are a no-go on mobile here (see feedback
+   memory). */
+.progress-table-card { min-width: 0; }
 .progress-table-card h3 { margin-top: 0; }
 
-.progress-topics-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0 0; }
+.progress-topics-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.75rem 0 0; table-layout: fixed; }
 .progress-topics-toggle { margin: 0.6rem 0 1.25rem; }
 .progress-topics-table th, .progress-topics-table td {
-  text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border);
+  text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); word-break: break-word;
 }
+.progress-topics-table th:first-child, .progress-topics-table td:first-child { width: 40%; }
 .progress-topics-table th {
   background: var(--surface-2); font-weight: 700; cursor: pointer; user-select: none;
   text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; color: var(--muted);
