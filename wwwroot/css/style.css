@@ -317,13 +317,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .exam-history-row:hover { border-color: var(--accent); }
 .exam-history-link { margin-left: 1rem; }
 
-/* Progress tab's per-attempt exam history -- exam-attempt-summary reuses .exam-history-row's
-   row layout (same look as the Exam tab's own history list) but on a <button> (in-place expand)
-   instead of an <a> (navigates away), so it needs its own width/text-align/weight reset. */
-.exam-attempt-summary { width: 100%; text-align: left; font-weight: 400; background: var(--surface-2); }
-.exam-attempt-summary:hover { border-color: var(--accent); }
-.exam-attempt-caret { flex-shrink: 0; color: var(--muted); }
-.exam-attempt-detail { margin-top: 0.5rem; }
+/* Progress tab's merged Exam Attempts table -- each row expands in place (a sibling detail row)
+   to show just the wrong questions, mirroring the admin console's per-attempt drill-down. */
+.exam-attempt-row { cursor: pointer; }
+.exam-attempt-caret { color: var(--muted); }
+.exam-attempt-detail-row:hover { background: transparent; }
+.exam-attempt-detail-row td { padding-top: 0; }
+.exam-attempt-detail { margin: 0.5rem 0; }
 .exam-attempt-wrong-list { display: flex; flex-direction: column; gap: 0.6rem; }
 .exam-attempt-score-failed { color: var(--incorrect); font-weight: 700; }
 .exam-attempt-score-passed { color: var(--correct); font-weight: 700; }

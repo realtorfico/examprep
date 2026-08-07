@@ -1041,13 +1041,13 @@ function drawQuestion() {
   setupMic();
 }
 
-var progressExamAttemptsByMode = { standard: null, toughest45: null }; // stashed per mode so toggling an attempt open/closed doesn't re-fetch
-var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time, across both buckets -- attemptIds are globally unique so this is unambiguous)
+var progressExamAttempts = []; // standard + toughest45 attempts merged into one list, each tagged with .mode -- stashed so toggling an attempt open/closed doesn't re-fetch
+var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time -- attemptIds are globally unique across modes so this is unambiguous)
 var examAttemptDetailCache = {}; // attemptId -> { review } | { error: true }, fetched lazily on first open
-var examAttemptsExpandedByMode = { standard: false, toughest45: false }; // collapsed by default, same "Show all" pattern as the topics table below
+var examAttemptsExpanded = false; // collapsed by default, same "Show all" pattern as the topics table below
+var examAttemptsSort = { key: 'date', dir: 'desc' }; // newest first by default; click a header to re-sort (e.g. by Mode, to group Toughest 45 attempts together)
 var EXAM_ATTEMPTS_COLLAPSED_COUNT = 2;
-
-function examAttemptsWrapId(mode) { return mode === 'toughest45' ? 'toughest45-attempts-wrap' : 'exam-attempts-wrap'; }
+var EXAM_ATTEMPT_MODE_LABELS = { standard: 'Standard', toughest45: 'Toughest 45' };
 
 // Per-attempt exam history for the Progress tab -- same attempts list as the Exam/Toughest 45
 // tabs' own history pages, but each row expands in place to show just the wrong questions (with
@@ -1066,33 +1066,54 @@ function examAttemptDetailHtml(attemptId) {
     wrongOnly.map(function (x) { return examReviewItemHtml(x.r, x.i); }).join('') + '</div>';
 }
 
-function examAttemptsSectionHtml(mode) {
-  var attempts = progressExamAttemptsByMode[mode] || [];
+function examAttemptSortValue(a, key) {
+  if (key === 'mode') return a.mode;
+  if (key === 'score') return a.total ? a.correct / a.total : 0;
+  return a.submittedAt;
+}
+
+// Standard and Toughest 45 attempts merged into one sortable table (a Mode column tells them
+// apart) rather than two near-identical cards -- they carry the same fields, and a reader browsing
+// recent activity doesn't care which bucket an attempt landed in until they want to filter by it,
+// at which point sorting by Mode groups them.
+function examAttemptsSectionHtml() {
+  var attempts = progressExamAttempts;
   if (!attempts.length) return '';
-  var heading = mode === 'toughest45' ? 'Toughest 45 Attempts' : 'Exam Attempts';
-  var expanded = examAttemptsExpandedByMode[mode];
-  var truncated = !expanded && attempts.length > EXAM_ATTEMPTS_COLLAPSED_COUNT;
-  var visible = truncated ? attempts.slice(0, EXAM_ATTEMPTS_COLLAPSED_COUNT) : attempts;
+  var key = examAttemptsSort.key, dir = examAttemptsSort.dir;
+  var sorted = attempts.slice().sort(function (a, b) {
+    var av = examAttemptSortValue(a, key), bv = examAttemptSortValue(b, key);
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  var truncated = !examAttemptsExpanded && sorted.length > EXAM_ATTEMPTS_COLLAPSED_COUNT;
+  var visible = truncated ? sorted.slice(0, EXAM_ATTEMPTS_COLLAPSED_COUNT) : sorted;
+  var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
   var rows = visible.map(function (a) {
     var isOpen = examAttemptOpenId === a.attemptId;
     var date = new Date(a.submittedAt * 1000).toLocaleString();
-    return '<div class="exam-attempt-item">' +
-      '<button class="card exam-history-row exam-attempt-summary" type="button" ' +
-      'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '" data-mode="' + mode + '">' +
-      '<span>' + date + '</span>' +
-      '<span class="' + (a.passed ? 'exam-attempt-score-passed' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span>' +
-      '<span class="exam-attempt-caret">' + (isOpen ? '▲' : '▾') + '</span>' +
-      '</button>' +
-      (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
-      '</div>';
+    var row = '<tr class="exam-attempt-row" data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '">' +
+      '<td>' + date + '</td>' +
+      '<td>' + EXAM_ATTEMPT_MODE_LABELS[a.mode] + '</td>' +
+      '<td><span class="' + (a.passed ? 'exam-attempt-score-passed' : 'exam-attempt-score-failed') + '">' + a.correct + ' / ' + a.total + '</span> ' +
+      '<span class="exam-attempt-caret">' + (isOpen ? '▲' : '▾') + '</span></td>' +
+      '</tr>';
+    var detailRow = isOpen
+      ? '<tr class="exam-attempt-detail-row"><td colspan="3"><div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div></td></tr>'
+      : '';
+    return row + detailRow;
   }).join('');
-  var toggleHtml = attempts.length > EXAM_ATTEMPTS_COLLAPSED_COUNT
-    ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-exam-attempts-expanded" data-mode="' + mode + '">' +
-      (truncated ? 'Show all ' + attempts.length + ' attempts ▾' : 'Show fewer ▴') + '</button>'
+  var toggleHtml = sorted.length > EXAM_ATTEMPTS_COLLAPSED_COUNT
+    ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-exam-attempts-expanded">' +
+      (truncated ? 'Show all ' + sorted.length + ' attempts ▾' : 'Show fewer ▴') + '</button>'
     : '';
-  return '<h3 class="mockexam-review-heading">' + heading + ' (' + attempts.length + ')</h3>' +
+  return '<h3 class="mockexam-review-heading">Exam Attempts (' + attempts.length + ')</h3>' +
     '<p class="muted">Tap an attempt to see the questions you missed, with the correct answer and why.</p>' +
-    '<div class="exam-history-list exam-attempts-list">' + rows + '</div>' + toggleHtml;
+    '<table class="progress-topics-table exam-attempts-table"><thead><tr>' +
+    '<th data-act="sort-exam-attempts" data-sort-key="date">Date' + arrow('date') + '</th>' +
+    '<th data-act="sort-exam-attempts" data-sort-key="mode">Mode' + arrow('mode') + '</th>' +
+    '<th data-act="sort-exam-attempts" data-sort-key="score">Score' + arrow('score') + '</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
 var progressByTopic = null; // stashed so the table can be re-sorted without a re-fetch
@@ -1208,8 +1229,9 @@ async function renderProgress() {
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
   progressByTopic = p.byTopic;
-  progressExamAttemptsByMode.standard = results[1].attempts || [];
-  progressExamAttemptsByMode.toughest45 = results[2].attempts || [];
+  var standardAttempts = (results[1].attempts || []).map(function (a) { a.mode = 'standard'; return a; });
+  var toughest45Attempts = (results[2].attempts || []).map(function (a) { a.mode = 'toughest45'; return a; });
+  progressExamAttempts = standardAttempts.concat(toughest45Attempts);
   leaderboardUsers = results[3].users || [];
   leaderboardMinQuestions = typeof results[3].minQuestions === 'number' ? results[3].minQuestions : leaderboardMinQuestions;
 
@@ -1265,8 +1287,7 @@ async function renderProgress() {
   var accuracyValCls = pct < accuracyPassPct ? 'wrong' : 'correct';
   var coverageValCls = coveragePct < progressCoveragePassPct ? 'wrong' : 'correct';
 
-  var standardAttemptsHtml = examAttemptsSectionHtml('standard');
-  var toughest45AttemptsHtml = examAttemptsSectionHtml('toughest45');
+  var examAttemptsHtml = examAttemptsSectionHtml();
 
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar progress-stats-bar">' +
@@ -1289,8 +1310,7 @@ async function renderProgress() {
     leaderboardMinQuestions + ' questions.</p>' +
     '<div id="leaderboard-wrap">' + leaderboardTableHtml() + '</div>' +
     '</div>' +
-    (standardAttemptsHtml ? '<div class="card progress-table-card" id="exam-attempts-wrap">' + standardAttemptsHtml + '</div>' : '<div id="exam-attempts-wrap"></div>') +
-    (toughest45AttemptsHtml ? '<div class="card progress-table-card" id="toughest45-attempts-wrap">' + toughest45AttemptsHtml + '</div>' : '<div id="toughest45-attempts-wrap"></div>') +
+    (examAttemptsHtml ? '<div class="card progress-table-card" id="exam-attempts-wrap">' + examAttemptsHtml + '</div>' : '<div id="exam-attempts-wrap"></div>') +
     '</div>' +
     wrongQuestionsSection +
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
@@ -2550,31 +2570,31 @@ document.addEventListener('click', async function (e) {
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
-    // examAttemptOpenId is shared across both buckets (accordion) -- opening one in either bucket
-    // must re-render both wraps, since a previously-open attempt in the OTHER bucket needs to
-    // collapse too.
-    var rerenderBothAttemptWraps = function () {
-      var standardWrap = document.getElementById(examAttemptsWrapId('standard'));
-      if (standardWrap) standardWrap.innerHTML = examAttemptsSectionHtml('standard');
-      var toughestWrap = document.getElementById(examAttemptsWrapId('toughest45'));
-      if (toughestWrap) toughestWrap.innerHTML = examAttemptsSectionHtml('toughest45');
+    var rerenderAttemptWrap = function () {
+      var attemptWrap = document.getElementById('exam-attempts-wrap');
+      if (attemptWrap) attemptWrap.innerHTML = examAttemptsSectionHtml();
     };
     examAttemptOpenId = examAttemptOpenId === attemptId ? null : attemptId;
     if (examAttemptOpenId && !examAttemptDetailCache[attemptId]) {
       apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId)).then(function (result) {
         examAttemptDetailCache[attemptId] = { review: result.review };
-        if (examAttemptOpenId === attemptId) rerenderBothAttemptWraps();
+        if (examAttemptOpenId === attemptId) rerenderAttemptWrap();
       }).catch(function () {
         examAttemptDetailCache[attemptId] = { error: true };
-        if (examAttemptOpenId === attemptId) rerenderBothAttemptWraps();
+        if (examAttemptOpenId === attemptId) rerenderAttemptWrap();
       });
     }
-    rerenderBothAttemptWraps();
+    rerenderAttemptWrap();
   } else if (act === 'toggle-exam-attempts-expanded') {
-    var expandMode = el.getAttribute('data-mode') || 'standard';
-    examAttemptsExpandedByMode[expandMode] = !examAttemptsExpandedByMode[expandMode];
-    var expandWrap = document.getElementById(examAttemptsWrapId(expandMode));
-    if (expandWrap) expandWrap.innerHTML = examAttemptsSectionHtml(expandMode);
+    examAttemptsExpanded = !examAttemptsExpanded;
+    var expandWrap = document.getElementById('exam-attempts-wrap');
+    if (expandWrap) expandWrap.innerHTML = examAttemptsSectionHtml();
+  } else if (act === 'sort-exam-attempts') {
+    var attemptSortKey = el.getAttribute('data-sort-key');
+    if (examAttemptsSort.key === attemptSortKey) examAttemptsSort.dir = examAttemptsSort.dir === 'asc' ? 'desc' : 'asc';
+    else { examAttemptsSort.key = attemptSortKey; examAttemptsSort.dir = attemptSortKey === 'mode' ? 'asc' : 'desc'; }
+    var sortWrap = document.getElementById('exam-attempts-wrap');
+    if (sortWrap) sortWrap.innerHTML = examAttemptsSectionHtml();
   } else if (act === 'progress-reset-select') {
     progressResetPending = el.getAttribute('data-scope');
     var resetWrapSelect = document.getElementById('progress-reset-wrap');
