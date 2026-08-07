@@ -15,6 +15,7 @@ var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" befo
 // network round-trip already gives a brief natural pause before the screen changes.
 var examAutoAdvance = localStorage.getItem('examprep_exam_autoadvance') === '1';
 var examAutoRead = localStorage.getItem('examprep_exam_autoread') === '1';
+var examUnseenOnly = localStorage.getItem('examprep_exam_unseenonly') === '1'; // regular exam only -- biases question selection toward questions never seen in quiz or exam before
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
 var sampleState = { questions: null, index: 0, answered: null };
@@ -1390,6 +1391,10 @@ async function renderExamIntro(mode) {
     '</ul>' +
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
+    (isToughest ? '' :
+      '<label class="auto-advance-toggle">' +
+      '<input type="checkbox" data-act="toggle-exam-unseen-only"' + (examUnseenOnly ? ' checked' : '') + '> ' +
+      'Only questions I haven\'t seen before (exam may run shorter than ' + config.questionCount + ')</label>') +
     '<button class="btn-primary" type="button" data-act="exam-begin" data-mode="' + mode + '">Begin Exam →</button>' +
     '<a class="btn-secondary exam-history-link" href="' + examHistoryHash(mode) + '">View past attempts →</a>' +
     '</div>';
@@ -1439,20 +1444,24 @@ async function renderExamAttemptDetailView(attemptId, mode) {
 
 async function beginExam(mode) {
   mode = mode || 'standard';
+  var unseenOnly = mode === 'standard' && examUnseenOnly;
   appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Starting…</p>';
   try {
-    var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode } });
+    var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode, unseenOnly: unseenOnly } });
     enterExamSitting(attempt, mode);
   } catch (e) {
     // Toughest 45 has no backfill -- a user with nothing currently wrong gets 'no_questions' here,
     // which deserves an explanation ("go miss some questions first") rather than a generic error.
-    var noQuestionsMsg = mode === 'toughest45'
+    // Same idea for "unseen only" -- a user who's seen the whole bank gets 'no_unseen_questions'.
+    var errCode = e.data && e.data.error;
+    var msg = errCode === 'no_unseen_questions'
+      ? '<p>You\'ve already seen every question in the bank at least once — nice work! Turn off ' +
+        '"Only questions I haven\'t seen before" to take a normal exam.</p>'
+      : errCode === 'no_questions' && mode === 'toughest45'
       ? '<p>You don\'t have any wrongly-answered questions right now -- nothing to drill on yet. ' +
         'Take the Quiz or the regular Exam first, and missed questions will show up here.</p>'
       : '<p>Could not start the exam. Try again shortly.</p>';
-    var isNoQuestions = e.data && e.data.error === 'no_questions';
-    appEl.innerHTML = renderTabs(examTabKey(mode)) +
-      (isNoQuestions ? noQuestionsMsg : '<p>Could not start the exam. Try again shortly.</p>');
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + msg;
   }
 }
 
@@ -2557,6 +2566,9 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_exam_autoread', examAutoRead ? '1' : '0');
     if (!examAutoRead) stopSpeaking();
     else speakCurrentExamQuestion();
+  } else if (act === 'toggle-exam-unseen-only') {
+    examUnseenOnly = el.checked;
+    localStorage.setItem('examprep_exam_unseenonly', examUnseenOnly ? '1' : '0');
   } else if (act === 'exam-submit-confirm') {
     var unanswered = examState.attempt.questions.length - Object.keys(examState.attempt.answers).length;
     if (unanswered > 0) {
