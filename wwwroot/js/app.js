@@ -1100,8 +1100,13 @@ var progressSort = { key: 'topic', dir: 'asc' };
 var progressTopicsExpanded = false; // collapsed by default -- a full topic list (30+ rows for
 // notary) otherwise pushes the wrong-questions section below the fold, especially on mobile.
 var PROGRESS_TOPICS_COLLAPSED_COUNT = 5;
-var PROGRESS_ACCURACY_PASS_PCT = 70; // red/bold below this, green/bold at or above -- matches the exam's own passPercent
-var PROGRESS_COVERAGE_PASS_PCT = 50; // same idea, separate threshold, for % of the topic's questions ever attempted
+var PROGRESS_ACCURACY_PASS_PCT = 70; // per-topic table only, red/bold below this, green/bold at or above -- matches the exam's own passPercent
+var PROGRESS_COVERAGE_PASS_PCT = 50; // per-topic table only, same idea, separate threshold, for % of the topic's questions ever attempted
+// The headline stats-bar's own Accuracy/Coverage thresholds are admin-configurable (progress_accuracy_pass_pct /
+// progress_coverage_pass_pct in app_settings) and come back on the /progress payload -- these are just the
+// client-side fallback if that's ever missing, matching the API's own defaults.
+var PROGRESS_STATSBAR_ACCURACY_PASS_PCT_DEFAULT = 80;
+var PROGRESS_STATSBAR_COVERAGE_PASS_PCT_DEFAULT = 50;
 
 function progressTopicPct(t) { return t.total ? Math.round((100 * t.correct) / t.total) : 0; }
 function progressTopicCoveragePct(t) { return t.topicTotal ? Math.round((100 * t.seen) / t.topicTotal) : 0; }
@@ -1226,7 +1231,10 @@ async function renderProgress() {
   var totalSeen = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.seen || 0); }, 0);
   var totalPossible = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.topicTotal || 0); }, 0);
   var coveragePct = totalPossible ? Math.round((100 * totalSeen) / totalPossible) : 0;
-  var coverageValCls = coveragePct < PROGRESS_COVERAGE_PASS_PCT ? 'wrong' : 'correct';
+  var accuracyPassPct = typeof p.accuracyPassPct === 'number' ? p.accuracyPassPct : PROGRESS_STATSBAR_ACCURACY_PASS_PCT_DEFAULT;
+  var coveragePassPct = typeof p.coveragePassPct === 'number' ? p.coveragePassPct : PROGRESS_STATSBAR_COVERAGE_PASS_PCT_DEFAULT;
+  var accuracyValCls = pct < accuracyPassPct ? 'wrong' : 'correct';
+  var coverageValCls = coveragePct < coveragePassPct ? 'wrong' : 'correct';
 
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar progress-stats-bar">' +
@@ -1234,7 +1242,7 @@ async function renderProgress() {
     '<span class="correct">' + p.totalCorrect + '</span><span class="sep">/</span>' +
     '<span class="wrong">' + wrong + '</span><span class="sep">/</span>' +
     '<span class="total">' + p.totalAnswered + '</span></div></div>' +
-    '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">' + pct + '%</div></div>' +
+    '<div class="stat-box"><div class="label">Accuracy</div><div class="val ' + accuracyValCls + '">' + pct + '%</div></div>' +
     '<div class="stat-box"><div class="label">Coverage</div><div class="val ' + coverageValCls + '">' + coveragePct + '%</div></div>' +
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
