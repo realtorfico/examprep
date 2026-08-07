@@ -1040,15 +1040,17 @@ function drawQuestion() {
   setupMic();
 }
 
-var progressExamAttempts = null; // stashed so toggling an attempt open/closed doesn't re-fetch
-var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time)
+var progressExamAttemptsByMode = { standard: null, toughest45: null }; // stashed per mode so toggling an attempt open/closed doesn't re-fetch
+var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time, across both buckets -- attemptIds are globally unique so this is unambiguous)
 var examAttemptDetailCache = {}; // attemptId -> { review } | { error: true }, fetched lazily on first open
 
-// Per-attempt exam history for the Progress tab -- same attempts list as the Exam tab's own
-// history page, but each row expands in place to show just the wrong questions (with the correct
-// answer + explanation), mirroring the admin console's user → attempt → per-question drill-down.
-// The full per-question detail (/exam/attempt) isn't in the /exam/history list response, so it's
-// fetched lazily the first time a row opens rather than upfront for every attempt.
+function examAttemptsWrapId(mode) { return mode === 'toughest45' ? 'toughest45-attempts-wrap' : 'exam-attempts-wrap'; }
+
+// Per-attempt exam history for the Progress tab -- same attempts list as the Exam/Toughest 45
+// tabs' own history pages, but each row expands in place to show just the wrong questions (with
+// the correct answer + explanation), mirroring the admin console's user → attempt → per-question
+// drill-down. The full per-question detail (/exam/attempt) isn't in the /exam/history list
+// response, so it's fetched lazily the first time a row opens rather than upfront for every attempt.
 function examAttemptDetailHtml(attemptId) {
   var cached = examAttemptDetailCache[attemptId];
   if (!cached) return '<p class="muted">Loading…</p>';
@@ -1061,15 +1063,16 @@ function examAttemptDetailHtml(attemptId) {
     wrongOnly.map(function (x) { return examReviewItemHtml(x.r, x.i); }).join('') + '</div>';
 }
 
-function examAttemptsSectionHtml() {
-  var attempts = progressExamAttempts || [];
+function examAttemptsSectionHtml(mode) {
+  var attempts = progressExamAttemptsByMode[mode] || [];
   if (!attempts.length) return '';
+  var heading = mode === 'toughest45' ? 'Toughest 45 Attempts' : 'Exam Attempts';
   var rows = attempts.map(function (a) {
     var isOpen = examAttemptOpenId === a.attemptId;
     var date = new Date(a.submittedAt * 1000).toLocaleString();
     return '<div class="exam-attempt-item">' +
       '<button class="card exam-history-row exam-attempt-summary" type="button" ' +
-      'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '">' +
+      'data-act="toggle-exam-attempt" data-attempt-id="' + a.attemptId + '" data-mode="' + mode + '">' +
       '<span>' + date + '</span>' +
       '<span>' + a.correct + ' / ' + a.total + '</span>' +
       '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
@@ -1078,7 +1081,7 @@ function examAttemptsSectionHtml() {
       (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
       '</div>';
   }).join('');
-  return '<h3 class="mockexam-review-heading">Exam Attempts (' + attempts.length + ')</h3>' +
+  return '<h3 class="mockexam-review-heading">' + heading + ' (' + attempts.length + ')</h3>' +
     '<p class="muted">Tap an attempt to see the questions you missed, with the correct answer and why.</p>' +
     '<div class="exam-history-list exam-attempts-list">' + rows + '</div>';
 }
@@ -1147,12 +1150,13 @@ async function renderProgress() {
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
   examAttemptOpenId = null;
   examAttemptDetailCache = {};
-  var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history')]);
+  var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history?mode=standard'), apiFetch('/exam/history?mode=toughest45')]);
   var p = results[0];
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
   progressByTopic = p.byTopic;
-  progressExamAttempts = results[1].attempts || [];
+  progressExamAttemptsByMode.standard = results[1].attempts || [];
+  progressExamAttemptsByMode.toughest45 = results[2].attempts || [];
 
   // The totals above are a "last attempt wins" snapshot shared by quiz and mock exam (a question
   // answered in both only reflects whichever happened most recently) -- exam_attempts has no such
@@ -1201,7 +1205,8 @@ async function renderProgress() {
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
-    '<div id="exam-attempts-wrap">' + examAttemptsSectionHtml() + '</div>' +
+    '<div id="exam-attempts-wrap">' + examAttemptsSectionHtml('standard') + '</div>' +
+    '<div id="toughest45-attempts-wrap">' + examAttemptsSectionHtml('toughest45') + '</div>' +
     wrongQuestionsSection +
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
@@ -1264,7 +1269,7 @@ function renderLockedToughest45Preview() {
   var mockup = '<div class="card mockexam-intro-card">' +
     '<p>This mimics the real exam format as closely as possible:</p>' +
     '<ul class="mockexam-intro-list">' +
-    '<li>Built from <strong>questions you\'ve gotten wrong before</strong> -- topped up with random questions from the full bank if you have fewer than 45 currently missed</li>' +
+    '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to 45, but could be fewer (no filler questions)</li>' +
     '<li><strong>60-minute</strong> timer, running continuously in one sitting</li>' +
     '<li>No answer feedback until you finish — just like the real thing</li>' +
     '<li>Need <strong>70%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
@@ -1360,7 +1365,8 @@ async function renderExamIntro(mode) {
   var config = await apiFetch('/exam/config');
   examState.config = config;
   var questionSourceLine = isToughest
-    ? '<li>Built from <strong>questions you\'ve gotten wrong before</strong> -- topped up with random questions from the full bank if you have fewer than ' + config.questionCount + ' currently missed</li>'
+    ? '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to ' + config.questionCount +
+      ', but could be fewer if you currently have less than that missed (no filler questions)</li>'
     : '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>';
   appEl.innerHTML = renderTabs(examTabKey(mode)) +
     '<h1>' + (isToughest ? 'Toughest 45' : 'Timed Practice Exam') + '</h1>' +
@@ -1429,7 +1435,15 @@ async function beginExam(mode) {
     var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode } });
     enterExamSitting(attempt, mode);
   } catch (e) {
-    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not start the exam. Try again shortly.</p>';
+    // Toughest 45 has no backfill -- a user with nothing currently wrong gets 'no_questions' here,
+    // which deserves an explanation ("go miss some questions first") rather than a generic error.
+    var noQuestionsMsg = mode === 'toughest45'
+      ? '<p>You don\'t have any wrongly-answered questions right now -- nothing to drill on yet. ' +
+        'Take the Quiz or the regular Exam first, and missed questions will show up here.</p>'
+      : '<p>Could not start the exam. Try again shortly.</p>';
+    var isNoQuestions = e.data && e.data.error === 'no_questions';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) +
+      (isNoQuestions ? noQuestionsMsg : '<p>Could not start the exam. Try again shortly.</p>');
   }
 }
 
@@ -2424,24 +2438,26 @@ document.addEventListener('click', async function (e) {
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
+    // examAttemptOpenId is shared across both buckets (accordion) -- opening one in either bucket
+    // must re-render both wraps, since a previously-open attempt in the OTHER bucket needs to
+    // collapse too.
+    var rerenderBothAttemptWraps = function () {
+      var standardWrap = document.getElementById(examAttemptsWrapId('standard'));
+      if (standardWrap) standardWrap.innerHTML = examAttemptsSectionHtml('standard');
+      var toughestWrap = document.getElementById(examAttemptsWrapId('toughest45'));
+      if (toughestWrap) toughestWrap.innerHTML = examAttemptsSectionHtml('toughest45');
+    };
     examAttemptOpenId = examAttemptOpenId === attemptId ? null : attemptId;
     if (examAttemptOpenId && !examAttemptDetailCache[attemptId]) {
       apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId)).then(function (result) {
         examAttemptDetailCache[attemptId] = { review: result.review };
-        if (examAttemptOpenId === attemptId) {
-          var attemptsWrap = document.getElementById('exam-attempts-wrap');
-          if (attemptsWrap) attemptsWrap.innerHTML = examAttemptsSectionHtml();
-        }
+        if (examAttemptOpenId === attemptId) rerenderBothAttemptWraps();
       }).catch(function () {
         examAttemptDetailCache[attemptId] = { error: true };
-        if (examAttemptOpenId === attemptId) {
-          var attemptsWrapErr = document.getElementById('exam-attempts-wrap');
-          if (attemptsWrapErr) attemptsWrapErr.innerHTML = examAttemptsSectionHtml();
-        }
+        if (examAttemptOpenId === attemptId) rerenderBothAttemptWraps();
       });
     }
-    var attemptsWrapNow = document.getElementById('exam-attempts-wrap');
-    if (attemptsWrapNow) attemptsWrapNow.innerHTML = examAttemptsSectionHtml();
+    rerenderBothAttemptWraps();
   } else if (act === 'progress-reset-select') {
     progressResetPending = el.getAttribute('data-scope');
     var resetWrapSelect = document.getElementById('progress-reset-wrap');
