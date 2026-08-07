@@ -1043,6 +1043,8 @@ function drawQuestion() {
 var progressExamAttemptsByMode = { standard: null, toughest45: null }; // stashed per mode so toggling an attempt open/closed doesn't re-fetch
 var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time, across both buckets -- attemptIds are globally unique so this is unambiguous)
 var examAttemptDetailCache = {}; // attemptId -> { review } | { error: true }, fetched lazily on first open
+var examAttemptsExpandedByMode = { standard: false, toughest45: false }; // collapsed by default, same "Show all" pattern as the topics table below
+var EXAM_ATTEMPTS_COLLAPSED_COUNT = 2;
 
 function examAttemptsWrapId(mode) { return mode === 'toughest45' ? 'toughest45-attempts-wrap' : 'exam-attempts-wrap'; }
 
@@ -1067,7 +1069,10 @@ function examAttemptsSectionHtml(mode) {
   var attempts = progressExamAttemptsByMode[mode] || [];
   if (!attempts.length) return '';
   var heading = mode === 'toughest45' ? 'Toughest 45 Attempts' : 'Exam Attempts';
-  var rows = attempts.map(function (a) {
+  var expanded = examAttemptsExpandedByMode[mode];
+  var truncated = !expanded && attempts.length > EXAM_ATTEMPTS_COLLAPSED_COUNT;
+  var visible = truncated ? attempts.slice(0, EXAM_ATTEMPTS_COLLAPSED_COUNT) : attempts;
+  var rows = visible.map(function (a) {
     var isOpen = examAttemptOpenId === a.attemptId;
     var date = new Date(a.submittedAt * 1000).toLocaleString();
     return '<div class="exam-attempt-item">' +
@@ -1081,9 +1086,13 @@ function examAttemptsSectionHtml(mode) {
       (isOpen ? '<div class="exam-attempt-detail">' + examAttemptDetailHtml(a.attemptId) + '</div>' : '') +
       '</div>';
   }).join('');
+  var toggleHtml = attempts.length > EXAM_ATTEMPTS_COLLAPSED_COUNT
+    ? '<button class="btn-secondary btn-sm progress-topics-toggle" type="button" data-act="toggle-exam-attempts-expanded" data-mode="' + mode + '">' +
+      (truncated ? 'Show all ' + attempts.length + ' attempts ▾' : 'Show fewer ▴') + '</button>'
+    : '';
   return '<h3 class="mockexam-review-heading">' + heading + ' (' + attempts.length + ')</h3>' +
     '<p class="muted">Tap an attempt to see the questions you missed, with the correct answer and why.</p>' +
-    '<div class="exam-history-list exam-attempts-list">' + rows + '</div>';
+    '<div class="exam-history-list exam-attempts-list">' + rows + '</div>' + toggleHtml;
 }
 
 var progressByTopic = null; // stashed so the table can be re-sorted without a re-fetch
@@ -2458,6 +2467,11 @@ document.addEventListener('click', async function (e) {
       });
     }
     rerenderBothAttemptWraps();
+  } else if (act === 'toggle-exam-attempts-expanded') {
+    var expandMode = el.getAttribute('data-mode') || 'standard';
+    examAttemptsExpandedByMode[expandMode] = !examAttemptsExpandedByMode[expandMode];
+    var expandWrap = document.getElementById(examAttemptsWrapId(expandMode));
+    if (expandWrap) expandWrap.innerHTML = examAttemptsSectionHtml(expandMode);
   } else if (act === 'progress-reset-select') {
     progressResetPending = el.getAttribute('data-scope');
     var resetWrapSelect = document.getElementById('progress-reset-wrap');
