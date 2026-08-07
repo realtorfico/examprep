@@ -192,6 +192,7 @@ a { color: var(--accent); }
    sized for the sticky update-available banner) left a visible gap above the question on every
    normal scroll (banner is a rare, dismissible edge case, not worth the everyday under-scroll). */
 .question-text { font-size: 1.1rem; line-height: 1.5; font-weight: 500; max-width: 68ch; scroll-margin-top: 0.5rem; }
+.question-progress-note { font-size: 0.8rem; margin-top: 0.6rem; }
 
 button {
   cursor: pointer; border: none; border-radius: 10px; padding: 0.6rem 0.9rem;

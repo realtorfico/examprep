@@ -1564,6 +1564,10 @@ function drawExamSitting() {
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
+    // Duplicates the "Question X of N" count from .mockexam-header above -- scrollToQuestion()
+    // lands the question text at the top of the viewport, scrolling that header (and this count
+    // with it) out of view, so this copy stays visible no matter where the page has scrolled to.
+    '<div class="question-progress-note muted">Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length + '</div>' +
     '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="exam-listen">🔊 Read aloud</button></div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
