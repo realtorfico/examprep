@@ -323,8 +323,8 @@ function renderTabs(active) {
   // visitor gets a sense of the layout -- clicking one still only shows a locked preview, never
   // the real content/data (see renderLockedTabPreview and the guard in renderNotaryApp).
   var loggedIn = !!getToken();
-  var gated = { quiz: true, exam: true, progress: true };
-  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['progress', 'Progress'], ['info', 'Info']];
+  var gated = { quiz: true, exam: true, toughest45: true, progress: true };
+  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Toughest 45'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">California Notary</div>' : '';
   return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
@@ -1260,6 +1260,22 @@ function renderLockedExamPreview() {
     'Sign in or unlock full access to take the real timed mock exam.');
 }
 
+function renderLockedToughest45Preview() {
+  var mockup = '<div class="card mockexam-intro-card">' +
+    '<p>This mimics the real exam format as closely as possible:</p>' +
+    '<ul class="mockexam-intro-list">' +
+    '<li>Built from <strong>questions you\'ve gotten wrong before</strong> -- topped up with random questions from the full bank if you have fewer than 45 currently missed</li>' +
+    '<li><strong>60-minute</strong> timer, running continuously in one sitting</li>' +
+    '<li>No answer feedback until you finish — just like the real thing</li>' +
+    '<li>Need <strong>70%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
+    '</ul>' +
+    '<button class="btn-primary" type="button" disabled>Begin Exam →</button>' +
+    '</div>';
+  renderLockedTabPreview('toughest45', 'Toughest 45',
+    mockup,
+    'Sign in or unlock full access to drill on your own weak spots with a focused, timed exam.');
+}
+
 function renderLockedProgressPreview() {
   var mockup = '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Total</div><div class="val">42</div></div>' +
@@ -1307,96 +1323,119 @@ function renderAdditionalInfo() {
     linkCards;
 }
 
-// ---- Timed mock exam --------------------------------------------------
+// ---- Timed mock exam (+ "Toughest 45", a harder variant) ------------------
 // A single-sitting, timed simulation of the real exam -- no per-question feedback, free
 // navigation between questions, and a countdown clock computed from the server's own
 // startedAt (not a client-only timer), so a refresh mid-sitting resumes in place rather than
 // restarting the clock or handing out a fresh question set.
+//
+// Both the regular exam and "Toughest 45" (same timed format, but every question is drawn from
+// ones you've previously gotten wrong -- see pickToughest45Questions in the Worker) share all of
+// this code, distinguished only by a `mode` ('standard' | 'toughest45') threaded through every
+// function and echoed in the server's exam_attempts row, rather than duplicating ~250 lines for a
+// second tab that's otherwise identical. examTabKey/examHistoryHash/examMainHash below are the
+// only mode-to-string mappings -- every other function just forwards the mode value it's given.
 
-var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: null };
+function examTabKey(mode) { return mode === 'toughest45' ? 'toughest45' : 'exam'; }
+function examHistoryHash(mode) { return mode === 'toughest45' ? '#/toughest45-history' : '#/exam-history'; }
+function examMainHash(mode) { return mode === 'toughest45' ? '#/toughest45' : '#/exam'; }
 
-async function renderExam() {
-  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading…</p>';
+var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: null, mode: 'standard' };
+
+async function renderExam(mode) {
+  mode = mode || 'standard';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading…</p>';
   try {
-    var current = await apiFetch('/exam/current');
-    if (current.attempt) { enterExamSitting(current.attempt); return; }
-    await renderExamIntro();
+    var current = await apiFetch('/exam/current?mode=' + mode);
+    if (current.attempt) { enterExamSitting(current.attempt, mode); return; }
+    await renderExamIntro(mode);
   } catch (e) {
-    appEl.innerHTML = renderTabs('exam') + '<p>Could not load the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load the exam. Try again shortly.</p>';
   }
 }
 
-async function renderExamIntro() {
+async function renderExamIntro(mode) {
+  mode = mode || 'standard';
+  var isToughest = mode === 'toughest45';
   var config = await apiFetch('/exam/config');
   examState.config = config;
-  appEl.innerHTML = renderTabs('exam') +
-    '<h1>Timed Practice Exam</h1>' +
+  var questionSourceLine = isToughest
+    ? '<li>Built from <strong>questions you\'ve gotten wrong before</strong> -- topped up with random questions from the full bank if you have fewer than ' + config.questionCount + ' currently missed</li>'
+    : '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) +
+    '<h1>' + (isToughest ? 'Toughest 45' : 'Timed Practice Exam') + '</h1>' +
+    (isToughest ? '<p class="muted page-intro-text">Same timed format as the practice exam, but every question is one you\'ve missed before -- a focused drill on your actual weak spots.</p>' : '') +
     '<div class="card mockexam-intro-card">' +
     '<p>This mimics the real exam format as closely as possible:</p>' +
     '<ul class="mockexam-intro-list">' +
-    '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>' +
+    questionSourceLine +
     '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>' +
     '<li>No answer feedback until you finish — just like the real thing</li>' +
     '<li>Need <strong>' + config.passPercent + '%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
     '</ul>' +
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
-    '<button class="btn-primary" type="button" data-act="exam-begin">Begin Exam →</button>' +
-    '<a class="btn-secondary exam-history-link" href="#/exam-history">View past attempts →</a>' +
+    '<button class="btn-primary" type="button" data-act="exam-begin" data-mode="' + mode + '">Begin Exam →</button>' +
+    '<a class="btn-secondary exam-history-link" href="' + examHistoryHash(mode) + '">View past attempts →</a>' +
     '</div>';
 }
 
-async function renderExamHistory() {
-  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading past attempts…</p>';
+async function renderExamHistory(mode) {
+  mode = mode || 'standard';
+  var examLabel = mode === 'toughest45' ? 'Toughest 45 exam' : 'practice exam';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading past attempts…</p>';
   try {
-    var res = await apiFetch('/exam/history');
+    var res = await apiFetch('/exam/history?mode=' + mode);
     if (!res.attempts.length) {
-      appEl.innerHTML = renderTabs('exam') + '<h1>Past Attempts</h1>' +
-        '<p class="muted">You haven\'t completed a practice exam yet.</p>' +
-        '<a class="btn-primary hub-cta" href="#/exam">Take one now →</a>';
+      appEl.innerHTML = renderTabs(examTabKey(mode)) + '<h1>Past Attempts</h1>' +
+        '<p class="muted">You haven\'t completed a ' + examLabel + ' yet.</p>' +
+        '<a class="btn-primary hub-cta" href="' + examMainHash(mode) + '">Take one now →</a>';
       return;
     }
     var rows = res.attempts.map(function (a) {
       var date = new Date(a.submittedAt * 1000).toLocaleString();
-      return '<a class="card exam-history-row" href="#/exam-history/' + a.attemptId + '">' +
+      return '<a class="card exam-history-row" href="' + examHistoryHash(mode) + '/' + a.attemptId + '">' +
         '<span>' + date + '</span>' +
         '<span>' + a.correct + ' / ' + a.total + '</span>' +
         '<span class="' + (a.passed ? 'result-correct' : 'result-incorrect') + '">' + a.percent + '% — ' + (a.passed ? 'Passed' : 'Not passed') + '</span>' +
         '</a>';
     }).join('');
-    appEl.innerHTML = renderTabs('exam') +
+    appEl.innerHTML = renderTabs(examTabKey(mode)) +
       '<h1>Past Attempts</h1>' +
-      '<p class="muted page-intro-text">Every practice exam you\'ve completed, most recent first. Tap one to review your answers.</p>' +
+      '<p class="muted page-intro-text">Every ' + examLabel + ' you\'ve completed, most recent first. Tap one to review your answers.</p>' +
       '<div class="exam-history-list">' + rows + '</div>' +
-      '<a class="btn-secondary hub-cta" href="#/exam">← Back to exam</a>';
+      '<a class="btn-secondary hub-cta" href="' + examMainHash(mode) + '">← Back to exam</a>';
   } catch (e) {
-    appEl.innerHTML = renderTabs('exam') + '<p>Could not load your past attempts. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load your past attempts. Try again shortly.</p>';
   }
 }
 
-async function renderExamAttemptDetailView(attemptId) {
-  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Loading…</p>';
+async function renderExamAttemptDetailView(attemptId, mode) {
+  mode = mode || 'standard';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading…</p>';
   try {
     var result = await apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId));
-    renderExamResults(result, { fromHistory: true });
+    renderExamResults(result, { fromHistory: true, mode: mode });
   } catch (e) {
-    appEl.innerHTML = renderTabs('exam') + '<p>Could not load this attempt.</p>' +
-      '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not load this attempt.</p>' +
+      '<a class="btn-secondary hub-cta" href="' + examHistoryHash(mode) + '">← Back to past attempts</a>';
   }
 }
 
-async function beginExam() {
-  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Starting…</p>';
+async function beginExam(mode) {
+  mode = mode || 'standard';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Starting…</p>';
   try {
-    var attempt = await apiFetch('/exam/start', { method: 'POST' });
-    enterExamSitting(attempt);
+    var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode } });
+    enterExamSitting(attempt, mode);
   } catch (e) {
-    appEl.innerHTML = renderTabs('exam') + '<p>Could not start the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not start the exam. Try again shortly.</p>';
   }
 }
 
-function enterExamSitting(attempt) {
+function enterExamSitting(attempt, mode) {
   examState.attempt = attempt;
+  examState.mode = mode || attempt.mode || 'standard';
   examState.currentIndex = 0;
   examSubmitConfirmPending = false;
   drawExamSitting();
@@ -1467,7 +1506,7 @@ function drawExamSitting() {
     return optionButtonHtml(k, q.choices[k], cls, 'type="button" data-act="exam-answer" data-choice="' + k + '"');
   }).join('');
 
-  appEl.innerHTML = renderTabs('exam') +
+  appEl.innerHTML = renderTabs(examTabKey(examState.mode)) +
     '<div class="mockexam-header">' +
     '<div>Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length +
     ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
@@ -1528,13 +1567,14 @@ async function selectExamAnswer(choice) {
 
 async function submitExam() {
   var attempt = examState.attempt;
+  var mode = examState.mode;
   if (examState.timerHandle) { clearInterval(examState.timerHandle); examState.timerHandle = null; }
-  appEl.innerHTML = renderTabs('exam') + '<p class="muted">Scoring your exam…</p>';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Scoring your exam…</p>';
   try {
     var result = await apiFetch('/exam/submit', { method: 'POST', body: { attemptId: attempt.attemptId } });
-    renderExamResults(result);
+    renderExamResults(result, { mode: mode });
   } catch (e) {
-    appEl.innerHTML = renderTabs('exam') + '<p>Could not submit the exam. Try again shortly.</p>';
+    appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p>Could not submit the exam. Try again shortly.</p>';
   }
 }
 
@@ -1560,15 +1600,17 @@ function examReviewItemHtml(r, i) {
 
 function renderExamResults(result, opts) {
   opts = opts || {};
+  var mode = opts.mode || 'standard';
   var reviewHtml = result.review.map(examReviewItemHtml).join('');
 
   var dateNote = opts.fromHistory && result.submittedAt
     ? '<p class="muted">Taken ' + new Date(result.submittedAt * 1000).toLocaleString() + '</p>' : '';
   var ctaHtml = opts.fromHistory
-    ? '<a class="btn-secondary hub-cta" href="#/exam-history">← Back to past attempts</a>'
-    : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart">Take another practice exam →</button>';
+    ? '<a class="btn-secondary hub-cta" href="' + examHistoryHash(mode) + '">← Back to past attempts</a>'
+    : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart" data-mode="' + mode + '">Take another ' +
+      (mode === 'toughest45' ? 'Toughest 45 exam' : 'practice exam') + ' →</button>';
 
-  appEl.innerHTML = renderTabs('exam') +
+  appEl.innerHTML = renderTabs(examTabKey(mode)) +
     '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +
     dateNote +
     '<div class="stats-bar">' +
@@ -2053,13 +2095,17 @@ async function renderNotaryApp() {
   if (!getToken()) {
     if (hadExplicitHash && view === 'quiz') { renderLockedQuizPreview(); return; }
     if (view === 'exam' || view.indexOf('exam-history') === 0) { renderLockedExamPreview(); return; }
+    if (view === 'toughest45' || view.indexOf('toughest45-history') === 0) { renderLockedToughest45Preview(); return; }
     if (view === 'progress') { renderLockedProgressPreview(); return; }
     renderRedeem(); return;
   }
   if (view === 'quiz') await renderQuiz();
-  else if (view === 'exam') await renderExam();
-  else if (view === 'exam-history') await renderExamHistory();
-  else if (view.indexOf('exam-history/') === 0) await renderExamAttemptDetailView(view.slice('exam-history/'.length));
+  else if (view === 'exam') await renderExam('standard');
+  else if (view === 'exam-history') await renderExamHistory('standard');
+  else if (view.indexOf('exam-history/') === 0) await renderExamAttemptDetailView(view.slice('exam-history/'.length), 'standard');
+  else if (view === 'toughest45') await renderExam('toughest45');
+  else if (view === 'toughest45-history') await renderExamHistory('toughest45');
+  else if (view.indexOf('toughest45-history/') === 0) await renderExamAttemptDetailView(view.slice('toughest45-history/'.length), 'toughest45');
   else if (view === 'progress') await renderProgress();
   else await renderQuiz();
 }
@@ -2430,7 +2476,7 @@ document.addEventListener('click', async function (e) {
     var rowToRemove = document.querySelector('.referred-friend-row[data-row-index="' + removeIdx + '"]');
     if (rowToRemove) rowToRemove.remove();
   } else if (act === 'exam-begin' || act === 'exam-restart') {
-    await beginExam();
+    await beginExam(el.getAttribute('data-mode') || 'standard');
   } else if (act === 'exam-goto') {
     stopSpeaking();
     examState.currentIndex = Number(el.getAttribute('data-index'));
