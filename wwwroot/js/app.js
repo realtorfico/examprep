@@ -1148,6 +1148,31 @@ function progressTopicsTableHtml() {
     '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
+// Leaderboard -- top 3 by accuracy, top 3 by coverage, same track only, fetched as one deduped
+// set from /leaderboard (see the Worker for why: it must guarantee the true top 3 for whichever
+// metric the client sorts by, without a second round-trip). Descending-only sort, no ascending
+// direction, since "who's lowest" isn't the point of a leaderboard.
+var leaderboardUsers = [];
+var leaderboardMinQuestions = 20;
+var leaderboardSortKey = 'accuracy';
+
+function leaderboardTableHtml() {
+  if (!leaderboardUsers.length) {
+    return '<p class="muted">No one on your track has answered at least ' + leaderboardMinQuestions + ' questions yet.</p>';
+  }
+  var key = leaderboardSortKey;
+  var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 3).map(function (u) {
+    return '<tr><td>' + u.code + '</td><td>' + u.accuracy + '%</td><td>' + u.coverage + '%</td><td>' + u.total + '</td></tr>';
+  }).join('');
+  var arrow = function (k) { return key === k ? ' ▼' : ''; };
+  return '<table class="progress-topics-table leaderboard-table"><thead><tr>' +
+    '<th>Code</th>' +
+    '<th data-act="sort-leaderboard" data-sort-key="accuracy">Accuracy' + arrow('accuracy') + '</th>' +
+    '<th data-act="sort-leaderboard" data-sort-key="coverage">Coverage' + arrow('coverage') + '</th>' +
+    '<th>Questions</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
 var progressResetPending = null; // null | 'quiz' | 'all' -- which scope (if any) is awaiting confirmation
 
 // In-page confirmation instead of a native confirm() popup, matching this app's own design
@@ -1178,13 +1203,15 @@ async function renderProgress() {
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
   examAttemptOpenId = null;
   examAttemptDetailCache = {};
-  var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history?mode=standard'), apiFetch('/exam/history?mode=toughest45')]);
+  var results = await Promise.all([apiFetch('/progress'), apiFetch('/exam/history?mode=standard'), apiFetch('/exam/history?mode=toughest45'), apiFetch('/leaderboard')]);
   var p = results[0];
   var pct = p.totalAnswered ? Math.round((100 * p.totalCorrect) / p.totalAnswered) : 0;
   var wrong = p.totalAnswered - p.totalCorrect;
   progressByTopic = p.byTopic;
   progressExamAttemptsByMode.standard = results[1].attempts || [];
   progressExamAttemptsByMode.toughest45 = results[2].attempts || [];
+  leaderboardUsers = results[3].users || [];
+  leaderboardMinQuestions = typeof results[3].minQuestions === 'number' ? results[3].minQuestions : leaderboardMinQuestions;
 
   // The totals above are a "last attempt wins" snapshot shared by quiz and mock exam (a question
   // answered in both only reflects whichever happened most recently) -- exam_attempts has no such
@@ -1238,6 +1265,9 @@ async function renderProgress() {
   var accuracyValCls = pct < accuracyPassPct ? 'wrong' : 'correct';
   var coverageValCls = coveragePct < progressCoveragePassPct ? 'wrong' : 'correct';
 
+  var standardAttemptsHtml = examAttemptsSectionHtml('standard');
+  var toughest45AttemptsHtml = examAttemptsSectionHtml('toughest45');
+
   appEl.innerHTML = renderTabs('progress') +
     '<div class="stats-bar progress-stats-bar">' +
     '<div class="stat-box"><div class="label">Right/Wrong/Total</div><div class="val stat-triple">' +
@@ -1248,9 +1278,20 @@ async function renderProgress() {
     '<div class="stat-box"><div class="label">Coverage</div><div class="val ' + coverageValCls + '">' + coveragePct + '%</div></div>' +
     '</div>' +
     '<p class="muted progress-breakdown-note">' + examBreakdownNote + '</p>' +
+    '<div class="progress-tables-grid">' +
+    '<div class="card progress-table-card">' +
+    '<h3>Progress by Topic</h3>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
-    '<div id="exam-attempts-wrap">' + examAttemptsSectionHtml('standard') + '</div>' +
-    '<div id="toughest45-attempts-wrap">' + examAttemptsSectionHtml('toughest45') + '</div>' +
+    '</div>' +
+    '<div class="card progress-table-card">' +
+    '<h3 class="progress-leaderboard-heading">Leaderboard</h3>' +
+    '<p class="muted page-intro-text">Top 3 by accuracy and by coverage among everyone on your track who\'s answered at least ' +
+    leaderboardMinQuestions + ' questions.</p>' +
+    '<div id="leaderboard-wrap">' + leaderboardTableHtml() + '</div>' +
+    '</div>' +
+    (standardAttemptsHtml ? '<div class="card progress-table-card" id="exam-attempts-wrap">' + standardAttemptsHtml + '</div>' : '<div id="exam-attempts-wrap"></div>') +
+    (toughest45AttemptsHtml ? '<div class="card progress-table-card" id="toughest45-attempts-wrap">' + toughest45AttemptsHtml + '</div>' : '<div id="toughest45-attempts-wrap"></div>') +
+    '</div>' +
     wrongQuestionsSection +
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
@@ -2499,6 +2540,10 @@ document.addEventListener('click', async function (e) {
     else { progressSort.key = sortKey; progressSort.dir = sortKey === 'topic' ? 'asc' : 'desc'; }
     var topicsWrap = document.getElementById('progress-topics-wrap');
     if (topicsWrap) topicsWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'sort-leaderboard') {
+    leaderboardSortKey = el.getAttribute('data-sort-key');
+    var leaderboardWrap = document.getElementById('leaderboard-wrap');
+    if (leaderboardWrap) leaderboardWrap.innerHTML = leaderboardTableHtml();
   } else if (act === 'toggle-progress-topics') {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
