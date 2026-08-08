@@ -675,6 +675,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); word-break: break-word;
 }
 .progress-topics-table th:first-child, .progress-topics-table td:first-child { width: 40%; }
+.leaderboard-table th:first-child, .leaderboard-table td:first-child { width: 22%; }
 .progress-topics-table th {
   background: var(--surface-2); font-weight: 700; cursor: pointer; user-select: none;
   text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; color: var(--muted);

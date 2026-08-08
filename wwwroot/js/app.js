@@ -1223,7 +1223,7 @@ function leaderboardTableHtml() {
   }
   var key = leaderboardSortKey;
   var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 3).map(function (u) {
-    return '<tr><td>' + u.code + '</td><td>' + u.accuracy + '%</td><td>' + u.coverage + '%</td><td>' + u.total + '</td></tr>';
+    return '<tr><td>' + u.code + '</td><td>' + u.accuracy + '%</td><td>' + u.coverage + '%</td><td>' + u.total + '</td><td>' + u.attempts + '</td></tr>';
   }).join('');
   var arrow = function (k) { return key === k ? ' ▼' : ''; };
   return '<table class="progress-topics-table leaderboard-table"><thead><tr>' +
@@ -1231,6 +1231,7 @@ function leaderboardTableHtml() {
     '<th data-act="sort-leaderboard" data-sort-key="accuracy">Accuracy' + arrow('accuracy') + '</th>' +
     '<th data-act="sort-leaderboard" data-sort-key="coverage">Coverage' + arrow('coverage') + '</th>' +
     '<th>Questions</th>' +
+    '<th>Attempts</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table>';
 }
 
