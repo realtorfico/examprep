@@ -2060,6 +2060,37 @@ function mountStripePaymentElement() {
       // still complete the purchase. The code stays typed in the input either way, so fixing the
       // email (for the domain-restricted case) and clicking Apply again just works.
       var errCode = err.data && err.data.error;
+      if (errCode === 'promo_email_verification_required') {
+        var codeToVerify = buyPromoCode;
+        buyPromoCode = null;
+        buyPromoDiscountCents = 0;
+        updateBuyTotalDisplay();
+        mountStripePaymentElement();
+        if (!email) {
+          if (promoResultEl) promoResultEl.innerHTML = '<p class="error-text">Enter your email above first, then click Apply again.</p>';
+          return;
+        }
+        if (promoResultEl) promoResultEl.innerHTML = '<p class="muted">Sending a verification link…</p>';
+        waitForTurnstileToken(function (verifyTurnstileToken) {
+          apiFetch('/promotions/verify-request', {
+            method: 'POST', body: { promoCode: codeToVerify, email: email, turnstileToken: verifyTurnstileToken },
+          }).then(function (r) {
+            if (!promoResultEl) return;
+            promoResultEl.innerHTML = r.alreadyVerified
+              ? '<p class="muted">That email is already verified — click Apply again.</p>'
+              : '<p class="result-correct">We sent a confirmation link to ' + escapeHtml(email) +
+                ' — click it, then come back here and click Apply again.</p>';
+          }).catch(function (verifyErr) {
+            var verifyErrCode = verifyErr.data && verifyErr.data.error;
+            if (promoResultEl) {
+              promoResultEl.innerHTML = verifyErrCode === 'promo_email_domain_required'
+                ? '<p class="error-text">This promo requires an email ending in "' + escapeHtml(verifyErr.data.requiredEmailDomain) + '".</p>'
+                : '<p class="error-text">Could not send the verification email. Try again shortly.</p>';
+            }
+          });
+        });
+        return;
+      }
       if (errCode === 'invalid_promo_code' || errCode === 'promo_email_domain_required') {
         buyPromoCode = null;
         buyPromoDiscountCents = 0;
@@ -2272,6 +2303,23 @@ function renderPointsRedeemVerify(token) {
   });
 }
 
+// Doesn't complete a purchase (unlike renderPointsRedeemVerify) -- just marks this email verified
+// for the promo, then sends the buyer back to checkout to actually apply the discount and pay.
+function renderPromoVerify(token) {
+  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  apiFetch('/promotions/verify-email?token=' + encodeURIComponent(token)).then(function (res) {
+    appEl.innerHTML = '<h1>Email confirmed ✅</h1>' +
+      '<p class="muted">' + (res.promoTitle ? 'You\'re all set for "' + escapeHtml(res.promoTitle) + '." ' : '') +
+      'Head back to checkout and click Apply on your promo code — the discount will be there waiting.</p>' +
+      '<a class="btn-primary hub-cta" href="#/buy">Back to checkout →</a>';
+  }).catch(function () {
+    appEl.innerHTML = '<h1>Could not confirm</h1>' +
+      '<p class="muted">This link may be invalid or expired (links are good for 7 days). Go back to checkout ' +
+      'and click Apply on your promo code again to get a new one.</p>' +
+      '<a class="btn-secondary hub-cta" href="#/buy">Back to checkout</a>';
+  });
+}
+
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
@@ -2375,6 +2423,7 @@ async function renderNotaryApp() {
   if (view === 'refund') { renderRefundRequest(); return; }
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
+  if (view.indexOf('promo-verify/') === 0) { renderPromoVerify(view.slice('promo-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
   if (!getToken()) {
