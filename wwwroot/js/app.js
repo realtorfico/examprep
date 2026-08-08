@@ -162,7 +162,10 @@ function dismissPromoId(id) {
 function promoBannersHtml(promotions, dismissible) {
   var dismissedIds = dismissible ? getDismissedPromoIds() : [];
   return promotions.filter(function (p) { return dismissedIds.indexOf(p.id) === -1; }).map(function (p) {
-    var codeChip = p.promoCode ? '<span class="badge promo-banner-code">Code: ' + escapeHtml(p.promoCode) + '</span>' : '';
+    var codeChip = p.promoCode
+      ? '<span class="badge promo-banner-code">Code: ' + escapeHtml(p.promoCode) +
+        (p.requiredEmailDomain ? ' (requires ' + escapeHtml(p.requiredEmailDomain) + ' email)' : '') + '</span>'
+      : '';
     var cta = (p.ctaLabel && p.ctaUrl) ? '<a class="btn-primary btn-sm promo-banner-cta" href="' + escapeHtml(p.ctaUrl) + '">' + escapeHtml(p.ctaLabel) + '</a>' : '';
     var dismissBtn = dismissible
       ? '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + p.id + '" aria-label="Dismiss">✕</button>'
@@ -2052,13 +2055,21 @@ function mountStripePaymentElement() {
       paymentElement.mount('#stripe-payment-element');
       if (payBtn) payBtn.disabled = false;
     }).catch(function (err) {
-      // An invalid/expired code shouldn't strand checkout -- clear it and retry at full (or
-      // points-discounted) price so the buyer can still complete the purchase.
-      if (err.data && err.data.error === 'invalid_promo_code') {
+      // An invalid/expired code, or one whose email requirement isn't met, shouldn't strand
+      // checkout -- clear it and retry at full (or points-discounted) price so the buyer can
+      // still complete the purchase. The code stays typed in the input either way, so fixing the
+      // email (for the domain-restricted case) and clicking Apply again just works.
+      var errCode = err.data && err.data.error;
+      if (errCode === 'invalid_promo_code' || errCode === 'promo_email_domain_required') {
         buyPromoCode = null;
         buyPromoDiscountCents = 0;
         updateBuyTotalDisplay();
-        if (promoResultEl) promoResultEl.innerHTML = '<p class="error-text">That promo code isn\'t valid or has expired.</p>';
+        if (promoResultEl) {
+          promoResultEl.innerHTML = errCode === 'promo_email_domain_required'
+            ? '<p class="error-text">This promo requires an email ending in "' + escapeHtml(err.data.requiredEmailDomain) +
+              '" — enter that email above, then click Apply again.</p>'
+            : '<p class="error-text">That promo code isn\'t valid or has expired.</p>';
+        }
         mountStripePaymentElement();
         return;
       }
