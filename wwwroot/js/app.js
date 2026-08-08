@@ -2237,6 +2237,67 @@ function saveReferrerInfo(name, email) {
 }
 
 var referFriendRowCount = 0;
+var referPromoVerifySentKey = null; // "<promoId>:<email>" a verification link was already sent for, to avoid re-sending on repeat clicks
+
+// Redeems a points-multiplier promo (e.g. "retired professionals get 2x referral points") --
+// a different effect from the checkout discount flow, but the same code/verification machinery,
+// so this mirrors mountStripePaymentElement's promo_email_verification_required handling closely.
+async function applyPointsPromoCode() {
+  var codeInput = document.getElementById('refer-promo-input');
+  var code = codeInput ? codeInput.value.trim() : '';
+  var resultEl = document.getElementById('refer-promo-result');
+  var emailEl = document.querySelector('[name="referrerEmail"]');
+  var email = emailEl ? emailEl.value.trim() : '';
+  if (!code) return;
+  if (!email) {
+    if (resultEl) resultEl.innerHTML = '<p class="error-text">Enter your email above first, then click Apply again.</p>';
+    return;
+  }
+  if (resultEl) resultEl.innerHTML = '<p class="muted">Checking…</p>';
+  waitForTurnstileToken(function (turnstileToken) {
+    apiFetch('/promotions/redeem-points-multiplier', {
+      method: 'POST', body: { promoCode: code, email: email, turnstileToken: turnstileToken },
+    }).then(function (r) {
+      if (!resultEl) return;
+      var expiresLabel = new Date(r.expiresAt * 1000).toLocaleDateString();
+      resultEl.innerHTML = '<p class="result-correct">' + r.multiplier + '× points active on your account through ' + expiresLabel + '!</p>';
+    }).catch(function (err) {
+      var errCode = err.data && err.data.error;
+      if (errCode === 'promo_email_verification_required') {
+        var promoId = err.data.promoId;
+        var promoTitle = err.data.promoTitle;
+        var verifyKey = promoId + ':' + email;
+        if (referPromoVerifySentKey === verifyKey) {
+          if (resultEl) resultEl.innerHTML = '<p class="muted">Check your inbox for the confirmation link we already sent, then click Apply again.</p>';
+          return;
+        }
+        referPromoVerifySentKey = verifyKey;
+        if (resultEl) {
+          resultEl.innerHTML = '<p class="muted">' + (promoTitle ? 'You qualify for "' + escapeHtml(promoTitle) + '" — ' : '') + 'sending a verification link…</p>';
+        }
+        waitForTurnstileToken(function (verifyTurnstileToken) {
+          apiFetch('/promotions/verify-request', {
+            method: 'POST', body: { promoId: promoId, email: email, turnstileToken: verifyTurnstileToken },
+          }).then(function (vr) {
+            if (!resultEl) return;
+            resultEl.innerHTML = vr.alreadyVerified
+              ? '<p class="muted">That email is already verified — click Apply again.</p>'
+              : '<p class="result-correct">We sent a confirmation link to ' + escapeHtml(email) + ' — click it, then come back and click Apply again.</p>';
+          }).catch(function () {
+            referPromoVerifySentKey = null;
+            if (resultEl) resultEl.innerHTML = '<p class="error-text">Could not send the verification email. Try again shortly.</p>';
+          });
+        });
+        return;
+      }
+      if (resultEl) {
+        resultEl.innerHTML = errCode === 'invalid_promo_code'
+          ? '<p class="error-text">That promo code isn\'t valid or has expired.</p>'
+          : '<p class="error-text">Could not apply that code. Try again shortly.</p>';
+      }
+    });
+  });
+}
 
 function renderReferFriendRow(idx) {
   return '<div class="referred-friend-row" data-row-index="' + idx + '">' +
@@ -2267,6 +2328,7 @@ async function renderReferForm() {
   appEl.innerHTML =
     '<div class="refer-page">' +
     '<h1>Refer friends, earn free access</h1>' +
+    '<div id="refer-promotions-wrap"></div>' +
     '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
     '<strong>' + required + ' points</strong> to unlock the California Notary course completely free.</p>' +
@@ -2281,6 +2343,12 @@ async function renderReferForm() {
     '<div><label class="muted buy-email-label">Your email</label>' +
     '<input type="email" name="referrerEmail" placeholder="you@example.com" value="' + escapeHtml(referrerInfo.email) + '" required></div>' +
     '</div>' +
+    '<label class="muted buy-email-label buy-promo-label">Have a points-boost promo code? (optional)</label>' +
+    '<div class="buy-promo-row">' +
+    '<input type="text" id="refer-promo-input" placeholder="e.g. RETIRED2X">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="apply-points-promo-code">Apply</button>' +
+    '</div>' +
+    '<div id="refer-promo-result"></div>' +
     '<label class="muted buy-email-label">Friends to refer</label>' +
     '<div id="referred-friends-list">' + renderReferFriendRow(0) + '</div>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="add-referred-friend">+ Add another friend</button>' +
@@ -2289,6 +2357,10 @@ async function renderReferForm() {
     '</form>' +
     '</div>';
   renderTurnstileWidget();
+  apiFetch('/promotions?placement=refer').then(function (r) {
+    var wrap = document.getElementById('refer-promotions-wrap');
+    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
+  }).catch(function () { /* best-effort */ });
 }
 
 function renderReferVerify(token) {
@@ -2332,18 +2404,24 @@ function renderPointsRedeemVerify(token) {
 
 // Doesn't complete a purchase (unlike renderPointsRedeemVerify) -- just marks this email verified
 // for the promo, then sends the buyer back to checkout to actually apply the discount and pay.
+// Shared by both promo flows -- a checkout discount (see mountStripePaymentElement) and a
+// points-multiplier redeemed on the Refer page (see applyPointsPromoCode) -- so this can't assume
+// which one the buyer came from, hence the generic "wherever you were applying it" wording and
+// both destination links.
 function renderPromoVerify(token) {
   appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
   apiFetch('/promotions/verify-email?token=' + encodeURIComponent(token)).then(function (res) {
     appEl.innerHTML = '<h1>Email confirmed ✅</h1>' +
       '<p class="muted">' + (res.promoTitle ? 'You\'re all set for "' + escapeHtml(res.promoTitle) + '." ' : '') +
-      'Head back to checkout and click Apply on your promo code — the discount will be there waiting.</p>' +
-      '<a class="btn-primary hub-cta" href="#/buy">Back to checkout →</a>';
+      'Go back to wherever you were applying your promo code and click Apply again — it\'ll go through now.</p>' +
+      '<a class="btn-primary hub-cta" href="#/buy">Back to checkout →</a>' +
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend →</a>';
   }).catch(function () {
     appEl.innerHTML = '<h1>Could not confirm</h1>' +
-      '<p class="muted">This link may be invalid or expired (links are good for 7 days). Go back to checkout ' +
-      'and click Apply on your promo code again to get a new one.</p>' +
-      '<a class="btn-secondary hub-cta" href="#/buy">Back to checkout</a>';
+      '<p class="muted">This link may be invalid or expired (links are good for 7 days). Go back to wherever ' +
+      'you applied the code and click Apply again to get a new one.</p>' +
+      '<a class="btn-secondary hub-cta" href="#/buy">Back to checkout</a>' +
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend</a>';
   });
 }
 
@@ -2954,6 +3032,8 @@ document.addEventListener('click', async function (e) {
     buyPromoCode = promoCodeEntered;
     if (promoResultDivEl) promoResultDivEl.innerHTML = '<p class="muted">Checking…</p>';
     if (document.getElementById('stripe-payment-form')) mountStripePaymentElement();
+  } else if (act === 'apply-points-promo-code') {
+    await applyPointsPromoCode();
   } else if (act === 'check-points') {
     var pointsEmailEl = document.getElementById('buy-email');
     var checkEmail = pointsEmailEl ? pointsEmailEl.value.trim() : '';

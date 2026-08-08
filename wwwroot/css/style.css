@@ -410,7 +410,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-promo-label { margin-top: 0.75rem; }
 .buy-promo-row { display: flex; gap: 0.5rem; }
 .buy-promo-row input { flex: 1; }
-#buy-promo-result { margin-top: 0.4rem; font-size: 0.85rem; }
+#buy-promo-result, #refer-promo-result { margin-top: 0.4rem; font-size: 0.85rem; }
 .buy-total-line { font-weight: 700; margin: 0.75rem 0 0; }
 .refer-page { max-width: 640px; margin: 0 auto; }
 .refer-name-email-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
