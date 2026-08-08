@@ -146,6 +146,34 @@ function renderNewsBanner() {
     '</div>';
 }
 
+// ---- Promotions (admin-managed, examprep-admin's Promotions tab) ----------
+// Home-page banners are individually dismissible (unlike the single news banner, there can be
+// several at once, so this tracks a set of dismissed ids rather than one value). Checkout-page
+// banners are not dismissible -- it's a one-time visit, dismissing there would just hide a promo
+// code from someone who might want to come back and use it.
+function getDismissedPromoIds() {
+  try { return JSON.parse(localStorage.getItem('examprep_promos_dismissed') || '[]'); } catch (e) { return []; }
+}
+function dismissPromoId(id) {
+  var ids = getDismissedPromoIds();
+  if (ids.indexOf(id) === -1) { ids.push(id); localStorage.setItem('examprep_promos_dismissed', JSON.stringify(ids)); }
+}
+
+function promoBannersHtml(promotions, dismissible) {
+  var dismissedIds = dismissible ? getDismissedPromoIds() : [];
+  return promotions.filter(function (p) { return dismissedIds.indexOf(p.id) === -1; }).map(function (p) {
+    var codeChip = p.promoCode ? '<span class="badge promo-banner-code">Code: ' + escapeHtml(p.promoCode) + '</span>' : '';
+    var cta = (p.ctaLabel && p.ctaUrl) ? '<a class="btn-primary btn-sm promo-banner-cta" href="' + escapeHtml(p.ctaUrl) + '">' + escapeHtml(p.ctaLabel) + '</a>' : '';
+    var dismissBtn = dismissible
+      ? '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + p.id + '" aria-label="Dismiss">✕</button>'
+      : '';
+    return '<div class="promo-banner">' +
+      '<div class="promo-banner-body"><strong>' + escapeHtml(p.title) + '</strong> ' +
+      '<span class="promo-banner-text">' + escapeHtml(p.body) + '</span> ' + codeChip + '</div>' +
+      cta + dismissBtn + '</div>';
+  }).join('');
+}
+
 // Account menu: just Log out today, but a real dropdown (not a bare button) so there's somewhere
 // to add more account-level actions later without another header redesign.
 function renderProfileMenu() {
@@ -264,6 +292,7 @@ function renderHub() {
 
   appEl.innerHTML =
     renderNewsBanner() +
+    '<div id="home-promotions-wrap"></div>' +
     '<div class="hub-hero">' +
     '<h1>Pass Your California Licensing Exams on the First Try</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards, with ' +
@@ -283,6 +312,14 @@ function renderHub() {
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div class="exam-track-grid">' + cards + '</div>';
+
+  // Rendered above synchronously so the page itself never waits on this -- promos fill in a
+  // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
+  // accuracy table.
+  apiFetch('/promotions?placement=home').then(function (r) {
+    var wrap = document.getElementById('home-promotions-wrap');
+    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
+  }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
 }
 
 function renderRedeem(error) {
@@ -1862,12 +1899,18 @@ function waitForTurnstileToken(callback, attemptsLeft) {
 }
 
 var buyPricing = null; // stashed so the points-apply checkbox can recompute the displayed total
+var buyPromoCode = null; // the code last confirmed valid by the server (or null)
+var buyPromoDiscountCents = 0; // set from the server's response once a code is confirmed valid
 
 function renderBuy() {
   appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
   apiFetch('/pricing?examType=notary').then(function (p) {
     buyPricing = p;
     drawBuyForm(p);
+    apiFetch('/promotions?placement=checkout').then(function (r) {
+      var wrap = document.getElementById('checkout-promotions-wrap');
+      if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
+    }).catch(function () { /* best-effort */ });
   }).catch(function () {
     appEl.innerHTML = '<h1>Get instant access</h1><p>Could not load pricing. Try again shortly.</p>';
   });
@@ -1875,8 +1918,11 @@ function renderBuy() {
 
 function drawBuyForm(pricing) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
+  buyPromoCode = null;
+  buyPromoDiscountCents = 0;
   appEl.innerHTML =
     '<h1>Get instant access</h1>' +
+    '<div id="checkout-promotions-wrap"></div>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col">' +
     '<div class="card buy-order-summary">' +
@@ -1906,6 +1952,12 @@ function drawBuyForm(pricing) {
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
     '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
     '<div id="points-result"></div>' +
+    '<label class="muted buy-email-label buy-promo-label">Promo code (optional)</label>' +
+    '<div class="buy-promo-row">' +
+    '<input type="text" id="buy-promo-input" placeholder="e.g. SAVE20">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="apply-promo-code">Apply</button>' +
+    '</div>' +
+    '<div id="buy-promo-result"></div>' +
     '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
     '<div id="turnstile-container"></div>' +
     '<p class="muted stripe-card-note">💳 Pay by card, Apple Pay, or Google Pay — whichever your device supports shows up automatically below.</p>' +
@@ -1934,19 +1986,24 @@ function updateBuyTotalDisplay() {
   var checkbox = document.getElementById('apply-points-checkbox');
   var applying = !!(checkbox && checkbox.checked);
   var pointsAvailable = checkbox ? Number(checkbox.getAttribute('data-points-available') || 0) : 0;
+  // Mirrors quoteCheckout's order: promo discount first, then points on whatever that leaves.
+  var afterPromoCents = Math.max(0, buyPricing.priceCents - buyPromoDiscountCents);
   var pointsApplied = pointsAvailable;
-  var finalCents = buyPricing.priceCents;
+  var finalCents = afterPromoCents;
   if (applying) {
-    finalCents = Math.max(0, buyPricing.priceCents - pointsAvailable);
+    finalCents = Math.max(0, afterPromoCents - pointsAvailable);
     // Mirrors the server's floor (see quoteCheckout) so the preview matches what actually gets
     // charged -- a partial discount can't leave less than this payable through the processor.
     var minCents = buyPricing.minPaypalChargeCents || 0;
     if (finalCents > 0 && finalCents < minCents) {
-      pointsApplied = Math.max(0, buyPricing.priceCents - minCents);
-      finalCents = buyPricing.priceCents - pointsApplied;
+      pointsApplied = Math.max(0, afterPromoCents - minCents);
+      finalCents = afterPromoCents - pointsApplied;
     }
   }
-  totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (applying ? ' (' + pointsApplied + ' points applied)' : '');
+  var noteParts = [];
+  if (buyPromoDiscountCents > 0) noteParts.push('promo -$' + (buyPromoDiscountCents / 100).toFixed(2));
+  if (applying) noteParts.push(pointsApplied + ' points applied');
+  totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (noteParts.length ? ' (' + noteParts.join(', ') + ')' : '');
 }
 
 var stripeObj = null;         // the Stripe(publishableKey) instance, created once and reused
@@ -1970,9 +2027,15 @@ function mountStripePaymentElement() {
     var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
     var applyCheckbox = document.getElementById('apply-points-checkbox');
     var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
+    var promoResultEl = document.getElementById('buy-promo-result');
     apiFetch('/stripe/create-intent', {
-      method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints },
+      method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined },
     }).then(function (r) {
+      buyPromoDiscountCents = r.promoDiscountCents || 0;
+      updateBuyTotalDisplay();
+      if (promoResultEl && buyPromoCode) {
+        promoResultEl.innerHTML = '<p class="result-correct">Promo "' + escapeHtml(buyPromoCode) + '" applied: -$' + (buyPromoDiscountCents / 100).toFixed(2) + '</p>';
+      }
       stripeObj = stripeObj || Stripe(STRIPE_PUBLISHABLE_KEY);
       var local = loadLocalPrefs();
       var isDark = local.theme === 'dark' || (local.theme === 'system' &&
@@ -1988,7 +2051,17 @@ function mountStripePaymentElement() {
       el.innerHTML = '';
       paymentElement.mount('#stripe-payment-element');
       if (payBtn) payBtn.disabled = false;
-    }).catch(function () {
+    }).catch(function (err) {
+      // An invalid/expired code shouldn't strand checkout -- clear it and retry at full (or
+      // points-discounted) price so the buyer can still complete the purchase.
+      if (err.data && err.data.error === 'invalid_promo_code') {
+        buyPromoCode = null;
+        buyPromoDiscountCents = 0;
+        updateBuyTotalDisplay();
+        if (promoResultEl) promoResultEl.innerHTML = '<p class="error-text">That promo code isn\'t valid or has expired.</p>';
+        mountStripePaymentElement();
+        return;
+      }
       el.innerHTML = '<p class="error-text">Could not load payment options. Try again shortly.</p>';
     });
   });
@@ -2585,6 +2658,10 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
     var bannerEl = el.closest('.news-flash-banner');
     if (bannerEl) bannerEl.remove();
+  } else if (act === 'dismiss-promo') {
+    dismissPromoId(el.getAttribute('data-promo-id'));
+    var promoBannerEl = el.closest('.promo-banner');
+    if (promoBannerEl) promoBannerEl.remove();
   } else if (act === 'reload-for-update') {
     location.reload();
   } else if (act === 'dismiss-update-banner') {
@@ -2781,6 +2858,14 @@ document.addEventListener('click', async function (e) {
     if (seekPlayer) seekPlayer.currentTime = Math.max(0, seekPlayer.currentTime + (Number(el.getAttribute('data-seek')) || 0));
   } else if (act === 'toggle-apply-points') {
     updateBuyTotalDisplay();
+    if (document.getElementById('stripe-payment-form')) mountStripePaymentElement();
+  } else if (act === 'apply-promo-code') {
+    var promoInputEl = document.getElementById('buy-promo-input');
+    var promoCodeEntered = promoInputEl ? promoInputEl.value.trim() : '';
+    var promoResultDivEl = document.getElementById('buy-promo-result');
+    if (!promoCodeEntered) return;
+    buyPromoCode = promoCodeEntered;
+    if (promoResultDivEl) promoResultDivEl.innerHTML = '<p class="muted">Checking…</p>';
     if (document.getElementById('stripe-payment-form')) mountStripePaymentElement();
   } else if (act === 'check-points') {
     var pointsEmailEl = document.getElementById('buy-email');
