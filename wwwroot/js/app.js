@@ -165,7 +165,9 @@ function promoBannersHtml(promotions, dismissible) {
     var codeChip = p.promoCode
       ? '<span class="badge promo-banner-code">Code: ' + escapeHtml(p.promoCode) +
         (p.requiredEmailDomain ? ' (requires ' + escapeHtml(p.requiredEmailDomain) + ' email)' : '') + '</span>'
-      : '';
+      : (p.requiredEmailDomain
+        ? '<span class="badge promo-banner-code">No code needed — just enter a ' + escapeHtml(p.requiredEmailDomain) + ' email at checkout</span>'
+        : '');
     var cta = (p.ctaLabel && p.ctaUrl) ? '<a class="btn-primary btn-sm promo-banner-cta" href="' + escapeHtml(p.ctaUrl) + '">' + escapeHtml(p.ctaLabel) + '</a>' : '';
     var dismissBtn = dismissible
       ? '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + p.id + '" aria-label="Dismiss">✕</button>'
@@ -1904,6 +1906,7 @@ function waitForTurnstileToken(callback, attemptsLeft) {
 var buyPricing = null; // stashed so the points-apply checkbox can recompute the displayed total
 var buyPromoCode = null; // the code last confirmed valid by the server (or null)
 var buyPromoDiscountCents = 0; // set from the server's response once a code is confirmed valid
+var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification link was already sent for, to avoid re-sending on repeat blur
 
 function renderBuy() {
   appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
@@ -1975,6 +1978,11 @@ function drawBuyForm(pricing) {
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
   renderTurnstileWidget();
+  // Re-quotes on email blur (not just on Apply/points-toggle) so a codeless, domain-gated promo
+  // (e.g. a .edu student discount) gets auto-detected the moment a qualifying email is entered --
+  // no code to type or Apply button to click for that case.
+  var buyEmailEl = document.getElementById('buy-email');
+  if (buyEmailEl) buyEmailEl.addEventListener('blur', function () { mountStripePaymentElement(); });
   if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
     var el = document.getElementById('stripe-payment-element');
     if (el) el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
@@ -2036,8 +2044,9 @@ function mountStripePaymentElement() {
     }).then(function (r) {
       buyPromoDiscountCents = r.promoDiscountCents || 0;
       updateBuyTotalDisplay();
-      if (promoResultEl && buyPromoCode) {
-        promoResultEl.innerHTML = '<p class="result-correct">Promo "' + escapeHtml(buyPromoCode) + '" applied: -$' + (buyPromoDiscountCents / 100).toFixed(2) + '</p>';
+      if (promoResultEl && buyPromoDiscountCents > 0) {
+        promoResultEl.innerHTML = '<p class="result-correct">"' + escapeHtml(r.promoTitle || buyPromoCode || 'Promo') +
+          '" applied: -$' + (buyPromoDiscountCents / 100).toFixed(2) + '</p>';
       }
       stripeObj = stripeObj || Stripe(STRIPE_PUBLISHABLE_KEY);
       var local = loadLocalPrefs();
@@ -2061,19 +2070,36 @@ function mountStripePaymentElement() {
       // email (for the domain-restricted case) and clicking Apply again just works.
       var errCode = err.data && err.data.error;
       if (errCode === 'promo_email_verification_required') {
+        // Covers both paths: an explicitly-applied code (buyPromoCode set) and an auto-detected
+        // codeless domain-gated promo (server identifies it by promoId since there's no code).
         var codeToVerify = buyPromoCode;
+        var promoIdToVerify = err.data.promoId;
+        var promoTitle = err.data.promoTitle;
         buyPromoCode = null;
         buyPromoDiscountCents = 0;
         updateBuyTotalDisplay();
         mountStripePaymentElement();
         if (!email) {
+          // Only the explicit-code path can reach here with no email (auto-detect never matches
+          // without one) -- codeless promos are silent until an email is actually entered.
           if (promoResultEl) promoResultEl.innerHTML = '<p class="error-text">Enter your email above first, then click Apply again.</p>';
           return;
         }
-        if (promoResultEl) promoResultEl.innerHTML = '<p class="muted">Sending a verification link…</p>';
+        // Avoid re-sending the same link on every blur if nothing about this attempt changed.
+        var verifyKey = (promoIdToVerify || codeToVerify) + ':' + email;
+        if (buyPromoVerifySentKey === verifyKey) {
+          if (promoResultEl) promoResultEl.innerHTML = '<p class="muted">Check your inbox for the confirmation link we already sent, then click Apply again.</p>';
+          return;
+        }
+        buyPromoVerifySentKey = verifyKey;
+        if (promoResultEl) {
+          promoResultEl.innerHTML = '<p class="muted">' + (promoTitle ? 'You qualify for "' + escapeHtml(promoTitle) + '" — ' : '') +
+            'sending a verification link…</p>';
+        }
         waitForTurnstileToken(function (verifyTurnstileToken) {
           apiFetch('/promotions/verify-request', {
-            method: 'POST', body: { promoCode: codeToVerify, email: email, turnstileToken: verifyTurnstileToken },
+            method: 'POST',
+            body: { promoCode: codeToVerify || undefined, promoId: promoIdToVerify || undefined, email: email, turnstileToken: verifyTurnstileToken },
           }).then(function (r) {
             if (!promoResultEl) return;
             promoResultEl.innerHTML = r.alreadyVerified
@@ -2081,6 +2107,7 @@ function mountStripePaymentElement() {
               : '<p class="result-correct">We sent a confirmation link to ' + escapeHtml(email) +
                 ' — click it, then come back here and click Apply again.</p>';
           }).catch(function (verifyErr) {
+            buyPromoVerifySentKey = null; // let a retry go through
             var verifyErrCode = verifyErr.data && verifyErr.data.error;
             if (promoResultEl) {
               promoResultEl.innerHTML = verifyErrCode === 'promo_email_domain_required'
