@@ -242,6 +242,10 @@ function renderTerms() {
     'or any other payment method — they may only be applied toward a course through this site. Points may expire ' +
     'or be adjusted, and the referral program itself may be modified, suspended, or discontinued, at any time. ' +
     'We reserve the right to revoke points or access obtained through fraud, abuse, or violation of these terms.</p>' +
+    '<p class="muted">Only one promotional discount or code may be applied per purchase — discounts cannot be ' +
+    'combined or stacked with each other, though referral points may still be applied on top of a single active ' +
+    'discount. Some promotions are restricted to first-time buyers and will be rejected at checkout for an email ' +
+    'already associated with a prior purchase.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
 }
 
@@ -2171,7 +2175,8 @@ function mountStripePaymentElement() {
         });
         return;
       }
-      if (errCode === 'invalid_promo_code' || errCode === 'promo_email_domain_required') {
+      if (errCode === 'invalid_promo_code' || errCode === 'promo_email_domain_required' ||
+          errCode === 'promo_first_purchase_only_email_required' || errCode === 'promo_not_first_purchase') {
         buyPromoCode = null;
         buyPromoDiscountCents = 0;
         updateBuyTotalDisplay();
@@ -2179,6 +2184,10 @@ function mountStripePaymentElement() {
           promoResultEl.innerHTML = errCode === 'promo_email_domain_required'
             ? '<p class="error-text">This promo requires an email ending in "' + escapeHtml(err.data.requiredEmailDomain) +
               '" — enter that email above, then click Apply again.</p>'
+            : errCode === 'promo_first_purchase_only_email_required'
+            ? '<p class="error-text">This promo is for first-time buyers — enter your email above first, then click Apply again.</p>'
+            : errCode === 'promo_not_first_purchase'
+            ? '<p class="error-text">This promo is for first-time buyers only, and that email already has access.</p>'
             : '<p class="error-text">That promo code isn\'t valid or has expired.</p>';
         }
         mountStripePaymentElement();
