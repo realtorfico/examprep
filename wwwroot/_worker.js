@@ -7,6 +7,12 @@
  * never has to deal with cross-origin cookie/CORS rules), and no public hostname
  * needed for the backend at all. Everything else falls through to the static
  * assets (Pages provides env.ASSETS automatically alongside _worker.js).
+ *
+ * /mcp is forwarded the same way, unchanged (no prefix to strip) -- it's the public,
+ * unauthenticated remote MCP server (see examprep-api's handleMcp) that AI assistants and
+ * Cloudflare's WebMCP bridge script (Dashboard > Agent Readiness > Labs, data-mcp-url="/mcp")
+ * call directly, kept at a clean top-level path since that's the conventional MCP endpoint
+ * shape external clients/directories look for.
  */
 export default {
   async fetch(request, env) {
@@ -17,6 +23,7 @@ export default {
       const proxied = new Request(target, request);
       return env.API.fetch(proxied);
     }
+    if (url.pathname === '/mcp') return env.API.fetch(request);
     return env.ASSETS.fetch(request);
   },
 };
