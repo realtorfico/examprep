@@ -1981,7 +1981,7 @@ function drawBuyForm(pricing) {
     '<div class="card buy-guarantee-card">' +
     '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
     '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
-    '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% Back</strong>' +
+    '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% Money Back</strong>' +
     '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
     '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
     '<p class="muted buy-guarantee-footnote"><a href="/notary#/refund">Refund request →</a></p>' +
@@ -2241,7 +2241,7 @@ function renderRefundRequest() {
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="unconditional_7day" checked> ' +
     '<span><strong>7-Day, No Questions Asked</strong><br><span class="muted">Full refund — must be within 7 days of purchase.</span></span></label>' +
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="exam_failure_50pct"> ' +
-    '<span><strong>Pass or ' + refundFailurePercent + '% Back</strong><br><span class="muted">' + refundFailurePercent + '% refund if you took and failed the real exam.</span></span></label>' +
+    '<span><strong>Pass or ' + refundFailurePercent + '% Money Back</strong><br><span class="muted">' + refundFailurePercent + '% refund if you took and failed the real exam.</span></span></label>' +
     '</div>' +
     '<div id="refund-failure-fields" class="refund-failure-fields">' +
     '<label class="muted buy-email-label">Exam date</label>' +
