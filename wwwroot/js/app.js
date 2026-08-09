@@ -124,7 +124,7 @@ function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">Not affiliated with, endorsed by, or sponsored by the California Secretary of State or any state licensing agency. Practice questions only — passing the real exam isn\'t guaranteed, though we back that risk with our 50% refund guarantee.</div>' +
+    '<div class="muted">examprep.softician.com is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our 50% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
@@ -192,9 +192,18 @@ function renderProfileMenu() {
 function renderTerms() {
   appEl.innerHTML = '<h1>Terms of Use</h1>' +
     '<p class="muted">ExamPrep provides original, independently-authored practice questions for exam preparation purposes only. ' +
-    'It is not affiliated with, endorsed by, or sponsored by the California Secretary of State or any licensing body. ' +
+    'It is not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, ' +
+    'or any other government agency. All official state trademarks, examination names, and statutory references are used purely ' +
+    'for identification and descriptive purposes. ' +
     'Access codes are non-transferable and grant access to one exam track as specified at purchase. ' +
     'We make no guarantee of passing any official exam.</p>' +
+    '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy California\'s state-mandated 6-hour ' +
+    '(or 3-hour refresher) notary public education requirement under Government Code § 8201, and does not issue an official ' +
+    'Proof of Completion certificate — our content is a supplementary study aid only. Completing practice exams here also does ' +
+    'not register you for, or schedule, the official proctored California Notary Public Examination; official exam scheduling ' +
+    'and candidate registration must be conducted through the California Secretary of State and its designated exam vendor, ' +
+    'CPS HR Consulting. While we strive to align our content with current California notary laws, handbook guidance, and ' +
+    'statutory regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>' +
     '<p class="muted">Referral points have no cash value and cannot be redeemed, exchanged, or refunded for cash ' +
     'or any other payment method — they may only be applied toward a course through this site. Points may expire ' +
     'or be adjusted, and the referral program itself may be modified, suspended, or discontinued, at any time. ' +
@@ -1544,6 +1553,8 @@ async function renderExamIntro(mode) {
     '</ul>' +
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
+    '<p class="exam-disclaimer-callout">This is an independent practice tool, not the official state exam. Completing it does not ' +
+    'register you for, or count toward, the real proctored exam or California\'s mandatory notary education requirement.</p>' +
     (isToughest ? '' :
       '<label class="auto-advance-toggle">' +
       '<input type="checkbox" data-act="toggle-exam-unseen-only"' + (examUnseenOnly ? ' checked' : '') + '> ' +

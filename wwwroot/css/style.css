@@ -282,6 +282,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .mockexam-intro-card { max-width: 65ch; }
 .mockexam-intro-list { margin: 0.75rem 0; padding-left: 1.2rem; line-height: 1.7; }
+.exam-disclaimer-callout {
+  font-size: 0.8rem; color: var(--muted); background: var(--surface-2); border: 1px solid var(--border);
+  border-left: 3px solid var(--highlight); border-radius: 8px; padding: 0.6rem 0.8rem; margin: 0.75rem 0;
+}
 .mockexam-header {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;
   flex-wrap: wrap; gap: 0.5rem;
