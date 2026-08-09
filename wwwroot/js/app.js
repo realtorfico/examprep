@@ -180,6 +180,19 @@ function dismissPromoId(id) {
   if (ids.indexOf(id) === -1) { ids.push(id); localStorage.setItem('examprep_promos_dismissed', JSON.stringify(ids)); }
 }
 
+// Lets a promotion's title/body reference the live Settings-tab guarantee numbers instead of
+// baking them in as typed digits -- e.g. "Pass or {{refundPct}}% of Your Money Back ... {{coveragePct}}%
+// coverage" stays correct automatically when an admin later tweaks refund_failure_percent /
+// progress_accuracy_pass_pct / progress_coverage_pass_pct, instead of silently drifting the way a
+// hardcoded number would. Callers of promoBannersHtml must have awaited loadSiteConfig() first so
+// these globals hold the current values, not the pre-fetch defaults.
+function applyPromoPlaceholders(text) {
+  return text
+    .replace(/\{\{refundPct\}\}/g, refundFailurePercent)
+    .replace(/\{\{accuracyPct\}\}/g, progressAccuracyPassPct)
+    .replace(/\{\{coveragePct\}\}/g, progressCoveragePassPct);
+}
+
 function promoBannersHtml(promotions, dismissible) {
   var dismissedIds = dismissible ? getDismissedPromoIds() : [];
   return promotions.filter(function (p) { return dismissedIds.indexOf(p.id) === -1; }).map(function (p) {
@@ -194,8 +207,8 @@ function promoBannersHtml(promotions, dismissible) {
       ? '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + p.id + '" aria-label="Dismiss">✕</button>'
       : '';
     return '<div class="promo-banner">' +
-      '<div class="promo-banner-body"><strong>' + escapeHtml(p.title) + '</strong> ' +
-      '<span class="promo-banner-text">' + escapeHtml(p.body) + '</span> ' + codeChip + '</div>' +
+      '<div class="promo-banner-body"><strong>' + escapeHtml(applyPromoPlaceholders(p.title)) + '</strong> ' +
+      '<span class="promo-banner-text">' + escapeHtml(applyPromoPlaceholders(p.body)) + '</span> ' + codeChip + '</div>' +
       cta + dismissBtn + '</div>';
   }).join('');
 }
@@ -351,7 +364,8 @@ function renderHub() {
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
   // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
   // accuracy table.
-  apiFetch('/promotions?placement=home').then(function (r) {
+  Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
+    var r = results[0];
     var wrap = document.getElementById('home-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
@@ -1947,7 +1961,11 @@ function renderBuy() {
     var p = results[0];
     buyPricing = p;
     drawBuyForm(p);
-    apiFetch('/promotions?placement=checkout').then(function (r) {
+    // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
+    // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
+    // cached singleton) so this stays correct even if the surrounding code is ever reordered.
+    Promise.all([apiFetch('/promotions?placement=checkout'), loadSiteConfig()]).then(function (results) {
+      var r = results[0];
       var wrap = document.getElementById('checkout-promotions-wrap');
       if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
     }).catch(function () { /* best-effort */ });
@@ -2392,7 +2410,8 @@ async function renderReferForm() {
     '</form>' +
     '</div>';
   renderTurnstileWidget();
-  apiFetch('/promotions?placement=refer').then(function (r) {
+  Promise.all([apiFetch('/promotions?placement=refer'), loadSiteConfig()]).then(function (results) {
+    var r = results[0];
     var wrap = document.getElementById('refer-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
   }).catch(function () { /* best-effort */ });
