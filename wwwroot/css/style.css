@@ -215,6 +215,11 @@ button {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   font-family: inherit;
 }
+/* border-radius lives here (not just on the button{} base rule above) because .btn-primary/
+   .btn-secondary are also used on plain <a> tags all over the site (hub-cta, promo-banner-cta,
+   etc.) -- button{} only matches real <button> elements, so an anchor styled as a button would
+   otherwise get every button visual EXCEPT its rounded corners. */
+.btn-primary, .btn-secondary { border-radius: 10px; }
 .btn-primary { background: var(--accent); color: #ffffff; box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent); }
 .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px -4px color-mix(in srgb, var(--accent) 60%, transparent); }
 .btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
@@ -506,7 +511,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.3rem 0.7rem; border-radius: 999px;
 }
 .hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.25rem; }
-.hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; border-radius: 10px; }
+.hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0.5rem; }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
