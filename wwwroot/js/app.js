@@ -120,11 +120,27 @@ function updateThemeButton() {
 
 var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this build pipeline
 
+// Admin-configurable (examprep-admin's Settings tab, key: refund_failure_percent) -- 50 is just
+// the pre-fetch default shown until /config resolves, same "progressive enhancement" pattern as
+// the promo banners below (comment near renderNewsBanner). Cached as a single shared promise so
+// every render spot that needs it (footer, buy, refund pages) triggers only one network request.
+var refundFailurePercent = 50;
+var siteConfigPromise = null;
+function loadSiteConfig() {
+  if (!siteConfigPromise) {
+    siteConfigPromise = apiFetch('/config').then(function (c) {
+      if (c && Number.isFinite(c.refundFailurePercent)) refundFailurePercent = c.refundFailurePercent;
+      return c;
+    }).catch(function () { /* keep default */ });
+  }
+  return siteConfigPromise;
+}
+
 function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">examprep.softician.com is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our 50% refund guarantee.</div>' +
+    '<div class="muted">examprep.softician.com is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
@@ -1922,7 +1938,8 @@ var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification 
 
 function renderBuy() {
   appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
-  apiFetch('/pricing?examType=notary').then(function (p) {
+  Promise.all([apiFetch('/pricing?examType=notary'), loadSiteConfig()]).then(function (results) {
+    var p = results[0];
     buyPricing = p;
     drawBuyForm(p);
     apiFetch('/promotions?placement=checkout').then(function (r) {
@@ -1959,8 +1976,8 @@ function drawBuyForm(pricing) {
     '<div class="card buy-guarantee-card">' +
     '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
     '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
-    '<div class="buy-guarantee-item"><strong>🎯 Pass or 50% Back</strong>' +
-    '<p class="muted">Take the real exam and don\'t pass? Get half your money back.</p></div>' +
+    '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% Back</strong>' +
+    '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back.</p></div>' +
     '<p class="muted buy-guarantee-footnote"><a href="/notary#/refund">Refund request →</a></p>' +
     '</div>' +
     '</div>' +
@@ -2196,11 +2213,11 @@ function renderPurchaseSuccess(code, pointsApplied) {
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
     '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>' +
-    '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-50%-back guarantees — ' +
+    '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees — ' +
     '<a href="#/refund">request one anytime →</a></p>';
 }
 
-// ---- Refund requests (7-day unconditional + pass-or-50%-back) -------------
+// ---- Refund requests (7-day unconditional + pass-or-N%-back) --------------
 
 function renderRefundRequest() {
   appEl.innerHTML =
@@ -2218,7 +2235,7 @@ function renderRefundRequest() {
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="unconditional_7day" checked> ' +
     '<span><strong>7-Day, No Questions Asked</strong><br><span class="muted">Full refund — must be within 7 days of purchase.</span></span></label>' +
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="exam_failure_50pct"> ' +
-    '<span><strong>Pass or 50% Back</strong><br><span class="muted">Half refund if you took and failed the real exam.</span></span></label>' +
+    '<span><strong>Pass or ' + refundFailurePercent + '% Back</strong><br><span class="muted">' + refundFailurePercent + '% refund if you took and failed the real exam.</span></span></label>' +
     '</div>' +
     '<div id="refund-failure-fields" class="refund-failure-fields">' +
     '<label class="muted buy-email-label">Exam date</label>' +
@@ -3145,5 +3162,6 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   applyTheme(local.theme, local.fontScale);
   renderSiteHeader();
   renderSiteFooter();
+  loadSiteConfig().then(renderSiteFooter);
   route();
 })();
