@@ -614,6 +614,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.75rem;
 }
 .promo-banner-body { flex: 1; min-width: 12rem; font-size: 0.88rem; }
+.promo-banner-body strong { color: var(--accent); }
 .promo-banner-code { margin-left: 0.4rem; }
 .promo-banner-cta { flex-shrink: 0; width: auto; padding: 0.5rem 1rem; }
 .promo-banner-dismiss {
