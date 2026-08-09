@@ -124,14 +124,19 @@ var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this 
 // the pre-fetch default shown until /config resolves, same "progressive enhancement" pattern as
 // the promo banners below (comment near renderNewsBanner). Cached as a single shared promise so
 // every render spot that needs it (footer, buy, refund pages) triggers only one network request.
+// Also seeds progressAccuracyPassPct/progressCoveragePassPct (declared further down, alongside
+// the Progress tab) so logged-out pages like Buy can quote them too -- the Progress tab's own
+// /progress fetch still re-syncs them for a logged-in user, this is just the pre-login source.
 var refundFailurePercent = 50;
 var siteConfigPromise = null;
 function loadSiteConfig() {
   if (!siteConfigPromise) {
     siteConfigPromise = apiFetch('/config').then(function (c) {
       if (c && Number.isFinite(c.refundFailurePercent)) refundFailurePercent = c.refundFailurePercent;
+      if (c && Number.isFinite(c.accuracyPassPct)) progressAccuracyPassPct = c.accuracyPassPct;
+      if (c && Number.isFinite(c.coveragePassPct)) progressCoveragePassPct = c.coveragePassPct;
       return c;
-    }).catch(function () { /* keep default */ });
+    }).catch(function () { /* keep defaults */ });
   }
   return siteConfigPromise;
 }
@@ -1977,7 +1982,8 @@ function drawBuyForm(pricing) {
     '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
     '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
     '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% Back</strong>' +
-    '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back.</p></div>' +
+    '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
+    '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
     '<p class="muted buy-guarantee-footnote"><a href="/notary#/refund">Refund request →</a></p>' +
     '</div>' +
     '</div>' +
