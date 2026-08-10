@@ -2,6 +2,21 @@
 // at the top level, matched against HUB_EXAMS's active tracks (see activeTrackForPath).
 var appEl = document.getElementById('app');
 var state = { question: null, answered: null, examType: 'ca_notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
+// Which track the current token actually grants access to -- distinct from state.examType, which
+// tracks whatever route is currently being VIEWED. Without this, an account bound to one track
+// (e.g. ca_notary) navigating to a different track's route (e.g. /ca_driver) would pass the naive
+// "is there any token" check and render that other track's authenticated quiz/exam/progress UI --
+// the server would correctly still only ever serve the account's own real questions (auth is
+// token-scoped server-side), but the page chrome (track name, tab state) would show the WRONG
+// track, confusingly. null = not yet loaded, or not logged in.
+var accountExamType = null;
+function loadAccountExamType() {
+  if (!getToken()) { accountExamType = null; return Promise.resolve(null); }
+  return apiFetch('/prefs').then(function (p) { accountExamType = p.examType; return accountExamType; })
+    .catch(function () { return accountExamType; }); // best-effort -- a failed fetch shouldn't block boot
+}
+// True only when logged in AND that login is for the track currently being viewed.
+function isLoggedInForCurrentTrack() { return !!getToken() && accountExamType === state.examType; }
 var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
 // Off by default -- matches pre-existing behavior unless the user opts in. Persisted like the
 // difficulty filter. quizRenderToken invalidates any pending auto-advance timer as soon as a new
@@ -506,8 +521,8 @@ function renderHub() {
     '<a class="btn-primary hub-hero-btn" href="' + heroTrackRoute + '#/sample">Try Free Sample</a>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
     '</div>' +
-    '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a> · ' +
-    'No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
+    '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
+    '<p class="muted hub-hero-subtext">No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
     '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
@@ -556,10 +571,12 @@ function renderTurnstileWidget(attemptsLeft) {
 }
 
 function renderTabs(active) {
-  // Quiz/Exam/Progress are shown to everyone (with a 🔒 marker when logged out) so an anonymous
-  // visitor gets a sense of the layout -- clicking one still only shows a locked preview, never
-  // the real content/data (see renderLockedTabPreview and the guard in renderTrackApp).
-  var loggedIn = !!getToken();
+  // Quiz/Exam/Progress are shown to everyone (with a 🔒 marker when logged out, or logged in for a
+  // DIFFERENT track) so a visitor gets a sense of the layout -- clicking one still only shows a
+  // locked preview, never the real content/data (see renderLockedTabPreview and the guard in
+  // renderTrackApp). Deliberately isLoggedInForCurrentTrack(), not just getToken() -- see its
+  // definition for why (an account bound to one track viewing a different track's route).
+  var loggedIn = isLoggedInForCurrentTrack();
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Toughest 45'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">' + escapeHtml((trackByExamType(state.examType) || {}).shortName || '') + '</div>' : '';
@@ -923,7 +940,7 @@ async function renderResources() {
     return;
   }
 
-  var loggedIn = !!getToken();
+  var loggedIn = isLoggedInForCurrentTrack();
   appEl.innerHTML = renderTabs('resources') + '<p class="muted">Loading…</p>';
 
   // Logged-in sessions get everything signed; anonymous visitors only get the server's own
@@ -2420,6 +2437,7 @@ async function submitStripePayment() {
     setToken(res.token);
     renderSiteHeader();
     state.examType = res.examType;
+    accountExamType = res.examType;
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
     renderPurchaseSuccess(res.code, res.pointsApplied);
@@ -2646,6 +2664,7 @@ function renderPointsRedeemVerify(token) {
     setToken(res.token);
     renderSiteHeader();
     state.examType = res.examType;
+    accountExamType = res.examType;
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
     renderPurchaseSuccess(res.code);
@@ -2788,7 +2807,7 @@ async function renderTrackApp() {
   if (view.indexOf('promo-verify/') === 0) { renderPromoVerify(view.slice('promo-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
-  if (!getToken()) {
+  if (!isLoggedInForCurrentTrack()) {
     if (hadExplicitHash && view === 'quiz') { renderLockedQuizPreview(); return; }
     if (view === 'exam' || view.indexOf('exam-history') === 0) { renderLockedExamPreview(); return; }
     if (view === 'toughest45' || view.indexOf('toughest45-history') === 0) { renderLockedToughest45Preview(); return; }
@@ -2879,6 +2898,7 @@ document.addEventListener('submit', async function (e) {
       setToken(res.token);
       renderSiteHeader();
       state.examType = res.examType;
+      accountExamType = res.examType;
       var local = loadLocalPrefs();
       applyTheme(local.theme, local.fontScale);
       location.hash = '#/quiz';
@@ -3176,6 +3196,7 @@ document.addEventListener('click', async function (e) {
     if (getToken()) apiFetch('/prefs', { method: 'POST', body: { fontScale: next } }).catch(function () {});
   } else if (act === 'log-out') {
     clearToken();
+    accountExamType = null;
     renderSiteHeader();
     location.hash = '';
     renderTrackApp();
@@ -3399,5 +3420,8 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderSiteHeader();
   renderSiteFooter();
   loadSiteConfig().then(renderSiteFooter);
-  route();
+  // Must know which track the token (if any) actually belongs to BEFORE the first render, or
+  // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment (accountExamType
+  // still null) on every fresh page load -- resolves near-instantly when there's no token.
+  loadAccountExamType().then(route);
 })();
