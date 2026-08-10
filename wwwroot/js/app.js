@@ -194,7 +194,8 @@ function applyPromoPlaceholders(text) {
     .replace(/\{\{coveragePct\}\}/g, progressCoveragePassPct);
 }
 
-function promoBannersHtml(promotions, dismissible) {
+function promoBannersHtml(promotions, dismissible, showBody) {
+  if (showBody === undefined) showBody = true; // default on; home page passes false for a condensed, heading-only card
   var dismissedIds = dismissible ? getDismissedPromoIds() : [];
   return promotions.filter(function (p) { return dismissedIds.indexOf(p.id) === -1; }).map(function (p) {
     var codeChip = p.promoCode
@@ -207,9 +208,10 @@ function promoBannersHtml(promotions, dismissible) {
     var dismissBtn = dismissible
       ? '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + p.id + '" aria-label="Dismiss">✕</button>'
       : '';
+    var bodyText = showBody ? '<span class="promo-banner-text">' + escapeHtml(applyPromoPlaceholders(p.body)) + '</span> ' : '';
     return '<div class="promo-banner">' +
       '<div class="promo-banner-body"><strong>' + escapeHtml(applyPromoPlaceholders(p.title)) + '</strong> ' +
-      '<span class="promo-banner-text">' + escapeHtml(applyPromoPlaceholders(p.body)) + '</span> ' + codeChip + '</div>' +
+      bodyText + codeChip + '</div>' +
       cta + dismissBtn + '</div>';
   }).join('');
 }
@@ -451,7 +453,7 @@ function renderHub() {
   Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var wrap = document.getElementById('home-promotions-wrap');
-    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
+    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
 }
 
