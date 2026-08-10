@@ -1,7 +1,7 @@
 // Vanilla JS, no framework/bundler. Hash-routed within a track's path (e.g. /notary); pathname-routed
 // at the top level, matched against HUB_EXAMS's active tracks (see activeTrackForPath).
 var appEl = document.getElementById('app');
-var state = { question: null, answered: null, examType: 'notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
+var state = { question: null, answered: null, examType: 'ca_notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
 var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
 // Off by default -- matches pre-existing behavior unless the user opts in. Persisted like the
 // difficulty filter. quizRenderToken invalidates any pending auto-advance timer as soon as a new
@@ -303,7 +303,7 @@ function renderGuarantee() {
 
 var HUB_EXAMS = [
   {
-    examType: 'notary', shortName: 'California Notary',
+    examType: 'ca_notary', shortName: 'California Notary',
     title: 'California Notary Public Exam', category: 'State Licensing', active: true, route: '/notary',
     duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
     description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
@@ -317,21 +317,21 @@ var HUB_EXAMS = [
     breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
   },
   {
-    examType: 'cdl', shortName: 'California CDL',
+    examType: 'ca_cdl', shortName: 'California CDL',
     title: 'California CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '33%'], ['Air Brakes & Combination Vehicles', '16%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '34%'], ['Vehicle Inspection & Skills Testing', '17%']],
   },
   {
-    examType: 'motorcycle', shortName: 'California Motorcycle',
+    examType: 'ca_motorcycle', shortName: 'California Motorcycle',
     title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/motorcycle',
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '24%'], ['Collision Avoidance, Hazards & Mechanical Problems', '22%'], ['License Requirements & Preparing to Ride', '28%'], ['Alcohol, DUI & Insurance Law', '26%']],
   },
   {
-    examType: 'dre', shortName: 'California DRE',
+    examType: 'ca_dre', shortName: 'California DRE',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
     description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
@@ -359,8 +359,16 @@ function firstActiveTrack() {
   var matches = HUB_EXAMS.filter(function (e) { return e.active; });
   return matches.length ? matches[0] : null;
 }
+// exam_type naming convention going forward: {state}_{category}, e.g. tx_driver, fl_notary --
+// national (non-state-specific) exams like the NMLS MLO stay unprefixed. notary/cdl/motorcycle
+// were renamed to ca_notary/ca_cdl/ca_motorcycle to fit this (ca_driver already fit); the alias
+// below keeps any not-yet-migrated account (old exam_type still in D1) resolving to the right
+// track during the migration window -- remove once the D1 migration is confirmed done.
+var LEGACY_EXAM_TYPE_ALIASES = { notary: 'ca_notary', cdl: 'ca_cdl', motorcycle: 'ca_motorcycle' };
+function normalizeExamType(examType) { return LEGACY_EXAM_TYPE_ALIASES[examType] || examType; }
 function trackByExamType(examType) {
-  var matches = HUB_EXAMS.filter(function (e) { return e.examType === examType; });
+  var normalized = normalizeExamType(examType);
+  var matches = HUB_EXAMS.filter(function (e) { return e.examType === normalized; });
   return matches.length ? matches[0] : null;
 }
 
@@ -368,7 +376,7 @@ function trackByExamType(examType) {
 // underlying facts differ per track (who administers the real exam, what education/training
 // requirement exists, if any). Add a real entry here before flipping a new track to active:true.
 var TRACK_COMPLIANCE = {
-  notary: {
+  ca_notary: {
     orgLine: 'the California Secretary of State, CPS HR Consulting,',
     footerRequirement: "do not fulfill California's mandatory notary education requirement",
     termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy California\'s state-mandated 6-hour ' +
@@ -393,7 +401,7 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: 'register you for, or count toward, the real DMV written knowledge test or any required driver education course.',
     passScoreNote: 'the same threshold as the real DMV test — 38 of 46 correct',
   },
-  cdl: {
+  ca_cdl: {
     orgLine: 'the California Department of Motor Vehicles (DMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
     footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any California CDL/endorsement training requirement",
     termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
@@ -406,7 +414,7 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: 'register you for, or count toward, the real DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the same threshold as the real DMV CDL General Knowledge test — 40 of 50 correct',
   },
-  motorcycle: {
+  ca_motorcycle: {
     orgLine: 'the California Department of Motor Vehicles (DMV) or the California Motorcyclist Safety Program (CMSP)',
     footerRequirement: "do not fulfill the CMSP training course requirement (mandatory for riders under 21) or any other license training requirement",
     termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the California Motorcyclist ' +
@@ -422,7 +430,7 @@ var TRACK_COMPLIANCE = {
   },
 };
 function trackCompliance(examType) {
-  return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.notary;
+  return TRACK_COMPLIANCE[normalizeExamType(examType)] || TRACK_COMPLIANCE.ca_notary;
 }
 // Resolves to whichever active track we're currently inside (state.examType, set by the router on
 // a track page), or the single active track as a sensible fallback for chrome rendered on the hub
@@ -716,7 +724,7 @@ var NOTARY_SUBSCRIBING_WITNESS_TABLE = {
 // on title/description, not verified against the actual audio/video content, so treat it as a
 // starting point to adjust rather than an authoritative tag.
 var RESOURCES = {
-  notary: [
+  ca_notary: [
     { title: 'Official California Notary Public Handbook', type: 'pdf', url: 'https://notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf',
       desc: 'The official handbook published by the California Secretary of State — the authoritative source the exam is based on.',
       topic: 'General Reference', free: true },
@@ -819,12 +827,12 @@ var RESOURCES = {
       desc: 'The official handbook published by the California DMV (DL 600) — the authoritative source the written knowledge test is based on.',
       topic: 'General Reference', free: true },
   ],
-  cdl: [
+  ca_cdl: [
     { title: 'Official California Commercial Driver Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/california-commercial-driver-handbook-pdf/',
       desc: 'The official handbook published by the California DMV (DL 650) — the authoritative source the CDL knowledge and endorsement tests are based on.',
       topic: 'General Reference', free: true },
   ],
-  motorcycle: [
+  ca_motorcycle: [
     { title: 'Official California Motorcycle Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/motorcycle-driver-handbook-pdf/',
       desc: 'The official handbook published by the California DMV (DL 665) — the authoritative source the M1/M2 written knowledge test is based on.',
       topic: 'General Reference', free: true },
@@ -914,7 +922,7 @@ function postResourceProgress(resourceKey, type, percent, isNewOpen) {
 }
 
 async function renderResources() {
-  var items = RESOURCES[state.examType] || [];
+  var items = RESOURCES[normalizeExamType(state.examType)] || [];
   if (!items.length) {
     appEl.innerHTML = renderTabs('resources') +
       '<p class="muted">No study resources yet for this exam track.</p>';
@@ -1663,7 +1671,7 @@ function renderLockedProgressPreview() {
 // ---- Additional information (official external links, per exam type) -----
 
 var ADDITIONAL_INFO_LINKS = {
-  notary: [
+  ca_notary: [
     { title: 'Secretary of State Site for Notary', url: 'https://www.sos.ca.gov/notary',
       desc: 'The California Secretary of State\'s official notary public program page.' },
     { title: 'Exam Registration', url: 'https://www.sos.ca.gov/notary/checklist/registration/',
@@ -1674,7 +1682,7 @@ var ADDITIONAL_INFO_LINKS = {
 };
 
 function renderAdditionalInfo() {
-  var links = ADDITIONAL_INFO_LINKS[state.examType] || [];
+  var links = ADDITIONAL_INFO_LINKS[normalizeExamType(state.examType)] || [];
   var linkCards = links.map(function (l) {
     return '<a class="card additional-info-card" href="' + l.url + '" target="_blank" rel="noopener noreferrer">' +
       '<div class="additional-info-title">' + l.title + ' ↗</div>' +
