@@ -2105,8 +2105,6 @@ function drawBuyForm(pricing) {
     '</ul>' +
     '</div>' +
     '<div class="card buy-guarantee-card">' +
-    '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
-    '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
     '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
     '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
     '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
