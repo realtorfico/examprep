@@ -301,6 +301,24 @@ var HUB_EXAMS = [
     description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
     breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
   },
+  {
+    title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
+    description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
+    breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
+  },
+  {
+    title: 'California CDL Knowledge & Endorsement Exams', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
+    breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '40%'], ['Air Brakes & Combination Vehicles', '25%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '20%'], ['Vehicle Inspection & Skills Testing', '15%']],
+  },
+  {
+    title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
+    description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
+    breakdown: [['Basic Control, Lane Position & SEE Strategy', '33%'], ['Collision Avoidance, Hazards & Mechanical Problems', '31%'], ['License Requirements & Preparing to Ride', '26%'], ['Alcohol, DUI & Insurance Law', '10%']],
+  },
 ];
 
 function renderHub() {

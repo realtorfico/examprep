@@ -557,6 +557,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* CSP blocks inline style="width:X%" -- one class per distinct percentage actually used across
    HUB_EXAMS's breakdown arrays (app.js). Add a new .pct-N here if a future breakdown value isn't
    already covered. */
+.pct-10 { width: 10%; }
 .pct-15 { width: 15%; }
 .pct-17 { width: 17%; }
 .pct-18 { width: 18%; }
@@ -564,9 +565,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .pct-23 { width: 23%; }
 .pct-24 { width: 24%; }
 .pct-25 { width: 25%; }
+.pct-26 { width: 26%; }
 .pct-27 { width: 27%; }
 .pct-30 { width: 30%; }
+.pct-31 { width: 31%; }
+.pct-33 { width: 33%; }
 .pct-35 { width: 35%; }
+.pct-40 { width: 40%; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 0.5rem;
