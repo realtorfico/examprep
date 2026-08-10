@@ -325,10 +325,10 @@ var HUB_EXAMS = [
   },
   {
     examType: 'motorcycle', shortName: 'California Motorcycle',
-    title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/motorcycle',
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
-    breakdown: [['Basic Control, Lane Position & SEE Strategy', '33%'], ['Collision Avoidance, Hazards & Mechanical Problems', '31%'], ['License Requirements & Preparing to Ride', '26%'], ['Alcohol, DUI & Insurance Law', '10%']],
+    breakdown: [['Basic Control, Lane Position & SEE Strategy', '24%'], ['Collision Avoidance, Hazards & Mechanical Problems', '22%'], ['License Requirements & Preparing to Ride', '28%'], ['Alcohol, DUI & Insurance Law', '26%']],
   },
   {
     examType: 'dre', shortName: 'California DRE',
@@ -405,6 +405,20 @@ var TRACK_COMPLIANCE = {
       '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the same threshold as the real DMV CDL General Knowledge test — 40 of 50 correct',
+  },
+  motorcycle: {
+    orgLine: 'the California Department of Motor Vehicles (DMV) or the California Motorcyclist Safety Program (CMSP)',
+    footerRequirement: "do not fulfill the CMSP training course requirement (mandatory for riders under 21) or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the California Motorcyclist ' +
+      'Safety Program (CMSP) training course requirement — mandatory for riders under 21, and a common way to satisfy the skills-test ' +
+      'requirement for riders of any age — and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Completing practice exams here also does not register you for, or schedule, the official DMV ' +
+      'M1/M2 written knowledge test or skills test; official testing must be scheduled directly through the California Department of ' +
+      'Motor Vehicles, and CMSP courses must be scheduled through an approved CMSP provider. While we strive to align our content with ' +
+      'the current California Motorcycle Handbook, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'riding-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DMV M1/M2 written knowledge test, skills test, or any required California Motorcyclist Safety Program (CMSP) training course.',
+    passScoreNote: 'the same threshold as the real DMV M1/M2 test — 20 of 25 correct',
   },
 };
 function trackCompliance(examType) {
@@ -808,6 +822,11 @@ var RESOURCES = {
   cdl: [
     { title: 'Official California Commercial Driver Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/california-commercial-driver-handbook-pdf/',
       desc: 'The official handbook published by the California DMV (DL 650) — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  motorcycle: [
+    { title: 'Official California Motorcycle Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/motorcycle-driver-handbook-pdf/',
+      desc: 'The official handbook published by the California DMV (DL 665) — the authoritative source the M1/M2 written knowledge test is based on.',
       topic: 'General Reference', free: true },
   ],
 };
