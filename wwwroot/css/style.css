@@ -516,7 +516,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0.5rem; }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 @media (min-width: 900px) {
-  .exam-track-grid { grid-template-columns: repeat(3, 1fr); }
+  .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
 }
 .exam-track-card {
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
