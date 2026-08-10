@@ -472,6 +472,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; }
 
+/* Buy page's "other tracks" comparison strip -- browse/switch, not a cart (see loadOtherTracksPricing). */
+.buy-other-tracks-card { margin-top: 1rem; }
+.buy-other-tracks-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.6rem; }
+.buy-other-track-row {
+  display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: var(--fg);
+  padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 0.5rem;
+  background: var(--surface-2); transition: border-color 0.15s, background 0.15s;
+}
+.buy-other-track-row:last-child { margin-bottom: 0; }
+.buy-other-track-row:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface-2)); }
+.buy-other-track-price { font-weight: 700; color: var(--accent); }
+
 .quiz-controls-row { margin-bottom: 0.85rem; }
 .quiz-controls-content { display: flex; flex-direction: column; gap: 0.6rem; }
 @media (min-width: 600px) {

@@ -2159,8 +2159,10 @@ function drawBuyForm(pricing) {
     '</div>' +
     '</div>' +
     '</div>' +
-    '<p class="muted redeem-sample-hint">Already have a code? <a href="' + (trackByExamType(state.examType) || {}).route + '">Enter it here</a></p>';
+    '<p class="muted redeem-sample-hint">Already have a code? <a href="' + (trackByExamType(state.examType) || {}).route + '">Enter it here</a></p>' +
+    '<div id="buy-other-tracks-wrap"></div>';
   renderTurnstileWidget();
+  loadOtherTracksPricing();
   // Re-quotes on email blur (not just on Apply/points-toggle) so a codeless, domain-gated promo
   // (e.g. a .edu student discount) gets auto-detected the moment a qualifying email is entered --
   // no code to type or Apply button to click for that case.
@@ -2172,6 +2174,33 @@ function drawBuyForm(pricing) {
     return;
   }
   loadStripeSdk(function () { mountStripePaymentElement(); });
+}
+
+// Lets someone comparison-shop other active tracks' pricing without leaving the buy flow --
+// deliberately just a browse/switch list, not a cart: each account/purchase is still scoped to
+// exactly one exam_type (see the users/codes schema), so "adding" a second track here means
+// switching to that track's own buy page, not combining a multi-item order.
+function loadOtherTracksPricing() {
+  var wrap = document.getElementById('buy-other-tracks-wrap');
+  if (!wrap) return;
+  var others = HUB_EXAMS.filter(function (e) { return e.active && e.examType !== state.examType; });
+  if (!others.length) return;
+  Promise.all(others.map(function (t) {
+    return apiFetch('/pricing?examType=' + encodeURIComponent(t.examType))
+      .then(function (p) { return { track: t, priceCents: p.priceCents }; })
+      .catch(function () { return null; });
+  })).then(function (results) {
+    var rows = results.filter(Boolean).map(function (r) {
+      return '<a class="buy-other-track-row" href="' + r.track.route + '#/buy">' +
+        '<span>' + escapeHtml(r.track.shortName || r.track.title) + '</span>' +
+        '<span class="buy-other-track-price">$' + (r.priceCents / 100).toFixed(2) + '</span>' +
+        '</a>';
+    }).join('');
+    if (!rows) return;
+    wrap.innerHTML = '<div class="card buy-other-tracks-card">' +
+      '<div class="buy-other-tracks-label">Also studying for something else?</div>' +
+      rows + '</div>';
+  }).catch(function () { /* best-effort -- not shown if pricing can't be fetched */ });
 }
 
 function updateBuyTotalDisplay() {
