@@ -1,4 +1,5 @@
-// Vanilla JS, no framework/bundler. Hash-routed within /notary; pathname-routed at the top level.
+// Vanilla JS, no framework/bundler. Hash-routed within a track's path (e.g. /notary); pathname-routed
+// at the top level, matched against HUB_EXAMS's active tracks (see activeTrackForPath).
 var appEl = document.getElementById('app');
 var state = { question: null, answered: null, examType: 'notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
 var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
@@ -146,7 +147,7 @@ function renderSiteFooter() {
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
     '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
-    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
+    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
 
@@ -284,36 +285,42 @@ function renderContact() {
 
 var HUB_EXAMS = [
   {
+    examType: 'notary', shortName: 'California Notary',
     title: 'California Notary Public Exam', category: 'State Licensing', active: true, route: '/notary',
     duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
     description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
     breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
   },
   {
+    examType: 'ca_driver', shortName: 'California Driver',
     title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
     duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
     description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
     breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
   },
   {
+    examType: 'cdl', shortName: 'California CDL',
     title: 'California CDL Knowledge & Endorsement Exams', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '40%'], ['Air Brakes & Combination Vehicles', '25%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '20%'], ['Vehicle Inspection & Skills Testing', '15%']],
   },
   {
+    examType: 'motorcycle', shortName: 'California Motorcycle',
     title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '33%'], ['Collision Avoidance, Hazards & Mechanical Problems', '31%'], ['License Requirements & Preparing to Ride', '26%'], ['Alcohol, DUI & Insurance Law', '10%']],
   },
   {
+    examType: 'dre', shortName: 'California DRE',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
     description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
     breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
   },
   {
+    examType: 'mlo', shortName: 'National MLO',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
     description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
@@ -321,9 +328,35 @@ var HUB_EXAMS = [
   },
 ];
 
+// Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
+// or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
+// only an active track can ever be matched to a real page.
+function activeTrackForPath(pathname) {
+  var matches = HUB_EXAMS.filter(function (e) { return e.active && e.route !== '#' && pathname.indexOf(e.route) === 0; });
+  return matches.length ? matches[0] : null;
+}
+// The single active track, used as a fallback wherever a track needs to be assumed before the
+// router has matched a specific one (e.g. the hub page's own footer/CTA links).
+function firstActiveTrack() {
+  var matches = HUB_EXAMS.filter(function (e) { return e.active; });
+  return matches.length ? matches[0] : null;
+}
+function trackByExamType(examType) {
+  var matches = HUB_EXAMS.filter(function (e) { return e.examType === examType; });
+  return matches.length ? matches[0] : null;
+}
+// Resolves to whichever active track we're currently inside (state.examType, set by the router on
+// a track page), or the single active track as a sensible fallback for chrome rendered on the hub
+// itself (e.g. the footer), where no specific track is in context yet.
+function currentOrFirstActiveTrack() {
+  var current = trackByExamType(state.examType);
+  return (current && current.active) ? current : firstActiveTrack();
+}
+
 function renderHub() {
   var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
   var upcomingCount = HUB_EXAMS.length - activeCount;
+  var heroTrackRoute = (firstActiveTrack() || {}).route || '/';
 
   var cards = HUB_EXAMS.map(function (exam) {
     var statusBadge = exam.active
@@ -348,7 +381,7 @@ function renderHub() {
       '</div>';
     var cta = exam.active
       ? '<a class="btn-primary hub-cta" href="' + exam.route + '">Start Questionnaire →</a>' +
-        '<a class="btn-secondary hub-cta" href="/notary#/sample">Try a free sample</a>'
+        '<a class="btn-secondary hub-cta" href="' + exam.route + '#/sample">Try a free sample</a>'
       : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
 
     return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
@@ -362,7 +395,7 @@ function renderHub() {
 
   appEl.innerHTML =
     renderNewsBanner() +
-    '<div id="home-promotions-wrap"></div>' +
+    '<div id="home-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="hub-hero">' +
     '<h1>Pass Your California Licensing Exams on the First Try</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards, with ' +
@@ -373,11 +406,11 @@ function renderHub() {
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
     '</div>' +
     '<div class="hub-hero-cta">' +
-    '<a class="btn-primary hub-hero-btn" href="/notary#/sample">Try Free Sample</a>' +
+    '<a class="btn-primary hub-hero-btn" href="' + heroTrackRoute + '#/sample">Try Free Sample</a>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
     '</div>' +
-    '<p class="muted hub-hero-subtext">Already have a code? <a href="/notary">Enter it here</a> · ' +
-    'No code yet? <a href="/notary#/buy">Buy instant access</a> or <a href="/notary#/refer">refer friends for free access</a></p>' +
+    '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a> · ' +
+    'No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
     '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
@@ -428,11 +461,11 @@ function renderTurnstileWidget(attemptsLeft) {
 function renderTabs(active) {
   // Quiz/Exam/Progress are shown to everyone (with a 🔒 marker when logged out) so an anonymous
   // visitor gets a sense of the layout -- clicking one still only shows a locked preview, never
-  // the real content/data (see renderLockedTabPreview and the guard in renderNotaryApp).
+  // the real content/data (see renderLockedTabPreview and the guard in renderTrackApp).
   var loggedIn = !!getToken();
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Toughest 45'], ['progress', 'Progress'], ['info', 'Info']];
-  var trackHeading = loggedIn ? '<div class="track-heading">California Notary</div>' : '';
+  var trackHeading = loggedIn ? '<div class="track-heading">' + escapeHtml((trackByExamType(state.examType) || {}).shortName || '') + '</div>' : '';
   return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' +
@@ -1979,7 +2012,7 @@ var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification 
 
 function renderBuy() {
   appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
-  Promise.all([apiFetch('/pricing?examType=notary'), loadSiteConfig()]).then(function (results) {
+  Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
     buyPricing = p;
     drawBuyForm(p);
@@ -2002,11 +2035,11 @@ function drawBuyForm(pricing) {
   buyPromoDiscountCents = 0;
   appEl.innerHTML =
     '<h1>Get instant access</h1>' +
-    '<div id="checkout-promotions-wrap"></div>' +
+    '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col">' +
     '<div class="card buy-order-summary">' +
-    '<div class="buy-order-summary-top"><span>California Notary — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
+    '<div class="buy-order-summary-top"><span>' + escapeHtml((trackByExamType(state.examType) || {}).title || 'ExamPrep') + ' — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
     '<p class="buy-promo-note">🔥 Promotional price — increasing soon</p>' +
     '<p class="muted">One-time payment, instant access — no subscription.</p>' +
     '<ul class="buy-feature-list">' +
@@ -2024,7 +2057,7 @@ function drawBuyForm(pricing) {
     '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
     '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
     '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
-    '<p class="muted buy-guarantee-footnote"><a href="/notary#/refund">Refund request →</a></p>' +
+    '<p class="muted buy-guarantee-footnote"><a href="' + (trackByExamType(state.examType) || {}).route + '#/refund">Refund request →</a></p>' +
     '</div>' +
     '</div>' +
     '<div class="buy-payment-col">' +
@@ -2051,7 +2084,7 @@ function drawBuyForm(pricing) {
     '</div>' +
     '</div>' +
     '</div>' +
-    '<p class="muted redeem-sample-hint">Already have a code? <a href="/notary">Enter it here</a></p>';
+    '<p class="muted redeem-sample-hint">Already have a code? <a href="' + (trackByExamType(state.examType) || {}).route + '">Enter it here</a></p>';
   renderTurnstileWidget();
   // Re-quotes on email blur (not just on Apply/points-toggle) so a codeless, domain-gated promo
   // (e.g. a .edu student discount) gets auto-detected the moment a qualifying email is entered --
@@ -2115,7 +2148,7 @@ function mountStripePaymentElement() {
     var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
     var promoResultEl = document.getElementById('buy-promo-result');
     apiFetch('/stripe/create-intent', {
-      method: 'POST', body: { examType: 'notary', turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined },
+      method: 'POST', body: { examType: state.examType, turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined },
     }).then(function (r) {
       buyPromoDiscountCents = r.promoDiscountCents || 0;
       updateBuyTotalDisplay();
@@ -2239,7 +2272,7 @@ async function submitStripePayment() {
   var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
   try {
     var res = await apiFetch('/stripe/confirm', {
-      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: 'notary', email: email },
+      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email },
     });
     setToken(res.token);
     renderSiteHeader();
@@ -2399,7 +2432,7 @@ async function renderReferForm() {
   var rules = { referralVerifiedPoints: 25, referralConvertedPoints: 100 };
   var pricing = { priceCents: 499 };
   try {
-    var results = await Promise.all([apiFetch('/points/rules'), apiFetch('/pricing?examType=notary')]);
+    var results = await Promise.all([apiFetch('/points/rules'), apiFetch('/pricing?examType=' + encodeURIComponent(state.examType))]);
     rules = results[0];
     pricing = results[1];
   } catch (e) { /* use the fallback defaults above */ }
@@ -2408,10 +2441,10 @@ async function renderReferForm() {
   appEl.innerHTML =
     '<div class="refer-page">' +
     '<h1>Refer friends, earn free access</h1>' +
-    '<div id="refer-promotions-wrap"></div>' +
+    '<div id="refer-promotions-wrap" class="promotions-wrap"></div>' +
     '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
-    '<strong>' + required + ' points</strong> to unlock the California Notary course completely free.</p>' +
+    '<strong>' + required + ' points</strong> to unlock the ' + escapeHtml((trackByExamType(state.examType) || {}).title || 'course') + ' completely free.</p>' +
     '<div class="refer-progress">' +
     '<div class="refer-progress-bar"><div class="refer-progress-fill"></div></div>' +
     '<div class="refer-progress-label muted">0 / ' + required + ' points — <a href="#/buy">check your real balance →</a></div>' +
@@ -2513,7 +2546,7 @@ async function renderSample() {
     '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>';
   if (!sampleState.questions) {
     try {
-      var res = await apiFetch('/sample?examType=notary');
+      var res = await apiFetch('/sample?examType=' + encodeURIComponent(state.examType));
       sampleState.questions = res.questions;
       sampleState.index = 0;
       sampleState.answered = null;
@@ -2531,7 +2564,7 @@ function drawSampleQuestion() {
       '<h1>That was the sample</h1>' +
       '<p class="muted">Enter an access code to unlock the full question bank and track your progress.</p>' +
       '<div class="sample-done-cta">' +
-      '<a class="btn-primary hub-cta" href="/notary">Enter access code →</a>' +
+      '<a class="btn-primary hub-cta" href="' + (trackByExamType(state.examType) || {}).route + '">Enter access code →</a>' +
       '<a class="btn-secondary hub-cta" href="#/resources">See free study resources →</a>' +
       '</div>';
     return;
@@ -2599,7 +2632,7 @@ function setupMic() {
 
 // ---- Routing --------------------------------------------------------------
 
-async function renderNotaryApp() {
+async function renderTrackApp() {
   var hadExplicitHash = !!location.hash; // so "no hash yet" keeps defaulting to the redeem page,
                                           // not the quiz view's fallback lock-preview, for anon visitors
   var view = (location.hash || '#/quiz').replace('#/', '');
@@ -2636,8 +2669,11 @@ function route() {
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
-  else if (location.pathname.indexOf('/notary') === 0) renderNotaryApp();
-  else renderHub();
+  else {
+    var track = activeTrackForPath(location.pathname);
+    if (track) { state.examType = track.examType; renderTrackApp(); }
+    else renderHub();
+  }
 }
 
 window.addEventListener('hashchange', route);
@@ -2702,7 +2738,7 @@ document.addEventListener('submit', async function (e) {
       var local = loadLocalPrefs();
       applyTheme(local.theme, local.fontScale);
       location.hash = '#/quiz';
-      renderNotaryApp();
+      renderTrackApp();
     } catch (err) {
       renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
         err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
@@ -2994,7 +3030,7 @@ document.addEventListener('click', async function (e) {
     clearToken();
     renderSiteHeader();
     location.hash = '';
-    renderNotaryApp();
+    renderTrackApp();
   } else if (act === 'toggle-profile-menu') {
     var profileMenuEl = el.closest('.profile-menu');
     if (profileMenuEl) profileMenuEl.classList.toggle('open');
@@ -3124,8 +3160,8 @@ document.addEventListener('click', async function (e) {
     try {
       var balanceRes = await apiFetch('/points/balance?email=' + encodeURIComponent(checkEmail));
       if (!resultEl) return;
-      var notaryReq = balanceRes.examTypes.filter(function (t) { return t.examType === 'notary'; })[0];
-      var required = notaryReq ? notaryReq.pointsRequired : null;
+      var trackReq = balanceRes.examTypes.filter(function (t) { return t.examType === state.examType; })[0];
+      var required = trackReq ? trackReq.pointsRequired : null;
       if (required != null && balanceRes.points >= required) {
         resultEl.innerHTML = '<p class="result-correct">You have ' + balanceRes.points + ' points — enough for free access!</p>' +
           '<button class="btn-primary btn-sm" type="button" data-act="redeem-points" data-email="' + checkEmail + '">Email me a redemption link</button>';
@@ -3148,7 +3184,7 @@ document.addEventListener('click', async function (e) {
     var pointsResultEl = document.getElementById('points-result');
     try {
       await apiFetch('/points/redeem', {
-        method: 'POST', body: { email: redeemEmail, examType: 'notary', turnstileToken: redeemTurnstileToken },
+        method: 'POST', body: { email: redeemEmail, examType: state.examType, turnstileToken: redeemTurnstileToken },
       });
       // Doesn't redeem instantly -- a confirmation link goes to that email first, so only
       // someone who actually controls the inbox can complete the redemption.

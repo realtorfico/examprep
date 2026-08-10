@@ -623,6 +623,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
   border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.75rem;
 }
+/* On desktop, promo banners sit in one row (up to 4 per row, quarter-width each) instead of
+   stacking -- mobile keeps the simple stacked layout. */
+@media (min-width: 900px) {
+  .promotions-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; align-items: stretch; }
+  .promotions-wrap .promo-banner {
+    margin-bottom: 0; height: 100%; flex-direction: column; align-items: flex-start; position: relative;
+  }
+  .promotions-wrap .promo-banner-dismiss { position: absolute; top: 0.5rem; right: 0.5rem; }
+  .promotions-wrap .promo-banner-cta { width: 100%; text-align: center; }
+}
 .promo-banner-body { flex: 1; min-width: 12rem; font-size: 0.88rem; }
 .promo-banner-body strong { color: var(--accent); font-size: 1.05rem; }
 .promo-banner-code { margin-left: 0.4rem; }
