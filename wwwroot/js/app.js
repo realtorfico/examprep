@@ -290,18 +290,6 @@ var HUB_EXAMS = [
     breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
   },
   {
-    title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
-    duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
-    description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
-    breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
-  },
-  {
-    title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
-    duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
-    description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
-    breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
-  },
-  {
     title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
     duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
     description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
@@ -318,6 +306,18 @@ var HUB_EXAMS = [
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '33%'], ['Collision Avoidance, Hazards & Mechanical Problems', '31%'], ['License Requirements & Preparing to Ride', '26%'], ['Alcohol, DUI & Insurance Law', '10%']],
+  },
+  {
+    title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
+    duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
+    description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
+    breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
+  },
+  {
+    title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
+    duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
+    description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
+    breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
   },
 ];
 
