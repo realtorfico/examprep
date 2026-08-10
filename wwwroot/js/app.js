@@ -87,7 +87,7 @@ function renderSiteHeader() {
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
     '<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
     '</svg></span>' +
-    '<span class="site-logo-text"><a href="/" class="site-logo-word">EXAM<span class="site-logo-accent">PREP</span></a>' +
+    '<span class="site-logo-text"><a href="/" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
     '<a href="#/guarantee" class="site-logo-tagline">Pass Exam - Or Your Money Back</a></span>' +
     '</span>';
 
@@ -145,7 +145,7 @@ function loadSiteConfig() {
 function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
-    '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
+    '<div>© ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).orgLine + ' or any other government agency. Practice questions only, and ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).footerRequirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
@@ -229,7 +229,7 @@ function renderProfileMenu() {
 function renderTerms() {
   var compliance = trackCompliance((currentOrFirstActiveTrack() || {}).examType);
   appEl.innerHTML = '<h1>Terms of Use</h1>' +
-    '<p class="muted">ExamPrep provides original, independently-authored practice questions for exam preparation purposes only. ' +
+    '<p class="muted">PassExamHQ provides original, independently-authored practice questions for exam preparation purposes only. ' +
     'It is not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + ' ' +
     'or any other government agency. All official state trademarks, examination names, and statutory references are used purely ' +
     'for identification and descriptive purposes. ' +
@@ -2103,7 +2103,7 @@ var buyPromoDiscountCents = 0; // set from the server's response once a code is 
 var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification link was already sent for, to avoid re-sending on repeat blur
 
 function renderBuy() {
-  var trackTitle = (trackByExamType(state.examType) || {}).title || 'ExamPrep';
+  var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
   Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
@@ -2124,7 +2124,7 @@ function renderBuy() {
 
 function drawBuyForm(pricing) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
-  var trackTitle = (trackByExamType(state.examType) || {}).title || 'ExamPrep';
+  var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   buyPromoCode = null;
   buyPromoDiscountCents = 0;
   appEl.innerHTML =
@@ -3358,7 +3358,7 @@ function checkForUpdate() {
     if (!latest || !current || latest === current) return;
     document.body.insertAdjacentHTML('afterbegin',
       '<div class="update-available-banner" id="update-available-banner">' +
-      '<span>A new version of ExamPrep is available.</span>' +
+      '<span>A new version of PassExamHQ is available.</span>' +
       '<button class="btn-primary btn-sm" type="button" data-act="reload-for-update">Refresh</button>' +
       '<button class="update-available-dismiss" type="button" data-act="dismiss-update-banner" aria-label="Dismiss">✕</button>' +
       '</div>');

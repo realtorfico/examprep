@@ -1,3 +1,13 @@
+/* Self-hosted (CSP is font-src 'self' -- Google Fonts' CDN itself can't be used) -- only the
+   700 weight/latin subset is needed since it's used solely for the "PassExamHQ" wordmark. */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-700.woff2') format('woff2');
+}
+
 :root {
   --bg: #0b0f17;
   --card: #161f30;
@@ -90,7 +100,10 @@ body {
   display: flex; align-items: center; justify-content: center; color: #fff;
 }
 .site-logo-text { display: flex; flex-direction: column; line-height: 1.15; }
-.site-logo-word { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+.site-logo-word {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--fg); text-decoration: none;
+}
 .site-logo-accent { color: var(--accent); }
 /* The tagline is its own link (to the guarantee details page), separate from the word's link
    (home) -- a subtle dotted underline signals it's clickable without looking like a normal link. */
