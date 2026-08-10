@@ -359,16 +359,10 @@ function firstActiveTrack() {
   var matches = HUB_EXAMS.filter(function (e) { return e.active; });
   return matches.length ? matches[0] : null;
 }
-// exam_type naming convention going forward: {state}_{category}, e.g. tx_driver, fl_notary --
-// national (non-state-specific) exams like the NMLS MLO stay unprefixed. notary/cdl/motorcycle
-// were renamed to ca_notary/ca_cdl/ca_motorcycle to fit this (ca_driver already fit); the alias
-// below keeps any not-yet-migrated account (old exam_type still in D1) resolving to the right
-// track during the migration window -- remove once the D1 migration is confirmed done.
-var LEGACY_EXAM_TYPE_ALIASES = { notary: 'ca_notary', cdl: 'ca_cdl', motorcycle: 'ca_motorcycle' };
-function normalizeExamType(examType) { return LEGACY_EXAM_TYPE_ALIASES[examType] || examType; }
+// exam_type naming convention: {state}_{category}, e.g. tx_driver, fl_notary -- national
+// (non-state-specific) exams like the NMLS MLO stay unprefixed.
 function trackByExamType(examType) {
-  var normalized = normalizeExamType(examType);
-  var matches = HUB_EXAMS.filter(function (e) { return e.examType === normalized; });
+  var matches = HUB_EXAMS.filter(function (e) { return e.examType === examType; });
   return matches.length ? matches[0] : null;
 }
 
@@ -430,7 +424,7 @@ var TRACK_COMPLIANCE = {
   },
 };
 function trackCompliance(examType) {
-  return TRACK_COMPLIANCE[normalizeExamType(examType)] || TRACK_COMPLIANCE.ca_notary;
+  return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.ca_notary;
 }
 // Resolves to whichever active track we're currently inside (state.examType, set by the router on
 // a track page), or the single active track as a sensible fallback for chrome rendered on the hub
@@ -922,7 +916,7 @@ function postResourceProgress(resourceKey, type, percent, isNewOpen) {
 }
 
 async function renderResources() {
-  var items = RESOURCES[normalizeExamType(state.examType)] || [];
+  var items = RESOURCES[state.examType] || [];
   if (!items.length) {
     appEl.innerHTML = renderTabs('resources') +
       '<p class="muted">No study resources yet for this exam track.</p>';
@@ -1682,7 +1676,7 @@ var ADDITIONAL_INFO_LINKS = {
 };
 
 function renderAdditionalInfo() {
-  var links = ADDITIONAL_INFO_LINKS[normalizeExamType(state.examType)] || [];
+  var links = ADDITIONAL_INFO_LINKS[state.examType] || [];
   var linkCards = links.map(function (l) {
     return '<a class="card additional-info-card" href="' + l.url + '" target="_blank" rel="noopener noreferrer">' +
       '<div class="additional-info-title">' + l.title + ' ↗</div>' +
