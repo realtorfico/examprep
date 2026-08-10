@@ -145,7 +145,7 @@ function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">examprep.softician.com is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
+    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="/notary#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
