@@ -318,10 +318,10 @@ var HUB_EXAMS = [
   },
   {
     examType: 'cdl', shortName: 'California CDL',
-    title: 'California CDL Knowledge & Endorsement Exams', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    title: 'California CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
-    breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '40%'], ['Air Brakes & Combination Vehicles', '25%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '20%'], ['Vehicle Inspection & Skills Testing', '15%']],
+    breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '33%'], ['Air Brakes & Combination Vehicles', '16%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '34%'], ['Vehicle Inspection & Skills Testing', '17%']],
   },
   {
     examType: 'motorcycle', shortName: 'California Motorcycle',
@@ -392,6 +392,19 @@ var TRACK_COMPLIANCE = {
       'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DMV written knowledge test or any required driver education course.',
     passScoreNote: 'the same threshold as the real DMV test — 38 of 46 correct',
+  },
+  cdl: {
+    orgLine: 'the California Department of Motor Vehicles (DMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any California CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any California CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the California Department of Motor Vehicles, and ELDT must be completed through an FMCSA-registered ' +
+      'training provider. While we strive to align our content with the current California Commercial Driver Handbook, it is provided ' +
+      '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold as the real DMV CDL General Knowledge test — 40 of 50 correct',
   },
 };
 function trackCompliance(examType) {
@@ -790,6 +803,11 @@ var RESOURCES = {
   ca_driver: [
     { title: 'Official California Driver Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/',
       desc: 'The official handbook published by the California DMV (DL 600) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  cdl: [
+    { title: 'Official California Commercial Driver Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/california-commercial-driver-handbook-pdf/',
+      desc: 'The official handbook published by the California DMV (DL 650) — the authoritative source the CDL knowledge and endorsement tests are based on.',
       topic: 'General Reference', free: true },
   ],
 };
