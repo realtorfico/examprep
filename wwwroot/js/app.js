@@ -82,14 +82,14 @@ function saveLocalPrefs(theme, fontScale) {
 
 function renderSiteHeader() {
   var loggedIn = !!getToken();
-  var logo = '<a href="/" class="site-logo">' +
+  var logo = '<span class="site-logo">' +
     '<span class="site-logo-icon">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
     '<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
     '</svg></span>' +
-    '<span class="site-logo-text"><span class="site-logo-word">EXAM<span class="site-logo-accent">PREP</span></span>' +
-    '<span class="site-logo-tagline">Pass Your Exam - Or Your Money Back</span></span>' +
-    '</a>';
+    '<span class="site-logo-text"><a href="/" class="site-logo-word">EXAM<span class="site-logo-accent">PREP</span></a>' +
+    '<a href="#/guarantee" class="site-logo-tagline">Pass Your Exam - Or Your Money Back</a></span>' +
+    '</span>';
 
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
@@ -276,6 +276,27 @@ function renderContact() {
     '</form>' +
     '</div>';
   renderTurnstileWidget();
+}
+
+function renderGuarantee() {
+  appEl.innerHTML = '<h1>Our Guarantee</h1><p class="muted">Loading…</p>';
+  loadSiteConfig().then(function () {
+    var refundRoute = (currentOrFirstActiveTrack() || {}).route || '/';
+    appEl.innerHTML = '<h1>Our Guarantee</h1>' +
+      '<p class="muted page-intro-text">Two separate ways you\'re covered — whichever applies to you.</p>' +
+      '<div class="card buy-guarantee-card">' +
+      '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
+      '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
+      '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
+      '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
+      '(as long as you maintained a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct +
+      '% Coverage in your practice here — a good-faith-effort requirement, not a formality).</p></div>' +
+      '</div>' +
+      '<p class="muted">Both guarantees cover real-money purchases only — free courses redeemed with points ' +
+      'aren\'t eligible, since no cash was paid.</p>' +
+      '<a class="btn-primary hub-cta" href="' + refundRoute + '#/refund">Request a refund →</a> ' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+  });
 }
 
 // ---- Views --------------------------------------------------------------
@@ -2379,7 +2400,7 @@ function renderRefundRequest() {
     '<label class="muted buy-email-label">Exam date</label>' +
     '<input type="date" name="examDate">' +
     '<label class="muted buy-email-label refund-field-spacing">Confirmation/candidate ID (optional)</label>' +
-    '<input type="text" name="confirmationNote" placeholder="e.g. your CPS HR confirmation number">' +
+    '<input type="text" name="confirmationNote" placeholder="e.g. your exam confirmation number">' +
     '</div>' +
     '<label class="muted buy-email-label refund-field-spacing">Notes (optional)</label>' +
     '<input type="text" name="notes" placeholder="Anything else we should know">' +
@@ -2722,6 +2743,7 @@ function route() {
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
+  if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else {
     var track = activeTrackForPath(location.pathname);

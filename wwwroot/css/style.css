@@ -83,16 +83,22 @@ body {
   .site-shell { max-width: 100%; padding: 0.75rem 1rem; }
 }
 
-.site-logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
+.site-logo { display: flex; align-items: center; gap: 0.65rem; }
 .site-logo-icon {
   width: 2.25rem; height: 2.25rem; border-radius: 0.65rem; flex-shrink: 0;
   background: linear-gradient(135deg, var(--accent), var(--accent-hover));
   display: flex; align-items: center; justify-content: center; color: #fff;
 }
 .site-logo-text { display: flex; flex-direction: column; line-height: 1.15; }
-.site-logo-word { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--fg); }
+.site-logo-word { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
 .site-logo-accent { color: var(--accent); }
-.site-logo-tagline { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+/* The tagline is its own link (to the guarantee details page), separate from the word's link
+   (home) -- a subtle dotted underline signals it's clickable without looking like a normal link. */
+.site-logo-tagline {
+  font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--muted); width: fit-content;
+}
+.site-logo-tagline:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
 #app {
   width: 100%; max-width: 580px; background: var(--card); border: 1px solid var(--border);
