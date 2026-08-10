@@ -384,12 +384,22 @@ function currentOrFirstActiveTrack() {
   return (current && current.active) ? current : firstActiveTrack();
 }
 
-function renderHub() {
-  var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
-  var upcomingCount = HUB_EXAMS.length - activeCount;
-  var heroTrackRoute = (firstActiveTrack() || {}).route || '/';
+var HUB_TRACKS_COLLAPSED_COUNT = 4;
+var hubTracksExpanded = false;
 
-  var cards = HUB_EXAMS.map(function (exam) {
+function hubTracksGridHtml() {
+  var cardsArr = hubTrackCards();
+  var truncated = !hubTracksExpanded && cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT;
+  var visible = truncated ? cardsArr.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : cardsArr;
+  var toggleHtml = cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT
+    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-hub-tracks">' +
+      (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
+    : '';
+  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + toggleHtml;
+}
+
+function hubTrackCards() {
+  return HUB_EXAMS.map(function (exam) {
     var statusBadge = exam.active
       ? '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>'
       : '<span class="status-badge">Coming Soon</span>';
@@ -422,7 +432,13 @@ function renderHub() {
       '<p class="muted exam-track-desc">' + exam.description + '</p>' +
       specs + breakdown +
       '</div><div class="exam-track-footer">' + cta + '</div></div>';
-  }).join('');
+  });
+}
+
+function renderHub() {
+  var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
+  var upcomingCount = HUB_EXAMS.length - activeCount;
+  var heroTrackRoute = (firstActiveTrack() || {}).route || '/';
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -445,7 +461,7 @@ function renderHub() {
     '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
-    '<div class="exam-track-grid">' + cards + '</div>';
+    '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>';
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
   // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
@@ -3001,6 +3017,10 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'toggle-hub-tracks') {
+    hubTracksExpanded = !hubTracksExpanded;
+    var hubTracksWrap = document.getElementById('hub-tracks-grid-wrap');
+    if (hubTracksWrap) hubTracksWrap.innerHTML = hubTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {

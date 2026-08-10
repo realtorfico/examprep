@@ -518,6 +518,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
 }
+.hub-tracks-toggle-wrap { text-align: center; margin-top: 1rem; }
 .exam-track-card {
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
   background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s, filter 0.15s;
