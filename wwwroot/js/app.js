@@ -146,7 +146,7 @@ function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' ExamPrep. All rights reserved.</div>' +
-    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, or any other government agency. Practice questions only, and do not fulfill California\'s mandatory notary education requirement — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
+    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).orgLine + ' or any other government agency. Practice questions only, and ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).footerRequirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
@@ -225,20 +225,15 @@ function renderProfileMenu() {
 }
 
 function renderTerms() {
+  var compliance = trackCompliance((currentOrFirstActiveTrack() || {}).examType);
   appEl.innerHTML = '<h1>Terms of Use</h1>' +
     '<p class="muted">ExamPrep provides original, independently-authored practice questions for exam preparation purposes only. ' +
-    'It is not affiliated with, authorized by, sponsored by, or endorsed by the California Secretary of State, CPS HR Consulting, ' +
+    'It is not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + ' ' +
     'or any other government agency. All official state trademarks, examination names, and statutory references are used purely ' +
     'for identification and descriptive purposes. ' +
     'Access codes are non-transferable and grant access to one exam track as specified at purchase. ' +
     'We make no guarantee of passing any official exam.</p>' +
-    '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy California\'s state-mandated 6-hour ' +
-    '(or 3-hour refresher) notary public education requirement under Government Code § 8201, and does not issue an official ' +
-    'Proof of Completion certificate — our content is a supplementary study aid only. Completing practice exams here also does ' +
-    'not register you for, or schedule, the official proctored California Notary Public Examination; official exam scheduling ' +
-    'and candidate registration must be conducted through the California Secretary of State and its designated exam vendor, ' +
-    'CPS HR Consulting. While we strive to align our content with current California notary laws, handbook guidance, and ' +
-    'statutory regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>' +
+    compliance.termsParagraph2 +
     '<p class="muted">Referral points have no cash value and cannot be redeemed, exchanged, or refunded for cash ' +
     'or any other payment method — they may only be applied toward a course through this site. Points may expire ' +
     'or be adjusted, and the referral program itself may be modified, suspended, or discontinued, at any time. ' +
@@ -293,7 +288,7 @@ var HUB_EXAMS = [
   },
   {
     examType: 'ca_driver', shortName: 'California Driver',
-    title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: false, route: '#',
+    title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ca_driver',
     duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
     description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
     breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
@@ -344,6 +339,40 @@ function firstActiveTrack() {
 function trackByExamType(examType) {
   var matches = HUB_EXAMS.filter(function (e) { return e.examType === examType; });
   return matches.length ? matches[0] : null;
+}
+
+// Per-track compliance/legal copy -- deliberately NOT auto-genericized from one template, since the
+// underlying facts differ per track (who administers the real exam, what education/training
+// requirement exists, if any). Add a real entry here before flipping a new track to active:true.
+var TRACK_COMPLIANCE = {
+  notary: {
+    orgLine: 'the California Secretary of State, CPS HR Consulting,',
+    footerRequirement: "do not fulfill California's mandatory notary education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy California\'s state-mandated 6-hour ' +
+      '(or 3-hour refresher) notary public education requirement under Government Code § 8201, and does not issue an official ' +
+      'Proof of Completion certificate — our content is a supplementary study aid only. Completing practice exams here also does ' +
+      'not register you for, or schedule, the official proctored California Notary Public Examination; official exam scheduling ' +
+      'and candidate registration must be conducted through the California Secretary of State and its designated exam vendor, ' +
+      'CPS HR Consulting. While we strive to align our content with current California notary laws, handbook guidance, and ' +
+      'statutory regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real proctored exam or California\'s mandatory notary education requirement.',
+    passScoreNote: 'a practice approximation of the real scaled-score-70 requirement',
+  },
+  ca_driver: {
+    orgLine: 'the California Department of Motor Vehicles (DMV)',
+    footerRequirement: "do not fulfill any California driver education or behind-the-wheel training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy any California driver ' +
+      'education or behind-the-wheel training requirement, and does not issue any official course-completion certificate — our ' +
+      'content is a supplementary study aid only. Completing practice exams here also does not register you for, or schedule, the ' +
+      'official DMV written knowledge test; official testing must be scheduled directly through the California Department of Motor ' +
+      'Vehicles. While we strive to align our content with the current California Driver Handbook, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DMV written knowledge test or any required driver education course.',
+    passScoreNote: 'the same threshold as the real DMV test — 38 of 46 correct',
+  },
+};
+function trackCompliance(examType) {
+  return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.notary;
 }
 // Resolves to whichever active track we're currently inside (state.examType, set by the router on
 // a track page), or the single active track as a sensible fallback for chrome rendered on the hub
@@ -718,6 +747,11 @@ var RESOURCES = {
     { title: 'California Powers of Attorney', type: 'video', file: 'CA_Powers_of_Attorney.mp4',
       desc: 'A video overview of notarial acts involving powers of attorney — acknowledgment, journal entry, and certified-copy rules.',
       topic: 'Powers Of Attorney', sizeBytes: 34638651 },
+  ],
+  ca_driver: [
+    { title: 'Official California Driver Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/',
+      desc: 'The official handbook published by the California DMV (DL 600) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
   ],
 };
 
@@ -1626,6 +1660,7 @@ async function renderExamIntro(mode) {
   var isToughest = mode === 'toughest45';
   var config = await apiFetch('/exam/config');
   examState.config = config;
+  var compliance = trackCompliance(state.examType);
   var questionSourceLine = isToughest
     ? '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to ' + config.questionCount +
       ', but could be fewer if you currently have less than that missed (no filler questions)</li>'
@@ -1639,12 +1674,12 @@ async function renderExamIntro(mode) {
     questionSourceLine +
     '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>' +
     '<li>No answer feedback until you finish — just like the real thing</li>' +
-    '<li>Need <strong>' + config.passPercent + '%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
+    '<li>Need <strong>' + config.passPercent + '%</strong> to pass (' + compliance.passScoreNote + ')</li>' +
     '</ul>' +
     '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
     'right where you left off, not restart. There\'s no pausing.</p>' +
     '<p class="exam-disclaimer-callout">This is an independent practice tool, not the official state exam. Completing it does not ' +
-    'register you for, or count toward, the real proctored exam or California\'s mandatory notary education requirement.</p>' +
+    compliance.examIntroDisclaimer + '</p>' +
     (isToughest ? '' :
       '<label class="auto-advance-toggle">' +
       '<input type="checkbox" data-act="toggle-exam-unseen-only"' + (examUnseenOnly ? ' checked' : '') + '> ' +
