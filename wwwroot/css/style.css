@@ -133,6 +133,11 @@ a { color: var(--accent); }
 /* Which exam track, shown above the tab nav on every view -- compact single line, not a banner. */
 .track-heading { font-weight: 800; font-size: 1.15rem; color: var(--accent); letter-spacing: -0.01em; text-align: center; }
 
+/* Which track you're buying -- the buy page has no tab nav/track-heading of its own (it's reached
+   pre-login too), so this is the one clear "you are buying X" cue beyond the small order-summary
+   line further down the page. */
+.buy-track-subtitle { font-weight: 700; color: var(--accent); margin: -0.5rem 0 1rem; font-size: 1rem; }
+
 /* Account menu: profile icon button + dropdown, replaces the old always-visible log-out bar */
 .profile-menu { position: relative; }
 .profile-menu-btn {

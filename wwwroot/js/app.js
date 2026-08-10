@@ -88,7 +88,7 @@ function renderSiteHeader() {
     '<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
     '</svg></span>' +
     '<span class="site-logo-text"><span class="site-logo-word">EXAM<span class="site-logo-accent">PREP</span></span>' +
-    '<span class="site-logo-tagline">Licensing Questionnaire Portal</span></span>' +
+    '<span class="site-logo-tagline">Pass Your Exam - Or Your Money Back</span></span>' +
     '</a>';
 
   document.getElementById('site-header').innerHTML =
@@ -2064,7 +2064,8 @@ var buyPromoDiscountCents = 0; // set from the server's response once a code is 
 var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification link was already sent for, to avoid re-sending on repeat blur
 
 function renderBuy() {
-  appEl.innerHTML = '<h1>Get instant access</h1><p class="muted">Loading price…</p>';
+  var trackTitle = (trackByExamType(state.examType) || {}).title || 'ExamPrep';
+  appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
   Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
     buyPricing = p;
@@ -2078,21 +2079,23 @@ function renderBuy() {
       if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
     }).catch(function () { /* best-effort */ });
   }).catch(function () {
-    appEl.innerHTML = '<h1>Get instant access</h1><p>Could not load pricing. Try again shortly.</p>';
+    appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p>Could not load pricing. Try again shortly.</p>';
   });
 }
 
 function drawBuyForm(pricing) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
+  var trackTitle = (trackByExamType(state.examType) || {}).title || 'ExamPrep';
   buyPromoCode = null;
   buyPromoDiscountCents = 0;
   appEl.innerHTML =
-    '<h1>Get instant access</h1>' +
+    '<h1>Get Instant Access</h1>' +
+    '<p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p>' +
     '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col">' +
     '<div class="card buy-order-summary">' +
-    '<div class="buy-order-summary-top"><span>' + escapeHtml((trackByExamType(state.examType) || {}).title || 'ExamPrep') + ' — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
+    '<div class="buy-order-summary-top"><span>' + escapeHtml(trackTitle) + ' — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
     '<p class="buy-promo-note">🔥 Promotional price — increasing soon</p>' +
     '<p class="muted">One-time payment, instant access — no subscription.</p>' +
     '<ul class="buy-feature-list">' +
