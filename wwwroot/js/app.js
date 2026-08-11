@@ -135,20 +135,46 @@ function renderSiteHeader() {
     '<a href="#/guarantee" class="site-logo-tagline">Pass Exam - Or Your Money Back</a></span>' +
     '</span>';
 
+  // Marketing nav + CTAs (ported from v0's site-header.tsx) -- inline on desktop, folded into a
+  // mobile drawer below the row on narrow screens. Kept separate from the existing font/theme/
+  // profile controls (unchanged, still always visible) rather than merged into one cluster, so
+  // adding these doesn't touch anything already working.
+  var anchorRoute = (currentOrFirstActiveTrack() || {}).route || '/';
+  var navLinksHtml = '<a href="/#tracks">Exam tracks</a>' +
+    '<a href="#/guarantee">Guarantee</a>' +
+    '<a href="' + anchorRoute + '#/refer">Refer &amp; earn</a>';
+  var navCtaHtml = '<a class="btn-secondary btn-sm" href="' + anchorRoute + '#/redeem">Redeem code</a>' +
+    '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
+
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
     logo +
+    '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
+    '<div class="site-nav-cta">' + navCtaHtml + '</div>' +
+    '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
     '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +
     '<button data-act="font-up">A+</button>' +
     '</div>' +
     '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
     (loggedIn ? renderProfileMenu() : '') +
-    '</div></div>' +
+    '</div>' +
+    '<div class="site-mobile-drawer" id="site-mobile-drawer">' +
+    '<nav aria-label="Mobile">' + navLinksHtml + '</nav>' +
+    '<div class="site-mobile-drawer-cta">' + navCtaHtml + '</div>' +
+    '</div>' +
+    '</div>' +
     '<div id="promo-ribbon-wrap" class="promo-ribbon"></div>';
   updateThemeButton();
   fillPromoRibbon();
+}
+
+function closeHeaderMenuIfOpen() {
+  var drawerEl = document.getElementById('site-mobile-drawer');
+  if (drawerEl) drawerEl.classList.remove('open');
+  var toggleBtn = document.querySelector('.header-menu-toggle');
+  if (toggleBtn) { toggleBtn.setAttribute('aria-expanded', 'false'); toggleBtn.textContent = '☰'; }
 }
 
 // Site-wide, site-header-hosted promo ribbon (Round 2 design decision) -- fills in async since it
@@ -223,15 +249,46 @@ function loadSiteConfig() {
 var HUB_FOOTER_ORG_LINE = 'any state department of motor vehicles, state licensing agency, official examination vendor,';
 var HUB_FOOTER_REQUIREMENT = 'do not fulfill any state-mandated licensing, driver education, or training requirement';
 
+// Four-column footer (ported from v0's site-footer.tsx) -- link destinations are all real routes
+// (no v0 placeholder hrefs carried over): the Exams column samples a few real live tracks rather
+// than hardcoding specific slugs, so it stays correct as tracks are added; Product/Legal links use
+// currentOrFirstActiveTrack() for whichever track-scoped destination is relevant on the current page.
 function renderSiteFooter() {
   var pageTrack = activeTrackForPath(window.location.pathname);
   var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
+  var anchorTrack = currentOrFirstActiveTrack() || {};
+  var anchorRoute = anchorTrack.route || '/';
+  var sampleTracks = HUB_EXAMS.filter(function (e) { return e.active; }).slice(0, 3);
+
+  var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
+    '<li><a href="/#tracks">All exam tracks</a></li>' +
+    sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
+    '</ul></div>';
+  var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
+    '<li><a href="' + anchorRoute + '#/redeem">Redeem access code</a></li>' +
+    '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
+    '<li><a href="' + anchorRoute + '#/refer">Refer &amp; earn</a></li>' +
+    '<li><a href="' + anchorRoute + '#/sample">Free sample questions</a></li>' +
+    '</ul></div>';
+  var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
+    '<li><a href="#/terms">Terms of service</a></li>' +
+    '<li><a href="#/privacy">Privacy policy</a></li>' +
+    '<li><a href="' + anchorRoute + '#/refund">Refund request</a></li>' +
+    '<li><a href="#/contact">Contact us</a></li>' +
+    '</ul></div>';
+
   document.getElementById('site-footer').innerHTML =
-    '<div class="site-shell footer-content">' +
-    '<div>© ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
-    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>.</div>' +
-    '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
+    '<div class="site-shell footer-shell">' +
+    '<div class="footer-grid">' +
+    '<div class="footer-brand-col">' +
+    '<span class="site-logo"><span class="site-logo-icon">' + LOGO_SVG + '</span>' +
+    '<span class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></span></span>' +
+    '<p class="muted footer-brand-blurb">Independent, one-time-purchase prep for real licensing exams. Question banks built on the current official handbooks — no subscriptions, ever.</p>' +
+    '</div>' +
+    exverse + productCol + legalCol +
+    '</div>' +
+    '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>. © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '</div>';
 }
 
@@ -995,13 +1052,16 @@ function renderHub() {
     '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
     '<p class="muted hub-hero-subtext">No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
     '</div>' +
+    trustStripHtml() +
+    howItWorksHtml() +
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
     '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>' +
     '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>' +
     comparisonTableHtml() +
-    outcomesStripHtml();
+    outcomesStripHtml() +
+    guaranteeCtaBandHtml();
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
   // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
@@ -1012,6 +1072,67 @@ function renderHub() {
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
   fillOutcomesStrip();
+  // The guarantee band renders synchronously with whatever refundFailurePercent already holds
+  // (the pre-fetch default until some earlier page has loaded real config) -- patches itself once
+  // the real value is in, rather than a second fetch just for this.
+  loadSiteConfig().then(function () {
+    document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
+  });
+}
+
+// ---- Home page: trust strip, how it works, guarantee band (ported from v0's page.tsx) ----
+
+function trustStripHtml() {
+  var items = [
+    ['📘', 'Built on current official handbooks'],
+    ['⏱️', 'Timed mocks that mirror the real format'],
+    ['🔄', '7-day no-questions-asked refund'],
+    ['🔑', 'One code in — no passwords to manage'],
+  ];
+  return '<section class="trust-strip">' + items.map(function (i) {
+    return '<div class="trust-strip-item"><span class="trust-strip-icon">' + i[0] + '</span><span>' + i[1] + '</span></div>';
+  }).join('') + '</section>';
+}
+
+var HOW_IT_WORKS_STEPS = [
+  ['📘', 'Try it free', 'Answer real practice questions before you pay a cent — no account needed.'],
+  ['📄', 'Buy one track', 'A single one-time payment unlocks a full exam track. No subscription, ever.'],
+  ['🔑', 'Your code is your login', 'We email you an access code. That code is the entire front door — no passwords.'],
+  ['🏆', 'Walk in confident', 'Drill the bank, sit a timed mock, and track readiness until you\'re ready to pass.'],
+];
+function howItWorksHtml() {
+  return '<section class="how-it-works-section">' +
+    '<p class="section-eyebrow">How it works</p>' +
+    '<h2 class="comparison-heading how-it-works-heading">From nervous to ready in four steps</h2>' +
+    '<ol class="how-it-works-grid">' +
+    HOW_IT_WORKS_STEPS.map(function (s, i) {
+      return '<li class="how-it-works-card">' +
+        '<div class="how-it-works-icon">' + s[0] + '</div>' +
+        '<p class="how-it-works-step-label">Step ' + (i + 1) + '</p>' +
+        '<h3>' + s[1] + '</h3>' +
+        '<p class="muted">' + s[2] + '</p>' +
+        '</li>';
+    }).join('') +
+    '</ol>' +
+    '</section>';
+}
+
+// refundFailurePercent shows its pre-fetch default (50) at first paint here, then gets patched by
+// the .js-refund-pct sweep in renderHub() once real config loads -- see the comment there.
+function guaranteeCtaBandHtml() {
+  return '<section class="guarantee-band">' +
+    '<div class="guarantee-band-copy">' +
+    '<span class="badge guarantee-band-badge">🛡️ Two guarantees, in plain language</span>' +
+    '<h2>If you don\'t pass, you don\'t pay.</h2>' +
+    '<p>Study the track, sit your real exam, and if you don\'t pass we refund <span class="js-refund-pct">' + refundFailurePercent + '</span>% of your purchase. ' +
+    'Changed your mind early? A 7-day, no-questions-asked refund covers that too.</p>' +
+    '<a class="guarantee-band-cta" href="#/guarantee">Read the guarantee →</a>' +
+    '</div>' +
+    '<div class="guarantee-band-cards">' +
+    '<div class="guarantee-band-card"><h3>Pass or money back</h3><p>Fail the real exam after completing your track? Get <span class="js-refund-pct">' + refundFailurePercent + '</span>% of your purchase refunded.</p></div>' +
+    '<div class="guarantee-band-card"><h3>7-day refund</h3><p>Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>' +
+    '</div>' +
+    '</section>';
 }
 
 // ---- Home page: comparison table (Round 2 redesign decision) --------------
@@ -3450,6 +3571,9 @@ async function renderTrackApp() {
 }
 
 function route() {
+  closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
+                            // by a route change (renderSiteHeader() only runs a handful of times
+                            // per session), so it needs to close itself independently.
   var hashView = (location.hash || '').replace('#/', '');
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
@@ -3854,6 +3978,11 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'toggle-profile-menu') {
     var profileMenuEl = el.closest('.profile-menu');
     if (profileMenuEl) profileMenuEl.classList.toggle('open');
+  } else if (act === 'toggle-header-menu') {
+    var drawerEl = document.getElementById('site-mobile-drawer');
+    var isOpen = drawerEl ? drawerEl.classList.toggle('open') : false;
+    el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    el.textContent = isOpen ? '✕' : '☰';
   } else if (act === 'copy-code') {
     var codeVal = el.getAttribute('data-code');
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
