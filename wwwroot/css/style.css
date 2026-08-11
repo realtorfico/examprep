@@ -550,20 +550,21 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0.5rem; }
-/* Same visual pattern as .quiz-difficulty-pill -- filters the tracks grid below by state/type.
-   No margin here -- #app is a flex column with its own gap:1rem between every child, so an
-   additional margin on top of that just double-spaces this row from its neighbors. */
+/* Filters the tracks grid below by state/type. Wraps onto multiple lines instead of scrolling
+   horizontally (was overflow-x:auto with no scroll affordance -- on narrow screens this silently
+   hid pills like Texas/New York off-screen, making "All States (N)" look wrong against whatever
+   subset happened to be visible; wrapping means every pill -- and thus the true sum -- is always
+   on screen). No margin here -- #app is a flex column with its own gap:1rem between every child,
+   so an additional margin on top of that just double-spaces this row from its neighbors. */
 .hub-state-filter-pill {
-  display: flex; max-width: 100%; overflow-x: auto; border: 1.5px solid var(--border); border-radius: 999px;
-  width: fit-content;
+  display: flex; flex-wrap: wrap; gap: 0.4rem; width: 100%;
 }
 .hub-state-filter-pill button {
-  border: none; border-radius: 0; background: transparent; color: var(--muted); white-space: nowrap;
-  padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; border-right: 1px solid var(--border);
+  border: 1.5px solid var(--border); border-radius: 999px; background: transparent; color: var(--muted);
+  white-space: nowrap; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600;
 }
-.hub-state-filter-pill button:last-child { border-right: none; }
-.hub-state-filter-pill button:hover { color: var(--accent); }
-.hub-state-filter-pill button.active { background: var(--accent); color: #fff; }
+.hub-state-filter-pill button:hover { color: var(--accent); border-color: var(--accent); }
+.hub-state-filter-pill button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
