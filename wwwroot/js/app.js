@@ -459,6 +459,27 @@ var HUB_EXAMS = [
     breakdown: [['Appointment, Qualifications & Professional Conduct', '18%'], ['Powers, Duties, Fees & Electronic Notarization', '22%'], ['Rules & Regulations (19 NYCRR Part 182) and Definitions/Fees', '39%'], ['Real Property Law, Restrictions & Criminal Liability', '21%']],
   },
   {
+    examType: 'il_driver', shortName: 'Illinois Driver', stateCode: 'IL', examKind: 'Driver',
+    title: 'Illinois Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/il_driver',
+    duration: 'Untimed', questions: '35 Multiple Choice', passScore: '28/35 Correct (80%)',
+    description: 'Practice questions covering the Illinois Rules of the Road: licensing and exam procedures, roadway signs and signals, traffic laws, safe driving and vehicle ownership, sharing the road, and young-driver/DUI license sanctions for the Class D written knowledge test.',
+    breakdown: [['Licensing & Exams', '17%'], ['Roadway Signs, Signals & Traffic Laws', '35%'], ['Safe Driving, Equipment & Vehicle Ownership', '17%'], ['Sharing the Road, Crash Procedures, Young Drivers & DUI', '31%']],
+  },
+  {
+    examType: 'il_real_estate', shortName: 'Illinois Real Estate', stateCode: 'IL', examKind: 'Real Estate',
+    title: 'Illinois Real Estate Broker Exam', category: 'Real Estate Licensing', active: true, route: '/il_real_estate',
+    duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '75% (30/40 Correct)',
+    description: 'Practice questions covering the Illinois Real Estate License Act of 2000 (225 ILCS 454): licensing requirements, the License Act itself, additional Illinois laws affecting real estate practice, and required disclosures — the state-specific portion of the Broker exam.',
+    breakdown: [['Licensing Requirements', '10%'], ['Illinois Real Estate License Act', '40%'], ['Additional Illinois Laws & Regulations', '25%'], ['Disclosures', '25%']],
+  },
+  {
+    examType: 'il_managing_broker', shortName: 'Illinois Managing Broker', stateCode: 'IL', examKind: 'Real Estate',
+    title: 'Illinois Managing Broker Exam', category: 'Real Estate Licensing', active: true, route: '/il_managing_broker',
+    duration: '90 Minutes', questions: '50 Multiple Choice', passScore: '75% or Higher',
+    description: 'Practice questions covering the Illinois Real Estate License Act of 2000 (225 ILCS 454) for the Managing Broker upgrade credential: brokerage administration and supervision, agency relationships, financing and calculations, disciplinary provisions, and escrow handling.',
+    breakdown: [['Licensing Requirements & Disclosures', '15%'], ['Agency Relationships & Brokerage Practices', '18%'], ['Managing Broker Supervisory Duties, Financing & Calculations', '39%'], ['Disciplinary Provisions, Escrow & Additional IL Laws', '28%']],
+  },
+  {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA', examKind: 'Real Estate',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
@@ -477,7 +498,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -647,6 +668,48 @@ var TRACK_COMPLIANCE = {
       'does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Department of State notary exam or notary commission application.',
     passScoreNote: 'the same threshold as the real Department of State exam — 28 of 40 correct',
+  },
+  il_driver: {
+    orgLine: 'the Illinois Secretary of State',
+    footerRequirement: "do not fulfill the Illinois driver education course requirement (mandatory under age 18, or for first-time applicants ages 18-20) or any behind-the-wheel training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Illinois driver ' +
+      'education course requirement — a state-approved course (30 classroom + 6 behind-the-wheel hours) for applicants under 18, or ' +
+      'a six-hour Adult Driver Education Course for first-time applicants ages 18-20 who never completed one — and does not issue ' +
+      'any official course-completion certificate — our content is a supplementary study aid only. Completing practice exams here ' +
+      'also does not register you for, or schedule, the official Secretary of State written knowledge test; official testing must ' +
+      'be scheduled directly through the Illinois Secretary of State, and driver education must be completed through a ' +
+      'state-certified provider. While we strive to align our content with the current Illinois Rules of the Road, it is provided ' +
+      '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Secretary of State written knowledge test or any required Illinois driver education course.',
+    passScoreNote: 'the same threshold as the real Secretary of State test — 28 of 35 correct',
+  },
+  il_real_estate: {
+    orgLine: 'the Illinois Department of Financial and Professional Regulation (IDFPR)',
+    footerRequirement: "do not fulfill the 75-hour pre-license education requirement or any Illinois real estate broker training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 75-hour pre-license ' +
+      'education requirement for an Illinois broker license (15 hours of which must be situational/case-study instruction), and does ' +
+      'not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the ' +
+      'state-specific portion of the exam, not the separate national/general portion. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of IDFPR, and ' +
+      'pre-license education must be completed through an IDFPR-approved provider. While we strive to align our content with the ' +
+      'current Real Estate License Act of 2000 (225 ILCS 454), it is provided "as-is" for self-study and does not constitute legal ' +
+      'advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real IDFPR broker exam or the required 75-hour pre-license education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
+  },
+  il_managing_broker: {
+    orgLine: 'the Illinois Department of Financial and Professional Regulation (IDFPR)',
+    footerRequirement: "do not fulfill the 45 additional hours of managing-broker-specific education required on top of an active broker license, or any other Illinois managing broker training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the education ' +
+      'requirements for an Illinois managing broker license — at least 165 total hours, including 45 additional hours of brokerage ' +
+      'administration/management education completed within the year before applying, on top of already holding an active Illinois ' +
+      'broker license for at least 2 of the preceding 3 years — and does not issue any official course-completion certificate — our ' +
+      'content is a supplementary study aid only. Completing practice exams here also does not register you for, or schedule, the ' +
+      'official licensing exam; official testing is administered by PSI on behalf of IDFPR, and education must be completed through ' +
+      'an IDFPR-approved provider. While we strive to align our content with the current Real Estate License Act of 2000 (225 ILCS ' +
+      '454), it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real IDFPR managing broker exam or the required managing-broker education hours.',
+    passScoreNote: 'the same threshold as the real state-specific IDFPR exam — 75% or higher',
   },
 };
 function trackCompliance(examType) {
@@ -1147,6 +1210,27 @@ var RESOURCES = {
   ny_notary: [
     { title: 'Official Notary Public License Law', type: 'pdf', url: 'https://dos.ny.gov/system/files/documents/2026/03/notary-public-license-law_03.2026.pdf',
       desc: 'The official booklet published by the New York Department of State — the authoritative source the notary exam is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  il_driver: [
+    { title: 'Illinois Rules of the Road', type: 'pdf', url: 'https://www.ilsos.gov/content/dam/publications/pdf_publications/dsd_a112.pdf',
+      desc: 'The official manual published by the Illinois Secretary of State — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  il_real_estate: [
+    { title: 'Illinois Real Estate License Act of 2000', type: 'pdf', url: 'https://www.ilga.gov/legislation/ILCS/details?MajorTopic=&Chapter=&ActName=Real+Estate+License+Act+of+2000.&ActID=1364&ChapterID=24&SeqStart=&ChapAct=FullText',
+      desc: 'The official statute (225 ILCS 454) published by the Illinois General Assembly — the authoritative source the state-specific portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'PSI Candidate Information Booklet', type: 'pdf', url: 'https://test-takers.psiexams.com/api/content/bulletin/4655',
+      desc: 'The official exam scheduling and content-outline reference from PSI, the IDFPR-contracted exam vendor.',
+      topic: 'General Reference', free: true },
+  ],
+  il_managing_broker: [
+    { title: 'Illinois Real Estate License Act of 2000', type: 'pdf', url: 'https://www.ilga.gov/legislation/ILCS/details?MajorTopic=&Chapter=&ActName=Real+Estate+License+Act+of+2000.&ActID=1364&ChapterID=24&SeqStart=&ChapAct=FullText',
+      desc: 'The official statute (225 ILCS 454) published by the Illinois General Assembly — the authoritative source the state-specific exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'PSI Candidate Information Booklet', type: 'pdf', url: 'https://test-takers.psiexams.com/api/content/bulletin/4655',
+      desc: 'The official exam scheduling and content-outline reference from PSI, the IDFPR-contracted exam vendor.',
       topic: 'General Reference', free: true },
   ],
 };
