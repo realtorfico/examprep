@@ -39,6 +39,31 @@ var sampleState = { questions: null, index: 0, answered: null };
 var recognition = null;
 var isRecording = false;
 
+// Donut/ring progress indicator (ported from v0Design's RadialProgress). Dasharray/offset and
+// width/height go on as real SVG attributes, not inline style -- CSP (style-src 'self') blocks
+// style="" and style.setProperty(), but plain SVG presentation attributes are unaffected.
+function radialProgressSvg(value, opts) {
+  opts = opts || {};
+  var size = opts.size || 132;
+  var strokeWidth = opts.strokeWidth || 12;
+  var color = opts.color || 'var(--accent)';
+  var v = Math.min(100, Math.max(0, value || 0));
+  var radius = (size - strokeWidth) / 2;
+  var circumference = 2 * Math.PI * radius;
+  var offset = circumference - (v / 100) * circumference;
+  var c = size / 2;
+  return '<div class="radial-progress-wrap">' +
+    '<svg width="' + size + '" height="' + size + '" class="radial-progress-svg">' +
+    '<circle cx="' + c + '" cy="' + c + '" r="' + radius + '" fill="none" stroke="var(--border)" stroke-width="' + strokeWidth + '"></circle>' +
+    '<circle cx="' + c + '" cy="' + c + '" r="' + radius + '" fill="none" stroke="' + color + '" stroke-width="' + strokeWidth + '" stroke-linecap="round" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"></circle>' +
+    '</svg>' +
+    '<div class="radial-progress-label">' +
+    '<span class="radial-progress-value">' + Math.round(v) + '%</span>' +
+    (opts.label ? '<span class="radial-progress-caption">' + escapeHtml(opts.label) + '</span>' : '') +
+    (opts.sublabel ? '<span class="radial-progress-sublabel">' + escapeHtml(opts.sublabel) + '</span>' : '') +
+    '</div></div>';
+}
+
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -95,13 +120,17 @@ function saveLocalPrefs(theme, fontScale) {
 // content, so theme/font controls and page navigation live above the content card
 // and stay put across every route change. ----------------------------------
 
+// Navy square + gold checkmark -- the mark itself carries the brand pairing, so it
+// needs no CSS background/color, just sizing on its wrapper (see .site-logo-icon).
+var LOGO_SVG = '<svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">' +
+  '<rect width="32" height="32" rx="7" fill="var(--accent)"></rect>' +
+  '<path d="M9 16.8 13.4 21 23 11" stroke="var(--highlight)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"></path>' +
+  '</svg>';
+
 function renderSiteHeader() {
   var loggedIn = !!getToken();
   var logo = '<span class="site-logo">' +
-    '<span class="site-logo-icon">' +
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-    '<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
-    '</svg></span>' +
+    '<span class="site-logo-icon">' + LOGO_SVG + '</span>' +
     '<span class="site-logo-text"><a href="/" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
     '<a href="#/guarantee" class="site-logo-tagline">Pass Exam - Or Your Money Back</a></span>' +
     '</span>';

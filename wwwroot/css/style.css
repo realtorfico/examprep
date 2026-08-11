@@ -125,11 +125,9 @@ body {
 }
 
 .site-logo { display: flex; align-items: center; gap: 0.65rem; }
-.site-logo-icon {
-  width: 2.25rem; height: 2.25rem; border-radius: 0.65rem; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-  display: flex; align-items: center; justify-content: center; color: var(--accent-foreground);
-}
+/* The mark is a self-contained SVG (navy square + gold checkmark, see LOGO_SVG in app.js) --
+   no background/color needed here, just sizing for the wrapper. */
+.site-logo-icon { width: 2.25rem; height: 2.25rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .site-logo-text { display: flex; flex-direction: column; line-height: 1.15; }
 .site-logo-word {
   font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
@@ -282,8 +280,32 @@ button {
 .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px -4px color-mix(in srgb, var(--accent) 60%, transparent); }
 .btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
 .btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+/* Rest of the variant/size matrix (ported from v0's button.tsx cva config) -- .btn-primary/
+   .btn-secondary above already cover "default"/"outline", so just the remaining ones. */
+.btn-ghost { background: transparent; color: var(--fg); border-radius: var(--radius-lg); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn-destructive { background: color-mix(in srgb, var(--incorrect) 12%, transparent); color: var(--incorrect); border-radius: var(--radius-lg); }
+.btn-destructive:hover { background: color-mix(in srgb, var(--incorrect) 22%, transparent); }
+.btn-link { background: transparent; color: var(--accent); padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+.btn-link:hover { color: var(--accent-hover); }
 .btn-sm { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+.btn-lg { padding: 0.85rem 1.6rem; font-size: 1rem; }
+.btn-icon {
+  width: 2.1rem; height: 2.1rem; padding: 0; border-radius: 999px;
+  background: var(--surface-2); color: var(--fg); border: 1.5px solid var(--border);
+}
+.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Donut/ring progress indicator (radialProgressSvg() in app.js) -- ported from v0's
+   RadialProgress. transform lives here as a class (not inline style) because CSP (style-src
+   'self') blocks style="" -- dasharray/offset are plain SVG attributes instead, unaffected. */
+.radial-progress-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.radial-progress-svg { transform: rotate(-90deg); }
+.radial-progress-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.radial-progress-value { font-family: 'Fraunces', Georgia, serif; font-size: 1.4rem; font-weight: 600; color: var(--fg); }
+.radial-progress-caption { margin-top: 0.15rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.radial-progress-sublabel { font-size: 0.68rem; color: var(--muted); }
 
 .options-grid { display: flex; flex-direction: column; gap: 0.6rem; }
 .option-btn {
