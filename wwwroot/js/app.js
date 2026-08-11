@@ -164,9 +164,17 @@ function fillPromoRibbon() {
     var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
     wrap.innerHTML = active.length
       ? promoBannersHtml([active[0]], true, false)
-      : '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Pass or ' + refundFailurePercent +
-        '% of Your Money Back</strong> — see our guarantee →</a>';
-  }).catch(function () { /* best-effort -- ribbon failing to load shouldn't break the header */ });
+      : promoRibbonFallbackHtml();
+  }).catch(function () {
+    // Fails open to the static tagline (using whatever refundFailurePercent default is already in
+    // memory) rather than leaving the ribbon blank -- a /promotions hiccup shouldn't cost the
+    // header its one always-available message.
+    wrap.innerHTML = promoRibbonFallbackHtml();
+  });
+}
+function promoRibbonFallbackHtml() {
+  return '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Pass or ' + refundFailurePercent +
+    '% of Your Money Back</strong> — see our guarantee →</a>';
 }
 
 function updateThemeButton() {
