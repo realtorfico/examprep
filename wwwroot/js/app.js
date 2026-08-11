@@ -318,48 +318,53 @@ function renderGuarantee() {
 
 var HUB_EXAMS = [
   {
-    examType: 'ca_notary', shortName: 'California Notary',
+    examType: 'ca_notary', shortName: 'California Notary', stateCode: 'CA',
     title: 'California Notary Public Exam', category: 'State Licensing', active: true, route: '/notary',
     duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
     description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
     breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
   },
   {
-    examType: 'ca_driver', shortName: 'California Driver',
+    examType: 'ca_driver', shortName: 'California Driver', stateCode: 'CA',
     title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ca_driver',
     duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
     description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
     breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
   },
   {
-    examType: 'ca_cdl', shortName: 'California CDL',
+    examType: 'ca_cdl', shortName: 'California CDL', stateCode: 'CA',
     title: 'California CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '33%'], ['Air Brakes & Combination Vehicles', '16%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '34%'], ['Vehicle Inspection & Skills Testing', '17%']],
   },
   {
-    examType: 'ca_motorcycle', shortName: 'California Motorcycle',
+    examType: 'ca_motorcycle', shortName: 'California Motorcycle', stateCode: 'CA',
     title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/motorcycle',
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '24%'], ['Collision Avoidance, Hazards & Mechanical Problems', '22%'], ['License Requirements & Preparing to Ride', '28%'], ['Alcohol, DUI & Insurance Law', '26%']],
   },
   {
-    examType: 'ca_dre', shortName: 'California DRE',
+    examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
     description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
     breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
   },
   {
-    examType: 'mlo', shortName: 'National MLO',
+    examType: 'mlo', shortName: 'National MLO', stateCode: 'US',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
     description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
     breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
   },
 ];
+
+// Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
+// tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
+// entry here whenever a new state's first track is added (e.g. TX, FL, NY).
+var STATE_LABELS = { CA: 'California', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -451,20 +456,44 @@ function currentOrFirstActiveTrack() {
 
 var HUB_TRACKS_COLLAPSED_COUNT = 4;
 var hubTracksExpanded = false;
+var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA')
+
+// One pill per distinct stateCode present in HUB_EXAMS, plus "All" -- same pattern as the quiz
+// difficulty picker (renderQuizDifficultyPicker). A single-state catalog (today: CA + National)
+// still renders fine, just with 2-3 pills; this is prep for once TX/FL/NY tracks exist, not
+// something that needs a minimum track count to make sense.
+function renderHubStateFilterPills() {
+  var codes = [];
+  HUB_EXAMS.forEach(function (e) { if (codes.indexOf(e.stateCode) === -1) codes.push(e.stateCode); });
+  codes.sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
+  var options = [['', 'All Tracks (' + HUB_EXAMS.length + ')']].concat(codes.map(function (c) {
+    var count = HUB_EXAMS.filter(function (e) { return e.stateCode === c; }).length;
+    return [c, (STATE_LABELS[c] || c) + ' (' + count + ')'];
+  }));
+  if (options.length <= 2) return ''; // nothing to filter yet (e.g. only one state so far)
+  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by state">' +
+    options.map(function (o) {
+      var active = hubStateFilter === o[0];
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-state" data-state="' + o[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+}
 
 function hubTracksGridHtml() {
-  var cardsArr = hubTrackCards();
+  var filtered = hubStateFilter ? HUB_EXAMS.filter(function (e) { return e.stateCode === hubStateFilter; }) : HUB_EXAMS;
+  var cardsArr = hubTrackCards(filtered);
   var truncated = !hubTracksExpanded && cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT;
   var visible = truncated ? cardsArr.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : cardsArr;
   var toggleHtml = cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT
     ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-hub-tracks">' +
       (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
     : '';
-  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + toggleHtml;
+  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this state.</p>' : '';
+  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
 }
 
-function hubTrackCards() {
-  return HUB_EXAMS.map(function (exam) {
+function hubTrackCards(tracks) {
+  return (tracks || HUB_EXAMS).map(function (exam) {
     var statusBadge = exam.active
       ? '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>'
       : '<span class="status-badge">Coming Soon</span>';
@@ -526,6 +555,7 @@ function renderHub() {
     '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
+    '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
     '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>';
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
@@ -3132,6 +3162,15 @@ document.addEventListener('click', async function (e) {
     hubTracksExpanded = !hubTracksExpanded;
     var hubTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (hubTracksWrap) hubTracksWrap.innerHTML = hubTracksGridHtml();
+  } else if (act === 'filter-hub-state') {
+    var newStateFilter = el.getAttribute('data-state');
+    if (newStateFilter === hubStateFilter) return;
+    hubStateFilter = newStateFilter;
+    hubTracksExpanded = false; // fresh filter, start collapsed again rather than carry over stale expand state
+    var filterWrap = document.getElementById('hub-state-filter-wrap');
+    if (filterWrap) filterWrap.innerHTML = renderHubStateFilterPills();
+    var filteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
+    if (filteredTracksWrap) filteredTracksWrap.innerHTML = hubTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {
