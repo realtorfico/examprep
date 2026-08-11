@@ -502,10 +502,10 @@ var HUB_EXAMS = [
   },
   {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA', examKind: 'Real Estate',
-    title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
-    duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
-    description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
-    breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
+    title: 'California DRE Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/ca_dre',
+    duration: '3 Hours 15 Minutes', questions: '150 Multiple Choice', passScore: '70% (105/150 Correct)',
+    description: 'Practice questions covering the California Real Estate Law (Business and Professions Code, Division 4), scoped to DRE\'s own official RE 425 exam content outline: property ownership and land use, agency and fiduciary duties, valuation, financing, transfer of property, practice/disclosures, and contracts.',
+    breakdown: [['Property Ownership & Land Use Controls', '15%'], ['Agency & Fiduciary Duties', '17%'], ['Valuation, Financing & Transfer of Property', '31%'], ['Practice of Real Estate, Disclosures & Contracts', '37%']],
   },
   {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
@@ -773,6 +773,21 @@ var TRACK_COMPLIANCE = {
       'outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 240-hour pre-license education.',
     passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
+  },
+  ca_dre: {
+    orgLine: 'the California Department of Real Estate (DRE)',
+    footerRequirement: "do not fulfill the three-course college-level education requirement (Real Estate Principles, Real Estate Practice, and one approved elective) required before the exam",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the pre-license education ' +
+      'requirement for a California real estate salesperson license — three college-level courses (Real Estate Principles, Real ' +
+      'Estate Practice, and one approved elective), each a 3-semester-unit course completed at an accredited institution — and does ' +
+      'not issue any official course-completion certificate — our content is a supplementary study aid only. Completing practice ' +
+      'exams here also does not register you for, or schedule, the official licensing exam; official testing is administered ' +
+      'directly by the California Department of Real Estate (not outsourced to a testing vendor), and pre-license courses must be ' +
+      'completed through an accredited institution or DRE-approved provider. While we strive to align our content with the current ' +
+      'California Real Estate Law (Business and Professions Code, Division 4), it is provided "as-is" for self-study and does not ' +
+      'constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DRE Salesperson exam or the required pre-license education courses.',
+    passScoreNote: 'the same threshold as the real DRE exam — 105 of 150 correct',
   },
 };
 function trackCompliance(examType) {
@@ -1312,6 +1327,14 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Pearson VUE Candidate Handbook', type: 'pdf', url: 'https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/093900.pdf',
       desc: 'The official exam scheduling and content-outline reference from Pearson VUE, the Real Estate Commission\'s contracted exam vendor.',
+      topic: 'General Reference', free: true },
+  ],
+  ca_dre: [
+    { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
+      desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'DRE Examination Description (RE 425)', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/forms/re425.pdf',
+      desc: 'DRE\'s own official exam content outline — the 7 major subject areas and their exam-weight percentages.',
       topic: 'General Reference', free: true },
   ],
 };

@@ -636,6 +636,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .pct-34 { width: 34%; }
 .pct-35 { width: 35%; }
 .pct-36 { width: 36%; }
+.pct-37 { width: 37%; }
 .pct-39 { width: 39%; }
 .pct-40 { width: 40%; }
 .exam-track-footer {
