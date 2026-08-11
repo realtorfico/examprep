@@ -157,11 +157,23 @@ function loadSiteConfig() {
   return siteConfigPromise;
 }
 
+// On a specific track's page, the footer's affiliation disclaimer names that track's real
+// agency/requirement (accurate and precise). On the hub itself (no track in the URL path) there's
+// no single track to name -- falling back to trackCompliance's default (ca_notary) would wrongly
+// imply the site's only affiliation-relevant agencies are California's, when 14 tracks across 4
+// states now exist. Use a deliberately agency-name-free disclaimer there instead, broad enough to
+// cover every current and future track without needing an update each time one's added.
+var HUB_FOOTER_ORG_LINE = 'any state department of motor vehicles, state licensing agency, official examination vendor,';
+var HUB_FOOTER_REQUIREMENT = 'do not fulfill any state-mandated licensing, driver education, or training requirement';
+
 function renderSiteFooter() {
+  var pageTrack = activeTrackForPath(window.location.pathname);
+  var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
+  var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
-    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).orgLine + ' or any other government agency. Practice questions only, and ' + trackCompliance((currentOrFirstActiveTrack() || {}).examType).footerRequirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
+    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
@@ -241,8 +253,19 @@ function renderProfileMenu() {
     '</div></div>';
 }
 
+// Genericized version of an .termsParagraph2 entry, used when Terms is viewed from the hub (no
+// specific track in the URL path) -- same reasoning as HUB_FOOTER_ORG_LINE/HUB_FOOTER_REQUIREMENT.
+var HUB_TERMS_PARAGRAPH2 = '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy any state-mandated ' +
+  'licensing, driver education, or training requirement, and does not issue any official course-completion certificate — our ' +
+  'content is a supplementary study aid only. Completing practice exams here also does not register you for, or schedule, any ' +
+  'official state or federal knowledge test, skills test, or road test; official testing and any required training must be ' +
+  'scheduled directly through the relevant state or federal agency. While we strive to align our content with the current ' +
+  'official handbook or manual for each track, it is provided "as-is" for self-study and does not constitute legal or ' +
+  'professional advice or a guaranteed exam outcome.</p>';
+
 function renderTerms() {
-  var compliance = trackCompliance((currentOrFirstActiveTrack() || {}).examType);
+  var pageTrack = activeTrackForPath(window.location.pathname);
+  var compliance = pageTrack ? trackCompliance(pageTrack.examType) : { orgLine: HUB_FOOTER_ORG_LINE, termsParagraph2: HUB_TERMS_PARAGRAPH2 };
   appEl.innerHTML = '<h1>Terms of Use</h1>' +
     '<p class="muted">PassExamHQ provides original, independently-authored practice questions for exam preparation purposes only. ' +
     'It is not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + ' ' +
