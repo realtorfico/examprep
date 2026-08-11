@@ -318,91 +318,91 @@ function renderGuarantee() {
 
 var HUB_EXAMS = [
   {
-    examType: 'ca_notary', shortName: 'California Notary', stateCode: 'CA',
+    examType: 'ca_notary', shortName: 'California Notary', stateCode: 'CA', examKind: 'Notary',
     title: 'California Notary Public Exam', category: 'State Licensing', active: true, route: '/notary',
     duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
     description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
     breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
   },
   {
-    examType: 'ca_driver', shortName: 'California Driver', stateCode: 'CA',
+    examType: 'ca_driver', shortName: 'California Driver', stateCode: 'CA', examKind: 'Driver',
     title: 'California Driver Knowledge Test (Class C)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ca_driver',
     duration: 'Untimed', questions: '46 Multiple Choice', passScore: '38/46 Correct (~83%)',
     description: 'Practice questions covering the California Driver Handbook: right-of-way rules, signs and signals, safe driving practices, and DUI/financial responsibility laws for the Class C written permit test.',
     breakdown: [['Laws & Rules of the Road', '31%'], ['Navigating the Roads (Signs, Signals & Markings)', '25%'], ['Safe Driving, Alcohol & Drugs', '24%'], ['Licensing & Introduction to Driving', '20%']],
   },
   {
-    examType: 'ca_cdl', shortName: 'California CDL', stateCode: 'CA',
+    examType: 'ca_cdl', shortName: 'California CDL', stateCode: 'CA', examKind: 'Commercial Driver (CDL)',
     title: 'California CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the California Commercial Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['General Knowledge (CDL Rules, Safe Driving & Cargo)', '33%'], ['Air Brakes & Combination Vehicles', '16%'], ['Passenger, School Bus, Tank & HazMat Endorsements', '34%'], ['Vehicle Inspection & Skills Testing', '17%']],
   },
   {
-    examType: 'ca_motorcycle', shortName: 'California Motorcycle', stateCode: 'CA',
+    examType: 'ca_motorcycle', shortName: 'California Motorcycle', stateCode: 'CA', examKind: 'Motorcycle',
     title: 'California Motorcycle Knowledge Test (M1/M2)', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/motorcycle',
     duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
     description: 'Practice questions covering the California Motorcycle Handbook: safe riding techniques, hazard avoidance, licensing requirements, and DUI law for the M1/M2 written knowledge test.',
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '24%'], ['Collision Avoidance, Hazards & Mechanical Problems', '22%'], ['License Requirements & Preparing to Ride', '28%'], ['Alcohol, DUI & Insurance Law', '26%']],
   },
   {
-    examType: 'tx_driver', shortName: 'Texas Driver', stateCode: 'TX',
+    examType: 'tx_driver', shortName: 'Texas Driver', stateCode: 'TX', examKind: 'Driver',
     title: 'Texas Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/tx_driver',
     duration: 'Untimed', questions: '30 Multiple Choice', passScore: '21/30 Correct (70%)',
     description: 'Practice questions covering the Texas Driver Handbook: licensing and application steps, right-of-way and vehicle equipment rules, traffic signs and signals, and alcohol/drug and crash-safety laws.',
     breakdown: [['Licensing, Application & Restrictions', '30%'], ['Vehicle Equipment & Right-of-Way Rules', '20%'], ['Traffic Signs, Signals & Special Situations', '26%'], ['Alcohol, Crashes & Pedestrian/Bicycle Safety', '24%']],
   },
   {
-    examType: 'tx_cdl', shortName: 'Texas CDL', stateCode: 'TX',
+    examType: 'tx_cdl', shortName: 'Texas CDL', stateCode: 'TX', examKind: 'Commercial Driver (CDL)',
     title: 'Texas CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/tx_cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the Texas Commercial Motor Vehicle Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['Licensing & Vehicle Control Fundamentals', '27%'], ['Air Brakes & Combination Vehicles', '12%'], ['Cargo, Passenger, HazMat & Specialty Vehicles', '36%'], ['Adverse Conditions & Skills/Inspection Testing', '25%']],
   },
   {
-    examType: 'fl_driver', shortName: 'Florida Driver', stateCode: 'FL',
+    examType: 'fl_driver', shortName: 'Florida Driver', stateCode: 'FL', examKind: 'Driver',
     title: 'Florida Class E Knowledge Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/fl_driver',
     duration: 'Untimed', questions: '50 Multiple Choice', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the Florida Driver License Handbook: licensing and ID requirements, driver fitness, traffic controls, rules of the road, and insurance/DUI law for the Class E Knowledge Exam.',
     breakdown: [['Driver Licenses, IDs & Testing', '25%'], ['Driver Fitness & Traffic Controls', '28%'], ['Driving Safety, Rules of the Road & Special Situations', '34%'], ['Your Driving Privilege (Insurance, DUI, Points & Suspensions)', '13%']],
   },
   {
-    examType: 'fl_cdl', shortName: 'Florida CDL', stateCode: 'FL',
+    examType: 'fl_cdl', shortName: 'Florida CDL', stateCode: 'FL', examKind: 'Commercial Driver (CDL)',
     title: 'Florida CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/fl_cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the Florida Commercial Driver License Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['Licensing, Testing & CDL Rules', '18%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '25%'], ['Hazardous Materials & Adverse Conditions/Emergencies', '39%'], ['Cargo, Passenger, School Bus & Specialty Vehicles', '18%']],
   },
   {
-    examType: 'ny_driver', shortName: 'New York Driver', stateCode: 'NY',
+    examType: 'ny_driver', shortName: 'New York Driver', stateCode: 'NY', examKind: 'Driver',
     title: 'New York Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ny_driver',
     duration: 'Untimed', questions: '20 Multiple Choice', passScore: '14/20 Correct (70%)',
     description: 'Practice questions covering the New York State Driver\'s Manual: licensing and learner permit rules, right-of-way and traffic control, passing/parking/defensive driving, and impairment and crash-reporting law for the Class D written knowledge test.',
     breakdown: [['Driver Licensing & Learner Permits', '17%'], ['License Sanctions, Vehicle Ownership & Right-of-Way', '27%'], ['Passing, Parking & Defensive Driving', '20%'], ['Impairment, Special Conditions & Sharing the Road', '36%']],
   },
   {
-    examType: 'ny_cdl', shortName: 'New York CDL', stateCode: 'NY',
+    examType: 'ny_cdl', shortName: 'New York CDL', stateCode: 'NY', examKind: 'Commercial Driver (CDL)',
     title: 'New York CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ny_cdl',
     duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the New York State Commercial Driver\'s Manual: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
     breakdown: [['Licensing & Skills Testing Overview', '18%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '30%'], ['Hazardous Materials & Adverse Conditions/Driver Fitness', '33%'], ['Cargo, Passenger, School Bus & Specialty Vehicles', '19%']],
   },
   {
-    examType: 'ny_notary', shortName: 'New York Notary', stateCode: 'NY',
+    examType: 'ny_notary', shortName: 'New York Notary', stateCode: 'NY', examKind: 'Notary',
     title: 'New York Notary Public Exam', category: 'State Licensing', active: true, route: '/ny_notary',
     duration: '60 Minutes', questions: '40 Multiple Choice', passScore: '70% (28/40 Correct)',
     description: 'Practice questions covering the New York Notary Public License Law: appointment and professional conduct, powers and duties, statutory fees, real property acknowledgments, and the rules and regulations governing notaries.',
     breakdown: [['Appointment, Qualifications & Professional Conduct', '18%'], ['Powers, Duties, Fees & Electronic Notarization', '22%'], ['Rules & Regulations (19 NYCRR Part 182) and Definitions/Fees', '39%'], ['Real Property Law, Restrictions & Criminal Liability', '21%']],
   },
   {
-    examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA',
+    examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA', examKind: 'Real Estate',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
     description: 'California real estate law, disclosures, agency relationships, property ownership, and contracts for state licensure.',
     breakdown: [['Practice & Disclosures', '25%'], ['Agency & Fiduciary Duties', '17%'], ['Ownership & Land Use', '15%'], ['Valuation & Finance', '23%']],
   },
   {
-    examType: 'mlo', shortName: 'National MLO', stateCode: 'US',
+    examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
     description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
@@ -599,17 +599,26 @@ function currentOrFirstActiveTrack() {
 var HUB_TRACKS_COLLAPSED_COUNT = 4;
 var hubTracksExpanded = false;
 var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA')
+var hubKindFilter = ''; // '' = All exam kinds; otherwise a HUB_EXAMS examKind value (e.g. 'Driver')
+
+// A track matches the current filter pair if it satisfies whichever of state/kind is active --
+// the two filters combine (AND), not just one at a time.
+function hubExamMatchesFilters(e, stateFilter, kindFilter) {
+  return (!stateFilter || e.stateCode === stateFilter) && (!kindFilter || e.examKind === kindFilter);
+}
 
 // One pill per distinct stateCode present in HUB_EXAMS, plus "All" -- same pattern as the quiz
 // difficulty picker (renderQuizDifficultyPicker). A single-state catalog (today: CA + National)
 // still renders fine, just with 2-3 pills; this is prep for once TX/FL/NY tracks exist, not
-// something that needs a minimum track count to make sense.
+// something that needs a minimum track count to make sense. Counts respect the current kind
+// filter too, so a pill never claims more tracks than would actually show once clicked.
 function renderHubStateFilterPills() {
   var codes = [];
   HUB_EXAMS.forEach(function (e) { if (codes.indexOf(e.stateCode) === -1) codes.push(e.stateCode); });
   codes.sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
-  var options = [['', 'All Tracks (' + HUB_EXAMS.length + ')']].concat(codes.map(function (c) {
-    var count = HUB_EXAMS.filter(function (e) { return e.stateCode === c; }).length;
+  var allCount = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, '', hubKindFilter); }).length;
+  var options = [['', 'All States (' + allCount + ')']].concat(codes.map(function (c) {
+    var count = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, c, hubKindFilter); }).length;
     return [c, (STATE_LABELS[c] || c) + ' (' + count + ')'];
   }));
   if (options.length <= 2) return ''; // nothing to filter yet (e.g. only one state so far)
@@ -621,8 +630,28 @@ function renderHubStateFilterPills() {
     }).join('') + '</div>';
 }
 
+// Same pattern as renderHubStateFilterPills, filtering by examKind (Driver, Commercial Driver
+// (CDL), Motorcycle, Notary, etc.) instead of state -- counts respect the current state filter too.
+function renderHubKindFilterPills() {
+  var kinds = [];
+  HUB_EXAMS.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  kinds.sort(function (a, b) { return a.localeCompare(b); });
+  var allCount = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, ''); }).length;
+  var options = [['', 'All Types (' + allCount + ')']].concat(kinds.map(function (k) {
+    var count = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, k); }).length;
+    return [k, k + ' (' + count + ')'];
+  }));
+  if (options.length <= 2) return ''; // nothing to filter yet
+  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
+    options.map(function (o) {
+      var active = hubKindFilter === o[0];
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-kind" data-kind="' + o[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+}
+
 function hubTracksGridHtml() {
-  var filtered = hubStateFilter ? HUB_EXAMS.filter(function (e) { return e.stateCode === hubStateFilter; }) : HUB_EXAMS;
+  var filtered = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, hubKindFilter); });
   var cardsArr = hubTrackCards(filtered);
   var truncated = !hubTracksExpanded && cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT;
   var visible = truncated ? cardsArr.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : cardsArr;
@@ -630,7 +659,7 @@ function hubTracksGridHtml() {
     ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-hub-tracks">' +
       (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
     : '';
-  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this state.</p>' : '';
+  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this filter.</p>' : '';
   return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
 }
 
@@ -698,6 +727,7 @@ function renderHub() {
     '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
+    '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>' +
     '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>';
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
@@ -3346,8 +3376,21 @@ document.addEventListener('click', async function (e) {
     hubTracksExpanded = false; // fresh filter, start collapsed again rather than carry over stale expand state
     var filterWrap = document.getElementById('hub-state-filter-wrap');
     if (filterWrap) filterWrap.innerHTML = renderHubStateFilterPills();
+    var kindFilterWrap = document.getElementById('hub-kind-filter-wrap');
+    if (kindFilterWrap) kindFilterWrap.innerHTML = renderHubKindFilterPills(); // its counts depend on the state filter too
     var filteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (filteredTracksWrap) filteredTracksWrap.innerHTML = hubTracksGridHtml();
+  } else if (act === 'filter-hub-kind') {
+    var newKindFilter = el.getAttribute('data-kind');
+    if (newKindFilter === hubKindFilter) return;
+    hubKindFilter = newKindFilter;
+    hubTracksExpanded = false;
+    var kindWrap = document.getElementById('hub-kind-filter-wrap');
+    if (kindWrap) kindWrap.innerHTML = renderHubKindFilterPills();
+    var stateFilterWrap = document.getElementById('hub-state-filter-wrap');
+    if (stateFilterWrap) stateFilterWrap.innerHTML = renderHubStateFilterPills(); // its counts depend on the kind filter too
+    var kindFilteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
+    if (kindFilteredTracksWrap) kindFilteredTracksWrap.innerHTML = hubTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {
