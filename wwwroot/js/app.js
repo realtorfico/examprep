@@ -360,6 +360,20 @@ var HUB_EXAMS = [
     breakdown: [['Licensing & Vehicle Control Fundamentals', '27%'], ['Air Brakes & Combination Vehicles', '12%'], ['Cargo, Passenger, HazMat & Specialty Vehicles', '36%'], ['Adverse Conditions & Skills/Inspection Testing', '25%']],
   },
   {
+    examType: 'fl_driver', shortName: 'Florida Driver', stateCode: 'FL',
+    title: 'Florida Class E Knowledge Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/fl_driver',
+    duration: 'Untimed', questions: '50 Multiple Choice', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Florida Driver License Handbook: licensing and ID requirements, driver fitness, traffic controls, rules of the road, and insurance/DUI law for the Class E Knowledge Exam.',
+    breakdown: [['Driver Licenses, IDs & Testing', '25%'], ['Driver Fitness & Traffic Controls', '28%'], ['Driving Safety, Rules of the Road & Special Situations', '34%'], ['Your Driving Privilege (Insurance, DUI, Points & Suspensions)', '13%']],
+  },
+  {
+    examType: 'fl_cdl', shortName: 'Florida CDL', stateCode: 'FL',
+    title: 'Florida CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/fl_cdl',
+    duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Florida Commercial Driver License Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
+    breakdown: [['Licensing, Testing & CDL Rules', '18%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '25%'], ['Hazardous Materials & Adverse Conditions/Emergencies', '39%'], ['Cargo, Passenger, School Bus & Specialty Vehicles', '18%']],
+  },
+  {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
@@ -378,7 +392,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -482,6 +496,33 @@ var TRACK_COMPLIANCE = {
       'provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DPS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the same threshold as the real DPS CDL General Knowledge test — 40 of 50 correct',
+  },
+  fl_driver: {
+    orgLine: 'the Florida Department of Highway Safety and Motor Vehicles (FLHSMV)',
+    footerRequirement: "do not fulfill the Traffic Law and Substance Abuse Education (TLSAE) or Driver Education Traffic Safety (DETS) course requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Traffic Law and ' +
+      'Substance Abuse Education (TLSAE) course requirement — mandatory for first-time applicants age 18 and older — or the Driver ' +
+      'Education Traffic Safety (DETS) course required instead for first-time applicants ages 15-17 — and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official Class E Knowledge Exam; official testing must be scheduled directly through the ' +
+      'Florida Department of Highway Safety and Motor Vehicles, and TLSAE/DETS must be completed through an FLHSMV-approved provider. ' +
+      'While we strive to align our content with the current Florida Driver License Handbook, it is provided "as-is" for self-study ' +
+      'and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real FLHSMV Class E Knowledge Exam or any required TLSAE/DETS driver education course.',
+    passScoreNote: 'the same threshold as the real FLHSMV Class E Knowledge Exam — 40 of 50 correct',
+  },
+  fl_cdl: {
+    orgLine: 'the Florida Department of Highway Safety and Motor Vehicles (FLHSMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Florida CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Florida CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official FLHSMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Florida Department of Highway Safety and Motor Vehicles, and ELDT must be completed through an ' +
+      'FMCSA-registered training provider. While we strive to align our content with the current Florida CDL Handbook, it is provided ' +
+      '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real FLHSMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold as the real FLHSMV CDL General Knowledge test — 40 of 50 correct',
   },
 };
 function trackCompliance(examType) {
@@ -927,6 +968,16 @@ var RESOURCES = {
   tx_cdl: [
     { title: 'Official Texas Commercial Motor Vehicle Driver\'s Handbook', type: 'pdf', url: 'https://www.dps.texas.gov/internetforms/Forms/DL-7C.pdf',
       desc: 'The official handbook published by the Texas Department of Public Safety (DL-7C) — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  fl_driver: [
+    { title: 'Official Florida Driver License Handbook', type: 'pdf', url: 'https://www.flhsmv.gov/pdf/handbooks/englishdriverhandbook.pdf',
+      desc: 'The official handbook published by the Florida Department of Highway Safety and Motor Vehicles — the authoritative source the Class E Knowledge Exam is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  fl_cdl: [
+    { title: 'Official Florida CDL Handbook', type: 'pdf', url: 'https://www.flhsmv.gov/pdf/handbooks/englishcdlhandbook.pdf',
+      desc: 'The official handbook published by the Florida Department of Highway Safety and Motor Vehicles — the authoritative source the CDL knowledge and endorsement tests are based on.',
       topic: 'General Reference', free: true },
   ],
 };
