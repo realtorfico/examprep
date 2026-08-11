@@ -223,6 +223,8 @@ a { color: var(--accent); }
 .stat-box .val.correct { color: var(--correct); }
 .stat-box .val.wrong { color: var(--incorrect); }
 .progress-breakdown-note { margin-top: 0.5rem; }
+.progress-radials { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; padding: 0.5rem 0; }
+.progress-radial-tile { display: flex; flex-direction: column; align-items: center; }
 /* Smaller than the base .stats-bar -- the quiz one repeats on every question so it shouldn't
    compete with the question card for vertical space. The Progress tab collapses Total/Correct/Wrong
    into one Right/Wrong/Total box alongside Accuracy and Coverage -- 3 boxes total, so it gets its
@@ -637,6 +639,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .hub-tracks-toggle-wrap { text-align: center; margin-top: 1rem; }
 
+/* Track landing/sales page (renderTrackLanding, Round 2 redesign decision) -- same marketing-
+   content width tier as the home page's comparison/outcomes sections, since it's a sales page,
+   not a dense functional screen. */
+.track-landing { max-width: min(92vw, 1400px); margin: 0 auto; }
+.track-landing h1 { margin-top: 0.5rem; }
+.track-landing-official { margin-top: 0.75rem; }
+.track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
+
 /* Home page: comparison table + outcomes strip (new sections, Round 2 redesign decision) */
 .hidden { display: none; }
 /* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
@@ -844,16 +854,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
-.locked-preview-wrap { position: relative; min-height: 320px; border-radius: 12px; overflow: hidden; }
-.locked-preview-mockup { filter: blur(1.5px) grayscale(0.4); opacity: 0.4; pointer-events: none; user-select: none; }
-.locked-preview-overlay {
-  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center; gap: 0.4rem; padding: 1.5rem;
-  background: color-mix(in srgb, var(--bg) 60%, transparent);
-}
-.locked-preview-overlay p { max-width: 32rem; color: var(--fg); font-weight: 500; }
-.locked-preview-icon { font-size: 2.5rem; }
-.locked-preview-overlay .sample-done-cta { align-items: center; width: 100%; max-width: 20rem; }
 .refer-confirmed-card { text-align: center; }
 .refer-confirmed-emoji { font-size: 3rem; line-height: 1; margin-bottom: 0.4rem; }
 .resources-intro { margin-top: 0.5rem; }

@@ -1104,6 +1104,7 @@ function renderRedeem(error) {
     '</form>' +
     '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a> or ' +
     '<a href="#/buy">buy one instantly →</a></p>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>' +
     '</div>';
   renderTurnstileWidget();
 }
@@ -1125,10 +1126,10 @@ function renderTurnstileWidget(attemptsLeft) {
 
 function renderTabs(active) {
   // Quiz/Exam/Progress are shown to everyone (with a 🔒 marker when logged out, or logged in for a
-  // DIFFERENT track) so a visitor gets a sense of the layout -- clicking one still only shows a
-  // locked preview, never the real content/data (see renderLockedTabPreview and the guard in
-  // renderTrackApp). Deliberately isLoggedInForCurrentTrack(), not just getToken() -- see its
-  // definition for why (an account bound to one track viewing a different track's route).
+  // DIFFERENT track) so a visitor gets a sense of the layout -- clicking one still only lands on
+  // the track landing/sales page, never the real content/data (see renderTrackLanding and the
+  // guard in renderTrackApp). Deliberately isLoggedInForCurrentTrack(), not just getToken() -- see
+  // its definition for why (an account bound to one track viewing a different track's route).
   var loggedIn = isLoggedInForCurrentTrack();
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Toughest 45'], ['progress', 'Progress'], ['info', 'Info']];
@@ -2196,7 +2197,24 @@ async function renderProgress() {
 
   var examAttemptsHtml = examAttemptsSectionHtml();
 
+  // Radial rings for the two threshold-graded metrics (ported RadialProgress usage from v0's
+  // study-hub.tsx) -- color reuses the same pass/fail logic as the stat-box classes below rather
+  // than introducing a second source of truth for "did they clear the bar". The plain stats-bar
+  // stays as-is alongside these -- it carries detail (raw right/wrong/total, attempt counts) the
+  // rings don't, so this is additive, not a replacement.
+  var progressRadialsHtml = '<div class="progress-radials">' +
+    '<div class="progress-radial-tile">' + radialProgressSvg(pct, {
+      size: 120, strokeWidth: 11, label: 'Accuracy',
+      color: accuracyValCls === 'correct' ? 'var(--correct)' : 'var(--incorrect)',
+    }) + '</div>' +
+    '<div class="progress-radial-tile">' + radialProgressSvg(coveragePct, {
+      size: 120, strokeWidth: 11, label: 'Coverage',
+      color: coverageValCls === 'correct' ? 'var(--correct)' : 'var(--incorrect)',
+    }) + '</div>' +
+    '</div>';
+
   appEl.innerHTML = renderTabs('progress') +
+    progressRadialsHtml +
     '<div class="stats-bar progress-stats-bar">' +
     '<div class="stat-box"><div class="label">Right/Wrong/Total</div><div class="val stat-triple">' +
     '<span class="correct">' + p.totalCorrect + '</span><span class="sep">/</span>' +
@@ -2225,93 +2243,68 @@ async function renderProgress() {
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
 
-// ---- Locked previews (Quiz/Exam/Progress, logged-out visitors) -----------
-// Real content/data always requires a token -- these are non-interactive mockups purely so an
-// anonymous visitor can see what each tab looks like before buying/referring their way in.
-
-function renderLockedTabPreview(tabKey, title, mockupHtml, blurb, extraCta) {
-  appEl.innerHTML = renderTabs(tabKey) +
-    '<h1>' + title + '</h1>' +
-    '<div class="locked-preview-wrap">' +
-    '<div class="locked-preview-mockup" aria-hidden="true" inert>' + mockupHtml + '</div>' +
-    '<div class="locked-preview-overlay">' +
-    '<div class="locked-preview-icon">🔒</div>' +
-    '<p>' + blurb + '</p>' +
-    '<div class="sample-done-cta">' +
-    '<a class="btn-primary hub-cta" href="#/buy">Unlock full access →</a>' +
-    '<a class="btn-secondary hub-cta" href="#/refer">Refer & earn free access →</a>' +
-    (extraCta || '') +
-    '</div>' +
-    '</div>' +
+// ---- Track landing/sales page (logged-out visitors) -----------------------
+// Consolidated single sales page (Round 2 redesign decision) -- replaces the previous four
+// per-tab locked-preview mockups (one each for Quiz/Exam/Toughest45/Progress, each showing a
+// blurred fake preview of that tab) with one persuasive page shown for ANY of those routes while
+// logged out, or logged in for a different track. Reuses the same specs/breakdown markup the hub
+// cards used to show before they were shrunk (kept in style.css for exactly this) and the
+// checkout page's two-column .buy-layout pattern.
+function renderTrackLanding() {
+  var exam = trackByExamType(state.examType);
+  if (!exam) { renderHub(); return; }
+  var specsHtml = '<div class="exam-specs">' +
+    '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
+    '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
+    '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '</div>';
-}
+  var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
+    exam.breakdown.map(function (b) {
+      var pct = parseInt(b[1], 10) || 0;
+      return '<div class="breakdown-row">' +
+        '<div class="breakdown-row-top"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>' +
+        '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
+        '</div>';
+    }).join('') + '</div>';
+  var infoLinks = ADDITIONAL_INFO_LINKS[exam.examType] || [];
+  var officialLinkHtml = infoLinks.length
+    ? '<a class="btn-secondary hub-cta" href="' + infoLinks[0].url + '" target="_blank" rel="noopener noreferrer">Official exam info ↗</a>'
+    : '';
+  var compliance = trackCompliance(exam.examType);
 
-function renderLockedQuizPreview() {
-  var mockup = '<div class="card">' +
-    '<div class="question-topic">Sample Topic</div>' +
-    '<div class="question-text">This is what a real practice question looks like — topic, question text, then four lettered choices.</div>' +
-    '</div>' +
-    '<div class="options-grid">' + ['A', 'B', 'C', 'D'].map(function (k) {
-      return optionButtonHtml(k, 'Answer choice ' + k, 'option-btn', 'disabled');
-    }).join('') + '</div>' +
-    '<div class="mic-zone"><button class="btn-mic" disabled>🎙️ Voice Answer</button></div>';
-  renderLockedTabPreview('quiz', 'Quiz',
-    mockup,
-    'Sign in or unlock full access to start practicing with the real question bank — voice answers included.',
-    '<a class="btn-secondary hub-cta" href="#/sample">Try 5 free sample questions →</a>');
-}
-
-function renderLockedExamPreview() {
-  // Same numbers HUB_EXAMS already shows publicly on the landing page -- no account/API call
-  // needed just to preview what the timed exam looks like.
-  var mockup = '<div class="card mockexam-intro-card">' +
-    '<p>This mimics the real exam format as closely as possible:</p>' +
-    '<ul class="mockexam-intro-list">' +
-    '<li><strong>45 questions</strong>, drawn at random from the full question bank</li>' +
-    '<li><strong>60-minute</strong> timer, running continuously in one sitting</li>' +
-    '<li>No answer feedback until you finish — just like the real thing</li>' +
-    '<li>Need <strong>70%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
+  appEl.innerHTML =
+    '<div class="track-landing">' +
+    '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
+    '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
+    '<h1>' + exam.title + '</h1>' +
+    '<p class="muted page-intro-text">' + exam.description + '</p>' +
+    '<div class="buy-layout">' +
+    '<div class="buy-value-col"><div class="card">' + specsHtml + breakdownHtml + '</div></div>' +
+    '<div class="card">' +
+    '<div class="exam-track-price" id="landing-price">…</div>' +
+    '<ul class="buy-feature-list">' +
+    '<li>✓ Full question bank, unlimited practice</li>' +
+    '<li>✓ Timed mock exam &amp; Toughest 45 drills</li>' +
+    '<li>✓ Voice-enabled answering &amp; read-aloud</li>' +
+    '<li>✓ Per-topic progress tracking</li>' +
+    '<li>✓ Pass-or-money-back guarantee</li>' +
     '</ul>' +
-    '<button class="btn-primary" type="button" disabled>Begin Exam →</button>' +
-    '</div>';
-  renderLockedTabPreview('exam', 'Timed Practice Exam',
-    mockup,
-    'Sign in or unlock full access to take the real timed mock exam.');
-}
-
-function renderLockedToughest45Preview() {
-  var mockup = '<div class="card mockexam-intro-card">' +
-    '<p>This mimics the real exam format as closely as possible:</p>' +
-    '<ul class="mockexam-intro-list">' +
-    '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to 45, but could be fewer (no filler questions)</li>' +
-    '<li><strong>60-minute</strong> timer, running continuously in one sitting</li>' +
-    '<li>No answer feedback until you finish — just like the real thing</li>' +
-    '<li>Need <strong>70%</strong> to pass (a practice approximation of the real scaled-score-70 requirement)</li>' +
-    '</ul>' +
-    '<button class="btn-primary" type="button" disabled>Begin Exam →</button>' +
-    '</div>';
-  renderLockedTabPreview('toughest45', 'Toughest 45',
-    mockup,
-    'Sign in or unlock full access to drill on your own weak spots with a focused, timed exam.');
-}
-
-function renderLockedProgressPreview() {
-  var mockup = '<div class="stats-bar">' +
-    '<div class="stat-box"><div class="label">Total</div><div class="val">42</div></div>' +
-    '<div class="stat-box"><div class="label">Correct</div><div class="val correct">31</div></div>' +
-    '<div class="stat-box"><div class="label">Wrong</div><div class="val wrong">11</div></div>' +
-    '<div class="stat-box"><div class="label">Accuracy</div><div class="val accuracy">74%</div></div>' +
+    '<a class="btn-primary hub-cta" href="#/buy">Get Instant Access →</a>' +
+    '<a class="btn-secondary hub-cta" href="#/sample">Try a free sample →</a>' +
+    '<p class="muted redeem-sample-hint">Already have a code? <a href="#/redeem">Redeem it →</a></p>' +
+    (officialLinkHtml ? '<div class="track-landing-official">' + officialLinkHtml + '</div>' : '') +
+    '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
     '</div>' +
-    '<table class="progress-topics-table"><thead><tr><th>Topic ▲</th><th>Accuracy</th><th>Questions</th></tr></thead>' +
-    '<tbody>' +
-    '<tr><td>Acknowledgment, Jurat &amp; Journal</td><td>69%</td><td>14</td></tr>' +
-    '<tr><td>Fees, Misconduct &amp; Conflict of Interest</td><td>78%</td><td>18</td></tr>' +
-    '</tbody></table>' +
-    '<h3 class="mockexam-review-heading">Questions you got wrong (11)</h3>' +
-    '<details class="card mockexam-review-item"><summary>Fees — A notary is asked to notarize…</summary></details>';
-  renderLockedTabPreview('progress', 'Progress',
-    mockup,
-    'Sign in or unlock full access to track your own real progress by topic, and review every question you got wrong.');
+    '</div>' +
+    '</div>';
+
+  apiFetch('/pricing?examType=' + encodeURIComponent(exam.examType)).then(function (p) {
+    var el = document.getElementById('landing-price');
+    if (el) el.textContent = '$' + (p.priceCents / 100).toFixed(2);
+  }).catch(function () {
+    var el = document.getElementById('landing-price');
+    if (el) el.textContent = '';
+  });
 }
 
 // ---- Additional information (official external links, per exam type) -----
@@ -3430,25 +3423,21 @@ function setupMic() {
 // ---- Routing --------------------------------------------------------------
 
 async function renderTrackApp() {
-  var hadExplicitHash = !!location.hash; // so "no hash yet" keeps defaulting to the redeem page,
-                                          // not the quiz view's fallback lock-preview, for anon visitors
   var view = (location.hash || '#/quiz').replace('#/', '');
   if (view === 'sample') { await renderSample(); return; }
   if (view === 'buy') { renderBuy(); return; }
   if (view === 'refer') { renderReferForm(); return; }
   if (view === 'refund') { renderRefundRequest(); return; }
+  if (view === 'redeem') { renderRedeem(); return; }
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view.indexOf('promo-verify/') === 0) { renderPromoVerify(view.slice('promo-verify/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
-  if (!isLoggedInForCurrentTrack()) {
-    if (hadExplicitHash && view === 'quiz') { renderLockedQuizPreview(); return; }
-    if (view === 'exam' || view.indexOf('exam-history') === 0) { renderLockedExamPreview(); return; }
-    if (view === 'toughest45' || view.indexOf('toughest45-history') === 0) { renderLockedToughest45Preview(); return; }
-    if (view === 'progress') { renderLockedProgressPreview(); return; }
-    renderRedeem(); return;
-  }
+  // Any of quiz/exam/toughest45/progress (plus their history/detail sub-views) while logged out
+  // (or logged in for a different track) all land on the same consolidated sales page now --
+  // see renderTrackLanding().
+  if (!isLoggedInForCurrentTrack()) { renderTrackLanding(); return; }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'exam') await renderExam('standard');
   else if (view === 'exam-history') await renderExamHistory('standard');
