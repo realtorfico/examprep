@@ -324,7 +324,7 @@ var HUB_TERMS_PARAGRAPH2 = '<p class="muted">Using this site\'s practice questio
 function renderTerms() {
   var pageTrack = activeTrackForPath(window.location.pathname);
   var compliance = pageTrack ? trackCompliance(pageTrack.examType) : { orgLine: HUB_FOOTER_ORG_LINE, termsParagraph2: HUB_TERMS_PARAGRAPH2 };
-  appEl.innerHTML = '<h1>Terms of Use</h1>' +
+  appEl.innerHTML = '<div class="narrow-page"><h1>Terms of Use</h1>' +
     '<p class="muted">PassExamHQ provides original, independently-authored practice questions for exam preparation purposes only. ' +
     'It is not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + ' ' +
     'or any other government agency. All official state trademarks, examination names, and statutory references are used purely ' +
@@ -340,11 +340,11 @@ function renderTerms() {
     'combined or stacked with each other, though referral points may still be applied on top of a single active ' +
     'discount. Some promotions are restricted to first-time buyers and will be rejected at checkout for an email ' +
     'already associated with a prior purchase.</p>' +
-    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
 }
 
 function renderPrivacy() {
-  appEl.innerHTML = '<h1>Privacy</h1>' +
+  appEl.innerHTML = '<div class="narrow-page"><h1>Privacy</h1>' +
     '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
     'your quiz progress, and your theme/font preferences. We only collect an email address if you choose to ' +
     'provide one — for an optional backup copy of your access code at purchase, or to take part in the referral ' +
@@ -352,12 +352,12 @@ function renderPrivacy() {
     'behalf; if you\'re referred by a friend, the same applies to you. We never sell or share this data. ' +
     'Payments are processed by Stripe directly; we don\'t see or store your payment details. Contact whoever ' +
     'issued your code with any privacy questions.</p>' +
-    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button>';
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
 }
 
 function renderContact() {
   appEl.innerHTML =
-    '<div class="refer-page">' +
+    '<div class="narrow-page">' +
     '<h1>Contact Us</h1>' +
     '<p class="muted">Questions about your account, a purchase, or anything else — send us a note and we\'ll reply to your email.</p>' +
     '<form data-act="contact-submit" class="card">' +
@@ -375,10 +375,10 @@ function renderContact() {
 }
 
 function renderGuarantee() {
-  appEl.innerHTML = '<h1>Our Guarantee</h1><p class="muted">Loading…</p>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1><p class="muted">Loading…</p></div>';
   loadSiteConfig().then(function () {
     var refundRoute = (currentOrFirstActiveTrack() || {}).route || '/';
-    appEl.innerHTML = '<h1>Our Guarantee</h1>' +
+    appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1>' +
       '<p class="muted page-intro-text">Two separate ways you\'re covered — whichever applies to you.</p>' +
       '<div class="card buy-guarantee-card">' +
       '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
@@ -391,7 +391,7 @@ function renderGuarantee() {
       '<p class="muted">Both guarantees cover real-money purchases only — free courses redeemed with points ' +
       'aren\'t eligible, since no cash was paid.</p>' +
       '<a class="btn-primary hub-cta" href="' + refundRoute + '#/refund">Request a refund →</a> ' +
-      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button></div>';
   });
 }
 
@@ -400,12 +400,12 @@ function renderGuarantee() {
 // gracefully as a nudge toward the referral flow rather than an error or a blank section.
 function renderProfile() {
   if (!getToken()) {
-    appEl.innerHTML = '<h1>My Profile</h1>' +
+    appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1>' +
       '<p class="muted">You\'re not logged in on this device. <a href="/">Enter your access code</a> to see your profile.</p>' +
-      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button></div>';
     return;
   }
-  appEl.innerHTML = '<h1>My Profile</h1><p class="muted">Loading…</p>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1><p class="muted">Loading…</p></div>';
   apiFetch('/profile').then(function (p) {
     var track = trackByExamType(p.examType);
     var trackTitle = (track && track.title) || p.examType;
@@ -417,7 +417,7 @@ function renderProfile() {
         '<div class="profile-row"><span class="muted">Referral points</span><span>' + (p.points || 0) + ' — <a href="' + trackRoute + '#/refer">Refer a friend →</a></span></div>'
       : '<p class="muted">No email on file, so we can\'t show referral points here — that needs an email to look up. ' +
         '<a href="' + trackRoute + '#/refer">Add one via the referral page</a> to start earning points.</p>';
-    appEl.innerHTML = '<h1>My Profile</h1>' +
+    appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1>' +
       '<div class="card profile-card">' +
       '<div class="profile-row"><span class="muted">Track</span><strong>' + escapeHtml(trackTitle) + '</strong></div>' +
       '<div class="profile-row"><span class="muted">Access code</span><span>' +
@@ -428,10 +428,10 @@ function renderProfile() {
       '</div>' +
       '<div class="card profile-card">' + emailSection + '</div>' +
       '<a class="btn-secondary hub-cta" href="' + trackRoute + '#/progress">View full progress →</a> ' +
-      '<button class="btn-secondary btn-sm" type="button" data-act="log-out">Log out</button>';
+      '<button class="btn-secondary btn-sm" type="button" data-act="log-out">Log out</button></div>';
   }).catch(function (e) {
-    appEl.innerHTML = '<h1>My Profile</h1>' + examErrorHtml(e, 'Could not load your profile. Try again shortly.') +
-      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+    appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1>' + examErrorHtml(e, 'Could not load your profile. Try again shortly.') +
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button></div>';
   });
 }
 
@@ -3012,7 +3012,7 @@ function renderPurchaseSuccess(code, pointsApplied) {
 
 function renderRefundRequest() {
   appEl.innerHTML =
-    '<div class="refer-page">' +
+    '<div class="narrow-page">' +
     '<h1>Request a Refund</h1>' +
     '<p class="muted">Covers real-money purchases only — free courses redeemed with points aren\'t eligible, ' +
     'since no cash was paid.</p>' +
@@ -3146,7 +3146,7 @@ async function renderReferForm() {
   var required = pricing.priceCents;
 
   appEl.innerHTML =
-    '<div class="refer-page">' +
+    '<div class="narrow-page">' +
     '<h1>Refer friends, earn free access</h1>' +
     '<div id="refer-promotions-wrap" class="promotions-wrap"></div>' +
     '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
@@ -3185,27 +3185,27 @@ async function renderReferForm() {
 }
 
 function renderReferVerify(token) {
-  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Confirming…</h1><p class="muted">One moment.</p></div>';
   apiFetch('/referrals/verify?token=' + encodeURIComponent(token)).then(function (res) {
     var msg = res.alreadyVerified
       ? 'This referral was already confirmed — thanks!'
       : 'Thanks for confirming — your friend just earned points because of you.';
     appEl.innerHTML =
-      '<div class="card refer-confirmed-card">' +
+      '<div class="narrow-page"><div class="card refer-confirmed-card">' +
       '<div class="refer-confirmed-emoji">🎉</div>' +
       '<h1>You\'re confirmed!</h1>' +
       '<p class="muted">' + msg + '</p>' +
       '<div class="sample-done-cta">' +
       '<a class="btn-primary hub-cta" href="#/sample">Try 5 free sample questions →</a>' +
       '<a class="btn-secondary hub-cta" href="#/refer">Refer your own friends & earn free access →</a>' +
-      '</div></div>';
+      '</div></div></div>';
   }).catch(function () {
-    appEl.innerHTML = '<h1>Something went wrong</h1><p class="muted">This link may be invalid or expired.</p>';
+    appEl.innerHTML = '<div class="narrow-page"><h1>Something went wrong</h1><p class="muted">This link may be invalid or expired.</p></div>';
   });
 }
 
 function renderPointsRedeemVerify(token) {
-  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Confirming…</h1><p class="muted">One moment.</p></div>';
   apiFetch('/points/redeem-verify?token=' + encodeURIComponent(token)).then(function (res) {
     setToken(res.token);
     renderSiteHeader();
@@ -3219,8 +3219,8 @@ function renderPointsRedeemVerify(token) {
     var msg = code === 'insufficient_points'
       ? 'Your points balance changed before this was confirmed, so it could no longer be redeemed.'
       : 'This link may be invalid, already used, or expired (links are only good for 30 minutes).';
-    appEl.innerHTML = '<h1>Could not redeem</h1><p class="muted">' + msg + '</p>' +
-      '<a class="btn-secondary hub-cta" href="#/buy">Back to purchase page</a>';
+    appEl.innerHTML = '<div class="narrow-page"><h1>Could not redeem</h1><p class="muted">' + msg + '</p>' +
+      '<a class="btn-secondary hub-cta" href="#/buy">Back to purchase page</a></div>';
   });
 }
 
@@ -3231,19 +3231,19 @@ function renderPointsRedeemVerify(token) {
 // which one the buyer came from, hence the generic "wherever you were applying it" wording and
 // both destination links.
 function renderPromoVerify(token) {
-  appEl.innerHTML = '<h1>Confirming…</h1><p class="muted">One moment.</p>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Confirming…</h1><p class="muted">One moment.</p></div>';
   apiFetch('/promotions/verify-email?token=' + encodeURIComponent(token)).then(function (res) {
-    appEl.innerHTML = '<h1>Email confirmed ✅</h1>' +
+    appEl.innerHTML = '<div class="narrow-page"><h1>Email confirmed ✅</h1>' +
       '<p class="muted">' + (res.promoTitle ? 'You\'re all set for "' + escapeHtml(res.promoTitle) + '." ' : '') +
       'Go back to wherever you were applying your promo code and click Apply again — it\'ll go through now.</p>' +
       '<a class="btn-primary hub-cta" href="#/buy">Back to checkout →</a>' +
-      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend →</a>';
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend →</a></div>';
   }).catch(function () {
-    appEl.innerHTML = '<h1>Could not confirm</h1>' +
+    appEl.innerHTML = '<div class="narrow-page"><h1>Could not confirm</h1>' +
       '<p class="muted">This link may be invalid or expired (links are good for 7 days). Go back to wherever ' +
       'you applied the code and click Apply again to get a new one.</p>' +
       '<a class="btn-secondary hub-cta" href="#/buy">Back to checkout</a>' +
-      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend</a>';
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend</a></div>';
   });
 }
 

@@ -506,7 +506,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-promo-row input { flex: 1; }
 #buy-promo-result, #refer-promo-result { margin-top: 0.4rem; font-size: 0.85rem; }
 .buy-total-line { font-weight: 700; margin: 0.75rem 0 0; }
-.refer-page { max-width: 640px; margin: 0 auto; }
+/* Narrows prose-heavy pages (legal/guarantee/contact/refund/refer) within the wider #app shell --
+   matches the redesign's readability guideline (~60-75 char measure) without shrinking #app
+   itself, which functional screens (quiz/exam/tables) still need the full fluid width for. */
+.narrow-page { max-width: 640px; margin: 0 auto; }
 .refer-name-email-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
 @media (min-width: 520px) {
   .refer-name-email-grid { flex-direction: row; }
