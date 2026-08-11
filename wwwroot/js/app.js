@@ -509,7 +509,7 @@ function renderHub() {
     renderNewsBanner() +
     '<div id="home-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="hub-hero">' +
-    '<h1>Pass Your California Licensing Exams on the First Try</h1>' +
+    '<h1>Pass Your Licensing Exams on the First Try</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards, with ' +
     'voice-enabled practice and instant online access.</p>' +
     '<div class="hub-trust-badges">' +
@@ -1066,7 +1066,7 @@ function renderResourcesTable() {
   var container = document.getElementById('resources-table-container');
   if (!container) return; // navigated away before an async duration lookup resolved
 
-  var loggedIn = !!getToken();
+  var loggedIn = isLoggedInForCurrentTrack();
   var columns = [['type', 'Type'], ['title', 'Name'], ['topic', 'Topic'], ['length', 'Length'], ['status', 'Status']];
   // Action column first -- so mobile users can see/tap Play/Show/Hide/Unlock without having to
   // horizontally scroll the table to reach it.
