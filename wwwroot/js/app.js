@@ -922,43 +922,52 @@ function hubTracksGridHtml() {
       (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
     : '';
   var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this filter.</p>' : '';
+  // Kicked off here (not awaited) so every caller that re-renders this grid (initial hub render,
+  // the state/kind filter handlers, the show-all toggle) gets pricing filled in for free, without
+  // each one needing to remember to call it separately. Safe regardless of caller: this function
+  // returns its HTML string (and gets assigned to innerHTML) synchronously, before any of these
+  // fetches can resolve.
+  fillHubPricing(truncated ? filtered.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : filtered);
   return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
 }
 
+// Smaller catalog card (Round 2 redesign decision): category/name/state/price/CTA only -- full
+// stats, breakdown, and buy details now live on the track's own page instead of duplicating them
+// here, since every track now has a real detail surface to click through to.
 function hubTrackCards(tracks) {
   return (tracks || HUB_EXAMS).map(function (exam) {
     var statusBadge = exam.active
       ? '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>'
       : '<span class="status-badge">Coming Soon</span>';
-    var specs = '<div class="exam-specs">' +
-      '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
-      '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
-      '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
-      '</div>';
-    var breakdown = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
-      exam.breakdown.map(function (b) {
-        var pct = parseInt(b[1], 10) || 0;
-        // CSP blocks inline style="width:X%" -- pct-N classes (see style.css) cover the exact
-        // set of breakdown percentages used across HUB_EXAMS instead. Add a new .pct-N rule
-        // there if a future breakdown introduces a percentage not already covered.
-        return '<div class="breakdown-row">' +
-          '<div class="breakdown-row-top"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>' +
-          '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
-          '</div>';
-      }).join('') +
-      '</div>';
-    var cta = exam.active
-      ? '<a class="btn-primary hub-cta" href="' + exam.route + '">Start Questionnaire →</a>' +
-        '<a class="btn-secondary hub-cta" href="' + exam.route + '#/sample">Try a free sample</a>'
-      : '<button class="btn-secondary hub-cta" disabled>Coming Soon</button>';
-
-    return '<div class="exam-track-card' + (exam.active ? ' is-active' : '') + '">' +
-      '<div class="exam-track-body">' +
+    var priceHtml = exam.active
+      ? '<span class="exam-track-price" data-price-for="' + exam.examType + '">…</span>'
+      : '<span class="exam-track-price muted">—</span>';
+    var body = '<div class="exam-track-body">' +
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
-      '<h3>' + exam.title + '</h3>' +
-      '<p class="muted exam-track-desc">' + exam.description + '</p>' +
-      specs + breakdown +
-      '</div><div class="exam-track-footer">' + cta + '</div></div>';
+      '<h3>' + escapeHtml(exam.shortName || exam.title) + '</h3>' +
+      '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</div>' +
+      priceHtml +
+      '</div><div class="exam-track-footer">' +
+      (exam.active ? '<span class="exam-track-view-link">View details →</span>' : '<span class="muted exam-track-view-link">Coming soon</span>') +
+      '</div>';
+    return exam.active
+      ? '<a class="exam-track-card is-active" href="' + exam.route + '">' + body + '</a>'
+      : '<div class="exam-track-card">' + body + '</div>';
+  });
+}
+
+// Fills in each visible active card's real price (a per-track /pricing fetch, same pattern as the
+// buy page's "other tracks" strip -- loadOtherTracksPricing). Best-effort: a failed fetch just
+// leaves that one card's price blank rather than blocking or erroring the whole grid.
+function fillHubPricing(tracks) {
+  (tracks || []).filter(function (e) { return e.active; }).forEach(function (t) {
+    apiFetch('/pricing?examType=' + encodeURIComponent(t.examType)).then(function (p) {
+      var el = document.querySelector('[data-price-for="' + t.examType + '"]');
+      if (el) el.textContent = '$' + (p.priceCents / 100).toFixed(2);
+    }).catch(function () {
+      var el = document.querySelector('[data-price-for="' + t.examType + '"]');
+      if (el) el.textContent = '';
+    });
   });
 }
 
@@ -990,7 +999,9 @@ function renderHub() {
     '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
     '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
     '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>' +
-    '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>';
+    '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>' +
+    comparisonTableHtml() +
+    outcomesStripHtml();
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
   // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
@@ -1000,6 +1011,84 @@ function renderHub() {
     var wrap = document.getElementById('home-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
+  fillOutcomesStrip();
+}
+
+// ---- Home page: comparison table (Round 2 redesign decision) --------------
+// PassExamHQ's own checkmarks are all real, confirmed features (mic/voice answering,
+// difficulty-filtered practice, timed exam mode, per-topic progress, guarantee). DMV Genie's
+// checkmarks were verified against its current App Store/Play Store listings before this shipped
+// (Aug 2026) -- re-verify before reusing this table later, app feature sets drift over time.
+// "Free Practice Sites" is a generic category, not one named product, so its marks describe the
+// category rather than claim something about any specific site -- 'varies' where free sites
+// commonly differ rather than a flat yes/no.
+var COMPARISON_FEATURES = [
+  // [feature, "Free Practice Sites", "DMV Genie", "PassExamHQ"]
+  ['State-specific, 2026-current content', 'varies', true, true],
+  ['Unlimited practice questions', true, true, true],
+  ['Full timed mock exam simulator', 'varies', true, true],
+  ['Voice-enabled answering & read-aloud', false, false, true],
+  ['Weak-topic progress tracking', false, true, true],
+  ['Explanation on every question', 'varies', true, true],
+  ['Pass-or-money-back guarantee', false, false, true],
+];
+function comparisonCell(v, highlight) {
+  var cls = v === true ? 'comparison-yes' : v === 'varies' ? 'comparison-varies' : 'comparison-no';
+  var mark = v === true ? '✓' : v === 'varies' ? '~' : '✗';
+  return '<td class="' + cls + (highlight ? ' comparison-us-col' : '') + '">' + mark + '</td>';
+}
+function comparisonTableHtml() {
+  return '<section class="comparison-section">' +
+    '<h2 class="comparison-heading">A Better Way to Pass Your Exam</h2>' +
+    '<p class="muted comparison-subheading">How PassExamHQ stacks up against typical DMV prep options.</p>' +
+    '<div class="comparison-table-scroll"><table class="comparison-table">' +
+    '<thead><tr><th></th><th>Free Practice Sites</th><th>DMV Genie</th><th class="comparison-us-col">PassExamHQ</th></tr></thead>' +
+    '<tbody>' +
+    COMPARISON_FEATURES.map(function (f) {
+      return '<tr><td class="comparison-feature">' + f[0] + '</td>' +
+        comparisonCell(f[1]) + comparisonCell(f[2]) + comparisonCell(f[3], true) + '</tr>';
+    }).join('') +
+    '</tbody></table></div>' +
+    '<p class="comparison-footnote muted">Comparison based on publicly available information as of August 2026 — ' +
+    'PassExamHQ is not affiliated with or endorsed by DMV Genie.</p>' +
+    '</section>';
+}
+
+// ---- Home page: outcomes strip (Round 2 redesign decision) ----------------
+// Real numbers pulled from /stats/public (see examprep-api), not invented -- deliberately omits
+// the raw "students served" count for now: at this site's current scale that number reads as
+// thin rather than reassuring, and nothing requires showing every computed stat. Not fabrication
+// either way -- just an editorial choice of which real numbers to feature.
+function outcomesStripHtml() {
+  return '<section class="outcomes-section" id="outcomes-section">' +
+    '<h2 class="comparison-heading">Real Results, Not Marketing Copy</h2>' +
+    '<p class="muted comparison-subheading">Pulled live from our own database.</p>' +
+    '<div class="outcomes-grid" id="outcomes-grid-wrap"><p class="muted">Loading…</p></div>' +
+    '</section>';
+}
+function fillOutcomesStrip() {
+  var wrap = document.getElementById('outcomes-grid-wrap');
+  if (!wrap) return;
+  apiFetch('/stats/public').then(function (s) {
+    var radialHtml = (s.passRate != null)
+      ? '<div class="outcome-tile">' + radialProgressSvg(s.passRate, { size: 108, strokeWidth: 10, color: 'var(--highlight)', label: 'Pass Rate' }) + '</div>'
+      : '';
+    var numberTiles = [
+      { value: s.totalQuestions, label: 'Practice Questions' },
+      { value: s.examsCompleted, label: 'Mock Exams Completed' },
+      { value: s.tracksLive, label: 'Live Exam Tracks' },
+    ];
+    wrap.innerHTML = radialHtml + numberTiles.map(function (t) {
+      return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() +
+        '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
+    }).join('');
+  }).catch(function () {
+    // Best-effort -- hides the whole section rather than showing an empty/broken one, since there
+    // are no safe placeholder numbers to fall back to here (unlike the promo ribbon's guarantee
+    // tagline fallback).
+    var section = document.getElementById('outcomes-section');
+    if (section) section.classList.add('hidden');
+  });
 }
 
 function renderRedeem(error) {

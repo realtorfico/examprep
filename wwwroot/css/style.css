@@ -636,9 +636,46 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
 }
 .hub-tracks-toggle-wrap { text-align: center; margin-top: 1rem; }
+
+/* Home page: comparison table + outcomes strip (new sections, Round 2 redesign decision) */
+.hidden { display: none; }
+/* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
+   next to these) -- these two are pure marketing content, so they get the redesign's other
+   container-width tier instead (~1400px cap), matching the plan's "don't force one width
+   everywhere" decision. */
+.comparison-section, .outcomes-section { padding: 1.5rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
+.comparison-heading { text-align: center; font-size: 1.5rem; }
+.comparison-subheading { text-align: center; max-width: 34rem; margin: 0.5rem auto 1.25rem; }
+.comparison-table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+.comparison-table { width: 100%; min-width: 480px; border-collapse: collapse; background: var(--card); }
+.comparison-table th, .comparison-table td { padding: 0.65rem 0.85rem; text-align: center; border-bottom: 1px solid var(--border); }
+.comparison-table thead th { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.comparison-feature { text-align: left; font-size: 0.85rem; font-weight: 600; }
+.comparison-table tbody tr:last-child td { border-bottom: none; }
+.comparison-us-col { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.comparison-table thead .comparison-us-col { background: var(--accent); color: var(--accent-foreground); }
+.comparison-yes { color: var(--correct); font-weight: 800; }
+.comparison-no { color: var(--incorrect); font-weight: 800; }
+.comparison-varies { color: var(--muted); font-weight: 800; }
+.comparison-footnote { text-align: center; font-size: 0.72rem; margin-top: 0.75rem; }
+
+.outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 1rem; margin-top: 1.25rem; justify-items: center; }
+@media (min-width: 700px) {
+  .outcomes-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.outcome-tile { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.outcome-tile-value { font-family: 'Fraunces', Georgia, serif; font-size: 2rem; font-weight: 700; color: var(--fg); }
+.outcome-tile-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--muted); text-align: center;
+}
+/* <a> for active tracks now (whole card is one click-through to its detail page), <div> for
+   coming-soon ones -- text-decoration/color reset since <a> would otherwise underline/tint
+   everything inside, including the heading. */
 .exam-track-card {
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
   background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s, filter 0.15s;
+  text-decoration: none; color: inherit;
 }
 .exam-track-card.is-active {
   border-color: var(--accent); border-width: 2px;
@@ -661,6 +698,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
+.exam-track-state { font-size: 0.78rem; margin-bottom: 0.6rem; }
+.exam-track-price { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+.exam-track-view-link { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+.exam-track-card:hover .exam-track-view-link { text-decoration: underline; }
+/* .exam-track-desc / .exam-specs / .breakdown-* / .pct-* below are no longer used by the hub
+   grid's now-smaller cards (Round 2 redesign decision) -- kept for the track detail page that
+   moves this content to instead of being deleted and re-added. */
 .exam-track-desc { font-size: 0.8rem; }
 .exam-specs {
   display: flex; flex-direction: column; gap: 0.3rem; background: color-mix(in srgb, var(--fg) 8%, var(--surface-2));
