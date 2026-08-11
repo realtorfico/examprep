@@ -483,10 +483,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
 .buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
-.buy-order-price { font-size: 1.3rem; color: var(--accent); }
+.buy-order-price { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
 .buy-promo-note { font-size: 0.8rem; font-weight: 700; color: var(--highlight); margin: 0.3rem 0 0; }
 .buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
-.buy-guarantee-card { display: flex; flex-direction: column; gap: 0.9rem; }
+/* Gold accent treatment (reuses the same highlight language as .exam-disclaimer-callout/
+   .news-flash-banner) -- the guarantee is a trust/reassurance callout, a natural fit for the
+   "CTAs, checkmarks, highlights" role gold plays throughout the redesign. */
+.buy-guarantee-card {
+  display: flex; flex-direction: column; gap: 0.9rem;
+  border-left: 3px solid var(--highlight); background: color-mix(in srgb, var(--highlight) 6%, var(--surface-2));
+}
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
 .buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
 .buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
