@@ -145,8 +145,28 @@ function renderSiteHeader() {
     '</div>' +
     '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
     (loggedIn ? renderProfileMenu() : '') +
-    '</div></div>';
+    '</div></div>' +
+    '<div id="promo-ribbon-wrap" class="promo-ribbon"></div>';
   updateThemeButton();
+  fillPromoRibbon();
+}
+
+// Site-wide, site-header-hosted promo ribbon (Round 2 design decision) -- fills in async since it
+// needs a /promotions fetch, same progressive-enhancement pattern as the hub's own promo wrap.
+// renderSiteHeader() only runs a handful of times per session (boot, login/logout, theme toggle),
+// not per route change, so this fetch is cheap.
+function fillPromoRibbon() {
+  var wrap = document.getElementById('promo-ribbon-wrap');
+  if (!wrap) return;
+  Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
+    var r = results[0];
+    var dismissedIds = getDismissedPromoIds();
+    var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
+    wrap.innerHTML = active.length
+      ? promoBannersHtml([active[0]], true, false)
+      : '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Pass or ' + refundFailurePercent +
+        '% of Your Money Back</strong> — see our guarantee →</a>';
+  }).catch(function () { /* best-effort -- ribbon failing to load shouldn't break the header */ });
 }
 
 function updateThemeButton() {
@@ -3626,7 +3646,11 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'dismiss-promo') {
     dismissPromoId(el.getAttribute('data-promo-id'));
     var promoBannerEl = el.closest('.promo-banner');
+    var inRibbon = promoBannerEl && promoBannerEl.closest('#promo-ribbon-wrap');
     if (promoBannerEl) promoBannerEl.remove();
+    // The ribbon is the one always-visible slot -- falls back to the guarantee tagline instead of
+    // going blank, rather than just disappearing like the hub/checkout/refer promo cards do.
+    if (inRibbon) fillPromoRibbon();
   } else if (act === 'reload-for-update') {
     location.reload();
   } else if (act === 'dismiss-update-banner') {

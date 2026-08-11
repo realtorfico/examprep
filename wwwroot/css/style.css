@@ -115,7 +115,12 @@ body {
 #site-header, #site-footer {
   width: 100%; background: var(--card);
 }
-#site-header { border-bottom: 1px solid var(--border); }
+#site-header {
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
 #site-footer { border-top: 1px solid var(--border); margin-top: auto; }
 .site-shell { max-width: min(90vw, 1680px); margin: 0 auto; padding: 0.75rem 1.5rem; }
 @media (max-width: 600px) {
@@ -529,9 +534,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 #referred-friends-list + .btn-sm { margin-bottom: 0.75rem; }
 
 /* Site-wide header/footer content (bars themselves defined near #site-header above) */
-.footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; }
-.footer-links { display: flex; gap: 1rem; }
-.footer-links a { color: var(--muted); font-size: 0.8rem; }
+.footer-content { font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem; padding: 0.5rem 0; }
+.footer-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.footer-links a { color: var(--muted); font-size: 0.8rem; transition: color 0.15s; }
+.footer-links a:hover { color: var(--accent); }
 .font-size-pill { display: inline-flex; border: 1.5px solid var(--border); border-radius: 999px; overflow: hidden; }
 .font-size-pill button {
   border: none; border-radius: 0; background: transparent; color: var(--fg);
@@ -699,8 +705,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* News/announcement banner -- reused on the hub (home page) and inside the notary app's
    tab bar. Uses --highlight (amber) rather than --accent so it reads as "news", not as a
    primary CTA, and pulses gently rather than hard-blinking (accessibility: no flashing >3Hz). */
+/* Inserted before #site-header in the DOM (see checkForUpdate() in app.js) -- static rather than
+   sticky now that the header itself is sticky top:0, so the two don't fight over the same spot;
+   this rare/dismissible banner just scrolls away with the page instead of staying pinned. */
 .update-available-banner {
-  position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   gap: 0.75rem; flex-wrap: wrap; background: var(--accent); color: var(--accent-foreground);
   padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 600;
 }
@@ -762,6 +771,29 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   font-size: 1rem; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 6px;
 }
 .promo-banner-dismiss:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
+
+/* Promo-first header ribbon (site-wide, part of #site-header -- see renderPromoRibbon() in
+   app.js): the single highest-attention slot on the page, directly under the sticky nav. Shows
+   the most relevant home-placement promo when one's active; reuses promoBannersHtml()'s existing
+   markup/dismiss wiring rather than a new render path, just restyled here from a card to a slim
+   full-width gold bar. Falls back to the guarantee tagline when no promo is active, rather than
+   running a separate always-on guarantee bar alongside it. */
+.promo-ribbon .promo-banner {
+  margin-bottom: 0; border-radius: 0; border-width: 0 0 1px;
+  background: color-mix(in srgb, var(--highlight) 14%, var(--card));
+  border-color: color-mix(in srgb, var(--highlight) 35%, var(--border));
+  padding: 0.5rem 1.5rem; justify-content: center;
+}
+.promo-ribbon .promo-banner-body { flex: 0 1 auto; font-size: 0.82rem; }
+.promo-ribbon .promo-banner-cta { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
+.promo-ribbon-fallback {
+  display: block; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none;
+  background: color-mix(in srgb, var(--highlight) 10%, var(--card));
+  border-bottom: 1px solid color-mix(in srgb, var(--highlight) 30%, var(--border));
+  padding: 0.5rem 1.5rem; font-size: 0.82rem; font-weight: 600; color: var(--fg);
+}
+.promo-ribbon-fallback strong { color: var(--accent); }
+.promo-ribbon-fallback:hover { background: color-mix(in srgb, var(--highlight) 18%, var(--card)); }
 
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
