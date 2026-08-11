@@ -173,7 +173,7 @@ function renderSiteFooter() {
   document.getElementById('site-footer').innerHTML =
     '<div class="site-shell footer-content">' +
     '<div>© ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
-    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our ' + refundFailurePercent + '% refund guarantee.</div>' +
+    '<div class="muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>.</div>' +
     '<nav class="footer-links"><a href="#/terms">Terms</a><a href="#/privacy">Privacy</a><a href="' + ((currentOrFirstActiveTrack() || {}).route || '/') + '#/refund">Refund Request</a><a href="#/contact">Contact Us</a></nav>' +
     '</div>';
 }
