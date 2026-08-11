@@ -374,6 +374,27 @@ var HUB_EXAMS = [
     breakdown: [['Licensing, Testing & CDL Rules', '18%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '25%'], ['Hazardous Materials & Adverse Conditions/Emergencies', '39%'], ['Cargo, Passenger, School Bus & Specialty Vehicles', '18%']],
   },
   {
+    examType: 'ny_driver', shortName: 'New York Driver', stateCode: 'NY',
+    title: 'New York Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ny_driver',
+    duration: 'Untimed', questions: '20 Multiple Choice', passScore: '14/20 Correct (70%)',
+    description: 'Practice questions covering the New York State Driver\'s Manual: licensing and learner permit rules, right-of-way and traffic control, passing/parking/defensive driving, and impairment and crash-reporting law for the Class D written knowledge test.',
+    breakdown: [['Driver Licensing & Learner Permits', '17%'], ['License Sanctions, Vehicle Ownership & Right-of-Way', '27%'], ['Passing, Parking & Defensive Driving', '20%'], ['Impairment, Special Conditions & Sharing the Road', '36%']],
+  },
+  {
+    examType: 'ny_cdl', shortName: 'New York CDL', stateCode: 'NY',
+    title: 'New York CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ny_cdl',
+    duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the New York State Commercial Driver\'s Manual: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
+    breakdown: [['Licensing & Skills Testing Overview', '18%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '30%'], ['Hazardous Materials & Adverse Conditions/Driver Fitness', '33%'], ['Cargo, Passenger, School Bus & Specialty Vehicles', '19%']],
+  },
+  {
+    examType: 'ny_notary', shortName: 'New York Notary', stateCode: 'NY',
+    title: 'New York Notary Public Exam', category: 'State Licensing', active: true, route: '/ny_notary',
+    duration: '60 Minutes', questions: '40 Multiple Choice', passScore: '70% (28/40 Correct)',
+    description: 'Practice questions covering the New York Notary Public License Law: appointment and professional conduct, powers and duties, statutory fees, real property acknowledgments, and the rules and regulations governing notaries.',
+    breakdown: [['Appointment, Qualifications & Professional Conduct', '18%'], ['Powers, Duties, Fees & Electronic Notarization', '22%'], ['Rules & Regulations (19 NYCRR Part 182) and Definitions/Fees', '39%'], ['Real Property Law, Restrictions & Criminal Liability', '21%']],
+  },
+  {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
@@ -392,7 +413,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -523,6 +544,45 @@ var TRACK_COMPLIANCE = {
       '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real FLHSMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the same threshold as the real FLHSMV CDL General Knowledge test — 40 of 50 correct',
+  },
+  ny_driver: {
+    orgLine: 'the New York State Department of Motor Vehicles (DMV)',
+    footerRequirement: "do not fulfill the New York 5-Hour Pre-Licensing Course requirement (mandatory before the road test) or the Driver Education program alternative",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the New York 5-Hour ' +
+      'Pre-Licensing Course requirement — mandatory before scheduling the road test — or the alternative Driver Education program, ' +
+      'and does not issue any official course-completion certificate — our content is a supplementary study aid only. Completing ' +
+      'practice exams here also does not register you for, or schedule, the official DMV written knowledge test; official testing ' +
+      'must be scheduled directly through the New York State DMV, and the 5-Hour Course must be completed through a DMV-approved ' +
+      'provider. While we strive to align our content with the current New York State Driver\'s Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DMV written knowledge test or any required 5-Hour Pre-Licensing Course.',
+    passScoreNote: 'the same threshold as the real DMV test — 14 of 20 correct',
+  },
+  ny_cdl: {
+    orgLine: 'the New York State Department of Motor Vehicles (DMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any New York CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any New York CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the New York State DMV, and ELDT must be completed through an FMCSA-registered training provider. ' +
+      'While we strive to align our content with the current New York State Commercial Driver\'s Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold as the real DMV CDL General Knowledge test — 40 of 50 correct',
+  },
+  ny_notary: {
+    orgLine: 'the New York Department of State',
+    footerRequirement: "do not register you for, or substitute for, the official New York notary public exam or commission application",
+    termsParagraph2: '<p class="muted">New York does not require a mandatory education course before the notary exam — unlike some ' +
+      'other states, candidates are expected to study the Notary Public License Law independently. Using this site\'s practice ' +
+      'questions or mock exams does not register you for, or schedule, the official Department of State notary exam, and does not ' +
+      'substitute for, or guarantee results on, your notary commission application — our content is a supplementary study aid only. ' +
+      'Official exam scheduling and commission applications must be conducted through the New York Department of State. While we ' +
+      'strive to align our content with the current Notary Public License Law booklet, it is provided "as-is" for self-study and ' +
+      'does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Department of State notary exam or notary commission application.',
+    passScoreNote: 'the same threshold as the real Department of State exam — 28 of 40 correct',
   },
 };
 function trackCompliance(examType) {
@@ -978,6 +1038,21 @@ var RESOURCES = {
   fl_cdl: [
     { title: 'Official Florida CDL Handbook', type: 'pdf', url: 'https://www.flhsmv.gov/pdf/handbooks/englishcdlhandbook.pdf',
       desc: 'The official handbook published by the Florida Department of Highway Safety and Motor Vehicles — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ny_driver: [
+    { title: 'Official New York State Driver\'s Manual', type: 'pdf', url: 'https://dmv.ny.gov/brochure/mv21.pdf',
+      desc: 'The official manual published by the New York DMV (MV-21) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ny_cdl: [
+    { title: 'Official New York State Commercial Driver\'s Manual', type: 'pdf', url: 'https://dmv.ny.gov/driver-license/commercial-drivers/new-york-state-commercial-drivers-manual',
+      desc: 'The official manual page published by the New York DMV (CDL-10, 12 sections) — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ny_notary: [
+    { title: 'Official Notary Public License Law', type: 'pdf', url: 'https://dos.ny.gov/system/files/documents/2026/03/notary-public-license-law_03.2026.pdf',
+      desc: 'The official booklet published by the New York Department of State — the authoritative source the notary exam is based on.',
       topic: 'General Reference', free: true },
   ],
 };
