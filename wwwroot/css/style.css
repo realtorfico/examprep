@@ -173,7 +173,7 @@ a { color: var(--accent); }
 .profile-menu.open .profile-menu-dropdown { display: flex; }
 .profile-menu-item {
   text-align: left; background: none; border: none; border-radius: 6px; padding: 0.55rem 0.65rem;
-  font-size: 0.88rem; font-weight: 600; color: var(--fg); cursor: pointer;
+  font-size: 0.88rem; font-weight: 600; color: var(--fg); cursor: pointer; text-decoration: none;
 }
 .profile-menu-item:hover { background: var(--surface-2); color: var(--accent); }
 
@@ -215,6 +215,9 @@ a { color: var(--accent); }
   border-radius: 12px; padding: 1.1rem;
 }
 .page-intro-text { max-width: 65ch; line-height: 1.6; }
+.profile-card { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.profile-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.profile-row code { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.2rem 0.5rem; font-size: 0.85rem; }
 .additional-info-card {
   display: block; text-decoration: none; color: inherit; margin-bottom: 0.75rem; transition: border-color 0.15s;
   max-width: 65ch;

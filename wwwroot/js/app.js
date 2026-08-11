@@ -243,12 +243,13 @@ function promoBannersHtml(promotions, dismissible, showBody) {
   }).join('');
 }
 
-// Account menu: just Log out today, but a real dropdown (not a bare button) so there's somewhere
-// to add more account-level actions later without another header redesign.
+// Account menu: a real dropdown (not a bare button) so there's somewhere to add more
+// account-level actions later without another header redesign.
 function renderProfileMenu() {
   return '<div class="profile-menu">' +
     '<button class="profile-menu-btn" type="button" data-act="toggle-profile-menu" aria-label="Account menu" aria-haspopup="true">👤</button>' +
     '<div class="profile-menu-dropdown">' +
+    '<a class="profile-menu-item" href="#/profile">My Profile</a>' +
     '<button class="profile-menu-item" type="button" data-act="log-out">Log out</button>' +
     '</div></div>';
 }
@@ -333,6 +334,46 @@ function renderGuarantee() {
       '<p class="muted">Both guarantees cover real-money purchases only — free courses redeemed with points ' +
       'aren\'t eligible, since no cash was paid.</p>' +
       '<a class="btn-primary hub-cta" href="' + refundRoute + '#/refund">Request a refund →</a> ' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+  });
+}
+
+// A code redeemed with no email ever provided (buyer_email null) has no way to look up referral
+// points -- accounts is a separate, email-keyed table with no FK to users -- so this renders that
+// gracefully as a nudge toward the referral flow rather than an error or a blank section.
+function renderProfile() {
+  if (!getToken()) {
+    appEl.innerHTML = '<h1>My Profile</h1>' +
+      '<p class="muted">You\'re not logged in on this device. <a href="/">Enter your access code</a> to see your profile.</p>' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
+    return;
+  }
+  appEl.innerHTML = '<h1>My Profile</h1><p class="muted">Loading…</p>';
+  apiFetch('/profile').then(function (p) {
+    var track = trackByExamType(p.examType);
+    var trackTitle = (track && track.title) || p.examType;
+    var trackRoute = (track && track.route) || '/';
+    var memberSince = p.createdAt ? new Date(p.createdAt * 1000).toLocaleDateString() : '—';
+    var purchaseLine = p.paidCents ? '$' + (p.paidCents / 100).toFixed(2) + ' (one-time)' : 'Free / points / admin-issued';
+    var emailSection = p.buyerEmail
+      ? '<div class="profile-row"><span class="muted">Email on file</span><span>' + escapeHtml(p.buyerEmail) + '</span></div>' +
+        '<div class="profile-row"><span class="muted">Referral points</span><span>' + (p.points || 0) + ' — <a href="' + trackRoute + '#/refer">Refer a friend →</a></span></div>'
+      : '<p class="muted">No email on file, so we can\'t show referral points here — that needs an email to look up. ' +
+        '<a href="' + trackRoute + '#/refer">Add one via the referral page</a> to start earning points.</p>';
+    appEl.innerHTML = '<h1>My Profile</h1>' +
+      '<div class="card profile-card">' +
+      '<div class="profile-row"><span class="muted">Track</span><strong>' + escapeHtml(trackTitle) + '</strong></div>' +
+      '<div class="profile-row"><span class="muted">Access code</span><span>' +
+      (p.code ? '<code>' + escapeHtml(p.code) + '</code> <button class="btn-secondary btn-sm" type="button" data-act="copy-code" data-code="' + escapeHtml(p.code) + '">Copy code</button>' : '—') +
+      '</span></div>' +
+      '<div class="profile-row"><span class="muted">Member since</span><span>' + memberSince + '</span></div>' +
+      '<div class="profile-row"><span class="muted">Purchase</span><span>' + purchaseLine + '</span></div>' +
+      '</div>' +
+      '<div class="card profile-card">' + emailSection + '</div>' +
+      '<a class="btn-secondary hub-cta" href="' + trackRoute + '#/progress">View full progress →</a> ' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="log-out">Log out</button>';
+  }).catch(function (e) {
+    appEl.innerHTML = '<h1>My Profile</h1>' + examErrorHtml(e, 'Could not load your profile. Try again shortly.') +
       '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>';
   });
 }
@@ -3091,6 +3132,7 @@ function route() {
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
+  if (hashView === 'profile') { renderProfile(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else {
     var track = activeTrackForPath(location.pathname);
