@@ -346,6 +346,20 @@ var HUB_EXAMS = [
     breakdown: [['Basic Control, Lane Position & SEE Strategy', '24%'], ['Collision Avoidance, Hazards & Mechanical Problems', '22%'], ['License Requirements & Preparing to Ride', '28%'], ['Alcohol, DUI & Insurance Law', '26%']],
   },
   {
+    examType: 'tx_driver', shortName: 'Texas Driver', stateCode: 'TX',
+    title: 'Texas Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/tx_driver',
+    duration: 'Untimed', questions: '30 Multiple Choice', passScore: '21/30 Correct (70%)',
+    description: 'Practice questions covering the Texas Driver Handbook: licensing and application steps, right-of-way and vehicle equipment rules, traffic signs and signals, and alcohol/drug and crash-safety laws.',
+    breakdown: [['Licensing, Application & Restrictions', '30%'], ['Vehicle Equipment & Right-of-Way Rules', '20%'], ['Traffic Signs, Signals & Special Situations', '26%'], ['Alcohol, Crashes & Pedestrian/Bicycle Safety', '24%']],
+  },
+  {
+    examType: 'tx_cdl', shortName: 'Texas CDL', stateCode: 'TX',
+    title: 'Texas CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/tx_cdl',
+    duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Texas Commercial Motor Vehicle Driver Handbook: general knowledge, air brakes, combination vehicles, and endorsement topics for Class A/B commercial permits.',
+    breakdown: [['Licensing & Vehicle Control Fundamentals', '27%'], ['Air Brakes & Combination Vehicles', '12%'], ['Cargo, Passenger, HazMat & Specialty Vehicles', '36%'], ['Adverse Conditions & Skills/Inspection Testing', '25%']],
+  },
+  {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
@@ -364,7 +378,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -441,6 +455,33 @@ var TRACK_COMPLIANCE = {
       'riding-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DMV M1/M2 written knowledge test, skills test, or any required California Motorcyclist Safety Program (CMSP) training course.',
     passScoreNote: 'the same threshold as the real DMV M1/M2 test — 20 of 25 correct',
+  },
+  tx_driver: {
+    orgLine: 'the Texas Department of Public Safety (DPS)',
+    footerRequirement: "do not fulfill the Texas driver education course requirement (mandatory for first-time applicants under 25) or any behind-the-wheel training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Texas driver education ' +
+      'course requirement — mandatory for first-time applicants under 25 (teens 14-17 complete the Graduated Driver License program; ' +
+      'adults 18-24 complete a 6-hour adult driver education course) — and does not issue any official course-completion certificate ' +
+      '— our content is a supplementary study aid only. Completing practice exams here also does not register you for, or schedule, ' +
+      'the official DPS written knowledge test; official testing must be scheduled directly through the Texas Department of Public ' +
+      'Safety, and driver education must be completed through a TDLR-approved provider. While we strive to align our content with the ' +
+      'current Texas Driver Handbook, it is provided "as-is" for self-study and does not constitute legal or driving-instruction ' +
+      'advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DPS written knowledge test or any required Texas driver education course.',
+    passScoreNote: 'the same threshold as the real DPS test — 21 of 30 correct',
+  },
+  tx_cdl: {
+    orgLine: 'the Texas Department of Public Safety (DPS) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Texas CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Texas CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DPS CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Texas Department of Public Safety, and ELDT must be completed through an FMCSA-registered ' +
+      'training provider. While we strive to align our content with the current Texas Commercial Motor Vehicle Driver Handbook, it is ' +
+      'provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DPS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold as the real DPS CDL General Knowledge test — 40 of 50 correct',
   },
 };
 function trackCompliance(examType) {
@@ -876,6 +917,16 @@ var RESOURCES = {
   ca_motorcycle: [
     { title: 'Official California Motorcycle Handbook', type: 'pdf', url: 'https://www.dmv.ca.gov/portal/file/motorcycle-driver-handbook-pdf/',
       desc: 'The official handbook published by the California DMV (DL 665) — the authoritative source the M1/M2 written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  tx_driver: [
+    { title: 'Official Texas Driver Handbook', type: 'pdf', url: 'https://www.dps.texas.gov/internetforms/forms/dl-7.pdf',
+      desc: 'The official handbook published by the Texas Department of Public Safety (DL-7) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  tx_cdl: [
+    { title: 'Official Texas Commercial Motor Vehicle Driver\'s Handbook', type: 'pdf', url: 'https://www.dps.texas.gov/internetforms/Forms/DL-7C.pdf',
+      desc: 'The official handbook published by the Texas Department of Public Safety (DL-7C) — the authoritative source the CDL knowledge and endorsement tests are based on.',
       topic: 'General Reference', free: true },
   ],
 };

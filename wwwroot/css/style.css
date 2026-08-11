@@ -607,6 +607,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    HUB_EXAMS's breakdown arrays (app.js). Add a new .pct-N here if a future breakdown value isn't
    already covered. */
 .pct-10 { width: 10%; }
+.pct-12 { width: 12%; }
 .pct-15 { width: 15%; }
 .pct-16 { width: 16%; }
 .pct-17 { width: 17%; }
@@ -624,6 +625,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .pct-33 { width: 33%; }
 .pct-34 { width: 34%; }
 .pct-35 { width: 35%; }
+.pct-36 { width: 36%; }
 .pct-40 { width: 40%; }
 .exam-track-footer {
   padding: 0.85rem 1.1rem; border-top: 1px solid var(--border);
