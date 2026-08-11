@@ -480,6 +480,27 @@ var HUB_EXAMS = [
     breakdown: [['Licensing Requirements & Disclosures', '15%'], ['Agency Relationships & Brokerage Practices', '18%'], ['Managing Broker Supervisory Duties, Financing & Calculations', '39%'], ['Disciplinary Provisions, Escrow & Additional IL Laws', '28%']],
   },
   {
+    examType: 'pa_driver', shortName: 'Pennsylvania Driver', stateCode: 'PA', examKind: 'Driver',
+    title: 'Pennsylvania Driver\'s License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/pa_driver',
+    duration: 'Untimed', questions: '18 Multiple Choice', passScore: '15/18 Correct (83.3%)',
+    description: 'Practice questions covering the Pennsylvania Driver\'s Manual (PennDOT, PUB 95): licensing and permit basics, traffic signals/signs/pavement markings, everyday driving skills, special circumstances and emergencies, driving record and DUI law, and related safety laws for the non-commercial written knowledge test.',
+    breakdown: [['Introduction, Learner\'s Permit & Driving Record', '20%'], ['Signals, Signs & Pavement Markings', '20%'], ['Everyday Driving Skills', '28%'], ['Special Circumstances, Emergencies & Related Laws', '32%']],
+  },
+  {
+    examType: 'pa_cdl', shortName: 'Pennsylvania CDL', stateCode: 'PA', examKind: 'Commercial Driver (CDL)',
+    title: 'Pennsylvania CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/pa_cdl',
+    duration: 'Untimed', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Pennsylvania Commercial Driver\'s Manual (PennDOT, PUB223): general knowledge, cargo and passenger safety, vehicle control and hazard awareness, adverse conditions and emergencies, air brakes and combination vehicles, hazardous materials, and skills/road testing for Class A/B/C commercial permits.',
+    breakdown: [['General Knowledge, Cargo & Passenger Safety', '16%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '36%'], ['Hazardous Materials & Adverse Conditions/Emergencies', '32%'], ['Skills & Road Testing', '16%']],
+  },
+  {
+    examType: 'pa_real_estate', shortName: 'Pennsylvania Real Estate', stateCode: 'PA', examKind: 'Real Estate',
+    title: 'Pennsylvania Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/pa_real_estate',
+    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '75% (30/40 Correct)',
+    description: 'Practice questions covering 49 Pa. Code Chapter 35 (State Real Estate Commission regulations): the Real Estate Commission, licensure, agency and disclosure, regulations governing licensee activities, and miscellaneous topics — the state-specific portion of the Salesperson exam.',
+    breakdown: [['Real Estate Commission & Licensure', '33%'], ['Agency and Disclosure', '25%'], ['Regulations Governing the Activities of Licensees', '27%'], ['Miscellaneous', '15%']],
+  },
+  {
     examType: 'ca_dre', shortName: 'California DRE', stateCode: 'CA', examKind: 'Real Estate',
     title: 'California DRE Real Estate Salesperson', category: 'Real Estate Licensing', active: false, route: '#',
     duration: '3 Hours', questions: '150 Multiple Choice', passScore: '70%',
@@ -498,7 +519,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -710,6 +731,48 @@ var TRACK_COMPLIANCE = {
       '454), it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real IDFPR managing broker exam or the required managing-broker education hours.',
     passScoreNote: 'the same threshold as the real state-specific IDFPR exam — 75% or higher',
+  },
+  pa_driver: {
+    orgLine: 'the Pennsylvania Department of Transportation (PennDOT)',
+    footerRequirement: "do not fulfill the driver training course requirement (approved by the PA Department of Education, needed to upgrade from a junior to a regular license before age 18) or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Pennsylvania driver ' +
+      'training course requirement — approved by the PA Department of Education, one of the conditions to upgrade from a junior ' +
+      'driver\'s license to a regular license before age 18 — and does not issue any official course-completion certificate — our ' +
+      'content is a supplementary study aid only. Completing practice exams here also does not register you for, or schedule, the ' +
+      'official PennDOT written knowledge test; official testing must be scheduled directly through the Pennsylvania Department of ' +
+      'Transportation, and driver training must be completed through an approved provider. While we strive to align our content with ' +
+      'the current Pennsylvania Driver\'s Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PennDOT written knowledge test or any required driver training course.',
+    passScoreNote: 'the same threshold as the real PennDOT test — 15 of 18 correct',
+  },
+  pa_cdl: {
+    orgLine: 'the Pennsylvania Department of Transportation (PennDOT) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Pennsylvania CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Pennsylvania CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official PennDOT CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Pennsylvania Department of Transportation, and ELDT must be completed through an ' +
+      'FMCSA-registered training provider. While we strive to align our content with the current Pennsylvania Commercial Driver\'s ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PennDOT CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  pa_real_estate: {
+    orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
+    footerRequirement: "do not fulfill the 240-hour pre-license education requirement or any Pennsylvania real estate salesperson training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 240-hour (16-credit) ' +
+      'real estate pre-license education requirement, and does not issue any official course-completion certificate — our content is ' +
+      'a supplementary study aid only, and covers only the state-specific portion of the exam, not the separate national/general ' +
+      'portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official ' +
+      'testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed ' +
+      'through a Commission-approved provider. While we strive to align our content with 49 Pa. Code Chapter 35 (State Real Estate ' +
+      'Commission regulations), it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 240-hour pre-license education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
   },
 };
 function trackCompliance(examType) {
@@ -1231,6 +1294,24 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'PSI Candidate Information Booklet', type: 'pdf', url: 'https://test-takers.psiexams.com/api/content/bulletin/4655',
       desc: 'The official exam scheduling and content-outline reference from PSI, the IDFPR-contracted exam vendor.',
+      topic: 'General Reference', free: true },
+  ],
+  pa_driver: [
+    { title: 'Pennsylvania Driver\'s Manual', type: 'pdf', url: 'https://www.pa.gov/content/dam/copapwp-pagov/en/penndot/documents/public/dvspubsforms/bdl/bdl-manuals/pa-drivers-manual-non-commercial/english/pub%2095.pdf',
+      desc: 'The official manual published by PennDOT (PUB 95) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  pa_cdl: [
+    { title: 'Pennsylvania Commercial Driver\'s Manual', type: 'pdf', url: 'https://www.pa.gov/content/dam/copapwp-pagov/en/penndot/documents/public/dvspubsforms/bdl/bdl-manuals/commercial-drivers-manual/pub223.pdf',
+      desc: 'The official manual published by PennDOT (PUB223) — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  pa_real_estate: [
+    { title: '49 Pa. Code Chapter 35 (State Real Estate Commission)', type: 'pdf', url: 'https://www.pacodeandbulletin.gov/secure/pacode/data/049/chapter35/049_0035.pdf',
+      desc: 'The official regulations published by the Pennsylvania Code and Bulletin — the authoritative source the state-specific portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'Pearson VUE Candidate Handbook', type: 'pdf', url: 'https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/093900.pdf',
+      desc: 'The official exam scheduling and content-outline reference from Pearson VUE, the Real Estate Commission\'s contracted exam vendor.',
       topic: 'General Reference', free: true },
   ],
 };
