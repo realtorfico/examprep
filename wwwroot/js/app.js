@@ -152,7 +152,8 @@ function renderSiteHeader() {
   var referHref = currentTrack ? (currentTrack.route + '#/refer') : '/#tracks';
   var navLinksHtml = '<a href="/#tracks">Exam tracks</a>' +
     '<a href="#/guarantee">Guarantee</a>' +
-    '<a href="' + referHref + '">Refer &amp; earn</a>';
+    '<a href="' + referHref + '">Refer &amp; earn</a>' +
+    '<a href="#/gift">Gift a track 🎁</a>';
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
     '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
   // Prominent, always-visible "which track am I logged into" indicator -- accountExamType
@@ -311,6 +312,7 @@ function renderSiteFooter() {
     '</ul></div>';
   var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
     '<li><a href="#/redeem">Redeem access code</a></li>' +
+    '<li><a href="#/gift">Gift a track</a></li>' +
     '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
     '<li><a href="' + referHref + '">Refer &amp; earn</a></li>' +
     '<li><a href="' + sampleHref + '">Free sample questions</a></li>' +
@@ -3210,13 +3212,18 @@ var buyPromoCode = null; // the code last confirmed valid by the server (or null
 var buyPromoDiscountCents = 0; // set from the server's response once a code is confirmed valid
 var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification link was already sent for, to avoid re-sending on repeat blur
 
-function renderBuy() {
+// giftIntent starts the gift checkbox pre-checked -- driven by the hash (#/buy-gift vs #/buy, see
+// renderTrackApp) rather than a module var, since the #/gift landing page's track links change the
+// URL's PATHNAME too (a real page load, not just a hash change on the same page -- this SPA has no
+// pushState-based interception of pathname links), so any in-memory flag would be wiped before
+// drawBuyForm ever ran. Reading it fresh off location.hash survives that reload naturally.
+function renderBuy(giftIntent) {
   var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
   Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
     buyPricing = p;
-    drawBuyForm(p);
+    drawBuyForm(p, giftIntent);
     // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
     // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
     // cached singleton) so this stays correct even if the surrounding code is ever reordered.
@@ -3230,7 +3237,7 @@ function renderBuy() {
   });
 }
 
-function drawBuyForm(pricing) {
+function drawBuyForm(pricing, giftIntent) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
   var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   buyPromoCode = null;
@@ -3263,11 +3270,23 @@ function drawBuyForm(pricing) {
     '</div>' +
     '<div class="buy-payment-col">' +
     '<div class="card">' +
-    '<label class="muted buy-email-label">Email Address (to send your instant access receipt & code)</label>' +
+    '<label class="muted buy-email-label">Your Email Address (to send your instant access receipt & code)</label>' +
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
+    '<label class="buy-gift-toggle"><input type="checkbox" id="buy-gift-checkbox"' + (giftIntent ? ' checked' : '') + '> 🎁 This is a gift</label>' +
+    '<div id="buy-gift-fields" class="buy-gift-fields"' + (giftIntent ? '' : ' hidden') + '>' +
+    '<label class="muted buy-email-label">Recipient\'s email (optional — we\'ll send them the code)</label>' +
+    '<input type="email" id="buy-gift-recipient-email" placeholder="friend@example.com">' +
+    '<label class="muted buy-email-label">Gift message (optional)</label>' +
+    '<textarea id="buy-gift-message" rows="2" maxlength="500" placeholder="Good luck on your exam!"></textarea>' +
+    '<p class="muted buy-gift-hint">Leave the recipient\'s email blank to just get a shareable code on the next screen instead.</p>' +
+    '</div>' +
     // CA Driver only -- the real DMV written test's question count/pass line depends on the
     // applicant's age (36Q/83.3% at 18+, 46Q/82.6% under 18 with a permit). Optional: skipping
     // it defaults to the 18+ format. Can also be changed per-sitting on the exam intro page later.
+    // Hidden in gift mode -- a gift's code is issued unredeemed (see issueGiftCode), so this
+    // choice would never actually reach the eventual redeemer/student; they can set their own
+    // format preference later via the exam intro page's picker instead.
+    '<div id="buy-age-category-wrap"' + (giftIntent ? ' hidden' : '') + '>' +
     (state.examType === 'ca_driver'
       ? '<label class="muted buy-email-label">Which written test format? (optional)</label>' +
         '<select id="buy-age-category">' +
@@ -3276,6 +3295,7 @@ function drawBuyForm(pricing) {
         '<option value="under18">Under 18 (permit) — 46 questions</option>' +
         '</select>'
       : '') +
+    '</div>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
     '<div id="points-result"></div>' +
     '<label class="muted buy-email-label buy-promo-label">Promo code (optional)</label>' +
@@ -3305,6 +3325,13 @@ function drawBuyForm(pricing) {
   // no code to type or Apply button to click for that case.
   var buyEmailEl = document.getElementById('buy-email');
   if (buyEmailEl) buyEmailEl.addEventListener('blur', function () { mountStripePaymentElement(); });
+  var giftCheckboxEl = document.getElementById('buy-gift-checkbox');
+  if (giftCheckboxEl) giftCheckboxEl.addEventListener('change', function () {
+    var fieldsEl = document.getElementById('buy-gift-fields');
+    if (fieldsEl) fieldsEl.hidden = !giftCheckboxEl.checked;
+    var ageCategoryWrapEl = document.getElementById('buy-age-category-wrap');
+    if (ageCategoryWrapEl) ageCategoryWrapEl.hidden = giftCheckboxEl.checked;
+  });
   if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
     var el = document.getElementById('stripe-payment-element');
     if (el) el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
@@ -3513,10 +3540,27 @@ async function submitStripePayment() {
   var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
   var ageCategoryEl = document.getElementById('buy-age-category');
   var ageCategory = ageCategoryEl && ageCategoryEl.value ? ageCategoryEl.value : undefined;
+  var giftCheckboxEl = document.getElementById('buy-gift-checkbox');
+  var isGift = !!(giftCheckboxEl && giftCheckboxEl.checked);
+  var recipientEmailEl = document.getElementById('buy-gift-recipient-email');
+  var recipientEmail = isGift && recipientEmailEl && recipientEmailEl.value.trim() ? recipientEmailEl.value.trim() : undefined;
+  var giftMessageEl = document.getElementById('buy-gift-message');
+  var giftMessage = isGift && giftMessageEl && giftMessageEl.value.trim() ? giftMessageEl.value.trim() : undefined;
   try {
     var res = await apiFetch('/stripe/confirm', {
-      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory },
+      method: 'POST', body: {
+        paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory,
+        isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage,
+      },
     });
+    if (res.isGift) {
+      // Deliberately does NOT call setToken/change state.examType/accountExamType or re-render
+      // the header/footer -- a gift purchase never logs the buyer in as the student, and if they
+      // were already logged into their OWN account, setToken(null) would corrupt that session
+      // (localStorage stringifies null to the literal text "null").
+      renderGiftPurchaseSuccess(res.code, recipientEmail);
+      return;
+    }
     setToken(res.token);
     // Set BEFORE re-rendering chrome -- currentTrackOrNull() reads accountExamType, so the header/
     // footer's Refer/sample links would still reflect the pre-purchase state for one render if this
@@ -3547,6 +3591,46 @@ function renderPurchaseSuccess(code, pointsApplied) {
     '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>' +
     '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees — ' +
     '<a href="#/refund">request one anytime →</a></p>';
+}
+
+function renderGiftPurchaseSuccess(code, recipientEmail) {
+  appEl.innerHTML =
+    '<h1>Gift purchased! 🎁</h1>' +
+    '<div class="card purchase-success-card">' +
+    '<p class="muted">' + (recipientEmail
+      ? 'We\'ve emailed this code to <strong>' + escapeHtml(recipientEmail) + '</strong> — here\'s a copy for your records:'
+      : 'Share this code with whoever you\'re gifting it to:') + '</p>' +
+    '<div class="purchase-code">' + code + '</div>' +
+    '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
+    '</div>' +
+    '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — ' +
+    'covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees.</p>' +
+    '<a class="btn-primary hub-cta" href="#/gift">Buy another gift →</a>';
+}
+
+// Global, track-agnostic entry point (same reasoning as #/redeem, #/refund) -- picking a track
+// here just deep-links into that track's own buy page in gift mode (#/buy-gift), reusing the
+// normal checkout flow wholesale rather than duplicating it.
+function renderGift() {
+  var tracks = HUB_EXAMS.filter(function (e) { return e.active; });
+  var cards = tracks.map(function (t) {
+    return '<a class="exam-track-card is-active" href="' + t.route + '#/buy-gift">' +
+      '<div class="exam-track-body">' +
+      '<div class="exam-track-top"><span class="badge">' + escapeHtml(t.category) + '</span></div>' +
+      '<h3>' + escapeHtml(t.shortName || t.title) + '</h3>' +
+      '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</div>' +
+      '</div><div class="exam-track-footer"><span class="exam-track-view-link">🎁 Gift this →</span></div>' +
+      '</a>';
+  }).join('');
+  appEl.innerHTML =
+    '<section class="refer-hero">' +
+    '<span class="badge refer-hero-badge">Gift a Track</span>' +
+    '<h1>Give the Gift of Passing 🎁</h1>' +
+    '<p>Buy full access to any track for someone else. They get their own code by email (or you get a ' +
+    'shareable one) — no account needed from you, and they redeem it whenever they\'re ready.</p>' +
+    '</section>' +
+    '<div class="exam-track-grid">' + cards + '</div>' +
+    (cards ? '' : '<p class="muted">No tracks available yet.</p>');
 }
 
 // ---- Refund requests (7-day unconditional + pass-or-N%-back) --------------
@@ -3925,7 +4009,8 @@ function setupMic() {
 async function renderTrackApp() {
   var view = (location.hash || '#/quiz').replace('#/', '');
   if (view === 'sample') { await renderSample(); return; }
-  if (view === 'buy') { renderBuy(); return; }
+  if (view === 'buy') { renderBuy(false); return; }
+  if (view === 'buy-gift') { renderBuy(true); return; }
   if (view === 'refer') { renderReferForm(); return; }
   // redeem/refund are now global routes (see route()) -- reachable regardless of pathname, so
   // they're handled there before this function is even called, not here.
@@ -3965,6 +4050,7 @@ function route() {
   // terms/guarantee/etc. above, so no chrome linking to them has to guess/default a track.
   if (hashView === 'redeem') { renderRedeem(); return; }
   if (hashView === 'refund') { renderRefundRequest(); return; }
+  if (hashView === 'gift') { renderGift(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else {
     var track = activeTrackForPath(location.pathname);
