@@ -1300,13 +1300,13 @@ function fillReadinessCard() {
   var wrap = document.getElementById('hub-readiness-wrap');
   if (!wrap) return;
   loadPublicStats().then(function (s) {
-    if (s.passRate == null && s.avgAccuracy == null && s.studentsServed == null) return; // nothing real to show
+    if (s.passRate == null && s.avgAccuracy == null && s.examsPassed == null) return; // nothing real to show
     var rows = [];
     // "Coverage" used to sit here, but it's a per-user average pulled down by everyone still
     // mid-study -- reads as a weakness rather than the strength it actually is. Students served
-    // is real, always-growing, and never looks bad out of context.
+    // was tried as a replacement but is still a very small, early-stage real number right now --
+    // just Accuracy + Mock exams passed until there's a bigger base to show it against.
     if (s.avgAccuracy != null) rows.push(['Accuracy', s.avgAccuracy + '%']);
-    if (s.studentsServed != null) rows.push(['Students served', s.studentsServed.toLocaleString()]);
     if (s.examsPassed != null) rows.push(['Mock exams passed', s.examsPassed.toLocaleString()]);
     var radial = radialProgressSvg(s.passRate != null ? s.passRate : 0, {
       size: 108, strokeWidth: 10, label: 'Ready', color: 'var(--highlight)',
