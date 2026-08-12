@@ -754,6 +754,13 @@ var HUB_EXAMS = [
     breakdown: [['Licensing, Applications, Examinations & Continuing Education', '36%'], ['Agency Relationships, Fiduciary Duties & Consumer Disclosures', '27%'], ['Advertising, Trust Accounts, Fees & the Recovery Fund', '19%'], ['Discipline, Commissions & Foreign Real Estate', '18%']],
   },
   {
+    examType: 'oh_boating', shortName: 'Ohio Boating', stateCode: 'OH', examKind: 'Boating',
+    title: 'Ohio Boater Education Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/oh_boating',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Ohio Boat Operators Guide (ODNR Division of Parks & Watercraft): registration, titling and required equipment, federal regulations and aids to navigation, navigation rules and lights, and Ohio operating laws, vessel accidents and state parks regulations -- modeled on the common format used by NASBLA/ODNR-approved boater education course providers.',
+    breakdown: [['Registration, Titling & Required Equipment', '30%'], ['Ohio Operating Laws, Vessel Accidents & State Parks Regulations', '29%'], ['Navigation Rules & Navigation Lights', '21%'], ['Federal Regulations & Aids to Navigation', '20%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -1084,6 +1091,22 @@ var TRACK_COMPLIANCE = {
       'Chapter 1301:5, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Ohio real estate exam or the required 100-hour pre-license education.',
     passScoreNote: 'the same threshold as the real state-specific portion — 28 of 40 correct',
+  },
+  oh_boating: {
+    orgLine: 'the Ohio Department of Natural Resources (ODNR), Division of Parks & Watercraft, or any of Ohio\'s NASBLA-approved boater education course providers',
+    footerRequirement: "do not fulfill Ohio's boater education course requirement (required for anyone born on or after January 1, 1982 operating a powered vessel over 10hp) or issue an Ohio Boater Education Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Ohio\'s boater education ' +
+      'requirement — a NASBLA-approved course, required for anyone born on or after January 1, 1982 who operates a boat or personal ' +
+      'watercraft powered by more than 10 horsepower — and does not issue any official course-completion certificate or Boater ' +
+      'Education Card. <strong>Ohio has no single official state-administered boating exam</strong> — the Division of Parks &amp; ' +
+      'Watercraft authorizes multiple independent course providers, each administering its own final test as ' +
+      'part of its own (paid) course; the 60-question, 80%-to-pass format used here models the common format found across several ' +
+      'NASBLA/ODNR-approved providers, not one official exam. Content is grounded in the ODNR\'s own official Ohio Boat Operators ' +
+      'Guide. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or ' +
+      'a guaranteed exam outcome — completing practice exams here does not register you for, or schedule, any provider\'s official ' +
+      'course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Ohio boater education provider\'s official course or exam, or issue an Ohio Boater Education Card.',
+    passScoreNote: 'the common format used across several NASBLA/ODNR-approved course providers — 48 of 60 correct (80%) — not one single official exam',
   },
 };
 function trackCompliance(examType) {
@@ -1835,6 +1858,11 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Ohio Administrative Code Chapter 1301:5 (Division of Real Estate)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-administrative-code/1301:5',
       desc: 'The official practice-conduct regulations — escrow/trust accounts, advertising, dual agency, continuing education — published by the Ohio Legislative Service Commission.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_boating: [
+    { title: 'Ohio Boat Operators Guide', type: 'pdf', url: 'https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/watercraft/OhioBoatOperatorsGuide.pdf',
+      desc: 'The official guide published by ODNR\'s Division of Parks & Watercraft — the authoritative source this practice content is grounded in.',
       topic: 'General Reference', free: true },
   ],
 };
