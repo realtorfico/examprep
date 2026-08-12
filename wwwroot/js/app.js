@@ -800,7 +800,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', OH: 'Ohio', GA: 'Georgia', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -1307,10 +1307,10 @@ function hubTrackCards(tracks, mode) {
       : '<span class="exam-track-price muted">—</span>';
     var body = '<div class="exam-track-body">' +
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + (isGift ? '' : statusBadge) + '</div>' +
-      '<h3>' + escapeHtml(exam.shortName || exam.title) + '</h3>' +
-      '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</div>' +
+      // shortName already leads with the state name (e.g. "Georgia Driver") -- a separate state
+      // line was pure redundancy, dropped in favor of pairing the title with price on one row.
+      '<div class="exam-track-title-row"><h3>' + escapeHtml(exam.shortName || exam.title) + '</h3>' + priceHtml + '</div>' +
       (exam.active ? '<div class="exam-track-resources muted">📚 ' + resourceInventorySummary(exam.examType).compact + '</div>' : '') +
-      priceHtml +
       '</div><div class="exam-track-footer">' +
       (exam.active ? '<span class="exam-track-view-link">' + (isGift ? '🎁 Gift this →' : 'View details →') + '</span>' : '<span class="muted exam-track-view-link">Coming soon</span>') +
       '</div>';

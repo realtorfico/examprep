@@ -978,7 +978,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .exam-track-card:not(.is-active):hover { opacity: 0.85; filter: grayscale(0.15); }
 .exam-track-body { padding: 0.75rem 0.85rem; flex: 1; }
 .exam-track-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
-.exam-track-body h3 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+.exam-track-title-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.exam-track-title-row h3 { font-size: 0.95rem; margin: 0; flex: 1; min-width: 0; }
 .status-badge {
   font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
   padding: 0.15rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted);
@@ -986,9 +987,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
-.exam-track-state { font-size: 0.78rem; margin-bottom: 0.35rem; }
 .exam-track-resources { font-size: 0.72rem; margin-bottom: 0.35rem; }
-.exam-track-price { font-size: 1.05rem; font-weight: 800; color: var(--accent); }
+.exam-track-price { font-size: 1.05rem; font-weight: 800; color: var(--accent); flex-shrink: 0; }
 .exam-track-view-link { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
 .exam-track-card:hover .exam-track-view-link { text-decoration: underline; }
 /* .exam-track-desc / .exam-specs / .breakdown-* / .pct-* below are no longer used by the hub
