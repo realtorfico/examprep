@@ -255,10 +255,22 @@ function loadSiteConfig() {
       if (c && Number.isFinite(c.refundFailurePercent)) refundFailurePercent = c.refundFailurePercent;
       if (c && Number.isFinite(c.accuracyPassPct)) progressAccuracyPassPct = c.accuracyPassPct;
       if (c && Number.isFinite(c.coveragePassPct)) progressCoveragePassPct = c.coveragePassPct;
+      if (c && Array.isArray(c.inactiveTracks)) applyInactiveTrackOverrides(c.inactiveTracks);
       return c;
     }).catch(function () { /* keep defaults */ });
   }
   return siteConfigPromise;
+}
+
+// Admin-settable "pull from sale" override (examprep-admin's Settings > Course pricing table),
+// applied on top of each track's own coded HUB_EXAMS.active default -- every existing .active
+// check (hub grid, header dropdown, loadOtherTracksPricing, etc.) picks this up automatically
+// since it mutates the shared HUB_EXAMS objects in place, once, at boot.
+function applyInactiveTrackOverrides(examTypes) {
+  examTypes.forEach(function (examType) {
+    var track = trackByExamType(examType);
+    if (track) track.active = false;
+  });
 }
 
 // Shared cached fetch -- the hub's readiness card and outcomes strip both need /stats/public on
@@ -4587,15 +4599,16 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   applyTheme(local.theme, local.fontScale);
   renderSiteHeader();
   renderSiteFooter();
-  loadSiteConfig().then(renderSiteFooter);
-  // Must know which track the token (if any) actually belongs to BEFORE #app's first render, or
-  // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment (accountExamType
-  // still null) on every fresh page load -- resolves near-instantly when there's no token. The
-  // header/footer sync calls above necessarily ran before this resolves too (with accountExamType
-  // still null, so currentTrackOrNull() fell back to state.examType's default) -- re-render both
-  // once the real value is in, so a logged-in visitor's Refer/sample links reflect their own
-  // track's account instead of whatever state.examType happened to default to.
-  loadAccountExamType().then(function () {
+  // Must know which track the token (if any) actually belongs to, AND have any admin
+  // track-deactivation override applied, BEFORE #app's first render -- otherwise
+  // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment
+  // (accountExamType still null), and route()/the hub grid could briefly show a track an admin
+  // just pulled from sale before disappearing on the next render. Both resolve near-instantly in
+  // the common case (no token, no override). The header/footer sync calls above necessarily ran
+  // before this resolves too (with accountExamType still null and no override applied yet) --
+  // re-render both once the real values are in, so a logged-in visitor's Refer/sample links
+  // reflect their own track's account instead of whatever state.examType happened to default to.
+  Promise.all([loadSiteConfig(), loadAccountExamType()]).then(function () {
     renderSiteHeader();
     renderSiteFooter();
     route();
