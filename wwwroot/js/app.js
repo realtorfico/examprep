@@ -733,6 +733,13 @@ var HUB_EXAMS = [
     breakdown: [['Basic Operation, Cornering & Braking', '39%'], ['Gear, Rider Readiness & Impairment', '23%'], ['Licensing, Testing & Ohio Law', '17%'], ['Street Strategies & Special Situations', '21%']],
   },
   {
+    examType: 'oh_real_estate', shortName: 'Ohio Real Estate', stateCode: 'OH', examKind: 'Real Estate',
+    title: 'Ohio Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/oh_real_estate',
+    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
+    description: 'Practice questions covering Ohio Revised Code Chapter 4735 (Real Estate Brokers) and Ohio Administrative Code Chapter 1301:5: licensing, applications, examinations and continuing education, advertising and trust accounts, discipline and foreign real estate, and agency relationships and consumer disclosures -- the state-specific portion of the PSI-administered Salesperson exam.',
+    breakdown: [['Licensing, Applications, Examinations & Continuing Education', '36%'], ['Agency Relationships, Fiduciary Duties & Consumer Disclosures', '27%'], ['Advertising, Trust Accounts, Fees & the Recovery Fund', '19%'], ['Discipline, Commissions & Foreign Real Estate', '18%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -1049,6 +1056,20 @@ var TRACK_COMPLIANCE = {
       'driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Ohio BMV written knowledge test, the skills test, or the Motorcycle Ohio Basic Rider Course.',
     passScoreNote: 'the same threshold as the real Ohio BMV test — 30 of 40 correct',
+  },
+  oh_real_estate: {
+    orgLine: 'the Ohio Division of Real Estate & Professional Licensing (Ohio Department of Commerce)',
+    footerRequirement: "do not fulfill the 100-hour pre-license education requirement (4 required courses, including 40 hours of Ohio Real Estate Law) or any Ohio real estate salesperson training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 100-hour pre-license ' +
+      'education requirement for an Ohio real estate salesperson license — 4 required courses, including 40 hours of Ohio Real Estate ' +
+      'Law — and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers ' +
+      'only the state-specific portion of the exam, not the separate national/general portion. Completing practice exams here also ' +
+      'does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the ' +
+      'Division of Real Estate & Professional Licensing, and pre-license education must be completed through a Division-approved ' +
+      'provider. While we strive to align our content with the current Ohio Revised Code Chapter 4735 and Ohio Administrative Code ' +
+      'Chapter 1301:5, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Ohio real estate exam or the required 100-hour pre-license education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 28 of 40 correct',
   },
 };
 function trackCompliance(examType) {
@@ -1792,6 +1813,14 @@ var RESOURCES = {
   oh_motorcycle: [
     { title: 'Ohio Motorcycle Operator Manual', type: 'pdf', url: 'https://motorcycle.ohio.gov/rider-safety-resources/motorcycle-operator-manual',
       desc: 'The official manual published by the Motorcycle Ohio program (Ohio Department of Public Safety) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_real_estate: [
+    { title: 'Ohio Revised Code Chapter 4735 (Real Estate Brokers)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-revised-code/chapter-4735',
+      desc: 'The official statute, published by the Ohio Legislative Service Commission — the authoritative source the state-specific portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'Ohio Administrative Code Chapter 1301:5 (Division of Real Estate)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-administrative-code/1301:5',
+      desc: 'The official practice-conduct regulations — escrow/trust accounts, advertising, dual agency, continuing education — published by the Ohio Legislative Service Commission.',
       topic: 'General Reference', free: true },
   ],
 };
