@@ -20,16 +20,18 @@
   /* Navy + gold identity. Light mode's tokens are close to a straight port of v0's OKLCH values
      (v0 was designed light-first and reads fine there -- dark is dark navy, which stays rich even
      at low chroma). Dark mode is NOT a straight port, deliberately: v0 never really designed for
-     it (its dark tokens are a mechanical lightness-flip, not independently tuned), and porting
-     them verbatim made the accent read as washed-out/flat -- v0's dark --primary is chroma 0.12,
-     roughly half the saturation of the indigo (#6366f1, ~0.23 chroma) it replaced. Dark mode's
-     accent/highlight/border below are intentionally boosted past v0's literal numbers to actually
-     read as vivid navy/gold against a dark background, not just "the light tokens, but darker". */
-  --bg: oklch(0.19 0.028 262);
-  --card: oklch(0.235 0.032 262);
-  --surface-2: oklch(0.29 0.03 262);
-  --accent: oklch(0.64 0.18 260);
-  --accent-hover: oklch(0.71 0.17 260);
+     it (its dark tokens are a mechanical lightness-flip, not independently tuned). Two rounds of
+     tuning past v0's literal numbers: round 1 boosted --accent chroma (v0's dark --primary was
+     chroma 0.12, about half the ~0.23 chroma of the indigo #6366f1 it replaced) but user feedback
+     said it still read as washed out, AND that bg/card/surface-2 felt flat (too-similar lightness
+     steps, chroma near-zero/gray). Round 2 below: --accent pushed close to the original indigo's
+     own L/C (0.585/0.233) instead of splitting the difference, and the bg->card->surface-2 ramp
+     widened its lightness steps and added real chroma at each level (was a near-gray ramp). */
+  --bg: oklch(0.14 0.025 262);
+  --card: oklch(0.21 0.035 262);
+  --surface-2: oklch(0.29 0.05 262);
+  --accent: oklch(0.6 0.22 262);
+  --accent-hover: oklch(0.67 0.2 262);
   /* Text placed ON TOP of an --accent background. Dark mode's navy is deliberately lighter (for
      contrast against the dark page bg), so white text on it would fail contrast -- needs dark
      text instead. Light mode's navy is dark, so white text is correct there. Mirrors v0's
@@ -41,7 +43,7 @@
   --incorrect: oklch(0.65 0.19 27);
   --voice-accent: #7c3aed;
   --highlight: oklch(0.8 0.16 75);
-  --border: oklch(0.98 0.01 250 / 20%);
+  --border: oklch(0.98 0.01 250 / 24%);
   --font-scale: 1;
   /* Radius scale -- one base, everything else derived. New components (Stage 2+) should reference
      these instead of hardcoding a border-radius; existing hardcoded values get migrated as each
