@@ -32,6 +32,11 @@ var QUIZ_AUTO_ADVANCE_DELAY_MS = 700; // long enough to register "Correct!" befo
 var examAutoAdvance = localStorage.getItem('examprep_exam_autoadvance') === '1';
 var examAutoRead = localStorage.getItem('examprep_exam_autoread') === '1';
 var examUnseenOnly = localStorage.getItem('examprep_exam_unseenonly') === '1'; // regular exam only -- biases question selection toward questions never seen in quiz or exam before
+// ca_driver only -- per-sitting override of the account's stored age-category default (real DMV
+// format differs by age; see getExamConfig). '' means "use my account default". Deliberately not
+// persisted to localStorage like the toggles above -- a one-off choice for this sitting, not a
+// standing preference.
+var examAgeCategoryOverride = '';
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
 var examDiscardConfirmPending = false; // in-page confirmation for "discard this attempt and start over?"
@@ -2667,10 +2672,12 @@ async function renderExam(mode) {
 
 async function renderExamIntro(mode) {
   mode = mode || 'standard';
+  examState.mode = mode; // so the age-category picker's change handler can re-render with the right mode
   var isToughest = mode === 'toughest45';
-  var config = await apiFetch('/exam/config');
+  var config = await apiFetch('/exam/config' + (examAgeCategoryOverride ? '?ageCategory=' + examAgeCategoryOverride : ''));
   examState.config = config;
   var compliance = trackCompliance(state.examType);
+  var isCaDriver = config.examType === 'ca_driver';
   var questionSourceLine = isToughest
     ? '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to ' + config.questionCount +
       ', but could be fewer if you currently have less than that missed (no filler questions)</li>'
@@ -2698,6 +2705,14 @@ async function renderExamIntro(mode) {
       '<label class="auto-advance-toggle">' +
       '<input type="checkbox" data-act="toggle-exam-unseen-only"' + (examUnseenOnly ? ' checked' : '') + '> ' +
       'Only questions I haven\'t seen before (exam may run shorter than ' + config.questionCount + ')</label>') +
+    (isCaDriver
+      ? '<label class="muted buy-email-label">Written test format for this attempt</label>' +
+        '<select data-act="change-exam-age-category">' +
+        '<option value=""' + (examAgeCategoryOverride === '' ? ' selected' : '') + '>Use my account default (18+ if none set)</option>' +
+        '<option value="18plus"' + (examAgeCategoryOverride === '18plus' ? ' selected' : '') + '>18 or older — 36 questions</option>' +
+        '<option value="under18"' + (examAgeCategoryOverride === 'under18' ? ' selected' : '') + '>Under 18 (permit) — 46 questions</option>' +
+        '</select>'
+      : '') +
     '<button class="btn-primary" type="button" data-act="exam-begin" data-mode="' + mode + '">Begin Exam →</button>' +
     '<a class="btn-secondary exam-history-link" href="' + examHistoryHash(mode) + '">View past attempts →</a>' +
     '</div>';
@@ -2749,7 +2764,7 @@ async function beginExam(mode) {
   var unseenOnly = mode === 'standard' && examUnseenOnly;
   appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Starting…</p>';
   try {
-    var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode, unseenOnly: unseenOnly } });
+    var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode, unseenOnly: unseenOnly, ageCategory: examAgeCategoryOverride || undefined } });
     enterExamSitting(attempt, mode);
   } catch (e) {
     // Toughest 45 has no backfill -- a user with nothing currently wrong gets 'no_questions' here,
@@ -3115,6 +3130,17 @@ function drawBuyForm(pricing) {
     '<div class="card">' +
     '<label class="muted buy-email-label">Email Address (to send your instant access receipt & code)</label>' +
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
+    // CA Driver only -- the real DMV written test's question count/pass line depends on the
+    // applicant's age (36Q/83.3% at 18+, 46Q/82.6% under 18 with a permit). Optional: skipping
+    // it defaults to the 18+ format. Can also be changed per-sitting on the exam intro page later.
+    (state.examType === 'ca_driver'
+      ? '<label class="muted buy-email-label">Which written test format? (optional)</label>' +
+        '<select id="buy-age-category">' +
+        '<option value="">Prefer not to say (defaults to 18+ format)</option>' +
+        '<option value="18plus">18 or older — 36 questions</option>' +
+        '<option value="under18">Under 18 (permit) — 46 questions</option>' +
+        '</select>'
+      : '') +
     '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
     '<div id="points-result"></div>' +
     '<label class="muted buy-email-label buy-promo-label">Promo code (optional)</label>' +
@@ -3350,9 +3376,11 @@ async function submitStripePayment() {
 
   var emailEl = document.getElementById('buy-email');
   var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
+  var ageCategoryEl = document.getElementById('buy-age-category');
+  var ageCategory = ageCategoryEl && ageCategoryEl.value ? ageCategoryEl.value : undefined;
   try {
     var res = await apiFetch('/stripe/confirm', {
-      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email },
+      method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory },
     });
     setToken(res.token);
     renderSiteHeader();
@@ -3990,6 +4018,9 @@ document.addEventListener('change', function (e) {
   if (e.target && e.target.name === 'claimType') {
     var failureFields = document.getElementById('refund-failure-fields');
     if (failureFields) failureFields.classList.toggle('shown', e.target.value === 'exam_failure_50pct');
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-exam-age-category') {
+    examAgeCategoryOverride = e.target.value;
+    renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
   }
 });
 
