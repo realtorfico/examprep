@@ -1140,7 +1140,14 @@ function renderHub() {
   Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var wrap = document.getElementById('home-promotions-wrap');
-    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true, false);
+    if (!wrap) return;
+    // The site header's promo ribbon (persistent across every page) already surfaces the first
+    // active promo in condensed form -- showing it again here as a full card would repeat the
+    // same message twice before any hero content. Only show promos beyond that one. Same
+    // dismissed-id filtering as fillPromoRibbon() so both agree on which promo is "first".
+    var dismissedIds = getDismissedPromoIds();
+    var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
+    wrap.innerHTML = promoBannersHtml(active.slice(1), true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
   fillOutcomesStrip();
   fillReadinessCard();
