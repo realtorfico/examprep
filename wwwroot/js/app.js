@@ -155,6 +155,16 @@ function renderSiteHeader() {
     '<a href="' + referHref + '">Refer &amp; earn</a>';
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
     '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
+  // Prominent, always-visible "which track am I logged into" indicator -- accountExamType
+  // specifically (the account's real track), NOT currentTrack above (whichever track's PAGE is
+  // being viewed, which could differ, e.g. a driver-track account browsing the notary track's
+  // sales page to compare). Was the missing piece behind the "why does this say California Notary"
+  // confusion earlier -- surfacing it in the header means a logged-in visitor never has to guess.
+  var accountTrack = loggedIn ? trackByExamType(accountExamType) : null;
+  var accountTrackBadge = accountTrack
+    ? '<a class="header-track-badge" href="' + accountTrack.route + '" title="Your active track">' +
+      '<span class="header-track-badge-icon">🎓</span><span class="header-track-badge-label">' + escapeHtml(accountTrack.shortName || accountTrack.title) + '</span></a>'
+    : '';
 
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
@@ -162,6 +172,7 @@ function renderSiteHeader() {
     '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
     '<div class="site-nav-cta">' + navCtaHtml + '</div>' +
+    accountTrackBadge +
     '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
     '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +

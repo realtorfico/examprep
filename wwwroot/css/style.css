@@ -198,11 +198,26 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
+/* Prominent "which track am I logged into" indicator (renderSiteHeader()) -- always visible, not
+   tucked into the profile dropdown, since guessing this wrong is exactly what caused the earlier
+   "why does this say California Notary" confusion. */
+.header-track-badge {
+  display: flex; align-items: center; gap: 0.35rem; white-space: nowrap;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px; padding: 0.3rem 0.7rem; font-size: 0.8rem; font-weight: 700;
+  color: var(--fg); text-decoration: none;
+}
+.header-track-badge:hover { border-color: var(--accent); }
 @media (max-width: 600px) {
   /* Icon-only theme toggle on phones -- saves header width where the logo and profile icon are
      already competing for space. 600px (not a tighter 480px) to also cover foldables/larger
      phones that report a wider CSS viewport than a typical phone. */
   .theme-toggle-label { display: none; }
+  /* Same idea for the track badge -- icon alone still communicates "you're logged in", the full
+     track name is available one tap away via the badge itself or the profile menu. */
+  .header-track-badge-label { display: none; }
+  .header-track-badge { padding: 0.3rem 0.5rem; }
   /* Drops the widest part of the logo (a full uppercase tagline) so logo + controls fit on one
      line -- icon/wordmark stay at full size. (A previous "always stack into 2 rows below 600px"
      rule lived here -- removed, since it unconditionally forced 2 lines regardless of whether
