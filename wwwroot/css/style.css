@@ -111,9 +111,20 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
-:root[data-theme="light"] body { background-image: none; }
+/* Light mode used to cancel the ambient glow entirely (flat white canvas) -- gave the whole page a
+   flatter, more templated feel than dark mode's version. Same idea, much lower opacity/chroma so
+   it reads as texture rather than muddying the white background. */
+:root[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse 900px 700px at 8% 0%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 60%),
+    radial-gradient(ellipse 800px 700px at 100% 25%, color-mix(in srgb, var(--highlight) 10%, transparent), transparent 60%);
+}
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) body { background-image: none; }
+  :root:not([data-theme="dark"]) body {
+    background-image:
+      radial-gradient(ellipse 900px 700px at 8% 0%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 60%),
+      radial-gradient(ellipse 800px 700px at 100% 25%, color-mix(in srgb, var(--highlight) 10%, transparent), transparent 60%);
+  }
 }
 
 /* Site-wide chrome: full-width bars, independent of the page-content card below */
@@ -713,7 +724,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 800px) {
   .hub-hero { grid-template-columns: 1.15fr 0.85fr; align-items: center; padding: 2rem 0; }
 }
-.hub-hero h1 { font-size: 1.9rem; max-width: 32rem; margin: 0; }
+.hub-hero h1 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3rem); max-width: 34rem; margin: 0; }
+.hub-hero-highlight { color: var(--highlight); }
 .hub-hero p { color: var(--muted); max-width: 34rem; margin: 0.75rem 0 0; font-size: 1rem; }
 .hub-trust-badges { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.5rem; margin-top: 1rem; }
 .hub-trust-badge {
@@ -729,15 +741,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    item, this is the card rendered inside it once real data loads. */
 #hub-readiness-wrap:empty { display: none; }
 .hub-readiness-card {
-  margin-top: 1.5rem; border: 1px solid var(--border);
+  margin-top: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--highlight);
   border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 34px -20px rgba(15, 23, 42, 0.45);
 }
 @media (min-width: 800px) { .hub-readiness-card { margin-top: 0; } }
 .hub-readiness-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0; }
 .hub-readiness-body { display: flex; align-items: center; gap: 1.5rem; margin-top: 0.85rem; }
 .hub-readiness-rows { display: flex; flex-direction: column; gap: 0.6rem; }
 .hub-readiness-row { display: flex; justify-content: space-between; gap: 1.5rem; font-size: 0.85rem; font-weight: 600; min-width: 11rem; }
-.hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0.5rem; }
+.hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--highlight); padding-bottom: 0.5rem; margin-top: 0.5rem; }
 /* Filters the tracks grid below by state/type. Horizontally scrollable pill bar -- on a narrow
    screen a pill like Texas/New York can be scrolled out of view, but the counts themselves are
    always correct (cross-aware against the other active filter), so this is a look, not a bug.
@@ -777,7 +790,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Embedded Quiz/Exam/Progress preview widget (trackLandingPreviewHtml() in app.js) -- client-side
    tab switch, blurred + overlaid, same visual language as the old routed locked-preview pages
    this replaced (kept the class names on the mockup/overlay pieces for that continuity). */
-.locked-preview-tabs-wrap { margin-top: 1rem; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; background: var(--card); }
+.locked-preview-tabs-wrap {
+  margin-top: 1rem; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; background: var(--card);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 32px -22px rgba(15, 23, 42, 0.4);
+}
 .locked-preview-tabs { display: flex; gap: 0.25rem; padding: 0.4rem; border-bottom: 1px solid var(--border); }
 .locked-preview-tabs button {
   flex: 1; background: transparent; color: var(--muted); border-radius: var(--radius-md);
@@ -813,8 +829,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .trust-strip-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-weight: 600; }
 .trust-strip-icon { font-size: 1.1rem; }
-.section-eyebrow { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin: 0; }
-.how-it-works-section { max-width: min(92vw, 1400px); margin: 0 auto; padding: 1.75rem 0; }
+.section-eyebrow { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--highlight); margin: 0; }
+/* Tinted panel (not flat white) so this section reads as its own block while scrolling down an
+   otherwise all-white page -- breaks up the monotony without a full-bleed background hack. */
+.how-it-works-section {
+  max-width: min(92vw, 1400px); margin: 1rem auto; padding: 1.75rem clamp(1rem, 4vw, 2.5rem);
+  background: var(--surface-2); border-radius: var(--radius-2xl);
+}
 .how-it-works-heading { text-align: left; margin-top: 0.4rem; }
 .how-it-works-grid {
   list-style: none; margin: 1.5rem 0 0; padding: 0;
@@ -822,10 +843,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 @media (min-width: 700px) { .how-it-works-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1000px) { .how-it-works-grid { grid-template-columns: repeat(4, 1fr); } }
-.how-it-works-card { border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem; }
+.how-it-works-card {
+  border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 28px -20px rgba(15, 23, 42, 0.4);
+}
 .how-it-works-icon {
-  width: 2.5rem; height: 2.5rem; border-radius: var(--radius-md); background: var(--surface-2);
-  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  width: 2.75rem; height: 2.75rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--highlight) 18%, var(--card));
+  display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
 }
 .how-it-works-step-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); margin: 0.85rem 0 0.15rem; }
 .how-it-works-card h3 { font-size: 1.02rem; margin: 0 0 0.4rem; }
@@ -866,7 +891,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .comparison-section, .outcomes-section { padding: 1.5rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
 .comparison-heading { text-align: center; font-size: 1.5rem; }
 .comparison-subheading { text-align: center; max-width: 34rem; margin: 0.5rem auto 1.25rem; }
-.comparison-table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+.comparison-table-scroll {
+  overflow-x: auto; border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 20px 40px -26px rgba(15, 23, 42, 0.45);
+}
 .comparison-table { width: 100%; min-width: 480px; border-collapse: collapse; background: var(--card); }
 .comparison-table th, .comparison-table td { padding: 0.65rem 0.85rem; text-align: center; border-bottom: 1px solid var(--border); }
 .comparison-table thead th { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
@@ -896,11 +924,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
   background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s, filter 0.15s;
   text-decoration: none; color: inherit;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
 }
 .exam-track-card.is-active {
   border-color: var(--accent); border-width: 2px;
   background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
 }
 .exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
 /* Upcoming (not yet active) tracks read as clearly secondary to the one you can actually use --
