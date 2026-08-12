@@ -980,13 +980,18 @@ var TRACK_COMPLIANCE = {
 function trackCompliance(examType) {
   return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.ca_notary;
 }
-// Resolves to whichever active track we're currently inside (state.examType, set by the router on
-// a track page) -- null when there's no current track in context (e.g. chrome rendered on the hub
-// itself). Callers must handle null explicitly, typically by sending the visitor to the tracks
-// picker (/#tracks) rather than falling back to any particular track -- no track gets default or
-// preferential treatment anywhere on the site.
+// Resolves to the track that's actually relevant right now. When logged in, that's the account's
+// OWN track (accountExamType, from /prefs) -- not state.examType, which only tracks whatever
+// route is currently being VIEWED and is untouched by navigating to the plain hub, so a logged-in
+// visitor browsing "/" would otherwise still read as whatever track state.examType last happened
+// to be (see the accountExamType comment near its declaration for the full "logged into A, viewing
+// B" bug class this mirrors). Falls back to state.examType when logged out (no account track to
+// prefer). Null when neither resolves to a real active track. Callers must handle null explicitly,
+// typically by sending the visitor to the tracks picker (/#tracks) rather than falling back to any
+// particular track -- no track gets default or preferential treatment anywhere on the site.
 function currentTrackOrNull() {
-  var current = trackByExamType(state.examType);
+  var examType = (getToken() && accountExamType) ? accountExamType : state.examType;
+  var current = trackByExamType(examType);
   return (current && current.active) ? current : null;
 }
 
@@ -3381,9 +3386,13 @@ async function submitStripePayment() {
       method: 'POST', body: { paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory },
     });
     setToken(res.token);
-    renderSiteHeader();
+    // Set BEFORE re-rendering chrome -- currentTrackOrNull() reads accountExamType, so the header/
+    // footer's Refer/sample links would still reflect the pre-purchase state for one render if this
+    // ran after.
     state.examType = res.examType;
     accountExamType = res.examType;
+    renderSiteHeader();
+    renderSiteFooter();
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
     renderPurchaseSuccess(res.code, res.pointsApplied);
@@ -3560,12 +3569,19 @@ async function renderReferForm() {
   var referrerInfo = loadReferrerInfo();
   appEl.innerHTML = '<h1>Refer friends, earn free access</h1><p class="muted">Loading…</p>';
 
+  // 'refer' is dispatched before renderTrackApp()'s isLoggedInForCurrentTrack() guard, so a
+  // logged-in visitor who somehow lands on a DIFFERENT track's #/refer path (stale bookmark,
+  // browser history, a link from before this fix) must still see their own account's track here,
+  // not whichever track's path they happened to land on -- same accountExamType-first rule as
+  // currentTrackOrNull(), which is what the links leading here now use going forward.
+  var referExamType = (getToken() && accountExamType) ? accountExamType : state.examType;
+
   // Live values from the admin's actual point-rule/price settings, so this copy never drifts
   // out of sync -- falls back to sane defaults if the fetch fails, rather than blocking the page.
   var rules = { referralVerifiedPoints: 25, referralConvertedPoints: 100 };
   var pricing = { priceCents: 499 };
   try {
-    var results = await Promise.all([apiFetch('/points/rules'), apiFetch('/pricing?examType=' + encodeURIComponent(state.examType))]);
+    var results = await Promise.all([apiFetch('/points/rules'), apiFetch('/pricing?examType=' + encodeURIComponent(referExamType))]);
     rules = results[0];
     pricing = results[1];
   } catch (e) { /* use the fallback defaults above */ }
@@ -3583,7 +3599,7 @@ async function renderReferForm() {
     '<div id="refer-promotions-wrap" class="promotions-wrap"></div>' +
     '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
-    '<strong>' + required + ' points</strong> to unlock the ' + escapeHtml((trackByExamType(state.examType) || {}).title || 'course') + ' completely free.</p>' +
+    '<strong>' + required + ' points</strong> to unlock the ' + escapeHtml((trackByExamType(referExamType) || {}).title || 'course') + ' completely free.</p>' +
     '<div class="refer-progress">' +
     '<div class="refer-progress-bar"><div class="refer-progress-fill"></div></div>' +
     '<div class="refer-progress-label muted">0 / ' + required + ' points — <a href="#/buy">check your real balance →</a></div>' +
@@ -3641,9 +3657,10 @@ function renderPointsRedeemVerify(token) {
   appEl.innerHTML = '<div class="narrow-page"><h1>Confirming…</h1><p class="muted">One moment.</p></div>';
   apiFetch('/points/redeem-verify?token=' + encodeURIComponent(token)).then(function (res) {
     setToken(res.token);
-    renderSiteHeader();
     state.examType = res.examType;
     accountExamType = res.examType;
+    renderSiteHeader();
+    renderSiteFooter();
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
     renderPurchaseSuccess(res.code);
@@ -3881,9 +3898,10 @@ document.addEventListener('submit', async function (e) {
     try {
       var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
       setToken(res.token);
-      renderSiteHeader();
       state.examType = res.examType;
       accountExamType = res.examType;
+      renderSiteHeader();
+      renderSiteFooter();
       var local = loadLocalPrefs();
       applyTheme(local.theme, local.fontScale);
       location.hash = '#/quiz';
@@ -4212,6 +4230,7 @@ document.addEventListener('click', async function (e) {
     clearToken();
     accountExamType = null;
     renderSiteHeader();
+    renderSiteFooter();
     location.hash = '';
     renderTrackApp();
   } else if (act === 'toggle-profile-menu') {
@@ -4449,8 +4468,16 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderSiteHeader();
   renderSiteFooter();
   loadSiteConfig().then(renderSiteFooter);
-  // Must know which track the token (if any) actually belongs to BEFORE the first render, or
+  // Must know which track the token (if any) actually belongs to BEFORE #app's first render, or
   // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment (accountExamType
-  // still null) on every fresh page load -- resolves near-instantly when there's no token.
-  loadAccountExamType().then(route);
+  // still null) on every fresh page load -- resolves near-instantly when there's no token. The
+  // header/footer sync calls above necessarily ran before this resolves too (with accountExamType
+  // still null, so currentTrackOrNull() fell back to state.examType's default) -- re-render both
+  // once the real value is in, so a logged-in visitor's Refer/sample links reflect their own
+  // track's account instead of whatever state.examType happened to default to.
+  loadAccountExamType().then(function () {
+    renderSiteHeader();
+    renderSiteFooter();
+    route();
+  });
 })();
