@@ -144,11 +144,16 @@ function renderSiteHeader() {
   // mobile drawer below the row on narrow screens. Kept separate from the existing font/theme/
   // profile controls (unchanged, still always visible) rather than merged into one cluster, so
   // adding these doesn't touch anything already working.
-  var anchorRoute = (currentOrFirstActiveTrack() || {}).route || '/';
+  // Refer is track-specific (points/pricing depend on which course you're unlocking) -- deep-links
+  // into the current track if there is one, otherwise sends to the tracks picker rather than
+  // guessing. Redeem needs no track at all (global route, see route()) -- the code you submit
+  // determines the track server-side, so this link never has to pick one.
+  var currentTrack = currentTrackOrNull();
+  var referHref = currentTrack ? (currentTrack.route + '#/refer') : '/#tracks';
   var navLinksHtml = '<a href="/#tracks">Exam tracks</a>' +
     '<a href="#/guarantee">Guarantee</a>' +
-    '<a href="' + anchorRoute + '#/refer">Refer &amp; earn</a>';
-  var navCtaHtml = '<a class="btn-secondary btn-sm" href="' + anchorRoute + '#/redeem">Redeem code</a>' +
+    '<a href="' + referHref + '">Refer &amp; earn</a>';
+  var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
     '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
 
   document.getElementById('site-header').innerHTML =
@@ -266,13 +271,15 @@ var HUB_FOOTER_REQUIREMENT = 'do not fulfill any state-mandated licensing, drive
 // Four-column footer (ported from v0's site-footer.tsx) -- link destinations are all real routes
 // (no v0 placeholder hrefs carried over): the Exams column samples a few real live tracks rather
 // than hardcoding specific slugs, so it stays correct as tracks are added; Product/Legal links use
-// currentOrFirstActiveTrack() for whichever track-scoped destination is relevant on the current page.
+// currentTrackOrNull() for whichever track-scoped destination is relevant on the current page,
+// falling back to the tracks picker (never a specific track) when there isn't one.
 function renderSiteFooter() {
   var pageTrack = activeTrackForPath(window.location.pathname);
   var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
-  var anchorTrack = currentOrFirstActiveTrack() || {};
-  var anchorRoute = anchorTrack.route || '/';
+  var currentTrack = currentTrackOrNull();
+  var referHref = currentTrack ? (currentTrack.route + '#/refer') : '/#tracks';
+  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : '/#tracks';
   var sampleTracks = HUB_EXAMS.filter(function (e) { return e.active; }).slice(0, 3);
 
   var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
@@ -280,15 +287,15 @@ function renderSiteFooter() {
     sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
     '</ul></div>';
   var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
-    '<li><a href="' + anchorRoute + '#/redeem">Redeem access code</a></li>' +
+    '<li><a href="#/redeem">Redeem access code</a></li>' +
     '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
-    '<li><a href="' + anchorRoute + '#/refer">Refer &amp; earn</a></li>' +
-    '<li><a href="' + anchorRoute + '#/sample">Free sample questions</a></li>' +
+    '<li><a href="' + referHref + '">Refer &amp; earn</a></li>' +
+    '<li><a href="' + sampleHref + '">Free sample questions</a></li>' +
     '</ul></div>';
   var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
-    '<li><a href="' + anchorRoute + '#/refund">Refund request</a></li>' +
+    '<li><a href="#/refund">Refund request</a></li>' +
     '<li><a href="#/contact">Contact us</a></li>' +
     '</ul></div>';
 
@@ -456,7 +463,6 @@ function renderGuarantee() {
   appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1><p class="muted">Loading…</p></div>';
   Promise.all([loadSiteConfig(), apiFetch('/stats/public').catch(function () { return null; })]).then(function (results) {
     var stats = results[1];
-    var refundRoute = (currentOrFirstActiveTrack() || {}).route || '/';
     var passRateNote = (stats && stats.passRate != null)
       ? '<div class="guarantee-stat-divider"></div><p class="guarantee-stat-label">Backed by real practice data</p>' +
         '<p class="muted guarantee-stat-note">' + stats.passRate + '% of practice mock exams taken on PassExamHQ end in a passing score.</p>'
@@ -473,7 +479,7 @@ function renderGuarantee() {
       'your mind early instead? A 7-day, no-questions-asked refund covers that too.</p>' +
       '<div class="guarantee-hero-cta">' +
       '<a class="btn-primary hub-hero-btn" href="/">Browse guaranteed tracks</a>' +
-      '<a class="btn-secondary hub-hero-btn" href="' + refundRoute + '#/refund">I need to file a claim</a>' +
+      '<a class="btn-secondary hub-hero-btn" href="#/refund">I need to file a claim</a>' +
       '</div>' +
       '</div>' +
       '<div class="guarantee-stat-card">' +
@@ -713,12 +719,6 @@ var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York
 // only an active track can ever be matched to a real page.
 function activeTrackForPath(pathname) {
   var matches = HUB_EXAMS.filter(function (e) { return e.active && e.route !== '#' && pathname.indexOf(e.route) === 0; });
-  return matches.length ? matches[0] : null;
-}
-// The single active track, used as a fallback wherever a track needs to be assumed before the
-// router has matched a specific one (e.g. the hub page's own footer/CTA links).
-function firstActiveTrack() {
-  var matches = HUB_EXAMS.filter(function (e) { return e.active; });
   return matches.length ? matches[0] : null;
 }
 // exam_type naming convention: {state}_{category}, e.g. tx_driver, fl_notary -- national
@@ -981,11 +981,13 @@ function trackCompliance(examType) {
   return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.ca_notary;
 }
 // Resolves to whichever active track we're currently inside (state.examType, set by the router on
-// a track page), or the single active track as a sensible fallback for chrome rendered on the hub
-// itself (e.g. the footer), where no specific track is in context yet.
-function currentOrFirstActiveTrack() {
+// a track page) -- null when there's no current track in context (e.g. chrome rendered on the hub
+// itself). Callers must handle null explicitly, typically by sending the visitor to the tracks
+// picker (/#tracks) rather than falling back to any particular track -- no track gets default or
+// preferential treatment anywhere on the site.
+function currentTrackOrNull() {
   var current = trackByExamType(state.examType);
-  return (current && current.active) ? current : firstActiveTrack();
+  return (current && current.active) ? current : null;
 }
 
 var HUB_TRACKS_COLLAPSED_COUNT = 4;
@@ -1105,7 +1107,6 @@ function fillHubPricing(tracks) {
 function renderHub() {
   var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
   var upcomingCount = HUB_EXAMS.length - activeCount;
-  var heroTrackRoute = (firstActiveTrack() || {}).route || '/';
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -1124,11 +1125,11 @@ function renderHub() {
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Try Free Sample</button>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
     '</div>' +
-    '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
+    '<p class="muted hub-hero-subtext">Already have a code? <a href="#/redeem">Enter it here</a></p>' +
     // Buying and referring are both track-specific flows -- unlike redeeming a code (whose outcome
-    // is determined by the code itself, not which track's page you land on), landing here on
-    // whichever track happens to be firstActiveTrack() would silently commit a visitor who hasn't
-    // picked a track yet to that one. Scroll to the picker instead, same as "Try Free Sample" above.
+    // is determined by the code itself, not which track's page you land on), assuming any one
+    // particular track here (before the visitor has picked one) would be a default/preference this
+    // site doesn't make. Scroll to the picker instead, same as "Try Free Sample" above.
     '<p class="muted hub-hero-subtext">No code yet? <a href="#" data-act="scroll-to-tracks">Buy instant access</a> or <a href="#" data-act="scroll-to-tracks">refer friends for free access</a></p>' +
     '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
@@ -1298,6 +1299,13 @@ function fillReadinessCard() {
 }
 
 function renderRedeem(error) {
+  // Redeem is a global route (reachable regardless of pathname, see route()), so unlike the
+  // form itself (track-agnostic by design), these "no code yet" links can't just assume whichever
+  // track's pathname they might historically have inherited -- deep-link into the current track if
+  // there is one, otherwise send to the tracks picker rather than guessing.
+  var currentTrack = currentTrackOrNull();
+  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : '/#tracks';
+  var buyHref = currentTrack ? (currentTrack.route + '#/buy') : '/#tracks';
   appEl.innerHTML =
     '<div class="redeem-page">' +
     '<div class="redeem-icon">🔐</div>' +
@@ -1308,8 +1316,8 @@ function renderRedeem(error) {
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Unlock</button>' +
     '</form>' +
-    '<p class="muted redeem-sample-hint">No code yet? <a href="#/sample">Try a free sample</a> or ' +
-    '<a href="#/buy">buy one instantly →</a></p>' +
+    '<p class="muted redeem-sample-hint">No code yet? <a href="' + sampleHref + '">Try a free sample</a> or ' +
+    '<a href="' + buyHref + '">buy one instantly →</a></p>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button>' +
     '</div>';
   renderTurnstileWidget();
@@ -3113,7 +3121,7 @@ function drawBuyForm(pricing) {
     '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
     '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
     '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
-    '<p class="muted buy-guarantee-footnote"><a href="' + (trackByExamType(state.examType) || {}).route + '#/refund">Refund request →</a></p>' +
+    '<p class="muted buy-guarantee-footnote"><a href="#/refund">Refund request →</a></p>' +
     '</div>' +
     '</div>' +
     '<div class="buy-payment-col">' +
@@ -3770,8 +3778,8 @@ async function renderTrackApp() {
   if (view === 'sample') { await renderSample(); return; }
   if (view === 'buy') { renderBuy(); return; }
   if (view === 'refer') { renderReferForm(); return; }
-  if (view === 'refund') { renderRefundRequest(); return; }
-  if (view === 'redeem') { renderRedeem(); return; }
+  // redeem/refund are now global routes (see route()) -- reachable regardless of pathname, so
+  // they're handled there before this function is even called, not here.
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view.indexOf('promo-verify/') === 0) { renderPromoVerify(view.slice('promo-verify/'.length)); return; }
@@ -3802,6 +3810,12 @@ function route() {
   if (hashView === 'contact') { renderContact(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
+  // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the
+  // server resolve which track it belongs to, so unlike refer/sample/buy (which really are
+  // track-specific) they don't need a track-scoped path at all. Global routes, same as
+  // terms/guarantee/etc. above, so no chrome linking to them has to guess/default a track.
+  if (hashView === 'redeem') { renderRedeem(); return; }
+  if (hashView === 'refund') { renderRefundRequest(); return; }
   if (location.pathname === '/' || location.pathname === '') renderHub();
   else {
     var track = activeTrackForPath(location.pathname);
