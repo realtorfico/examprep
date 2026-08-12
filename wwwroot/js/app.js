@@ -1241,14 +1241,17 @@ function guaranteeCtaBandHtml() {
 
 // ---- Home page: comparison table (Round 2 redesign decision) --------------
 // PassExamHQ's own checkmarks are all real, confirmed features (mic/voice answering,
-// difficulty-filtered practice, timed exam mode, per-topic progress, guarantee). DMV Genie's
-// checkmarks were verified against its current App Store/Play Store listings before this shipped
-// (Aug 2026) -- re-verify before reusing this table later, app feature sets drift over time.
-// "Free Practice Sites" is a generic category, not one named product, so its marks describe the
-// category rather than claim something about any specific site -- 'varies' where free sites
-// commonly differ rather than a flat yes/no.
+// difficulty-filtered practice, timed exam mode, per-topic progress, guarantee). The "Other Paid
+// Apps" column's checkmarks were verified against a real representative competitor's current App
+// Store/Play Store listings (Aug 2026) -- re-verify before reusing this table later, app feature
+// sets drift over time. The column is deliberately labeled generically rather than naming that
+// competitor: naming it would just hand a curious visitor a specific product to go research
+// instead of buying here, with no real upside to offset that. "Free Practice Sites" is likewise a
+// generic category, not one named product, so its marks describe the category rather than claim
+// something about any specific site -- 'varies' where free sites commonly differ rather than a
+// flat yes/no.
 var COMPARISON_FEATURES = [
-  // [feature, "Free Practice Sites", "DMV Genie", "PassExamHQ"]
+  // [feature, "Free Practice Sites", "Other Paid Apps", "PassExamHQ"]
   ['State-specific, 2026-current content', 'varies', true, true],
   ['Unlimited practice questions', true, true, true],
   ['Full timed mock exam simulator', 'varies', true, true],
@@ -1267,15 +1270,14 @@ function comparisonTableHtml() {
     '<h2 class="comparison-heading">A Better Way to Pass Your Exam</h2>' +
     '<p class="muted comparison-subheading">How PassExamHQ stacks up against typical DMV prep options.</p>' +
     '<div class="comparison-table-scroll"><table class="comparison-table">' +
-    '<thead><tr><th></th><th>Free Practice Sites</th><th>DMV Genie</th><th class="comparison-us-col">PassExamHQ</th></tr></thead>' +
+    '<thead><tr><th></th><th>Free Practice Sites</th><th>Other Paid Apps</th><th class="comparison-us-col">PassExamHQ</th></tr></thead>' +
     '<tbody>' +
     COMPARISON_FEATURES.map(function (f) {
       return '<tr><td class="comparison-feature">' + f[0] + '</td>' +
         comparisonCell(f[1]) + comparisonCell(f[2]) + comparisonCell(f[3], true) + '</tr>';
     }).join('') +
     '</tbody></table></div>' +
-    '<p class="comparison-footnote muted">Comparison based on publicly available information as of August 2026 — ' +
-    'PassExamHQ is not affiliated with or endorsed by DMV Genie.</p>' +
+    '<p class="comparison-footnote muted">Comparison based on publicly available information as of August 2026.</p>' +
     '</section>';
 }
 
