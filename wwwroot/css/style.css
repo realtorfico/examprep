@@ -706,23 +706,33 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .quiz-toggles-group { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
 
 /* Hub / exam-track landing page */
-.hub-hero { text-align: center; padding: 1.5rem 0 1rem; }
-.hub-hero h1 { font-size: 1.9rem; max-width: 42rem; margin: 0 auto; }
-.hub-hero p { color: var(--muted); max-width: 40rem; margin: 0.75rem auto 0; font-size: 1rem; }
-.hub-trust-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+/* Left-aligned two-column hero on desktop (copy | readiness card), matching v0's page.tsx --
+   stacks to one left-aligned column on mobile rather than centering (v0 never centers this hero
+   at any breakpoint). */
+.hub-hero { padding: 1.5rem 0 1rem; display: grid; gap: 1.75rem; }
+@media (min-width: 800px) {
+  .hub-hero { grid-template-columns: 1.15fr 0.85fr; align-items: center; padding: 2rem 0; }
+}
+.hub-hero h1 { font-size: 1.9rem; max-width: 32rem; margin: 0; }
+.hub-hero p { color: var(--muted); max-width: 34rem; margin: 0.75rem 0 0; font-size: 1rem; }
+.hub-trust-badges { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.5rem; margin-top: 1rem; }
 .hub-trust-badge {
   font-size: 0.78rem; font-weight: 600; color: var(--correct); background: color-mix(in srgb, var(--correct) 12%, transparent);
   padding: 0.3rem 0.7rem; border-radius: 999px;
 }
-.hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.25rem; }
+.hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.75rem; margin-top: 1.25rem; }
 .hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
 /* "Community Readiness" hero card (fillReadinessCard() in app.js) -- real sitewide data, not the
-   fabricated per-visitor numbers v0's version shows. */
+   fabricated per-visitor numbers v0's version shows. Sits in the hero's 2nd grid column on desktop
+   (see .hub-hero above), stacks below the copy on mobile -- #hub-readiness-wrap is that grid/flow
+   item, this is the card rendered inside it once real data loads. */
+#hub-readiness-wrap:empty { display: none; }
 .hub-readiness-card {
-  display: inline-block; text-align: left; margin-top: 1.5rem; border: 1px solid var(--border);
+  margin-top: 1.5rem; border: 1px solid var(--border);
   border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem 1.5rem;
 }
+@media (min-width: 800px) { .hub-readiness-card { margin-top: 0; } }
 .hub-readiness-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0; }
 .hub-readiness-body { display: flex; align-items: center; gap: 1.5rem; margin-top: 0.85rem; }
 .hub-readiness-rows { display: flex; flex-direction: column; gap: 0.6rem; }

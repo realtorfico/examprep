@@ -1105,6 +1105,7 @@ function renderHub() {
     renderNewsBanner() +
     '<div id="home-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="hub-hero">' +
+    '<div class="hub-hero-copy">' +
     '<h1>Pass Your Licensing Exams on the First Try</h1>' +
     '<p>Practice question sets modeled after official state and national licensing standards, with ' +
     'voice-enabled practice and instant online access.</p>' +
@@ -1119,6 +1120,7 @@ function renderHub() {
     '</div>' +
     '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
     '<p class="muted hub-hero-subtext">No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
+    '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
     trustStripHtml() +
