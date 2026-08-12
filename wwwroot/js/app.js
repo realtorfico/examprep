@@ -712,6 +712,27 @@ var HUB_EXAMS = [
     breakdown: [['Property Ownership & Land Use Controls', '15%'], ['Agency & Fiduciary Duties', '17%'], ['Valuation, Financing & Transfer of Property', '31%'], ['Practice of Real Estate, Disclosures & Contracts', '37%']],
   },
   {
+    examType: 'oh_driver', shortName: 'Ohio Driver', stateCode: 'OH', examKind: 'Driver',
+    title: 'Ohio Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/oh_driver',
+    duration: 'Untimed', questions: '40 Multiple Choice', passScore: '30/40 Correct (75%)',
+    description: 'Practice questions covering the Ohio Driver Manual (BMV): licensing process and requirements, rules of the road and driving maneuvers, sharing the road and emergency preparedness, and vehicle safety, impairment and penalties for the Class D written knowledge test.',
+    breakdown: [['Licensing Process & Requirements', '30%'], ['Rules of the Road & Driving Maneuvers', '28%'], ['Sharing the Road & Emergency Preparedness', '21%'], ['Vehicle Safety, Impairment & Penalties', '21%']],
+  },
+  {
+    examType: 'oh_cdl', shortName: 'Ohio CDL', stateCode: 'OH', examKind: 'Commercial Driver (CDL)',
+    title: 'Ohio CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/oh_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Ohio CDL Manual (BMV, AAMVA content): CDL licensing and regulations, vehicle inspection and cargo/passenger safety, vehicle control, air brakes and combination vehicles, hazardous materials and hazard conditions/emergencies, and school bus endorsement content.',
+    breakdown: [['CDL Licensing, Vehicle Inspection & Cargo/Passenger Safety', '29%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '35%'], ['Hazardous Materials & Hazard Conditions/Emergencies', '25%'], ['School Bus', '11%']],
+  },
+  {
+    examType: 'oh_motorcycle', shortName: 'Ohio Motorcycle', stateCode: 'OH', examKind: 'Motorcycle',
+    title: 'Ohio Motorcycle Written Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/oh_motorcycle',
+    duration: 'Untimed', questions: '40 Multiple Choice', passScore: '30/40 Correct (75%)',
+    description: 'Practice questions covering the Ohio Motorcycle Operator Manual: basic operation, cornering and braking, gear, rider readiness and impairment, licensing, testing and Ohio law, and street strategies for special situations for the motorcycle written knowledge test.',
+    breakdown: [['Basic Operation, Cornering & Braking', '39%'], ['Gear, Rider Readiness & Impairment', '23%'], ['Licensing, Testing & Ohio Law', '17%'], ['Street Strategies & Special Situations', '21%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -986,6 +1007,48 @@ var TRACK_COMPLIANCE = {
       'constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DRE Salesperson exam or the required pre-license education courses.',
     passScoreNote: 'the same threshold as the real DRE exam — 105 of 150 correct',
+  },
+  oh_driver: {
+    orgLine: 'the Ohio Bureau of Motor Vehicles (BMV)',
+    footerRequirement: "do not fulfill the BMV-approved driver education course requirement (24 hours classroom instruction plus 8 hours behind-the-wheel training, required for first-time applicants under 21) or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the BMV-approved driver ' +
+      'education course requirement — 24 hours of classroom or online instruction plus 8 hours of behind-the-wheel training, required ' +
+      'for first-time applicants under 21 — and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Completing practice exams here also does not register you for, or schedule, the official BMV ' +
+      'written knowledge test; official testing must be scheduled directly through the Ohio Bureau of Motor Vehicles, and driver ' +
+      'education must be completed through a BMV-approved provider. While we strive to align our content with the current Ohio Driver ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Ohio BMV written knowledge test or any required driver education course.',
+    passScoreNote: 'the same threshold as the real Ohio BMV test — 30 of 40 correct',
+  },
+  oh_cdl: {
+    orgLine: 'the Ohio Bureau of Motor Vehicles (BMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Ohio CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Ohio CDL/endorsement training requirement, and does not issue any official course-completion ' +
+      'certificate — our content is a supplementary study aid only. Completing practice exams here also does not register you for, or ' +
+      'schedule, the official BMV CDL knowledge test, skills test, or road test; official testing must be scheduled directly through ' +
+      'the Ohio Bureau of Motor Vehicles, and ELDT must be completed through an FMCSA-registered training provider. While we strive to ' +
+      'align our content with the current Ohio CDL Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Ohio BMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  oh_motorcycle: {
+    orgLine: 'the Ohio Bureau of Motor Vehicles (BMV) or the Motorcycle Ohio program (Ohio Department of Public Safety)',
+    footerRequirement: "do not fulfill the Motorcycle Ohio Basic Rider Course requirement (mandatory for riders under 18, and the common way adult riders waive the skills test) or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Motorcycle Ohio Basic ' +
+      'Rider Course requirement — mandatory for riders under 18, and the common way adult riders waive the BMV skills test — and does ' +
+      'not issue any official course-completion certificate — our content is a supplementary study aid only. Completing the Basic ' +
+      'Rider Course only waives the skills test, not the 40-question BMV written knowledge test, which every applicant must still pass. ' +
+      'Completing practice exams here also does not register you for, or schedule, the official BMV written knowledge test or the ' +
+      'Motorcycle Ohio course; official testing is administered by the Ohio Bureau of Motor Vehicles, and rider training is ' +
+      'administered by the Motorcycle Ohio program (Ohio Department of Public Safety). While we strive to align our content with the ' +
+      'current Ohio Motorcycle Operator Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Ohio BMV written knowledge test, the skills test, or the Motorcycle Ohio Basic Rider Course.',
+    passScoreNote: 'the same threshold as the real Ohio BMV test — 30 of 40 correct',
   },
 };
 function trackCompliance(examType) {
@@ -1714,6 +1777,21 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'DRE Examination Description (RE 425)', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/forms/re425.pdf',
       desc: 'DRE\'s own official exam content outline — the 7 major subject areas and their exam-weight percentages.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_driver: [
+    { title: 'Ohio Digest of Motor Vehicle Laws (Driver Manual)', type: 'pdf', url: 'https://publicsafety.ohio.gov/links/hsy7607.pdf',
+      desc: 'The official manual published by the Ohio Department of Public Safety (HSY 7607) — the authoritative source the BMV written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_cdl: [
+    { title: 'Ohio Commercial Driver License Manual', type: 'pdf', url: 'https://www.publicsafety.ohio.gov/links/hsy7605.pdf',
+      desc: 'The official manual published by the Ohio Department of Public Safety (HSY 7605) — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_motorcycle: [
+    { title: 'Ohio Motorcycle Operator Manual', type: 'pdf', url: 'https://motorcycle.ohio.gov/rider-safety-resources/motorcycle-operator-manual',
+      desc: 'The official manual published by the Motorcycle Ohio program (Ohio Department of Public Safety) — the authoritative source the written knowledge test is based on.',
       topic: 'General Reference', free: true },
   ],
 };
