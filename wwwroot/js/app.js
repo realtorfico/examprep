@@ -2675,19 +2675,23 @@ async function renderExamIntro(mode) {
     ? '<li>Built <strong>entirely from questions you\'ve gotten wrong before</strong> -- up to ' + config.questionCount +
       ', but could be fewer if you currently have less than that missed (no filler questions)</li>'
     : '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>';
+  var isUntimed = !config.durationSec;
   appEl.innerHTML = renderTabs(examTabKey(mode)) +
-    '<h1>' + (isToughest ? 'Toughest 45' : 'Timed Practice Exam') + '</h1>' +
-    (isToughest ? '<p class="muted page-intro-text">Same timed format as the practice exam, but every question is one you\'ve missed before -- a focused drill on your actual weak spots.</p>' : '') +
+    '<h1>' + (isToughest ? 'Toughest 45' : (isUntimed ? 'Practice Exam' : 'Timed Practice Exam')) + '</h1>' +
+    (isToughest ? '<p class="muted page-intro-text">Same format as the practice exam, but every question is one you\'ve missed before -- a focused drill on your actual weak spots.</p>' : '') +
     '<div class="card mockexam-intro-card">' +
     '<p>This mimics the real exam format as closely as possible:</p>' +
     '<ul class="mockexam-intro-list">' +
     questionSourceLine +
-    '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>' +
+    (isUntimed
+      ? '<li><strong>No time limit</strong>, matching the real test — take as long as you need</li>'
+      : '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>') +
     '<li>No answer feedback until you finish — just like the real thing</li>' +
     '<li>Need <strong>' + config.passPercent + '%</strong> to pass (' + compliance.passScoreNote + ')</li>' +
     '</ul>' +
-    '<p class="muted">Once started, the clock keeps running even if you close this tab — reopening it will resume ' +
-    'right where you left off, not restart. There\'s no pausing.</p>' +
+    '<p class="muted">' + (isUntimed
+      ? 'This stays open even if you close this tab — reopening it will resume right where you left off, not restart. There\'s no pausing.'
+      : 'Once started, the clock keeps running even if you close this tab — reopening it will resume right where you left off, not restart. There\'s no pausing.') + '</p>' +
     '<p class="exam-disclaimer-callout">This is an independent practice tool, not the official state exam. Completing it does not ' +
     compliance.examIntroDisclaimer + '</p>' +
     (isToughest ? '' :
@@ -2787,6 +2791,7 @@ function formatClock(seconds) {
 
 function startExamTimer() {
   if (examState.timerHandle) clearInterval(examState.timerHandle);
+  if (!examState.attempt.durationSec) return; // untimed track -- no countdown, nothing to auto-submit
   examState.timerHandle = setInterval(function () {
     var el = document.getElementById('exam-timer-display');
     if (!el) { clearInterval(examState.timerHandle); examState.timerHandle = null; return; } // navigated away
@@ -2855,7 +2860,7 @@ function drawExamSitting() {
     '<div class="mockexam-header">' +
     '<div>Question ' + (examState.currentIndex + 1) + ' of ' + attempt.questions.length +
     ' — <span class="muted">' + answeredCount + ' answered</span></div>' +
-    '<div class="mockexam-timer" id="exam-timer-display">' + formatClock(examSecondsRemaining()) + '</div>' +
+    '<div class="mockexam-timer" id="exam-timer-display">' + (attempt.durationSec ? formatClock(examSecondsRemaining()) : 'No time limit') + '</div>' +
     '<label class="auto-advance-toggle">' +
     '<input type="checkbox" data-act="toggle-exam-autoadvance"' + (examAutoAdvance ? ' checked' : '') + '> ' +
     'Auto-advance after I answer</label>' +
