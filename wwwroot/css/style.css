@@ -717,6 +717,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 1.25rem; }
 .hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
+/* "Community Readiness" hero card (fillReadinessCard() in app.js) -- real sitewide data, not the
+   fabricated per-visitor numbers v0's version shows. */
+.hub-readiness-card {
+  display: inline-block; text-align: left; margin-top: 1.5rem; border: 1px solid var(--border);
+  border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem 1.5rem;
+}
+.hub-readiness-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0; }
+.hub-readiness-body { display: flex; align-items: center; gap: 1.5rem; margin-top: 0.85rem; }
+.hub-readiness-rows { display: flex; flex-direction: column; gap: 0.6rem; }
+.hub-readiness-row { display: flex; justify-content: space-between; gap: 1.5rem; font-size: 0.85rem; font-weight: 600; min-width: 11rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0.5rem; }
 /* Filters the tracks grid below by state/type. Horizontally scrollable pill bar -- on a narrow
    screen a pill like Texas/New York can be scrolled out of view, but the counts themselves are

@@ -240,6 +240,15 @@ function loadSiteConfig() {
   return siteConfigPromise;
 }
 
+// Shared cached fetch -- the hub's readiness card and outcomes strip both need /stats/public on
+// the same page load; this avoids firing it twice. Not persisted across page loads (a fresh
+// renderHub() gets a fresh var), just within one.
+var publicStatsPromise = null;
+function loadPublicStats() {
+  if (!publicStatsPromise) publicStatsPromise = apiFetch('/stats/public');
+  return publicStatsPromise;
+}
+
 // On a specific track's page, the footer's affiliation disclaimer names that track's real
 // agency/requirement (accurate and precise). On the hub itself (no track in the URL path) there's
 // no single track to name -- falling back to trackCompliance's default (ca_notary) would wrongly
@@ -1110,6 +1119,7 @@ function renderHub() {
     '</div>' +
     '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
     '<p class="muted hub-hero-subtext">No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
+    '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
     trustStripHtml() +
     howItWorksHtml() +
@@ -1131,6 +1141,7 @@ function renderHub() {
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
   fillOutcomesStrip();
+  fillReadinessCard();
   // The guarantee band renders synchronously with whatever refundFailurePercent already holds
   // (the pre-fetch default until some earlier page has loaded real config) -- patches itself once
   // the real value is in, rather than a second fetch just for this.
@@ -1249,7 +1260,7 @@ function outcomesStripHtml() {
 function fillOutcomesStrip() {
   var wrap = document.getElementById('outcomes-grid-wrap');
   if (!wrap) return;
-  apiFetch('/stats/public').then(function (s) {
+  loadPublicStats().then(function (s) {
     var radialHtml = (s.passRate != null)
       ? '<div class="outcome-tile">' + radialProgressSvg(s.passRate, { size: 108, strokeWidth: 10, color: 'var(--highlight)', label: 'Pass Rate' }) + '</div>'
       : '';
@@ -1269,6 +1280,33 @@ function fillOutcomesStrip() {
     var section = document.getElementById('outcomes-section');
     if (section) section.classList.add('hidden');
   });
+}
+
+// Hero "Community Readiness" card (ported from v0's page.tsx "Your readiness" card) -- v0's
+// version shows fabricated per-visitor numbers (91% ready, 82% accuracy...) on a page nobody's
+// logged into yet. This uses real /stats/public aggregates instead, labeled as community data
+// rather than "yours" -- see the redesign decision to never fabricate a value for a design
+// element. Shares the same fetch as fillOutcomesStrip() via loadPublicStats().
+function fillReadinessCard() {
+  var wrap = document.getElementById('hub-readiness-wrap');
+  if (!wrap) return;
+  loadPublicStats().then(function (s) {
+    if (s.passRate == null && s.avgAccuracy == null && s.avgCoverage == null) return; // nothing real to show
+    var rows = [];
+    if (s.avgAccuracy != null) rows.push(['Accuracy', s.avgAccuracy + '%']);
+    if (s.avgCoverage != null) rows.push(['Coverage', s.avgCoverage + '%']);
+    if (s.examsPassed != null) rows.push(['Mock exams passed', s.examsPassed.toLocaleString()]);
+    var radial = radialProgressSvg(s.passRate != null ? s.passRate : 0, {
+      size: 108, strokeWidth: 10, label: 'Ready', color: 'var(--highlight)',
+    });
+    wrap.innerHTML = '<div class="hub-readiness-card">' +
+      '<p class="hub-readiness-label">Community Readiness</p>' +
+      '<div class="hub-readiness-body">' + radial +
+      '<div class="hub-readiness-rows">' + rows.map(function (r) {
+        return '<div class="hub-readiness-row"><span class="muted">' + r[0] + '</span><span>' + r[1] + '</span></div>';
+      }).join('') + '</div>' +
+      '</div></div>';
+  }).catch(function () { /* best-effort -- card just doesn't appear */ });
 }
 
 function renderRedeem(error) {
