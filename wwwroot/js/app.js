@@ -1136,7 +1136,6 @@ function renderHub() {
     '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>' +
     '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>' +
     comparisonTableHtml() +
-    outcomesStripHtml() +
     guaranteeCtaBandHtml();
 
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
@@ -1154,7 +1153,6 @@ function renderHub() {
     var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
     wrap.innerHTML = promoBannersHtml(active.slice(1), true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
-  fillOutcomesStrip();
   fillReadinessCard();
   // The guarantee band renders synchronously with whatever refundFailurePercent already holds
   // (the pre-fetch default until some earlier page has loaded real config) -- patches itself once
@@ -1259,70 +1257,38 @@ function comparisonTableHtml() {
     '</section>';
 }
 
-// ---- Home page: outcomes strip (Round 2 redesign decision) ----------------
-// Real numbers pulled from /stats/public (see examprep-api), not invented -- deliberately omits
-// the raw "students served" count for now: at this site's current scale that number reads as
-// thin rather than reassuring, and nothing requires showing every computed stat. Not fabrication
-// either way -- just an editorial choice of which real numbers to feature.
-function outcomesStripHtml() {
-  return '<section class="outcomes-section" id="outcomes-section">' +
-    '<h2 class="comparison-heading">Real Results, Not Marketing Copy</h2>' +
-    '<p class="muted comparison-subheading">Pulled live from our own database.</p>' +
-    '<div class="outcomes-grid" id="outcomes-grid-wrap"><p class="muted">Loading…</p></div>' +
-    '</section>';
-}
-function fillOutcomesStrip() {
-  var wrap = document.getElementById('outcomes-grid-wrap');
-  if (!wrap) return;
-  loadPublicStats().then(function (s) {
-    var radialHtml = (s.passRate != null)
-      ? '<div class="outcome-tile">' + radialProgressSvg(s.passRate, { size: 108, strokeWidth: 10, color: 'var(--highlight)', label: 'Pass Rate' }) + '</div>'
-      : '';
-    var numberTiles = [
-      { value: s.totalQuestions, label: 'Practice Questions' },
-      { value: s.examsCompleted, label: 'Mock Exams Completed' },
-      { value: s.tracksLive, label: 'Live Exam Tracks' },
-    ];
-    wrap.innerHTML = radialHtml + numberTiles.map(function (t) {
-      return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() +
-        '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
-    }).join('');
-  }).catch(function () {
-    // Best-effort -- hides the whole section rather than showing an empty/broken one, since there
-    // are no safe placeholder numbers to fall back to here (unlike the promo ribbon's guarantee
-    // tagline fallback).
-    var section = document.getElementById('outcomes-section');
-    if (section) section.classList.add('hidden');
-  });
-}
-
-// Hero "Community Readiness" card (ported from v0's page.tsx "Your readiness" card) -- v0's
-// version shows fabricated per-visitor numbers (91% ready, 82% accuracy...) on a page nobody's
-// logged into yet. This uses real /stats/public aggregates instead, labeled as community data
-// rather than "yours" -- see the redesign decision to never fabricate a value for a design
-// element. Shares the same fetch as fillOutcomesStrip() via loadPublicStats().
+// Hero "Real Results" card (ported from v0's page.tsx "Your readiness" card, then repointed at
+// real data -- v0's version showed fabricated per-visitor numbers, 91% ready/82% accuracy, on a
+// page nobody's logged into yet). Used to show "Community Readiness" (accuracy/mock-exams-passed
+// averages) with a near-duplicate "Real Results" numbers section further down the page -- the two
+// sections' radial rings were literally showing the same s.passRate value twice under different
+// labels. Merged into one: this card now IS "Real Results, Not Marketing Copy", and the standalone
+// bottom section is gone. Real numbers pulled from /stats/public (see examprep-api), not invented
+// -- deliberately omits the raw "students served" count for now: at this site's current scale
+// that number reads as thin rather than reassuring, same reasoning as dropping per-user Accuracy/
+// Coverage averages. Not fabrication either way -- just an editorial choice of which real numbers
+// to feature.
 function fillReadinessCard() {
   var wrap = document.getElementById('hub-readiness-wrap');
   if (!wrap) return;
   loadPublicStats().then(function (s) {
-    if (s.passRate == null && s.avgAccuracy == null && s.examsPassed == null) return; // nothing real to show
-    var rows = [];
-    // "Coverage" used to sit here, but it's a per-user average pulled down by everyone still
-    // mid-study -- reads as a weakness rather than the strength it actually is. Students served
-    // was tried as a replacement but is still a very small, early-stage real number right now --
-    // just Accuracy + Mock exams passed until there's a bigger base to show it against.
-    if (s.avgAccuracy != null) rows.push(['Accuracy', s.avgAccuracy + '%']);
-    if (s.examsPassed != null) rows.push(['Mock exams passed', s.examsPassed.toLocaleString()]);
+    if (s.passRate == null && s.totalQuestions == null && s.tracksLive == null) return; // nothing real to show
     var radial = radialProgressSvg(s.passRate != null ? s.passRate : 0, {
-      size: 108, strokeWidth: 10, label: 'Ready', color: 'var(--highlight)',
+      size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
     });
+    var tiles = [
+      { value: s.totalQuestions, label: 'Practice Questions' },
+      { value: s.examsCompleted, label: 'Mock Exams' },
+      { value: s.tracksLive, label: 'Live Tracks' },
+    ];
     wrap.innerHTML = '<div class="hub-readiness-card">' +
-      '<p class="hub-readiness-label">Community Readiness</p>' +
-      '<div class="hub-readiness-body">' + radial +
-      '<div class="hub-readiness-rows">' + rows.map(function (r) {
-        return '<div class="hub-readiness-row"><span class="muted">' + r[0] + '</span><span>' + r[1] + '</span></div>';
+      '<p class="hub-readiness-label">Real Results, Not Marketing Copy</p>' +
+      '<div class="hub-readiness-radial-wrap">' + radial + '</div>' +
+      '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
+        return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() +
+          '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
       }).join('') + '</div>' +
-      '</div></div>';
+      '</div>';
   }).catch(function () { /* best-effort -- card just doesn't appear */ });
 }
 

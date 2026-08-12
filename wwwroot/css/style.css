@@ -748,10 +748,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.75rem; margin-top: 1.25rem; }
 .hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
-/* "Community Readiness" hero card (fillReadinessCard() in app.js) -- real sitewide data, not the
-   fabricated per-visitor numbers v0's version shows. Sits in the hero's 2nd grid column on desktop
-   (see .hub-hero above), stacks below the copy on mobile -- #hub-readiness-wrap is that grid/flow
-   item, this is the card rendered inside it once real data loads. */
+/* "Real Results, Not Marketing Copy" hero card (fillReadinessCard() in app.js) -- real sitewide
+   data, not the fabricated per-visitor numbers v0's version shows. Sits in the hero's 2nd grid
+   column on desktop (see .hub-hero above), stacks below the copy on mobile -- #hub-readiness-wrap
+   is that grid/flow item, this is the card rendered inside it once real data loads. Used to hold a
+   separate "Community Readiness" reading (accuracy/mock-exams-passed averages) alongside a
+   near-duplicate "Real Results" numbers section further down the page -- both radial rings showed
+   the same s.passRate value under different labels. Merged into this one card; see the standalone
+   .outcome-tile rules below, now reused here instead of a now-removed full-width outcomes section. */
 #hub-readiness-wrap:empty { display: none; }
 .hub-readiness-card {
   margin-top: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--highlight);
@@ -760,9 +764,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 @media (min-width: 800px) { .hub-readiness-card { margin-top: 0; } }
 .hub-readiness-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0; }
-.hub-readiness-body { display: flex; align-items: center; gap: 1.5rem; margin-top: 0.85rem; }
-.hub-readiness-rows { display: flex; flex-direction: column; gap: 0.6rem; }
-.hub-readiness-row { display: flex; justify-content: space-between; gap: 1.5rem; font-size: 0.85rem; font-weight: 600; min-width: 11rem; }
+.hub-readiness-radial-wrap { display: flex; justify-content: center; margin-top: 0.85rem; }
+.hub-readiness-tiles {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+  margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+}
+/* Narrower than the tiles' original full-width home (see .outcome-tile-value below) -- this card
+   is a hero-column sidebar, not a 1400px-wide section, so the numbers need to shrink to fit three
+   across without wrapping/crowding. */
+.hub-readiness-tiles .outcome-tile-value { font-size: 1.35rem; }
+.hub-readiness-tiles .outcome-tile-label { font-size: 0.62rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--highlight); padding-bottom: 0.5rem; margin-top: 0.5rem; }
 /* Filters the tracks grid below by state/type. Horizontally scrollable pill bar -- on a narrow
    screen a pill like Texas/New York can be scrolled out of view, but the counts themselves are
@@ -895,13 +906,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .guarantee-band-card h3 { font-size: 0.98rem; margin: 0 0 0.4rem; }
 .guarantee-band-card p { font-size: 0.82rem; opacity: 0.85; line-height: 1.5; margin: 0; }
 
-/* Home page: comparison table + outcomes strip (new sections, Round 2 redesign decision) */
-.hidden { display: none; }
+/* Home page: comparison table (new section, Round 2 redesign decision) */
 /* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
-   next to these) -- these two are pure marketing content, so they get the redesign's other
-   container-width tier instead (~1400px cap), matching the plan's "don't force one width
-   everywhere" decision. */
-.comparison-section, .outcomes-section { padding: 1.5rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
+   next to these) -- pure marketing content, so it gets the redesign's other container-width tier
+   instead (~1400px cap), matching the plan's "don't force one width everywhere" decision. */
+.comparison-section { padding: 1.5rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
 .comparison-heading { text-align: center; font-size: 1.5rem; }
 .comparison-subheading { text-align: center; max-width: 34rem; margin: 0.5rem auto 1.25rem; }
 .comparison-table-scroll {
@@ -920,10 +929,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .comparison-varies { color: var(--muted); font-weight: 800; }
 .comparison-footnote { text-align: center; font-size: 0.72rem; margin-top: 0.75rem; }
 
-.outcomes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 1rem; margin-top: 1.25rem; justify-items: center; }
-@media (min-width: 700px) {
-  .outcomes-grid { grid-template-columns: repeat(4, 1fr); }
-}
+/* Used inside the hero's "Real Results" card now (.hub-readiness-tiles above), not a standalone
+   full-width section anymore -- see that rule's comment. */
 .outcome-tile { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
 .outcome-tile-value { font-family: 'Fraunces', Georgia, serif; font-size: 2rem; font-weight: 700; color: var(--fg); }
 .outcome-tile-label {
