@@ -1121,11 +1121,15 @@ function renderHub() {
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
     '</div>' +
     '<div class="hub-hero-cta">' +
-    '<a class="btn-primary hub-hero-btn" href="' + heroTrackRoute + '#/sample">Try Free Sample</a>' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Try Free Sample</button>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
     '</div>' +
     '<p class="muted hub-hero-subtext">Already have a code? <a href="' + heroTrackRoute + '">Enter it here</a></p>' +
-    '<p class="muted hub-hero-subtext">No code yet? <a href="' + heroTrackRoute + '#/buy">Buy instant access</a> or <a href="' + heroTrackRoute + '#/refer">refer friends for free access</a></p>' +
+    // Buying and referring are both track-specific flows -- unlike redeeming a code (whose outcome
+    // is determined by the code itself, not which track's page you land on), landing here on
+    // whichever track happens to be firstActiveTrack() would silently commit a visitor who hasn't
+    // picked a track yet to that one. Scroll to the picker instead, same as "Try Free Sample" above.
+    '<p class="muted hub-hero-subtext">No code yet? <a href="#" data-act="scroll-to-tracks">Buy instant access</a> or <a href="#" data-act="scroll-to-tracks">refer friends for free access</a></p>' +
     '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
