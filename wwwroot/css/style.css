@@ -37,6 +37,14 @@
      text instead. Light mode's navy is dark, so white text is correct there. Mirrors v0's
      primary/primary-foreground pairing. */
   --accent-foreground: oklch(0.15 0.03 262);
+  /* For large solid-fill "trust" surfaces (guarantee band, comparison table's highlighted column,
+     active track card border) that are meant to read as a deliberately dark, authoritative navy
+     block in BOTH themes -- not just wherever --accent itself happens to land. In light mode
+     --accent already IS this deep navy, but in dark mode --accent is deliberately much lighter
+     (see comment above, needed for dark-on-accent button text), which made these same surfaces
+     come out as a bright, almost neon blue instead of the calm navy the light-mode version has. */
+  --accent-deep: oklch(0.32 0.07 262);
+  --accent-deep-foreground: oklch(0.98 0.01 250);
   --fg: oklch(0.95 0.012 250);
   --muted: oklch(0.72 0.025 258);
   --correct: oklch(0.68 0.14 155);
@@ -64,6 +72,10 @@
   --accent: oklch(0.32 0.07 262);
   --accent-hover: oklch(0.26 0.07 262);
   --accent-foreground: oklch(0.98 0.01 250);
+  /* Light mode's --accent is already the deep navy these surfaces want, so just alias it rather
+     than duplicating the value -- keeps light mode's guarantee band etc. pixel-identical to before. */
+  --accent-deep: var(--accent);
+  --accent-deep-foreground: var(--accent-foreground);
   --fg: oklch(0.24 0.04 260);
   --muted: oklch(0.52 0.03 260);
   --correct: oklch(0.55 0.13 155);
@@ -76,6 +88,7 @@
   :root:not([data-theme="dark"]) {
     --bg: oklch(0.985 0.005 250); --card: oklch(1 0 0); --surface-2: oklch(0.95 0.01 255);
     --accent: oklch(0.32 0.07 262); --accent-hover: oklch(0.26 0.07 262); --accent-foreground: oklch(0.98 0.01 250);
+    --accent-deep: var(--accent); --accent-deep-foreground: var(--accent-foreground);
     --fg: oklch(0.24 0.04 260); --muted: oklch(0.52 0.03 260); --correct: oklch(0.55 0.13 155); --incorrect: oklch(0.55 0.2 27);
     --voice-accent: #7c3aed; --highlight: oklch(0.78 0.13 78); --border: oklch(0.9 0.01 255);
   }
@@ -603,10 +616,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
    site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
 .refer-hero {
-  background: var(--accent); color: var(--accent-foreground); border-radius: var(--radius-2xl);
+  background: var(--accent-deep); color: var(--accent-deep-foreground); border-radius: var(--radius-2xl);
   text-align: center; padding: 2rem 1.5rem; margin-bottom: 1.5rem;
 }
-.refer-hero-badge { background: color-mix(in srgb, var(--accent-foreground) 15%, transparent); color: var(--accent-foreground); border: none; }
+.refer-hero-badge { background: color-mix(in srgb, var(--accent-deep-foreground) 15%, transparent); color: var(--accent-deep-foreground); border: none; }
 .refer-hero h1 { margin-top: 0.85rem; }
 .refer-hero p { max-width: 34rem; margin: 0.75rem auto 0; opacity: 0.85; line-height: 1.6; }
 .refer-how-it-works { max-width: min(92vw, 1400px); margin: 2rem auto 0; }
@@ -857,7 +870,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .how-it-works-card p { font-size: 0.85rem; margin: 0; }
 
 .guarantee-band {
-  background: var(--accent); color: var(--accent-foreground); border-radius: var(--radius-2xl);
+  background: var(--accent-deep); color: var(--accent-deep-foreground); border-radius: var(--radius-2xl);
   padding: 1.75rem; margin: 1.5rem 0; display: grid; gap: 1.5rem;
 }
 @media (min-width: 800px) {
@@ -865,18 +878,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .guarantee-band h2 { font-size: 1.6rem; margin-top: 0.6rem; }
 .guarantee-band-copy p { margin-top: 0.6rem; opacity: 0.85; line-height: 1.6; }
-.guarantee-band-badge { background: color-mix(in srgb, var(--accent-foreground) 15%, transparent); color: var(--accent-foreground); border: none; }
+.guarantee-band-badge { background: color-mix(in srgb, var(--accent-deep-foreground) 15%, transparent); color: var(--accent-deep-foreground); border: none; }
 .guarantee-band-cta {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; width: auto;
-  background: var(--accent-foreground); color: var(--accent); font-weight: 700; font-size: 0.9rem;
+  background: var(--accent-deep-foreground); color: var(--accent-deep); font-weight: 700; font-size: 0.9rem;
   padding: 0.65rem 1.4rem; border-radius: var(--radius-lg); text-decoration: none; margin-top: 1.1rem;
   transition: opacity 0.15s;
 }
 .guarantee-band-cta:hover { opacity: 0.85; }
 .guarantee-band-cards { display: grid; gap: 0.85rem; grid-template-columns: 1fr 1fr; }
 .guarantee-band-card {
-  background: color-mix(in srgb, var(--accent-foreground) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-foreground) 20%, transparent);
+  background: color-mix(in srgb, var(--accent-deep-foreground) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-deep-foreground) 20%, transparent);
   border-radius: var(--radius-lg); padding: 1rem;
 }
 .guarantee-band-card h3 { font-size: 0.98rem; margin: 0 0 0.4rem; }
@@ -900,8 +913,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .comparison-table thead th { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
 .comparison-feature { text-align: left; font-size: 0.85rem; font-weight: 600; }
 .comparison-table tbody tr:last-child td { border-bottom: none; }
-.comparison-us-col { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-.comparison-table thead .comparison-us-col { background: var(--accent); color: var(--accent-foreground); }
+.comparison-us-col { background: color-mix(in srgb, var(--accent-deep) 8%, transparent); }
+.comparison-table thead .comparison-us-col { background: var(--accent-deep); color: var(--accent-deep-foreground); }
 .comparison-yes { color: var(--correct); font-weight: 800; }
 .comparison-no { color: var(--incorrect); font-weight: 800; }
 .comparison-varies { color: var(--muted); font-weight: 800; }
@@ -927,11 +940,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
 }
 .exam-track-card.is-active {
-  border-color: var(--accent); border-width: 2px;
-  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
+  border-color: var(--accent-deep); border-width: 2px;
+  background: color-mix(in srgb, var(--accent-deep) 7%, var(--surface-2));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
 }
-.exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
+.exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent); }
 /* Upcoming (not yet active) tracks read as clearly secondary to the one you can actually use --
    dimmed and desaturated at rest, easing back toward full color on hover so the content is still
    readable if someone's curious what's coming. */
