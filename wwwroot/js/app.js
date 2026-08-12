@@ -1292,7 +1292,12 @@ function hubTracksGridHtml() {
 // Smaller catalog card (Round 2 redesign decision): category/name/state/price/CTA only -- full
 // stats, breakdown, and buy details now live on the track's own page instead of duplicating them
 // here, since every track now has a real detail surface to click through to.
-function hubTrackCards(tracks) {
+// mode: 'normal' (default, hub grid) or 'gift' (#/gift landing page) -- gift mode is only ever
+// called with already-active tracks (nothing to gift that isn't purchasable), so it skips the
+// now-redundant "Active" status badge and points the CTA at that track's buy page in gift mode
+// (#/buy-gift) instead of the track's own sales/landing page.
+function hubTrackCards(tracks, mode) {
+  var isGift = mode === 'gift';
   return (tracks || HUB_EXAMS).map(function (exam) {
     var statusBadge = exam.active
       ? '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>'
@@ -1301,16 +1306,16 @@ function hubTrackCards(tracks) {
       ? '<span class="exam-track-price" data-price-for="' + exam.examType + '">…</span>'
       : '<span class="exam-track-price muted">—</span>';
     var body = '<div class="exam-track-body">' +
-      '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
+      '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + (isGift ? '' : statusBadge) + '</div>' +
       '<h3>' + escapeHtml(exam.shortName || exam.title) + '</h3>' +
       '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</div>' +
       (exam.active ? '<div class="exam-track-resources muted">📚 ' + resourceInventorySummary(exam.examType).compact + '</div>' : '') +
       priceHtml +
       '</div><div class="exam-track-footer">' +
-      (exam.active ? '<span class="exam-track-view-link">View details →</span>' : '<span class="muted exam-track-view-link">Coming soon</span>') +
+      (exam.active ? '<span class="exam-track-view-link">' + (isGift ? '🎁 Gift this →' : 'View details →') + '</span>' : '<span class="muted exam-track-view-link">Coming soon</span>') +
       '</div>';
     return exam.active
-      ? '<a class="exam-track-card is-active" href="' + exam.route + '">' + body + '</a>'
+      ? '<a class="exam-track-card is-active" href="' + (isGift ? exam.route + '#/buy-gift' : exam.route) + '">' + body + '</a>'
       : '<div class="exam-track-card">' + body + '</div>';
   });
 }
@@ -1328,6 +1333,74 @@ function fillHubPricing(tracks) {
       if (el) el.textContent = '';
     });
   });
+}
+
+// ---- #/gift landing page's own track grid ----------------------------------
+// Deliberately separate state/pill/grid functions from the hub's above, rather than sharing
+// hubStateFilter/hubKindFilter/hubTracksExpanded -- filtering on the hub shouldn't silently carry
+// over and make the gift page look like it's "missing tracks" (or vice versa) when the two are
+// visited independently. Reuses hubExamMatchesFilters/hubTrackCards/fillHubPricing though, since
+// the matching/card/pricing logic itself is identical, just gift-scoped to active tracks only
+// (nothing to gift that isn't purchasable) and a different collapsed-count/CTA.
+var GIFT_TRACKS_COLLAPSED_COUNT = 4;
+var giftTracksExpanded = false;
+var giftStateFilter = '';
+var giftKindFilter = '';
+
+function giftActiveTracks() {
+  return HUB_EXAMS.filter(function (e) { return e.active; });
+}
+
+function renderGiftStateFilterPills() {
+  var activeTracks = giftActiveTracks();
+  var codes = [];
+  activeTracks.forEach(function (e) { if (codes.indexOf(e.stateCode) === -1) codes.push(e.stateCode); });
+  codes.sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
+  var allCount = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, '', giftKindFilter); }).length;
+  var options = [['', 'All States (' + allCount + ')']].concat(codes.map(function (c) {
+    var count = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, c, giftKindFilter); }).length;
+    return [c, (STATE_LABELS[c] || c) + ' (' + count + ')'];
+  }));
+  if (options.length <= 2) return '';
+  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by state">' +
+    options.map(function (o) {
+      var active = giftStateFilter === o[0];
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-gift-state" data-state="' + o[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+}
+
+function renderGiftKindFilterPills() {
+  var activeTracks = giftActiveTracks();
+  var kinds = [];
+  activeTracks.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  kinds.sort(function (a, b) { return a.localeCompare(b); });
+  var allCount = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, ''); }).length;
+  var options = [['', 'All Types (' + allCount + ')']].concat(kinds.map(function (k) {
+    var count = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, k); }).length;
+    return [k, k + ' (' + count + ')'];
+  }));
+  if (options.length <= 2) return '';
+  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
+    options.map(function (o) {
+      var active = giftKindFilter === o[0];
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-gift-kind" data-kind="' + o[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
+    }).join('') + '</div>';
+}
+
+function giftTracksGridHtml() {
+  var filtered = giftActiveTracks().filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, giftKindFilter); });
+  var cardsArr = hubTrackCards(filtered, 'gift');
+  var truncated = !giftTracksExpanded && cardsArr.length > GIFT_TRACKS_COLLAPSED_COUNT;
+  var visible = truncated ? cardsArr.slice(0, GIFT_TRACKS_COLLAPSED_COUNT) : cardsArr;
+  var toggleHtml = cardsArr.length > GIFT_TRACKS_COLLAPSED_COUNT
+    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-gift-tracks">' +
+      (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
+    : '';
+  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this filter.</p>' : '';
+  fillHubPricing(truncated ? filtered.slice(0, GIFT_TRACKS_COLLAPSED_COUNT) : filtered);
+  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
 }
 
 function renderHub() {
@@ -3750,18 +3823,13 @@ function renderGiftPurchaseSuccess(code, recipientEmail) {
 
 // Global, track-agnostic entry point (same reasoning as #/redeem, #/refund) -- picking a track
 // here just deep-links into that track's own buy page in gift mode (#/buy-gift), reusing the
-// normal checkout flow wholesale rather than duplicating it.
+// normal checkout flow wholesale rather than duplicating it. Track grid mirrors the hub's own
+// (state/kind filter pills, collapse-to-N, live pricing) -- see giftTracksGridHtml et al. above --
+// rather than an unfiltered wall of all 27+ active tracks.
 function renderGift() {
-  var tracks = HUB_EXAMS.filter(function (e) { return e.active; });
-  var cards = tracks.map(function (t) {
-    return '<a class="exam-track-card is-active" href="' + t.route + '#/buy-gift">' +
-      '<div class="exam-track-body">' +
-      '<div class="exam-track-top"><span class="badge">' + escapeHtml(t.category) + '</span></div>' +
-      '<h3>' + escapeHtml(t.shortName || t.title) + '</h3>' +
-      '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</div>' +
-      '</div><div class="exam-track-footer"><span class="exam-track-view-link">🎁 Gift this →</span></div>' +
-      '</a>';
-  }).join('');
+  giftTracksExpanded = false;
+  giftStateFilter = '';
+  giftKindFilter = '';
   appEl.innerHTML =
     '<section class="refer-hero">' +
     '<span class="badge refer-hero-badge">Gift a Track</span>' +
@@ -3769,8 +3837,9 @@ function renderGift() {
     '<p>Buy full access to any track for someone else. They get their own code by email (or you get a ' +
     'shareable one) — no account needed from you, and they redeem it whenever they\'re ready.</p>' +
     '</section>' +
-    '<div class="exam-track-grid">' + cards + '</div>' +
-    (cards ? '' : '<p class="muted">No tracks available yet.</p>');
+    '<div id="gift-state-filter-wrap">' + renderGiftStateFilterPills() + '</div>' +
+    '<div id="gift-kind-filter-wrap">' + renderGiftKindFilterPills() + '</div>' +
+    '<div id="gift-tracks-grid-wrap">' + giftTracksGridHtml() + '</div>';
 }
 
 // ---- Refund requests (7-day unconditional + pass-or-N%-back) --------------
@@ -4522,6 +4591,32 @@ document.addEventListener('click', async function (e) {
     if (stateFilterWrap) stateFilterWrap.innerHTML = renderHubStateFilterPills(); // its counts depend on the kind filter too
     var kindFilteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (kindFilteredTracksWrap) kindFilteredTracksWrap.innerHTML = hubTracksGridHtml();
+  } else if (act === 'toggle-gift-tracks') {
+    giftTracksExpanded = !giftTracksExpanded;
+    var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
+    if (giftTracksWrap) giftTracksWrap.innerHTML = giftTracksGridHtml();
+  } else if (act === 'filter-gift-state') {
+    var newGiftStateFilter = el.getAttribute('data-state');
+    if (newGiftStateFilter === giftStateFilter) return;
+    giftStateFilter = newGiftStateFilter;
+    giftTracksExpanded = false;
+    var giftFilterWrap = document.getElementById('gift-state-filter-wrap');
+    if (giftFilterWrap) giftFilterWrap.innerHTML = renderGiftStateFilterPills();
+    var giftKindFilterWrap = document.getElementById('gift-kind-filter-wrap');
+    if (giftKindFilterWrap) giftKindFilterWrap.innerHTML = renderGiftKindFilterPills();
+    var giftFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
+    if (giftFilteredTracksWrap) giftFilteredTracksWrap.innerHTML = giftTracksGridHtml();
+  } else if (act === 'filter-gift-kind') {
+    var newGiftKindFilter = el.getAttribute('data-kind');
+    if (newGiftKindFilter === giftKindFilter) return;
+    giftKindFilter = newGiftKindFilter;
+    giftTracksExpanded = false;
+    var giftKindWrap = document.getElementById('gift-kind-filter-wrap');
+    if (giftKindWrap) giftKindWrap.innerHTML = renderGiftKindFilterPills();
+    var giftStateFilterWrap = document.getElementById('gift-state-filter-wrap');
+    if (giftStateFilterWrap) giftStateFilterWrap.innerHTML = renderGiftStateFilterPills();
+    var giftKindFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
+    if (giftKindFilteredTracksWrap) giftKindFilteredTracksWrap.innerHTML = giftTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {
