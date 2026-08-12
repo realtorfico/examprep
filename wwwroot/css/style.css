@@ -17,16 +17,19 @@
 }
 
 :root {
-  /* Navy + gold identity (ported from the v0 design's OKLCH tokens). --accent stays the name for
-     the site's one broad "brand/interactive" color (buttons, links, tabs, focus) -- it's now navy
-     instead of indigo. --highlight (gold) takes on v0's narrower "accent" role: CTAs/checkmarks/
-     promo highlights -- its existing usage (promo/news banners, disclaimer callouts) already
-     matches that role, so no rename needed there either. */
+  /* Navy + gold identity. Light mode's tokens are close to a straight port of v0's OKLCH values
+     (v0 was designed light-first and reads fine there -- dark is dark navy, which stays rich even
+     at low chroma). Dark mode is NOT a straight port, deliberately: v0 never really designed for
+     it (its dark tokens are a mechanical lightness-flip, not independently tuned), and porting
+     them verbatim made the accent read as washed-out/flat -- v0's dark --primary is chroma 0.12,
+     roughly half the saturation of the indigo (#6366f1, ~0.23 chroma) it replaced. Dark mode's
+     accent/highlight/border below are intentionally boosted past v0's literal numbers to actually
+     read as vivid navy/gold against a dark background, not just "the light tokens, but darker". */
   --bg: oklch(0.19 0.028 262);
   --card: oklch(0.235 0.032 262);
   --surface-2: oklch(0.29 0.03 262);
-  --accent: oklch(0.62 0.12 262);
-  --accent-hover: oklch(0.68 0.12 262);
+  --accent: oklch(0.64 0.18 260);
+  --accent-hover: oklch(0.71 0.17 260);
   /* Text placed ON TOP of an --accent background. Dark mode's navy is deliberately lighter (for
      contrast against the dark page bg), so white text on it would fail contrast -- needs dark
      text instead. Light mode's navy is dark, so white text is correct there. Mirrors v0's
@@ -37,8 +40,8 @@
   --correct: oklch(0.68 0.14 155);
   --incorrect: oklch(0.65 0.19 27);
   --voice-accent: #7c3aed;
-  --highlight: oklch(0.8 0.13 78);
-  --border: oklch(0.98 0.01 250 / 14%);
+  --highlight: oklch(0.8 0.16 75);
+  --border: oklch(0.98 0.01 250 / 20%);
   --font-scale: 1;
   /* Radius scale -- one base, everything else derived. New components (Stage 2+) should reference
      these instead of hardcoding a border-radius; existing hardcoded values get migrated as each
@@ -521,6 +524,46 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
 .buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
+
+/* Guarantee page (rebuilt as a full landing page, ported from v0's guarantee/page.tsx) */
+.guarantee-page { max-width: min(92vw, 1400px); margin: 0 auto; }
+.guarantee-hero { display: grid; gap: 1.75rem; padding: 1rem 0 1.75rem; border-bottom: 1px solid var(--border); }
+@media (min-width: 800px) { .guarantee-hero { grid-template-columns: 1.2fr 1fr; align-items: center; } }
+.guarantee-hero-badge { background: color-mix(in srgb, var(--correct) 15%, transparent); color: var(--correct); border: none; }
+.guarantee-hero h1 { margin-top: 0.85rem; }
+.guarantee-hero-copy .page-intro-text { margin-top: 0.75rem; }
+.guarantee-hero-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+.guarantee-hero-cta .hub-hero-btn { width: auto; padding: 0.6rem 1.4rem; }
+.guarantee-stat-card {
+  border: 1px solid var(--border); border-radius: var(--radius-2xl); background: var(--card);
+  padding: 1.75rem; text-align: center;
+}
+.guarantee-stat-icon {
+  width: 3.5rem; height: 3.5rem; margin: 0 auto; border-radius: 999px;
+  background: color-mix(in srgb, var(--correct) 15%, transparent); display: flex; align-items: center;
+  justify-content: center; font-size: 1.5rem;
+}
+.guarantee-stat-value { font-family: 'Fraunces', Georgia, serif; font-size: 2.75rem; font-weight: 700; margin-top: 0.75rem; }
+.guarantee-stat-divider { border-top: 1px solid var(--border); margin: 1.25rem 0; }
+.guarantee-stat-label { font-size: 0.85rem; font-weight: 700; text-align: left; margin: 0; }
+.guarantee-stat-note { text-align: left; font-size: 0.85rem; margin-top: 0.3rem; }
+.guarantee-eligibility { padding: 1.75rem 0; }
+.guarantee-steps { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.5rem; }
+@media (min-width: 800px) { .guarantee-steps { grid-template-columns: repeat(3, 1fr); } }
+.guarantee-step-card { position: relative; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem; }
+.guarantee-step-num { position: absolute; top: 1rem; right: 1.1rem; font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; font-weight: 700; color: var(--border); }
+.guarantee-step-icon {
+  width: 2.5rem; height: 2.5rem; border-radius: var(--radius-md); display: flex; align-items: center;
+  justify-content: center; font-size: 1.15rem; background: color-mix(in srgb, var(--highlight) 18%, transparent);
+}
+.guarantee-step-card h3 { font-size: 0.98rem; margin: 0.85rem 0 0.4rem; }
+.guarantee-step-card p { font-size: 0.85rem; margin: 0; }
+.guarantee-faq { padding: 1.75rem 0 2.5rem; border-top: 1px solid var(--border); }
+.guarantee-faq-list { border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card); margin: 1.5rem 0 0; }
+.guarantee-faq-item { padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.guarantee-faq-item:last-child { border-bottom: none; }
+.guarantee-faq-item dt { font-weight: 700; font-size: 0.92rem; }
+.guarantee-faq-item dd { margin: 0.5rem 0 0; font-size: 0.85rem; line-height: 1.55; }
 .buy-email-label { display: block; font-size: 0.8rem; margin-bottom: 0.35rem; }
 #buy-email { margin-bottom: 0.75rem; }
 .stripe-card-note { margin-top: 0.75rem; margin-bottom: 0; font-size: 0.85rem; }
@@ -544,6 +587,19 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    matches the redesign's readability guideline (~60-75 char measure) without shrinking #app
    itself, which functional screens (quiz/exam/tables) still need the full fluid width for. */
 .narrow-page { max-width: 640px; margin: 0 auto; }
+/* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
+   site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
+.refer-hero {
+  background: var(--accent); color: var(--accent-foreground); border-radius: var(--radius-2xl);
+  text-align: center; padding: 2rem 1.5rem; margin-bottom: 1.5rem;
+}
+.refer-hero-badge { background: color-mix(in srgb, var(--accent-foreground) 15%, transparent); color: var(--accent-foreground); border: none; }
+.refer-hero h1 { margin-top: 0.85rem; }
+.refer-hero p { max-width: 34rem; margin: 0.75rem auto 0; opacity: 0.85; line-height: 1.6; }
+.refer-how-it-works { max-width: min(92vw, 1400px); margin: 2rem auto 0; }
+.refer-how-it-works .comparison-heading { text-align: left; }
+.refer-how-it-works-grid { grid-template-columns: 1fr; }
+@media (min-width: 700px) { .refer-how-it-works-grid { grid-template-columns: repeat(3, 1fr); } }
 .refer-name-email-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
 @media (min-width: 520px) {
   .refer-name-email-grid { flex-direction: row; }
@@ -686,9 +742,47 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    content width tier as the home page's comparison/outcomes sections, since it's a sales page,
    not a dense functional screen. */
 .track-landing { max-width: min(92vw, 1400px); margin: 0 auto; }
+.track-landing-breadcrumb { font-size: 0.8rem; margin-bottom: 0.5rem; }
+.track-landing-breadcrumb a { color: var(--muted); }
+.track-landing-breadcrumb a:hover { color: var(--accent); }
 .track-landing h1 { margin-top: 0.5rem; }
 .track-landing-official { margin-top: 0.75rem; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
+.track-landing-preview-section { margin-top: 2rem; }
+.track-landing-preview-section h2 { margin-bottom: 0.3rem; }
+.track-landing-crosssell { margin-top: 1.5rem; }
+
+/* Embedded Quiz/Exam/Progress preview widget (trackLandingPreviewHtml() in app.js) -- client-side
+   tab switch, blurred + overlaid, same visual language as the old routed locked-preview pages
+   this replaced (kept the class names on the mockup/overlay pieces for that continuity). */
+.locked-preview-tabs-wrap { margin-top: 1rem; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; background: var(--card); }
+.locked-preview-tabs { display: flex; gap: 0.25rem; padding: 0.4rem; border-bottom: 1px solid var(--border); }
+.locked-preview-tabs button {
+  flex: 1; background: transparent; color: var(--muted); border-radius: var(--radius-md);
+  padding: 0.5rem; font-size: 0.85rem; font-weight: 600;
+}
+.locked-preview-tabs button.active { background: var(--accent); color: var(--accent-foreground); }
+.locked-preview-body { position: relative; min-height: 280px; }
+.locked-preview-mockup { padding: 1.25rem; filter: blur(2px) grayscale(0.35); opacity: 0.5; pointer-events: none; user-select: none; }
+.locked-preview-meta { font-size: 0.78rem; margin-bottom: 0.4rem; }
+.locked-preview-exam-bar {
+  display: flex; justify-content: space-between; align-items: center; background: var(--accent);
+  color: var(--accent-foreground); border-radius: var(--radius-md); padding: 0.6rem 0.9rem;
+  font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;
+}
+.locked-preview-exam-track { margin-bottom: 0.75rem; }
+.locked-preview-progress-panel { display: flex; justify-content: center; gap: 2rem; padding: 1.5rem 0; }
+.locked-preview-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; gap: 0.5rem; padding: 1.5rem;
+  background: color-mix(in srgb, var(--card) 55%, transparent);
+}
+.locked-preview-overlay p { max-width: 22rem; color: var(--fg); font-weight: 600; font-size: 0.92rem; }
+.locked-preview-icon {
+  width: 2.75rem; height: 2.75rem; border-radius: 999px; background: var(--accent); color: var(--accent-foreground);
+  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+}
+.locked-preview-overlay .hub-cta { width: auto; padding: 0.6rem 1.4rem; }
 
 /* Home page: trust strip, how it works, guarantee band (ported from v0's page.tsx) */
 .trust-strip {

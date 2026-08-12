@@ -431,25 +431,84 @@ function renderContact() {
   renderTurnstileWidget();
 }
 
+// Rebuilt as a full landing page (ported from v0's guarantee/page.tsx: hero+stat card, eligibility
+// steps, FAQ) rather than the single compact card this used to be. v0's copy has specific numbers
+// (a fabricated "94% pass their first attempt" stat, an "85% on two timed exams" eligibility bar,
+// 60-day/14-day deadlines) that don't match this site's real policy -- ported the STRUCTURE only;
+// every number here is real (refundFailurePercent, accuracy/coverage thresholds, and the real
+// /stats/public pass rate, correctly framed as practice-exam performance, not a claim about real
+// official exam outcomes we have no way to measure).
 function renderGuarantee() {
   appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1><p class="muted">Loading…</p></div>';
-  loadSiteConfig().then(function () {
+  Promise.all([loadSiteConfig(), apiFetch('/stats/public').catch(function () { return null; })]).then(function (results) {
+    var stats = results[1];
     var refundRoute = (currentOrFirstActiveTrack() || {}).route || '/';
-    appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1>' +
-      '<p class="muted page-intro-text">Two separate ways you\'re covered — whichever applies to you.</p>' +
-      '<div class="card buy-guarantee-card">' +
-      '<div class="buy-guarantee-item"><strong>🔄 7-Day, No Questions Asked</strong>' +
-      '<p class="muted">Not satisfied? Full refund within 7 days of purchase — no reason needed.</p></div>' +
-      '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
-      '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
-      '(as long as you maintained a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct +
-      '% Coverage in your practice here — a good-faith-effort requirement, not a formality).</p></div>' +
+    var passRateNote = (stats && stats.passRate != null)
+      ? '<div class="guarantee-stat-divider"></div><p class="guarantee-stat-label">Backed by real practice data</p>' +
+        '<p class="muted guarantee-stat-note">' + stats.passRate + '% of practice mock exams taken on PassExamHQ end in a passing score.</p>'
+      : '';
+
+    appEl.innerHTML =
+      '<div class="guarantee-page">' +
+      '<section class="guarantee-hero">' +
+      '<div class="guarantee-hero-copy">' +
+      '<span class="badge guarantee-hero-badge">🛡️ Pass Guarantee</span>' +
+      '<h1>Pass, or get ' + refundFailurePercent + '% back.</h1>' +
+      '<p class="page-intro-text">We only sell prep we\'d stake our reputation on. Practice to the threshold, sit your ' +
+      'official exam, and if you still don\'t pass, you get ' + refundFailurePercent + '% of your purchase back. Changed ' +
+      'your mind early instead? A 7-day, no-questions-asked refund covers that too.</p>' +
+      '<div class="guarantee-hero-cta">' +
+      '<a class="btn-primary hub-hero-btn" href="/">Browse guaranteed tracks</a>' +
+      '<a class="btn-secondary hub-hero-btn" href="' + refundRoute + '#/refund">I need to file a claim</a>' +
       '</div>' +
-      '<p class="muted">Both guarantees cover real-money purchases only — free courses redeemed with points ' +
-      'aren\'t eligible, since no cash was paid.</p>' +
-      '<a class="btn-primary hub-cta" href="' + refundRoute + '#/refund">Request a refund →</a> ' +
-      '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button></div>';
+      '</div>' +
+      '<div class="guarantee-stat-card">' +
+      '<div class="guarantee-stat-icon">🛡️</div>' +
+      '<div class="guarantee-stat-value">' + refundFailurePercent + '%</div>' +
+      '<p class="muted">money back if you meet the practice requirement and still don\'t pass</p>' +
+      passRateNote +
+      '</div>' +
+      '</section>' +
+      '<section class="guarantee-eligibility">' +
+      '<h2>How to qualify</h2>' +
+      '<p class="muted page-intro-text">Three simple conditions — they exist so the guarantee protects people who actually did the work.</p>' +
+      '<div class="guarantee-steps">' +
+      guaranteeStepHtml(1, '📊', 'Practice to the threshold',
+        'Maintain at least ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct +
+        '% Coverage in your practice here — a good-faith-effort requirement, not a formality.') +
+      guaranteeStepHtml(2, '🎓', 'Take your official exam',
+        'Sit the real exam through the official testing authority for your track.') +
+      guaranteeStepHtml(3, '📝', 'Submit your claim',
+        'File a refund request with your result — real-money purchases only, since a free or points-redeemed course has no purchase to refund.') +
+      '</div>' +
+      '</section>' +
+      '<section class="guarantee-faq">' +
+      '<h2>Refund questions</h2>' +
+      '<dl class="guarantee-faq-list">' +
+      guaranteeFaqHtml('What exactly do I get back?',
+        refundFailurePercent + '% of what you paid for the track (or a full refund under the separate 7-day guarantee). ' +
+        'Free or points-redeemed courses aren\'t eligible, since no cash was paid.') +
+      guaranteeFaqHtml('How is a refund paid out?',
+        'Once your claim is reviewed and approved, it\'s issued back to your original payment method through Stripe.') +
+      guaranteeFaqHtml('What if I used a promo code or points?',
+        'Any points or promo discount applied at checkout only reduces what you paid — the guarantee still covers whatever cash amount you actually paid.') +
+      guaranteeFaqHtml('Which tracks are covered?',
+        'Every active track — the same ' + refundFailurePercent + '% pass-or-refund guarantee and 7-day return window apply sitewide, not just select tracks.') +
+      '</dl>' +
+      '</section>' +
+      '</div>';
   });
+}
+function guaranteeStepHtml(num, icon, title, body) {
+  return '<div class="guarantee-step-card">' +
+    '<span class="guarantee-step-num">' + num + '</span>' +
+    '<div class="guarantee-step-icon">' + icon + '</div>' +
+    '<h3>' + title + '</h3>' +
+    '<p class="muted">' + body + '</p>' +
+    '</div>';
+}
+function guaranteeFaqHtml(q, a) {
+  return '<div class="guarantee-faq-item"><dt>' + q + '</dt><dd class="muted">' + a + '</dd></div>';
 }
 
 // A code redeemed with no email ever provided (buyer_email null) has no way to look up referral
@@ -2395,6 +2454,8 @@ function renderTrackLanding() {
 
   appEl.innerHTML =
     '<div class="track-landing">' +
+    '<nav class="track-landing-breadcrumb muted" aria-label="Breadcrumb"><a href="/#tracks">Exams</a> / ' +
+    escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</nav>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +
@@ -2417,15 +2478,70 @@ function renderTrackLanding() {
     '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
     '</div>' +
     '</div>' +
+    '<section class="track-landing-preview-section">' +
+    '<h2>Preview the study hub</h2>' +
+    '<p class="muted">Here\'s what Quiz, Exam, and Progress look like inside this track — unlock to start.</p>' +
+    trackLandingPreviewHtml(exam) +
+    '</section>' +
+    '<div id="buy-other-tracks-wrap" class="track-landing-crosssell"></div>' +
     '</div>';
 
   apiFetch('/pricing?examType=' + encodeURIComponent(exam.examType)).then(function (p) {
+    var priceStr = '$' + (p.priceCents / 100).toFixed(2);
     var el = document.getElementById('landing-price');
-    if (el) el.textContent = '$' + (p.priceCents / 100).toFixed(2);
+    if (el) el.textContent = priceStr;
+    var previewPriceEl = document.getElementById('landing-preview-price');
+    if (previewPriceEl) previewPriceEl.textContent = priceStr;
   }).catch(function () {
     var el = document.getElementById('landing-price');
     if (el) el.textContent = '';
   });
+  loadOtherTracksPricing();
+}
+
+// Tabbed Quiz/Exam/Progress teaser, embedded directly on the landing page (client-side tab switch,
+// no navigation) -- ports v0's locked-preview.tsx as a widget rather than the separate routed
+// pages this site used to have (see the Stage 6 consolidation note above). Blurred + overlaid with
+// an unlock CTA, same as before -- the example content inside is illustrative (what the UI looks
+// like), not a claim about the viewer's own data, same category as the sample question mockups
+// this site has always shown to logged-out visitors.
+function trackLandingPreviewHtml(exam) {
+  var firstTopic = (exam.breakdown && exam.breakdown[0] && exam.breakdown[0][0]) || 'the exam topics';
+  var quizPanel = '<div class="locked-preview-quiz">' +
+    '<p class="muted locked-preview-meta">Question 4 of ' + exam.questions + ' · ' + escapeHtml(firstTopic) + '</p>' +
+    '<h4>Sample question about ' + escapeHtml(firstTopic) + '</h4>' +
+    '<div class="options-grid">' + ['A', 'B', 'C', 'D'].map(function (k) {
+      return optionButtonHtml(k, 'Answer choice ' + k, 'option-btn', 'disabled');
+    }).join('') + '</div>' +
+    '</div>';
+  var examPanel = '<div class="locked-preview-exam">' +
+    '<div class="locked-preview-exam-bar"><span>Mock exam in progress</span><span>28:14</span></div>' +
+    '<div class="breakdown-bar locked-preview-exam-track"><div class="breakdown-bar-fill pct-33"></div></div>' +
+    '<p class="muted">' + exam.questions + ' · ' + exam.duration + ' · pass at ' + exam.passScore + '</p>' +
+    '<div class="card"><p>No feedback until you finish — just like the real thing.</p></div>' +
+    '</div>';
+  var progressPanel = '<div class="locked-preview-progress-panel">' +
+    radialProgressSvg(82, { size: 96, strokeWidth: 9, label: 'Accuracy' }) +
+    radialProgressSvg(64, { size: 96, strokeWidth: 9, label: 'Coverage', color: 'var(--highlight)' }) +
+    '</div>';
+
+  return '<div class="locked-preview-tabs-wrap">' +
+    '<div class="locked-preview-tabs" role="tablist">' +
+    '<button type="button" class="active" data-act="landing-preview-tab" data-tab="quiz">Quiz</button>' +
+    '<button type="button" data-act="landing-preview-tab" data-tab="exam">Exam</button>' +
+    '<button type="button" data-act="landing-preview-tab" data-tab="progress">Progress</button>' +
+    '</div>' +
+    '<div class="locked-preview-body">' +
+    '<div class="locked-preview-mockup" data-preview-panel="quiz">' + quizPanel + '</div>' +
+    '<div class="locked-preview-mockup" data-preview-panel="exam" hidden>' + examPanel + '</div>' +
+    '<div class="locked-preview-mockup" data-preview-panel="progress" hidden>' + progressPanel + '</div>' +
+    '<div class="locked-preview-overlay">' +
+    '<div class="locked-preview-icon">🔒</div>' +
+    '<p id="landing-preview-unlock-text">Unlock the full quiz for this track</p>' +
+    '<a class="btn-primary hub-cta" href="#/buy">Unlock for <span id="landing-preview-price">…</span></a>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
 }
 
 // ---- Additional information (official external links, per exam type) -----
@@ -3332,6 +3448,32 @@ function renderReferFriendRow(idx) {
     '</div>';
 }
 
+// Adapted from v0's refer/page.tsx "How it works" -- v0's own version describes a share-your-own-
+// link model (copy a URL, friends click through anonymously), which isn't how this site's
+// referral system actually works (see renderReferForm below: the referrer submits friends' name/
+// email directly, and we send the invite). Ported the section/structure, rewrote the 3 steps to
+// describe the real mechanic with real point values (rules), not v0's fixed "$5 off"/"500 points".
+function referHowItWorksHtml(rules) {
+  var steps = [
+    ['📧', 'Add your friend', 'Enter their name and email in the form above — no link to copy or share.'],
+    ['✉️', 'They get invited', 'We send them a one-time email introducing PassExamHQ on your behalf.'],
+    ['🎁', 'You earn points', rules.referralVerifiedPoints + ' points when they confirm, plus ' + rules.referralConvertedPoints +
+      ' more if they buy a course — redeemable on your next track.'],
+  ];
+  return '<section class="refer-how-it-works">' +
+    '<h2 class="comparison-heading">How it works</h2>' +
+    '<div class="how-it-works-grid refer-how-it-works-grid">' +
+    steps.map(function (s) {
+      return '<div class="how-it-works-card">' +
+        '<div class="how-it-works-icon">' + s[0] + '</div>' +
+        '<h3>' + s[1] + '</h3>' +
+        '<p class="muted">' + s[2] + '</p>' +
+        '</div>';
+    }).join('') +
+    '</div>' +
+    '</section>';
+}
+
 async function renderReferForm() {
   referFriendRowCount = 1;
   var referrerInfo = loadReferrerInfo();
@@ -3349,6 +3491,12 @@ async function renderReferForm() {
   var required = pricing.priceCents;
 
   appEl.innerHTML =
+    '<section class="refer-hero">' +
+    '<span class="badge refer-hero-badge">Refer &amp; Earn</span>' +
+    '<h1>Help a friend pass. Earn real points doing it.</h1>' +
+    '<p>Add a friend below — they get a personal invite, and you earn ' + rules.referralVerifiedPoints +
+    ' points once they confirm, plus ' + rules.referralConvertedPoints + ' more if they go on to buy a course.</p>' +
+    '</section>' +
     '<div class="narrow-page">' +
     '<h1>Refer friends, earn free access</h1>' +
     '<div id="refer-promotions-wrap" class="promotions-wrap"></div>' +
@@ -3378,7 +3526,8 @@ async function renderReferForm() {
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Send referrals</button>' +
     '</form>' +
-    '</div>';
+    '</div>' +
+    referHowItWorksHtml(rules);
   renderTurnstileWidget();
   Promise.all([apiFetch('/promotions?placement=refer'), loadSiteConfig()]).then(function (results) {
     var r = results[0];
@@ -3983,6 +4132,16 @@ document.addEventListener('click', async function (e) {
     var isOpen = drawerEl ? drawerEl.classList.toggle('open') : false;
     el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     el.textContent = isOpen ? '✕' : '☰';
+  } else if (act === 'landing-preview-tab') {
+    var previewTabKey = el.getAttribute('data-tab');
+    document.querySelectorAll('.locked-preview-tabs button').forEach(function (b) {
+      b.classList.toggle('active', b === el);
+    });
+    document.querySelectorAll('.locked-preview-mockup').forEach(function (p) {
+      p.hidden = p.getAttribute('data-preview-panel') !== previewTabKey;
+    });
+    var unlockTextEl = document.getElementById('landing-preview-unlock-text');
+    if (unlockTextEl) unlockTextEl.textContent = 'Unlock the full ' + previewTabKey + ' for this track';
   } else if (act === 'copy-code') {
     var codeVal = el.getAttribute('data-code');
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
