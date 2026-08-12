@@ -761,6 +761,34 @@ var HUB_EXAMS = [
     breakdown: [['Registration, Titling & Required Equipment', '30%'], ['Ohio Operating Laws, Vessel Accidents & State Parks Regulations', '29%'], ['Navigation Rules & Navigation Lights', '21%'], ['Federal Regulations & Aids to Navigation', '20%']],
   },
   {
+    examType: 'ga_driver', shortName: 'Georgia Driver', stateCode: 'GA', examKind: 'Driver',
+    title: 'Georgia Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ga_driver',
+    duration: 'Untimed', questions: '40 Multiple Choice', passScore: '30/40 Correct (75%)',
+    description: 'Practice questions covering the Georgia Driver\'s Manual (Department of Driver Services): general licensing and obtaining a license, permit or ID card, testing information and other DDS services, traffic laws, teen driving laws and signs/signals/markings, safety guidelines and sharing the road, and losing driving privileges and crashes for the DDS written knowledge test.',
+    breakdown: [['Licensing, Obtaining a License & Testing Information', '36%'], ['Traffic Laws', '25%'], ['Safety Guidelines, Sharing the Road & Losing Privileges', '23%'], ['Teen Driving Laws & Signs, Signals and Markings', '16%']],
+  },
+  {
+    examType: 'ga_cdl', shortName: 'Georgia CDL', stateCode: 'GA', examKind: 'Commercial Driver (CDL)',
+    title: 'Georgia CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ga_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Georgia CDL Manual/Study Guide (Department of Driver Services): CDL licensing and vehicle inspection, vehicle control/air brakes/combination vehicles, hazardous materials and hazard conditions/emergencies, and school bus endorsement content.',
+    breakdown: [['Vehicle Control, Air Brakes & Combination Vehicles', '35%'], ['CDL Licensing, Vehicle Inspection & Cargo/Passenger Safety', '29%'], ['Hazardous Materials & Hazard Conditions/Emergencies', '29%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'ga_motorcycle', shortName: 'Georgia Motorcycle', stateCode: 'GA', examKind: 'Motorcycle',
+    title: 'Georgia Motorcycle Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ga_motorcycle',
+    duration: '30 Minutes', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
+    description: 'Practice questions covering the Georgia Motorcycle Operator\'s Manual (Department of Driver Services): licensing/permits and road signs/signals, impairment/gear and pre-ride preparation, vehicle control and braking skills, street strategies and special riding situations, and passengers/group riding/multi-track vehicles for the DDS motorcycle knowledge test.',
+    breakdown: [['Licensing, Permits & Road Signs/Signals', '26%'], ['Street Strategies & Special Riding Situations', '21%'], ['Impairment, Gear & Pre-Ride Preparation', '19%'], ['Vehicle Control & Braking Skills', '18%'], ['Passengers, Group Riding & Multi-Track Vehicles', '16%']],
+  },
+  {
+    examType: 'ga_real_estate', shortName: 'Georgia Real Estate', stateCode: 'GA', examKind: 'Real Estate',
+    title: 'Georgia Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/ga_real_estate',
+    duration: '120 Minutes', questions: '52 Multiple Choice (State-Specific Portion)', passScore: '39/52 Correct (75%)',
+    description: 'Practice questions covering the Georgia Real Estate Commission Rules (Chapter 520) and O.C.G.A. Title 43, Chapter 40 -- the licensing and regulatory portion of the state-specific Salesperson exam: licensing, qualifications, fees and commission operations, trust accounts, advertising and brokerage relationships, fair housing and discipline, real estate education and course standards, and hearings and firm requirements.',
+    breakdown: [['Licensing, Qualifications, Fees & Commission Operations', '28%'], ['Trust Accounts, Advertising & Brokerage Relationships', '21%'], ['Fair Housing, Discipline & Handling Transactions', '19%'], ['Real Estate Education, Course Standards & CAM', '17%'], ['Hearings, Nonresident Licensure & Firm Requirements', '15%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -1107,6 +1135,67 @@ var TRACK_COMPLIANCE = {
       'course or exam.</p>',
     examIntroDisclaimer: 'register you for, or count toward, any Ohio boater education provider\'s official course or exam, or issue an Ohio Boater Education Card.',
     passScoreNote: 'the common format used across several NASBLA/ODNR-approved course providers — 48 of 60 correct (80%) — not one single official exam',
+  },
+  ga_driver: {
+    orgLine: 'the Georgia Department of Driver Services (DDS)',
+    footerRequirement: "do not fulfill Joshua's Law driver education requirement (30 hours classroom/online instruction plus 6 hours behind-the-wheel training, required for applicants age 16-17) or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Joshua\'s Law driver ' +
+      'education requirement — 30 hours of classroom or online instruction plus 6 hours of professional behind-the-wheel training (or ' +
+      '40 hours of parent-taught training), required for applicants age 16-17 seeking a Class D license — and does not issue any ' +
+      'official course-completion certificate — our content is a supplementary study aid only. The real DDS knowledge exam is ' +
+      'actually two separately-graded 20-question tests (Road Rules and Road Signs, each requiring 15/20 correct); this practice exam ' +
+      'models it as a single unified 40-question sitting for simplicity. Completing practice exams here also does not register you ' +
+      'for, or schedule, the official DDS written knowledge test; official testing must be scheduled directly through the Georgia ' +
+      'Department of Driver Services, and driver education must be completed through a DDS-approved provider. While we strive to ' +
+      'align our content with the current Georgia Driver\'s Manual, it is provided "as-is" for self-study and does not constitute ' +
+      'legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Georgia DDS written knowledge test or any required driver education course.',
+    passScoreNote: 'the same overall threshold as the real DDS test — 30 of 40 correct (the real test is actually two separately-graded 20-question sections, each requiring 15/20)',
+  },
+  ga_cdl: {
+    orgLine: 'the Georgia Department of Driver Services (DDS) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Georgia CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Georgia CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DDS CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Georgia Department of Driver Services, and ELDT must be completed through an ' +
+      'FMCSA-registered training provider. While we strive to align our content with the current Georgia CDL Manual/Study Guide, it ' +
+      'is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Georgia DDS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  ga_motorcycle: {
+    orgLine: 'the Georgia Department of Driver Services (DDS) or the Georgia Motorcycle Safety Program (GMSP)',
+    footerRequirement: "do not fulfill the Georgia Motorcycle Safety Program License Test Waiver course requirement (waives the skills test; mandatory certified driver training also applies to 16-year-old Class MP permit applicants under Joshua's Law) or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Georgia Motorcycle Safety ' +
+      'Program (GMSP) License Test Waiver course requirement — which waives the DDS skills test for qualifying riders — or, for a ' +
+      '16-year-old applying for a Class MP Instructional Permit under Joshua\'s Law, the required 30 hours of classroom/online ' +
+      'instruction plus 6 hours of behind-the-wheel training. Completing a GMSP course does not waive the written knowledge test, ' +
+      'which every applicant must still pass. Our content is a supplementary study aid only, and does not issue any official ' +
+      'course-completion certificate. Completing practice exams here also does not register you for, or schedule, the official DDS ' +
+      'written knowledge test or a GMSP course; official testing is administered by the Georgia Department of Driver Services, and ' +
+      'rider training is administered by the GMSP. While we strive to align our content with the current Georgia Motorcycle ' +
+      'Operator\'s Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a ' +
+      'guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Georgia DDS written knowledge test, the skills test, or a Georgia Motorcycle Safety Program course.',
+    passScoreNote: 'the same threshold as the real Georgia DDS test — 20 of 25 correct',
+  },
+  ga_real_estate: {
+    orgLine: 'the Georgia Real Estate Commission',
+    footerRequirement: "do not fulfill the 75-hour pre-license education requirement (or the 25-hour post-license course required within the first year of licensure) or any Georgia real estate salesperson training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 75-hour pre-license ' +
+      'education requirement for a Georgia real estate salesperson license (or the separate 25-hour post-license course required ' +
+      'within the first year of licensure), and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only, and covers only the licensing and regulatory portion of the state-specific exam (grounded in ' +
+      'the Real Estate Commission\'s own Rules and O.C.G.A. Title 43, Chapter 40) — not the separate national/general portion, and ' +
+      'not every topic on the Commission\'s official state-portion content outline. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real ' +
+      'Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align ' +
+      'our content with the current Commission Rules and Georgia statute, it is provided "as-is" for self-study and does not ' +
+      'constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 75-hour pre-license education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 39 of 52 correct',
   },
 };
 function trackCompliance(examType) {
@@ -1863,6 +1952,29 @@ var RESOURCES = {
   oh_boating: [
     { title: 'Ohio Boat Operators Guide', type: 'pdf', url: 'https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/watercraft/OhioBoatOperatorsGuide.pdf',
       desc: 'The official guide published by ODNR\'s Division of Parks & Watercraft — the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_driver: [
+    { title: 'Georgia Driver\'s Manual', type: 'pdf', url: 'https://dds.georgia.gov/dds-forms-and-manuals/manuals',
+      desc: 'The official manual published by the Georgia Department of Driver Services — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_cdl: [
+    { title: 'Georgia CDL Manual/Study Guide', type: 'pdf', url: 'https://dds.georgia.gov/dds-forms-and-manuals/manuals',
+      desc: 'The official manual published by the Georgia Department of Driver Services — the authoritative source the CDL knowledge and endorsement tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_motorcycle: [
+    { title: 'Georgia Motorcycle Operator\'s Manual', type: 'pdf', url: 'https://dds.georgia.gov/dds-forms-and-manuals/manuals',
+      desc: 'The official manual published by the Georgia Department of Driver Services — the authoritative source the motorcycle knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_real_estate: [
+    { title: 'Georgia Real Estate Commission Rules (Chapter 520)', type: 'pdf', url: 'https://rules.sos.ga.gov/gac/520',
+      desc: 'The official regulations published by the Georgia Secretary of State — the authoritative source the licensing/regulatory portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'O.C.G.A. Title 43, Chapter 40 (Real Estate Brokers, Salespersons and Rental Agents)', type: 'pdf', url: 'https://law.justia.com/codes/georgia/title-43/chapter-40/',
+      desc: 'The Georgia Real Estate License Act — the statutory basis for the Commission\'s Rules.',
       topic: 'General Reference', free: true },
   ],
 };
