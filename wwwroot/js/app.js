@@ -1076,6 +1076,7 @@ function hubTrackCards(tracks) {
       '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' + statusBadge + '</div>' +
       '<h3>' + escapeHtml(exam.shortName || exam.title) + '</h3>' +
       '<div class="exam-track-state muted">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</div>' +
+      (exam.active ? '<div class="exam-track-resources muted">📚 ' + resourceInventorySummary(exam.examType).compact + '</div>' : '') +
       priceHtml +
       '</div><div class="exam-track-footer">' +
       (exam.active ? '<span class="exam-track-view-link">View details →</span>' : '<span class="muted exam-track-view-link">Coming soon</span>') +
@@ -1695,6 +1696,24 @@ var RESOURCE_TYPE_LABEL = {
 function resourceTypeCellHtml(type) {
   var t = RESOURCE_TYPE_LABEL[type];
   return '<span class="resource-type-cell"><span>' + t.icon + '</span><span>' + t.label + '</span></span>';
+}
+
+// Real per-track resource inventory, shown pre-purchase (hub cards + track landing page) so a
+// visitor knows what they're actually getting -- most tracks currently have just the one official
+// handbook link, ca_notary has a full audio/video library. Computed live from RESOURCES itself
+// (never a separately-maintained count), so it can't drift out of sync with what's really there,
+// and it updates automatically as more tracks grow their own resource libraries over time.
+function resourceInventorySummary(examType) {
+  var items = RESOURCES[examType] || [];
+  var counts = {};
+  items.forEach(function (r) { counts[r.type] = (counts[r.type] || 0) + 1; });
+  var mediaCount = (counts.audio || 0) + (counts.video || 0);
+  if (!mediaCount) return { compact: 'Official handbook', full: 'Official handbook (external link)' };
+  var parts = [];
+  if (counts.audio) parts.push(counts.audio + ' audio lesson' + (counts.audio === 1 ? '' : 's'));
+  if (counts.video) parts.push(counts.video + ' video' + (counts.video === 1 ? '' : 's'));
+  if (counts.table) parts.push(counts.table + ' reference guide' + (counts.table === 1 ? '' : 's'));
+  return { compact: mediaCount + ' audio/video lessons', full: parts.join(' · ') + ', plus the official handbook' };
 }
 
 // Native <audio controls>/<video controls> has a draggable scrubber but no dedicated skip
@@ -2458,6 +2477,7 @@ function renderTrackLanding() {
     '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
+    '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
     '</div>';
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {

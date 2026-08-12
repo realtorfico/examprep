@@ -968,6 +968,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
 .exam-track-state { font-size: 0.78rem; margin-bottom: 0.6rem; }
+.exam-track-resources { font-size: 0.72rem; margin-bottom: 0.6rem; }
 .exam-track-price { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
 .exam-track-view-link { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
 .exam-track-card:hover .exam-track-view-link { text-decoration: underline; }
