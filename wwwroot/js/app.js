@@ -849,7 +849,7 @@ var HUB_EXAMS = [
     title: 'Virginia Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/va_real_estate',
     duration: '45 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
     description: 'Practice questions covering Virginia Code Chapter 21 (Real Estate Board) and 18VAC135-20: licensing, qualifications, continuing education and escrow accounts, agency definitions and brokerage relationships, disclosure requirements, advertising and recordkeeping, and Virginia Fair Housing Law -- the state-specific portion of the PSI-administered Salesperson exam.',
-    breakdown: [['Licensing, Qualifications & Escrow Accounts', '54%'], ['Agency Definitions & Brokerage Relationships', '21%'], ['Disclosure Requirements, Advertising & Recordkeeping', '15%'], ['Virginia Fair Housing Law', '10%']],
+    breakdown: [['Licensing, Qualifications & Escrow Accounts', '37%'], ['Agency Definitions & Brokerage Relationships', '29%'], ['Disclosure Requirements, Advertising & Recordkeeping', '20%'], ['Virginia Fair Housing Law', '14%']],
   },
   {
     examType: 'va_boating', shortName: 'Virginia Boating', stateCode: 'VA', examKind: 'Boating',
@@ -1401,17 +1401,19 @@ var TRACK_COMPLIANCE = {
     passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
   },
   va_motorcycle: {
-    orgLine: 'the Virginia Department of Motor Vehicles (DMV) or an approved Rider Training Program provider',
-    footerRequirement: "do not fulfill Virginia's Rider Training Program course requirement (the common way riders waive the DMV skills test) or any other license training requirement",
-    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s Rider Training ' +
-      'Program course requirement — completing an approved course is the common way riders waive the DMV on-cycle skills test, but it ' +
-      'does not waive the written knowledge test, which every applicant must still pass — and does not issue any official ' +
-      'course-completion certificate. Our content is a supplementary study aid only. Completing practice exams here also does not ' +
-      'register you for, or schedule, the official DMV written knowledge test or a Rider Training Program course; official testing is ' +
-      'administered by the Virginia Department of Motor Vehicles. While we strive to align our content with the current Virginia ' +
-      'Motorcycle Rider\'s Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice ' +
-      'or a guaranteed exam outcome.</p>',
-    examIntroDisclaimer: 'register you for, or count toward, the real Virginia DMV written knowledge test, the skills test, or a Rider Training Program course.',
+    orgLine: 'the Virginia Department of Motor Vehicles (DMV) or a Virginia Rider Training Program (VRTP) provider',
+    footerRequirement: "do not fulfill Virginia's Rider Training Program (VRTP) course requirement -- completing an approved VRTP course waives BOTH the DMV written knowledge exam and the road skills test -- or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s Rider ' +
+      'Training Program (VRTP) course requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Completing a VRTP course is optional, not mandatory: riders who skip it must instead pass the ' +
+      'DMV written knowledge exam, hold a motorcycle learner\'s permit for 30 days (9 months if under 18), and then pass the DMV road ' +
+      'skills test. Riders who complete an approved VRTP course receive a certificate that waives BOTH the written knowledge exam AND ' +
+      'the road skills test (valid for one year from completion, for riders under 18); it does not shorten the under-18 permit-holding ' +
+      'period. Completing practice exams here also does not register you for, or schedule, the official DMV written knowledge test, ' +
+      'the road skills test, or a VRTP course; official testing and VRTP provider listings are administered by the Virginia ' +
+      'Department of Motor Vehicles. While we strive to align our content with the current Virginia Motorcycle Rider\'s Manual, it is ' +
+      'provided "as-is" for self-study and does not constitute legal or riding-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Virginia DMV written knowledge test, the road skills test, or a Virginia Rider Training Program course.',
     passScoreNote: 'the same threshold as the real Virginia DMV test — 20 of 25 correct',
   },
   va_real_estate: {
@@ -1469,17 +1471,20 @@ var TRACK_COMPLIANCE = {
     passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
   },
   mi_motorcycle: {
-    orgLine: 'the Michigan Department of State (Secretary of State) or an approved Motorcycle Safety Program provider',
-    footerRequirement: "do not fulfill Michigan's motorcycle safety course requirement (the common way riders satisfy the skills-test requirement) or any other license training requirement",
-    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Michigan\'s approved ' +
-      'motorcycle safety course requirement — completing an approved course, or taking the rider skills test directly through a ' +
-      'licensed driver testing business, are the paths to a motorcycle endorsement — and does not issue any official ' +
-      'course-completion certificate. Our content is a supplementary study aid only. Completing practice exams here also does not ' +
-      'register you for, or schedule, the official written knowledge test or the rider skills test; official testing is administered ' +
-      'through the Michigan Department of State. While we strive to align our content with the current Michigan Motorcycle Operator ' +
-      'Manual, it is provided "as-is" for self-study and does not constitute legal or riding-instruction advice or a guaranteed exam ' +
-      'outcome.</p>',
-    examIntroDisclaimer: 'register you for, or count toward, the real Michigan written knowledge test, the rider skills test, or an approved motorcycle safety course.',
+    orgLine: 'the Michigan Department of State (Secretary of State) or the Michigan Rider Education Program (Mi-REP)',
+    footerRequirement: "do not fulfill Michigan's Rider Education Program (Mi-REP) motorcycle safety course requirement -- completing an approved MSF Basic or Returning RiderCourse waives BOTH the written knowledge test and the Rider Skills Test -- or the alternative path (written knowledge test, then a Temporary Instruction Permit and supervised practice, then the Rider Skills Test)",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Michigan\'s Rider ' +
+      'Education Program (Mi-REP) motorcycle safety course requirement. Michigan riders reach a motorcycle endorsement one of two ' +
+      'ways: (1) complete an approved Mi-REP course -- the Motorcycle Safety Foundation Basic RiderCourse (BRC) or Returning ' +
+      'RiderCourse (RRC) -- which waives BOTH the Secretary of State written knowledge test and the Rider Skills Test (RST); or (2) ' +
+      'pass the written knowledge test at a Secretary of State office, obtain a Temporary Instruction Permit (TIP), practice under ' +
+      'supervision for up to 180 days, then pass the RST. Our content is a supplementary study aid for the written knowledge test ' +
+      'used in path (2) -- it is not a substitute for, and does not issue, any Mi-REP course-completion certificate. Completing ' +
+      'practice exams here also does not register you for, or schedule, the official written knowledge test, the Rider Skills ' +
+      'Test, or a Mi-REP course; official testing is administered through the Michigan Department of State, and rider training ' +
+      'through Mi-REP. While we strive to align our content with the current Michigan Motorcycle Operator Manual (SOS-116), it is ' +
+      'provided "as-is" for self-study and does not constitute legal or riding-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Michigan written knowledge test, the Rider Skills Test, or a Mi-REP motorcycle safety course.',
     passScoreNote: 'the same threshold as the real Michigan knowledge test — 20 of 25 correct',
   },
   mi_boating: {
@@ -1502,11 +1507,14 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: '<p class="muted"><strong>Important scope note:</strong> unlike this site\'s other real estate tracks, Michigan\'s ' +
       'real Salesperson exam (administered by PSI) is a single unified 115-question, national-plus-state test with no separate ' +
       'standalone state-only portion or partial-retake option. This track is NOT a practice version of that full exam — it covers ' +
-      'only the roughly 28 items\' worth of genuinely Michigan-specific subject matter within it (licensing, applications and ' +
-      'department requirements; definitions, duties and agency relationship disclosure; prohibited conduct, trust accounts and ' +
-      'compensation; advertising, supervision and property interest disclosure; and contractual relationships), grounded in ' +
-      'Michigan\'s Occupational Code Article 25 (MCL 339.2501-2518). The 40-question/70%-pass format here is a practice-sizing ' +
-      'convention, not an official Michigan-specific exam format. Using this site does not satisfy Michigan\'s prelicense education ' +
+      'genuinely Michigan-specific subject matter (licensing, applications and department requirements; definitions, duties and ' +
+      'agency relationship disclosure; prohibited conduct, trust accounts and compensation; advertising, supervision and property ' +
+      'interest disclosure; and contractual relationships), grounded in Michigan\'s Occupational Code Article 25 (MCL 339.2501-2518). ' +
+      'PSI\'s own content outline separately labels a similar 35-item "Michigan Specific Portion" within the 115-item exam (Duties/' +
+      'Powers of the Department and Board 3, Licensing Requirements 5, Statutory Requirements Governing Licensees 10, Contractual ' +
+      'Relationships 5, Additional State Topics 12); our coverage is organized around the underlying statute rather than matching ' +
+      'that exact item-by-item split. The 40-question/70%-pass format here is a practice-sizing convention, not an official ' +
+      'Michigan-specific exam format. Using this site does not satisfy Michigan\'s prelicense education ' +
       'requirement and does not issue any official course-completion certificate — our content is a supplementary study aid only. ' +
       'Completing practice exams here does not register you for, or schedule, the official PSI-administered Salesperson exam. It is ' +
       'provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
