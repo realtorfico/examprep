@@ -789,6 +789,111 @@ var HUB_EXAMS = [
     breakdown: [['Licensing, Qualifications, Fees & Commission Operations', '28%'], ['Trust Accounts, Advertising & Brokerage Relationships', '21%'], ['Fair Housing, Discipline & Handling Transactions', '19%'], ['Real Estate Education, Course Standards & CAM', '17%'], ['Hearings, Nonresident Licensure & Firm Requirements', '15%']],
   },
   {
+    examType: 'nc_driver', shortName: 'North Carolina Driver', stateCode: 'NC', examKind: 'Driver',
+    title: 'North Carolina Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/nc_driver',
+    duration: 'Untimed', questions: '37 Multiple Choice (Knowledge + Road Signs)', passScore: '29/37 Correct (78.4%)',
+    description: 'Practice questions covering the North Carolina Driver\'s Handbook: licensing, permits and required documents, alcohol, points and license consequences, driver safety and basic driving skills, defensive driving, hazards and emergencies, signals, signs and pavement markings, and sharing the road -- for both the NC DMV general knowledge test and the required road-sign identification test.',
+    breakdown: [['Driver Safety & Basic Driving Skills', '23%'], ['Licensing, Permits & Required Documents', '20%'], ['Defensive Driving, Hazards & Emergencies', '16%'], ['Alcohol, Points & License Consequences', '15%'], ['Signals, Signs & Pavement Markings', '14%'], ['Sharing the Road', '12%']],
+  },
+  {
+    examType: 'nc_cdl', shortName: 'North Carolina CDL', stateCode: 'NC', examKind: 'Commercial Driver (CDL)',
+    title: 'North Carolina CDL (Commercial Driver\'s License) Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/nc_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the North Carolina CDL Manual: vehicle control, air brakes and combination vehicles, CDL licensing, vehicle inspection and cargo/passenger safety, hazardous materials and hazard conditions/emergencies, and school bus endorsement content.',
+    breakdown: [['Vehicle Control, Air Brakes & Combination Vehicles', '35%'], ['CDL Licensing, Vehicle Inspection & Cargo/Passenger Safety', '29%'], ['Hazardous Materials & Hazard Conditions/Emergencies', '29%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'nc_real_estate', shortName: 'North Carolina Real Estate', stateCode: 'NC', examKind: 'Real Estate',
+    title: 'North Carolina Real Estate Broker Exam', category: 'Real Estate Licensing', active: true, route: '/nc_real_estate',
+    duration: '120 Minutes', questions: '60 Multiple Choice (State-Specific Portion)', passScore: '45/60 Correct (75%)',
+    description: 'Practice questions covering the North Carolina Real Estate License Law and Commission Rules: handling trust funds and broker price opinions/CMAs, broker conduct, broker-in-charge duties and compensation, prohibited acts and agency law, agency agreements, disclosure and dual/designated agency, licensure and the Real Estate Commission, and residential disclosures and closing -- the state-specific portion of the PSI/Pearson VUE-administered Broker exam.',
+    breakdown: [['Handling Trust Funds & BPO/CMA', '24%'], ['Broker Conduct, Broker-in-Charge & Compensation', '20%'], ['Prohibited Acts & Agency Law', '17%'], ['Agency Agreements, Disclosure & Dual/Designated Agency', '16%'], ['Licensure & the Real Estate Commission', '14%'], ['Residential Disclosures & Closing', '9%']],
+  },
+  {
+    examType: 'nc_notary', shortName: 'North Carolina Notary', stateCode: 'NC', examKind: 'Notary',
+    title: 'North Carolina Notary Public Exam', category: 'State Licensing', active: true, route: '/nc_notary',
+    duration: 'Untimed', questions: '50 Multiple Choice', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the North Carolina Notary Public Act (General Statutes Chapter 10B): general provisions and commissioning, notarial acts, powers, limitations and fees, electronic and remote notarization, signature, seal and certificate forms, and changes in status, enforcement and validation -- grounded in the statutory 80% pass threshold set by G.S. 10B-8.',
+    breakdown: [['General Provisions & Commissioning', '26%'], ['Notarial Acts, Powers, Limitations & Fees', '21%'], ['Electronic & Remote Notarization', '21%'], ['Signature, Seal & Certificate Forms', '16%'], ['Changes in Status, Enforcement & Validation', '16%']],
+  },
+  {
+    examType: 'nc_boating', shortName: 'North Carolina Boating', stateCode: 'NC', examKind: 'Boating',
+    title: 'North Carolina Boater Education Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/nc_boating',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the North Carolina Vessel Operator\'s Guide: registration, safety education and required equipment, boating accidents, rules of the road and regulations, operation of vessels, PWC and water sports, and inland lighting rules and waterway markers -- modeled on the common format used by NASBLA-approved boater education course providers.',
+    breakdown: [['Registration, Safety Education & Required Equipment', '32%'], ['Boating Accidents, Rules of the Road & Regulations', '25%'], ['Operation of Vessels, PWC & Water Sports', '24%'], ['Inland Lighting Rules & Waterway Markers', '19%']],
+  },
+  {
+    examType: 'va_driver', shortName: 'Virginia Driver', stateCode: 'VA', examKind: 'Driver',
+    title: 'Virginia Driver License Knowledge Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/va_driver',
+    duration: 'Untimed', questions: '40 Multiple Choice (Road Signs + General Knowledge)', passScore: '34/40 Correct (85%)',
+    description: 'Practice questions covering the Virginia Driver\'s Manual: traffic signals, signs and pavement markings, space cushion, sharing the road and hazardous conditions, licensing, testing and registration, seat belts, child safety and penalties, speed, stopping, right-of-way and turning, and license types and other important information -- for both the required 10-question road-sign identification section and the general knowledge section of the DMV test.',
+    breakdown: [['Traffic Signals, Signs & Pavement Markings', '24%'], ['Space Cushion, Sharing the Road & Hazardous Conditions', '23%'], ['Licensing, Testing & Registration', '17%'], ['Seat Belts, Child Safety & Penalties', '14%'], ['Speed, Stopping, Right-of-Way & Turning', '11%'], ['License Types & Other Important Information', '11%']],
+  },
+  {
+    examType: 'va_cdl', shortName: 'Virginia CDL', stateCode: 'VA', examKind: 'Commercial Driver (CDL)',
+    title: 'Virginia CDL (Commercial Driver\'s License) Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/va_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Virginia CDL Manual: vehicle control, air brakes and combination vehicles, CDL licensing and driving safety, hazardous materials and alcohol/drugs awareness, cargo/passenger safety and accident procedures, and school bus endorsement content.',
+    breakdown: [['Vehicle Control, Air Brakes & Combination Vehicles', '34%'], ['CDL Licensing & Driving Safety', '31%'], ['Hazardous Materials & Alcohol/Drugs Basics', '17%'], ['Cargo, Passenger Safety & Accident Procedures', '13%'], ['School Bus', '5%']],
+  },
+  {
+    examType: 'va_motorcycle', shortName: 'Virginia Motorcycle', stateCode: 'VA', examKind: 'Motorcycle',
+    title: 'Virginia Motorcycle Knowledge Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/va_motorcycle',
+    duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
+    description: 'Practice questions covering the Virginia Motorcycle Rider\'s Manual: visibility, lane positioning and following distance, gear, pre-ride inspection and vehicle control, hazardous surfaces, night riding and emergencies, and Virginia motorcycle licensing, permits and testing.',
+    breakdown: [['Visibility, Lane Positioning & Following Distance', '28%'], ['Gear, Pre-Ride Inspection & Vehicle Control', '26%'], ['Hazardous Surfaces, Night Riding & Emergencies', '25%'], ['Virginia Motorcycle Licensing, Permits & Testing', '21%']],
+  },
+  {
+    examType: 'va_real_estate', shortName: 'Virginia Real Estate', stateCode: 'VA', examKind: 'Real Estate',
+    title: 'Virginia Real Estate Salesperson Exam', category: 'Real Estate Licensing', active: true, route: '/va_real_estate',
+    duration: '45 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
+    description: 'Practice questions covering Virginia Code Chapter 21 (Real Estate Board) and 18VAC135-20: licensing, qualifications, continuing education and escrow accounts, agency definitions and brokerage relationships, disclosure requirements, advertising and recordkeeping, and Virginia Fair Housing Law -- the state-specific portion of the PSI-administered Salesperson exam.',
+    breakdown: [['Licensing, Qualifications & Escrow Accounts', '54%'], ['Agency Definitions & Brokerage Relationships', '21%'], ['Disclosure Requirements, Advertising & Recordkeeping', '15%'], ['Virginia Fair Housing Law', '10%']],
+  },
+  {
+    examType: 'va_boating', shortName: 'Virginia Boating', stateCode: 'VA', examKind: 'Boating',
+    title: 'Virginia Boating Safety Education Exam', category: 'Boating & Watercraft Safety', active: true, route: '/va_boating',
+    duration: 'Untimed', questions: '75 Multiple Choice', passScore: '60/75 Correct (80%)',
+    description: 'Practice questions covering the Virginia DWR Boater\'s Guide: required safety equipment, operating laws and safety course requirements, safety, accidents and recreation, registration and titling, and navigation rules and aids to navigation -- grounded directly in Virginia Administrative Code 4VAC15-410, the state\'s official boating safety equivalency exam.',
+    breakdown: [['Required Safety Equipment', '26%'], ['Operating Laws & Safety Course', '20%'], ['Safety, Accidents & Recreation', '20%'], ['Registration & Titling', '18%'], ['Navigation Rules & Aids to Navigation', '16%']],
+  },
+  {
+    examType: 'mi_driver', shortName: 'Michigan Driver', stateCode: 'MI', examKind: 'Driver',
+    title: 'Michigan Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mi_driver',
+    duration: 'Untimed', questions: '50 Multiple Choice', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Michigan Driver\'s Manual (Secretary of State): traffic laws, signs, pavement markings and signals, licensing, GDL requirements, testing and state IDs, driving record, points, alcohol and drugs, emergencies and special situations, and sharing the road with commercial vehicles, pedestrians, motorcycles and bicycles.',
+    breakdown: [['Traffic Laws: Distraction, Restraints, Speed, Right-of-Way, Passing, Turning & Parking', '28%'], ['Signs, Pavement Markings & Signals', '19%'], ['Licensing, GDL Requirements, Testing & State IDs', '17%'], ['Driving Record, Points, Alcohol & Drugs', '14%'], ['Emergencies & Special Situations', '13%'], ['Sharing the Road: Commercial Vehicles, Pedestrians, Motorcycles & Bicycles', '9%']],
+  },
+  {
+    examType: 'mi_cdl', shortName: 'Michigan CDL', stateCode: 'MI', examKind: 'Commercial Driver (CDL)',
+    title: 'Michigan CDL (Commercial Driver\'s License) Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mi_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Michigan Commercial Driver License Manual: CDL licensing and driving safety, vehicle control, air brakes and combination vehicles, hazardous materials and alcohol/drugs awareness, and cargo/passenger safety.',
+    breakdown: [['CDL Licensing & Driving Safety', '44%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '34%'], ['Hazardous Materials & Alcohol/Drugs Awareness', '15%'], ['Cargo & Passenger Safety', '7%']],
+  },
+  {
+    examType: 'mi_motorcycle', shortName: 'Michigan Motorcycle', stateCode: 'MI', examKind: 'Motorcycle',
+    title: 'Michigan Motorcycle Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mi_motorcycle',
+    duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
+    description: 'Practice questions covering the Michigan Motorcycle Operator Manual: licensing, permits and endorsement requirements, Michigan motorcycle laws and equipment, protective gear and helmets, vehicle inspection and street strategies, and alcohol, drugs and impairment.',
+    breakdown: [['Licensing, Permits & Endorsement Requirements', '26%'], ['Michigan Motorcycle Laws & Equipment', '25%'], ['Protective Gear & Helmets', '18%'], ['Vehicle Inspection & Street Strategies', '17%'], ['Alcohol, Drugs & Impairment', '14%']],
+  },
+  {
+    examType: 'mi_boating', shortName: 'Michigan Boating', stateCode: 'MI', examKind: 'Boating',
+    title: 'Michigan Boater Safety Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/mi_boating',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering Michigan Boating Laws and Responsibilities: required safety equipment, boating basics and navigation rules, operating laws, alcohol, accidents and environmental protection, registration, titling and legal operator requirements, and PWC-specific rules, operation and skiing.',
+    breakdown: [['Required Safety Equipment', '23%'], ['Boating Basics & Navigation Rules', '22%'], ['Operating Laws, Alcohol, Accidents & Environmental Protection', '22%'], ['Registration, Titling & Legal Operator Requirements', '18%'], ['PWC-Specific Rules, Operation & Skiing', '15%']],
+  },
+  {
+    examType: 'mi_real_estate', shortName: 'Michigan Real Estate', stateCode: 'MI', examKind: 'Real Estate',
+    title: 'Michigan Real Estate Salesperson Exam Prep (Michigan-Specific Content)', category: 'Real Estate Licensing', active: true, route: '/mi_real_estate',
+    duration: '45 Minutes', questions: '40 Multiple Choice (Michigan-Specific Content)', passScore: '28/40 Correct (70%)',
+    description: 'Practice questions covering Michigan\'s Occupational Code Article 25 (Real Estate Brokers and Salespersons, MCL 339.2501-2518): licensing, applications and department requirements, definitions, duties and agency relationship disclosure, prohibited conduct, trust accounts and compensation, advertising, supervision and property interest disclosure, and contractual relationships. Note: Michigan\'s real Salesperson exam is one unified 115-question national+state test with no separate standalone state-only portion -- this track covers the Michigan-specific subject matter as supplemental practice, not a full state-portion exam.',
+    breakdown: [['Licensing, Applications & Department Requirements', '36%'], ['Definitions, Duties & Agency Relationship Disclosure', '19%'], ['Prohibited Conduct, Trust Accounts & Compensation', '18%'], ['Advertising, Supervision & Property Interest Disclosure', '14%'], ['Contractual Relationships: Service & Right-to-List Agreements', '13%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -800,7 +905,7 @@ var HUB_EXAMS = [
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', OH: 'Ohio', GA: 'Georgia', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', OH: 'Ohio', GA: 'Georgia', NC: 'North Carolina', VA: 'Virginia', MI: 'Michigan', WA: 'Washington', US: 'National' };
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -1196,6 +1301,217 @@ var TRACK_COMPLIANCE = {
       'constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 75-hour pre-license education.',
     passScoreNote: 'the same threshold as the real state-specific portion — 39 of 52 correct',
+  },
+  nc_driver: {
+    orgLine: 'the North Carolina Division of Motor Vehicles (NCDMV)',
+    footerRequirement: "do not fulfill North Carolina's driver education/training requirement for permit applicants under 18, or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy North Carolina\'s driver ' +
+      'education requirement for permit applicants under 18, and does not issue any official course-completion certificate — our ' +
+      'content is a supplementary study aid only. The real NCDMV knowledge test includes a required road-sign identification section ' +
+      '(9 of 12 correct) in addition to the general knowledge questions (20 of 25 correct); this practice exam models it as a single ' +
+      'unified 37-question sitting, blended to a 78.4% pass threshold, for simplicity. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official NCDMV written knowledge test; official testing must be scheduled directly through ' +
+      'the North Carolina Division of Motor Vehicles, and driver education must be completed through an NCDMV-approved provider. ' +
+      'While we strive to align our content with the current North Carolina Driver\'s Handbook, it is provided "as-is" for self-study ' +
+      'and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real NCDMV written knowledge test or any required driver education course.',
+    passScoreNote: 'the same overall blended threshold as the real NCDMV test — 29 of 37 correct (the real test is actually two separately-graded sections: 25 general-knowledge questions at 80%, plus 12 road-sign questions at 75%)',
+  },
+  nc_cdl: {
+    orgLine: 'the North Carolina Division of Motor Vehicles (NCDMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any North Carolina CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level ' +
+      'Driver Training (ELDT) requirement or any North Carolina CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official NCDMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the North Carolina Division of Motor Vehicles, and ELDT must be completed through an ' +
+      'FMCSA-registered training provider. While we strive to align our content with the current North Carolina CDL Manual, it is ' +
+      'provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real NCDMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  nc_real_estate: {
+    orgLine: 'the North Carolina Real Estate Commission (NCREC)',
+    footerRequirement: "do not fulfill the 75-hour prelicensing course requirement or any North Carolina real estate broker training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 75-hour prelicensing ' +
+      'course requirement for a North Carolina real estate broker license, and does not issue any official course-completion ' +
+      'certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam, not the ' +
+      'separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official ' +
+      'licensing exam; official testing is administered by PSI/Pearson VUE on behalf of the Real Estate Commission, and prelicensing ' +
+      'education must be completed through a Commission-approved school. While we strive to align our content with the current PSI ' +
+      'Candidate Handbook and NCREC License Law and Rules Comments, it is provided "as-is" for self-study and does not constitute ' +
+      'legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 75-hour prelicensing education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 45 of 60 correct',
+  },
+  nc_notary: {
+    orgLine: 'the North Carolina Secretary of State',
+    footerRequirement: "do not fulfill North Carolina's notary education/instruction requirement administered by a Secretary of State-approved provider, or issue a notary commission",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy North Carolina\'s notary ' +
+      'education requirement, administered by a Secretary of State-approved instructor or provider, and does not issue any official ' +
+      'course-completion certificate or notary commission — our content is a supplementary study aid only. Completing practice exams ' +
+      'here also does not register you for, or schedule, the official commissioning process; official notary commissioning is ' +
+      'administered directly by the North Carolina Secretary of State. While we strive to align our content with the current North ' +
+      'Carolina Notary Public Act (General Statutes Chapter 10B), it is provided "as-is" for self-study and does not constitute ' +
+      'legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real North Carolina notary commissioning process or any required notary education course.',
+    passScoreNote: 'the same statutory threshold set by G.S. 10B-8 — 40 of 50 correct',
+  },
+  nc_boating: {
+    orgLine: 'the North Carolina Wildlife Resources Commission (NCWRC) or any of North Carolina\'s NASBLA-approved boater education course providers',
+    footerRequirement: "do not fulfill North Carolina's boater education requirement or issue a Boater Education Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy North Carolina\'s boater ' +
+      'education requirement — a NASBLA-approved course — and does not issue any official course-completion certificate or Boater ' +
+      'Education Card. <strong>North Carolina has no single official state-administered boating exam</strong> — the Wildlife ' +
+      'Resources Commission authorizes multiple independent course providers, each administering its own final test as part of its ' +
+      'own course; the 60-question, 80%-to-pass format used here models the common format found across several NASBLA-approved ' +
+      'providers, not one official exam. Content is grounded in the North Carolina Vessel Operator\'s Guide. Our content is a ' +
+      'supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam ' +
+      'outcome — completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any North Carolina boater education provider\'s official course or exam, or issue a Boater Education Card.',
+    passScoreNote: 'the common format used across several NASBLA-approved course providers — 48 of 60 correct (80%) — not one single official exam',
+  },
+  va_driver: {
+    orgLine: 'the Virginia Department of Motor Vehicles (DMV)',
+    footerRequirement: "do not fulfill Virginia's driver education/training requirement for applicants under 19, or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s driver ' +
+      'education requirement for applicants under 19, and does not issue any official course-completion certificate — our content is ' +
+      'a supplementary study aid only. The real Virginia DMV knowledge test has a two-part, two-gate structure: Part 1 is 10 ' +
+      'road-sign questions, ALL of which must be answered correctly before advancing (no partial credit); Part 2 is 30 ' +
+      'general-knowledge questions requiring 24 correct (80%). This practice exam models it as a single unified 40-question sitting, ' +
+      'blended to an 85% pass threshold, for simplicity. Completing practice exams here also does not register you for, or schedule, ' +
+      'the official DMV written knowledge test; official testing must be scheduled directly through the Virginia Department of Motor ' +
+      'Vehicles, and driver education must be completed through a DMV-approved provider. While we strive to align our content with ' +
+      'the current Virginia Driver\'s Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Virginia DMV written knowledge test or any required driver education course.',
+    passScoreNote: 'the same overall blended threshold as the real DMV test — 34 of 40 correct (the real test has a two-gate structure: 10 road-sign questions requiring ALL correct, then 30 general-knowledge questions at 80%)',
+  },
+  va_cdl: {
+    orgLine: 'the Virginia Department of Motor Vehicles (DMV) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Virginia CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level ' +
+      'Driver Training (ELDT) requirement or any Virginia CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Virginia Department of Motor Vehicles, and ELDT must be completed through an FMCSA-registered ' +
+      'training provider. While we strive to align our content with the current Virginia CDL Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Virginia DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  va_motorcycle: {
+    orgLine: 'the Virginia Department of Motor Vehicles (DMV) or an approved Rider Training Program provider',
+    footerRequirement: "do not fulfill Virginia's Rider Training Program course requirement (the common way riders waive the DMV skills test) or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s Rider Training ' +
+      'Program course requirement — completing an approved course is the common way riders waive the DMV on-cycle skills test, but it ' +
+      'does not waive the written knowledge test, which every applicant must still pass — and does not issue any official ' +
+      'course-completion certificate. Our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official DMV written knowledge test or a Rider Training Program course; official testing is ' +
+      'administered by the Virginia Department of Motor Vehicles. While we strive to align our content with the current Virginia ' +
+      'Motorcycle Rider\'s Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice ' +
+      'or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Virginia DMV written knowledge test, the skills test, or a Rider Training Program course.',
+    passScoreNote: 'the same threshold as the real Virginia DMV test — 20 of 25 correct',
+  },
+  va_real_estate: {
+    orgLine: 'the Virginia Real Estate Board',
+    footerRequirement: "do not fulfill the applicable prelicense education requirement or any Virginia real estate salesperson training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s prelicense ' +
+      'education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — ' +
+      'our content is a supplementary study aid only, and covers only the state-specific portion of the exam, not the separate ' +
+      'national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing ' +
+      'exam; official testing is administered by PSI on behalf of the Real Estate Board, and prelicense education must be completed ' +
+      'through a Board-approved school. While we strive to align our content with Virginia Code Chapter 21 (Real Estate Board) and ' +
+      '18VAC135-20, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Board exam or the required prelicense education.',
+    passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
+  },
+  va_boating: {
+    orgLine: 'the Virginia Department of Wildlife Resources (DWR)',
+    footerRequirement: "do not fulfill Virginia's boater education requirement or issue a Boater Education Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Virginia\'s boater ' +
+      'education requirement, and does not issue any official course-completion certificate or Boater Education Card — our content ' +
+      'is a supplementary study aid only. Virginia\'s boater education requirement can be satisfied by passing an approved ' +
+      'equivalency exam under Virginia Administrative Code 4VAC15-410, administered through DWR-approved providers; the exact ' +
+      'question count and format can vary by provider, and the 75-question, 80%-to-pass format used here models that regulation\'s ' +
+      'common format, not one single fixed official exam. Content is grounded in the Virginia DWR Boater\'s Guide. Completing practice ' +
+      'exams here does not register you for, or schedule, any provider\'s official equivalency exam. While we strive to align our ' +
+      'content with 4VAC15-410 and the current DWR Boater\'s Guide, it is provided "as-is" for self-study and does not constitute ' +
+      'legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Virginia DWR-approved provider\'s official boating equivalency exam, or issue a Boater Education Card.',
+    passScoreNote: 'the common format consistent with 4VAC15-410 — 60 of 75 correct (80%)',
+  },
+  mi_driver: {
+    orgLine: 'the Michigan Department of State (Secretary of State)',
+    footerRequirement: "do not fulfill Michigan's Graduated Driver Licensing (GDL) segmented driver education requirement for applicants under 18, or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Michigan\'s Graduated ' +
+      'Driver Licensing (GDL) segmented driver education requirement for applicants under 18, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official Secretary of State written knowledge test; official testing must be scheduled ' +
+      'directly through the Michigan Department of State, and driver education must be completed through a state-approved provider. ' +
+      'While we strive to align our content with the current Michigan Driver\'s Manual, it is provided "as-is" for self-study and ' +
+      'does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Michigan Secretary of State written knowledge test or any required driver education course.',
+    passScoreNote: 'the same threshold as the real Michigan knowledge test — 40 of 50 correct',
+  },
+  mi_cdl: {
+    orgLine: 'the Michigan Department of State (Secretary of State) or the Federal Motor Carrier Safety Administration (FMCSA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Michigan CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level ' +
+      'Driver Training (ELDT) requirement or any Michigan CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official CDL knowledge test, skills test, or road test; official testing must be scheduled ' +
+      'directly through the Michigan Department of State, and ELDT must be completed through an FMCSA-registered training provider. ' +
+      'While we strive to align our content with the current Michigan Commercial Driver License Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Michigan CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold required by federal law for every state\'s CDL General Knowledge test — 40 of 50 correct',
+  },
+  mi_motorcycle: {
+    orgLine: 'the Michigan Department of State (Secretary of State) or an approved Motorcycle Safety Program provider',
+    footerRequirement: "do not fulfill Michigan's motorcycle safety course requirement (the common way riders satisfy the skills-test requirement) or any other license training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Michigan\'s approved ' +
+      'motorcycle safety course requirement — completing an approved course, or taking the rider skills test directly through a ' +
+      'licensed driver testing business, are the paths to a motorcycle endorsement — and does not issue any official ' +
+      'course-completion certificate. Our content is a supplementary study aid only. Completing practice exams here also does not ' +
+      'register you for, or schedule, the official written knowledge test or the rider skills test; official testing is administered ' +
+      'through the Michigan Department of State. While we strive to align our content with the current Michigan Motorcycle Operator ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or riding-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Michigan written knowledge test, the rider skills test, or an approved motorcycle safety course.',
+    passScoreNote: 'the same threshold as the real Michigan knowledge test — 20 of 25 correct',
+  },
+  mi_boating: {
+    orgLine: 'the Michigan Department of Natural Resources (DNR) or any of Michigan\'s approved boater safety course providers',
+    footerRequirement: "do not fulfill Michigan's boater safety education requirement or issue a Boater Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Michigan\'s boater safety ' +
+      'education requirement, and does not issue any official course-completion certificate or Boater Safety Certificate. ' +
+      '<strong>Michigan has no single official state-administered boating exam</strong> — the DNR authorizes multiple independent, ' +
+      'Kalkomey-produced course providers, each administering its own final test as part of its own course; the 60-question, ' +
+      '80%-to-pass format used here models the common format found across several DNR-approved providers, not one official exam. ' +
+      'Content is grounded in Michigan Boating Laws and Responsibilities. Our content is a supplementary study aid only, provided ' +
+      '"as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome — completing practice exams here ' +
+      'does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Michigan boater safety course provider\'s official course or exam, or issue a Boater Safety Certificate.',
+    passScoreNote: 'the common format used across several DNR-approved course providers — 48 of 60 correct (80%) — not one single official exam',
+  },
+  mi_real_estate: {
+    orgLine: 'the Michigan Department of Licensing and Regulatory Affairs (LARA)',
+    footerRequirement: "do not fulfill Michigan's real estate salesperson prelicense education requirement, and are NOT a substitute for or portion of Michigan's actual Salesperson licensing exam",
+    termsParagraph2: '<p class="muted"><strong>Important scope note:</strong> unlike this site\'s other real estate tracks, Michigan\'s ' +
+      'real Salesperson exam (administered by PSI) is a single unified 115-question, national-plus-state test with no separate ' +
+      'standalone state-only portion or partial-retake option. This track is NOT a practice version of that full exam — it covers ' +
+      'only the roughly 28 items\' worth of genuinely Michigan-specific subject matter within it (licensing, applications and ' +
+      'department requirements; definitions, duties and agency relationship disclosure; prohibited conduct, trust accounts and ' +
+      'compensation; advertising, supervision and property interest disclosure; and contractual relationships), grounded in ' +
+      'Michigan\'s Occupational Code Article 25 (MCL 339.2501-2518). The 40-question/70%-pass format here is a practice-sizing ' +
+      'convention, not an official Michigan-specific exam format. Using this site does not satisfy Michigan\'s prelicense education ' +
+      'requirement and does not issue any official course-completion certificate — our content is a supplementary study aid only. ' +
+      'Completing practice exams here does not register you for, or schedule, the official PSI-administered Salesperson exam. It is ' +
+      'provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Michigan Salesperson exam or the required prelicense education — this track covers Michigan-specific subject matter only, not a full state-portion exam.',
+    passScoreNote: 'a practice-sizing convention for this Michigan-specific supplemental content — 28 of 40 correct (70%) — not an official Michigan-specific exam format',
   },
 };
 function trackCompliance(examType) {
@@ -2048,6 +2364,81 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'O.C.G.A. Title 43, Chapter 40 (Real Estate Brokers, Salespersons and Rental Agents)', type: 'pdf', url: 'https://law.justia.com/codes/georgia/title-43/chapter-40/',
       desc: 'The Georgia Real Estate License Act — the statutory basis for the Commission\'s Rules.',
+      topic: 'General Reference', free: true },
+  ],
+  nc_driver: [
+    { title: 'North Carolina DMV', type: 'pdf', url: 'https://www.ncdot.gov/dmv/Pages/default.aspx',
+      desc: 'The North Carolina Division of Motor Vehicles\' official site — the authoritative source the driver\'s handbook and written knowledge test are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nc_cdl: [
+    { title: 'North Carolina DMV', type: 'pdf', url: 'https://www.ncdot.gov/dmv/Pages/default.aspx',
+      desc: 'The North Carolina Division of Motor Vehicles\' official site — the authoritative source the CDL manual and knowledge test are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nc_real_estate: [
+    { title: 'North Carolina Real Estate Commission', type: 'pdf', url: 'https://www.ncrec.gov',
+      desc: 'The North Carolina Real Estate Commission\'s official site — the authoritative source the license law and rules are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nc_notary: [
+    { title: 'North Carolina Secretary of State — Notary Division', type: 'pdf', url: 'https://www.sosnc.gov/divisions/notary',
+      desc: 'The North Carolina Secretary of State\'s official notary division page — the authoritative source the Notary Public Act (G.S. Chapter 10B) content is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nc_boating: [
+    { title: 'North Carolina Wildlife Resources Commission', type: 'pdf', url: 'https://www.ncwildlife.org',
+      desc: 'The North Carolina Wildlife Resources Commission\'s official site — the authoritative source the Vessel Operator\'s Guide is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  va_driver: [
+    { title: 'Virginia Driver\'s Manual', type: 'pdf', url: 'https://www.dmv.virginia.gov/sites/default/files/documents/dmv39b.pdf',
+      desc: 'The official manual published by the Virginia DMV — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  va_cdl: [
+    { title: 'Virginia DMV', type: 'pdf', url: 'https://www.dmv.virginia.gov',
+      desc: 'The Virginia Department of Motor Vehicles\' official site — the authoritative source the CDL manual and knowledge test are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  va_motorcycle: [
+    { title: 'Virginia DMV', type: 'pdf', url: 'https://www.dmv.virginia.gov',
+      desc: 'The Virginia Department of Motor Vehicles\' official site — the authoritative source the Motorcycle Rider\'s Manual is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  va_real_estate: [
+    { title: '18VAC135-20 (Virginia Real Estate Board Regulations)', type: 'pdf', url: 'https://law.lis.virginia.gov/admincode/title18/agency135/chapter20/',
+      desc: 'The Virginia Real Estate Board\'s official regulations — the authoritative source the state-specific portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  va_boating: [
+    { title: 'Virginia DWR Boater\'s Guide', type: 'pdf', url: 'https://dwr.virginia.gov/boating/boaters-guide/',
+      desc: 'The official guide published by the Virginia Department of Wildlife Resources — the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_driver: [
+    { title: 'Michigan Department of State', type: 'pdf', url: 'https://www.michigan.gov/sos',
+      desc: 'The Michigan Department of State\'s official site — the authoritative source the Driver\'s Manual and knowledge test are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_cdl: [
+    { title: 'Michigan Department of State', type: 'pdf', url: 'https://www.michigan.gov/sos',
+      desc: 'The Michigan Department of State\'s official site — the authoritative source the Commercial Driver License Manual is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_motorcycle: [
+    { title: 'Michigan Department of State', type: 'pdf', url: 'https://www.michigan.gov/sos',
+      desc: 'The Michigan Department of State\'s official site — the authoritative source the Motorcycle Operator Manual is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_boating: [
+    { title: 'Michigan Department of Natural Resources', type: 'pdf', url: 'https://www.michigan.gov/dnr',
+      desc: 'The Michigan Department of Natural Resources\' official site — the authoritative source Michigan Boating Laws and Responsibilities is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_real_estate: [
+    { title: 'Michigan LARA — Real Estate Licensing', type: 'pdf', url: 'https://www.michigan.gov/lara',
+      desc: 'The Michigan Department of Licensing and Regulatory Affairs\' official site — the authoritative source the Occupational Code Article 25 (MCL 339.2501-2518) content is based on.',
       topic: 'General Reference', free: true },
   ],
 };
