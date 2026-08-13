@@ -894,6 +894,41 @@ var HUB_EXAMS = [
     breakdown: [['Licensing, Applications & Department Requirements', '36%'], ['Definitions, Duties & Agency Relationship Disclosure', '19%'], ['Prohibited Conduct, Trust Accounts & Compensation', '18%'], ['Advertising, Supervision & Property Interest Disclosure', '14%'], ['Contractual Relationships: Service & Right-to-List Agreements', '13%']],
   },
   {
+    examType: 'wa_driver', shortName: 'Washington Driver', stateCode: 'WA', examKind: 'Driver',
+    title: 'Washington Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/wa_driver',
+    duration: 'Untimed', questions: '40 Multiple Choice', passScore: '32/40 Correct (80%)',
+    description: 'Practice questions covering the Washington Driver Guide (Department of Licensing): licensing, permits and endorsements, vehicles, safety technology and basic control, traffic laws, signals, signs, intersections and road markings, sharing the road with people, buses, large vehicles, motorcycles, bicyclists, trains and emergency vehicles, impaired, distracted and smart driving, hazard awareness, speed, space, zones and parking, and road conditions, vehicle failures, collisions and law enforcement.',
+    breakdown: [['Licensing, Permits & Endorsements', '11%'], ['Vehicles, Safety Technology & Basic Control', '11%'], ['Traffic Laws, Signals, Signs, Intersections & Road Markings', '22%'], ['Sharing the Road: People, Vehicles & Vulnerable Users', '19%'], ['Impaired, Distracted & Smart Driving', '10%'], ['Hazard Awareness, Speed, Space, Zones & Parking', '17%'], ['Road Conditions, Vehicle Failures, Collisions & Law Enforcement', '10%']],
+  },
+  {
+    examType: 'wa_cdl', shortName: 'Washington CDL', stateCode: 'WA', examKind: 'Commercial Driver (CDL)',
+    title: 'Washington CDL (Commercial Driver\'s License) Exam', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/wa_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Washington Commercial Driver Guide: vehicle control, air brakes and combination vehicles, CDL licensing, driving safety and cargo/passenger safety, hazardous materials, and school bus content.',
+    breakdown: [['Vehicle Control, Air Brakes & Combination Vehicles', '32%'], ['CDL Licensing, Driving Safety & Cargo/Passenger Safety', '41%'], ['Hazardous Materials', '17%'], ['School Bus', '10%']],
+  },
+  {
+    examType: 'wa_motorcycle', shortName: 'Washington Motorcycle', stateCode: 'WA', examKind: 'Motorcycle',
+    title: 'Washington Motorcycle Endorsement Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/wa_motorcycle',
+    duration: 'Untimed', questions: '25 Multiple Choice', passScore: '20/25 Correct (80%)',
+    description: 'Practice questions covering the Washington Motorcycle Operator Manual: licensing, permits and endorsement process, gear, motorcycle inspection and personal responsibility, two-wheel riding controls, cornering and braking, riding a three-wheeled motorcycle, street strategies, and impairments.',
+    breakdown: [['Licensing, Permits & Endorsement Process', '14%'], ['Gear, Motorcycle Inspection & Personal Responsibility', '13%'], ['Two-Wheel Riding: Controls, Cornering & Braking', '10%'], ['Riding a Three-Wheeled Motorcycle', '21%'], ['Strategies for the Street', '24%'], ['Impairments', '18%']],
+  },
+  {
+    examType: 'wa_real_estate', shortName: 'Washington Real Estate', stateCode: 'WA', examKind: 'Real Estate',
+    title: 'Washington Real Estate Broker Exam', category: 'Real Estate Licensing', active: true, route: '/wa_real_estate',
+    duration: '90 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: '21/30 Correct (70%)',
+    description: 'Practice questions covering RCW 18.85 (broker licensing), RCW 18.86 (brokerage relationships/agency) and RCW 49.60.222-.227 (fair housing): licensing requirements and examination, agency relationships and disclosure, trust accounts and client funds, fair housing and anti-discrimination, and records, supervision and discipline -- the state-specific portion of the PSI-administered Broker exam. Washington\'s entry-level real estate license is called "Broker" (not "Salesperson").',
+    breakdown: [['Licensing Requirements & Examination', '25%'], ['Agency Relationships & Disclosure', '21%'], ['Trust Accounts & Client Funds', '18%'], ['Fair Housing & Anti-Discrimination', '15%'], ['Records, Supervision & Discipline', '21%']],
+  },
+  {
+    examType: 'wa_managing_broker', shortName: 'Washington Managing Broker', stateCode: 'WA', examKind: 'Real Estate',
+    title: 'Washington Managing Broker Exam', category: 'Real Estate Licensing', active: true, route: '/wa_managing_broker',
+    duration: '90 Minutes', questions: '44 Multiple Choice (State-Specific Portion)', passScore: '33/44 Correct (75%)',
+    description: 'Practice questions covering RCW 18.85 (managing-broker sections), WAC 308-124C (Records and Responsibilities), WAC 308-124E (Trust Account Procedures) and WAC 308-124B (Firms, Branch Offices & Advertising): licensing and qualifications, designated broker and supervisory authority, branch office supervision and recordkeeping, trust account oversight, advertising compliance and disciplinary oversight, and license renewal/continuing education -- the state-specific portion of the PSI-administered Managing Broker exam, Washington\'s supervisory upgrade tier above the base Broker license.',
+    breakdown: [['Licensing & Qualifications', '16%'], ['Designated Broker & Supervisory Authority', '21%'], ['Branch Office Supervision & Recordkeeping', '18%'], ['Trust Account Oversight', '21%'], ['Advertising Compliance & Disciplinary Oversight', '13%'], ['License Renewal, Continuing Education & Firm Closure', '11%']],
+  },
+  {
     examType: 'mlo', shortName: 'National MLO', stateCode: 'US', examKind: 'Mortgage Loan Origination',
     title: 'NMLS SAFE National MLO Exam', category: 'Mortgage Loan Origination', active: false, route: '#',
     duration: '190 Minutes', questions: '125 Questions (115 Scored)', passScore: '75%',
@@ -1520,6 +1555,81 @@ var TRACK_COMPLIANCE = {
       'provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Michigan Salesperson exam or the required prelicense education — this track covers Michigan-specific subject matter only, not a full state-portion exam.',
     passScoreNote: 'a practice-sizing convention for this Michigan-specific supplemental content — 28 of 40 correct (70%) — not an official Michigan-specific exam format',
+  },
+  wa_driver: {
+    orgLine: 'the Washington State Department of Licensing (DOL)',
+    footerRequirement: "do not fulfill Washington's driver education requirement (30 hours of classroom instruction plus 6 hours of behind-the-wheel training with a licensed instructor, required for applicants under 18) or the state's supervised driving practice requirement (40 hours daytime and 10 hours nighttime driving with a licensed driver)",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Washington\'s driver ' +
+      'education requirement — 30 hours of classroom instruction plus 6 hours of behind-the-wheel training from a licensed instructor at a ' +
+      'DOL-approved driver training school, required for applicants under 18 (Washington does not accept parent-taught courses as a substitute) ' +
+      '— nor the state\'s separate supervised driving practice requirement of 40 hours of daytime and 10 hours of nighttime driving with a ' +
+      'licensed driver, and does not issue any official course-completion certificate — our content is a supplementary study aid only. ' +
+      'Completing practice exams here also does not register you for, or schedule, the official DOL written knowledge test; official testing ' +
+      'must be scheduled directly through the Washington State Department of Licensing, and driver education must be completed through a ' +
+      'DOL-approved provider. While we strive to align our content with the current Washington Driver Guide, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Washington DOL written knowledge test or any required driver education course.',
+    passScoreNote: 'the same overall threshold as the real DOL test — 32 of 40 correct',
+  },
+  wa_cdl: {
+    orgLine: 'the Washington State Department of Licensing (DOL)',
+    footerRequirement: "do not fulfill Washington's federal Entry-Level Driver Training (ELDT) requirement (training from an FMCSA Training Provider Registry-listed provider, required since February 7, 2022, before taking the CDL skills test) or any other driver education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver Training ' +
+      '(ELDT) requirement under 49 CFR Part 380 — training from a provider listed on the FMCSA Training Provider Registry, required since ' +
+      'February 7, 2022 for anyone obtaining a Class A or B CDL for the first time, upgrading an existing CDL, or obtaining a passenger, school ' +
+      'bus, or hazardous materials endorsement — and does not issue any official course-completion certificate — our content is a supplementary ' +
+      'study aid only. Completing practice exams here also does not register you for, or schedule, the official DOL written knowledge test; ' +
+      'official testing must be scheduled directly through the Washington State Department of Licensing, and ELDT must be completed through a ' +
+      'training provider listed on the FMCSA Training Provider Registry. While we strive to align our content with the current Washington ' +
+      'Commercial Driver Guide, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a ' +
+      'guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Washington DOL written knowledge test or federal ELDT training requirement.',
+    passScoreNote: 'the same overall threshold as the real DOL test — 40 of 50 correct',
+  },
+  wa_motorcycle: {
+    orgLine: 'the Washington State Department of Licensing (DOL)',
+    footerRequirement: "do not fulfill Washington's required approved motorcycle safety training course (mandatory for applicants under 18 seeking a 2-wheel endorsement) or replace the official DOL-administered endorsement knowledge and riding skills tests",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not fulfill Washington\'s approved motorcycle ' +
+      'safety training course requirement — mandatory for applicants under 18 seeking a 2-wheel motorcycle endorsement, and a common path ' +
+      'riders use to satisfy permit- and endorsement-level testing at a DOL-approved motorcycle training school under RCW 46.20.515 — and does ' +
+      'not issue any official course-completion certificate — our content is a supplementary study aid only. Completing practice exams here ' +
+      'also does not register you for, schedule, or waive the official endorsement knowledge test or riding skills test; those must be ' +
+      'completed directly through a DOL-approved motorcycle training school, and any course-based testing waiver is granted solely at the ' +
+      'department\'s discretion under RCW 46.20.515. While we strive to align our content with the current Washington Motorcycle Operator ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or riding-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, schedule, or waive the real Washington DOL endorsement knowledge test or riding skills test.',
+    passScoreNote: 'the same overall threshold as the real DOL endorsement test — 20 of 25 correct',
+  },
+  wa_real_estate: {
+    orgLine: 'the Washington State Department of Licensing (DOL)',
+    footerRequirement: "do not fulfill Washington's 90-hour real estate broker prelicense education requirement (a 60-hour Real Estate Fundamentals course plus a 30-hour Real Estate Practices course, including 3 hours on fair housing and consumer protection, per RCW 18.85.101) or any other licensing education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Washington\'s real estate broker ' +
+      'prelicense education requirement — 90 hours of DOL-approved instruction (a 60-hour Real Estate Fundamentals course plus a 30-hour Real ' +
+      'Estate Practices course, including 3 hours on fair housing and consumer protection issues, per RCW 18.85.101), completed within 2 years ' +
+      'before the exam — and does not issue any official course-completion certificate — our content is a supplementary study aid covering the ' +
+      'state-specific portion of Washington\'s two-part (national and state) broker licensing exam only. Completing practice exams here also ' +
+      'does not register you for, or schedule, the official licensing exam; official testing must be scheduled directly through the state\'s ' +
+      'approved testing vendor, and prelicense education must be completed through a DOL-approved provider. While we strive to align our ' +
+      'content with RCW 18.85 (broker licensing), RCW 18.86 (brokerage relationships), and RCW 49.60.222-.227 (fair housing), it is provided ' +
+      '"as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Washington real estate broker licensing exam or any required prelicense education.',
+    passScoreNote: 'the same overall threshold as the real state-portion exam — 21 of 30 correct',
+  },
+  wa_managing_broker: {
+    orgLine: 'the Washington State Department of Licensing (DOL)',
+    footerRequirement: "do not fulfill Washington's 90-hour managing broker upgrade education requirement (30 hours each of brokerage management, business management, and advanced real estate law, per RCW 18.85.111) or the 3-years-of-licensed-broker-experience requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Washington\'s managing broker ' +
+      'upgrade education requirement — 90 hours of DOL-approved instruction (30 hours of real estate brokerage management, 30 hours of ' +
+      'business management, and 30 hours of advanced real estate law, per RCW 18.85.111), completed within 3 years before the exam — nor the ' +
+      'separate requirement of at least 3 years of full-time licensed real estate broker experience within the 5 years before application — ' +
+      'and does not issue any official course-completion certificate — our content is a supplementary study aid covering the state-specific ' +
+      'portion of the managing broker licensing exam only. Completing practice exams here also does not register you for, or schedule, the ' +
+      'official licensing exam; official testing must be scheduled directly through the state\'s approved testing vendor, and upgrade education ' +
+      'must be completed through a DOL-approved provider. While we strive to align our content with RCW 18.85 (managing broker licensing), WAC ' +
+      '308-124C (records and responsibilities), WAC 308-124E (trust account procedures), and WAC 308-124B (firms, branch offices, and ' +
+      'advertising), it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Washington managing broker licensing exam or any required upgrade education or experience.',
+    passScoreNote: 'the same overall threshold as the real state-portion exam — 33 of 44 correct',
   },
 };
 function trackCompliance(examType) {
@@ -2447,6 +2557,31 @@ var RESOURCES = {
   mi_real_estate: [
     { title: 'Michigan LARA — Real Estate Licensing', type: 'pdf', url: 'https://www.michigan.gov/lara',
       desc: 'The Michigan Department of Licensing and Regulatory Affairs\' official site — the authoritative source the Occupational Code Article 25 (MCL 339.2501-2518) content is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_driver: [
+    { title: 'Washington Driver Guide', type: 'pdf', url: 'https://dol.wa.gov/driver-licenses-and-permits/driver-training-and-testing/driver-guides',
+      desc: 'The official manual published by the Washington State Department of Licensing — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_cdl: [
+    { title: 'Washington Commercial Driver Guide', type: 'pdf', url: 'https://dol.wa.gov/driver-licenses-and-permits/commercial-driver-licenses-cdl/cdl-training-and-testing/commercial-driver-guides',
+      desc: 'The official CDL manual published by the Washington State Department of Licensing — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_motorcycle: [
+    { title: 'Washington Motorcycle Operator Manual', type: 'pdf', url: 'https://dol.wa.gov/driver-licenses-and-permits/motorcycle/motorcycle-endorsement-training-and-testing/motorcycle-operator-manual',
+      desc: 'The official manual published by the Washington State Department of Licensing — the authoritative source the permit and endorsement knowledge tests are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_real_estate: [
+    { title: 'RCW 18.85 — Real Estate Brokers and Managing Brokers', type: 'pdf', url: 'https://apps.leg.wa.gov/rcw/default.aspx?cite=18.85',
+      desc: 'Washington\'s statute governing broker licensing requirements, prelicense education, and license renewal — the primary legal source behind the state exam content.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_managing_broker: [
+    { title: 'WAC 308-124C — Real Estate Records and Responsibilities', type: 'pdf', url: 'https://apps.leg.wa.gov/wac/default.aspx?cite=308-124C',
+      desc: 'Washington\'s regulations on managing broker recordkeeping and supervisory responsibilities — a primary source behind the managing broker state exam content, alongside RCW 18.85.111 (education/experience requirements), WAC 308-124E (trust accounts), and WAC 308-124B (firms/branch offices).',
       topic: 'General Reference', free: true },
   ],
 };
