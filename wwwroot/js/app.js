@@ -2327,12 +2327,15 @@ function renderHubKindFilterPillsScoped() {
     return [k, k + ' (' + count + ')'];
   }));
   if (options.length <= 2) return ''; // this state only has one exam kind so far -- nothing to filter
+  // Same pill markup/interaction as the original all-states kind pills (renderHubKindFilterPills)
+  // -- in-place JS toggle, no page reload -- just without the state pill row next to it, since the
+  // state's fixed by the header picker instead. history.pushState (see the click handler) still
+  // keeps the URL in sync with the current kind so it stays bookmarkable/shareable.
   return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
     options.map(function (o) {
       var active = hubKindFilter === o[0];
-      var href = '/' + hubScopedState.toLowerCase() + (o[0] ? '/' + kindSlug(o[0]) : '');
-      return '<a href="' + href + '" class="' + (active ? 'active' : '') + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</a>';
+      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-kind-scoped" data-kind="' + o[0] + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
     }).join('') + '</div>';
 }
 
@@ -6175,6 +6178,21 @@ document.addEventListener('click', async function (e) {
     if (stateFilterWrap) stateFilterWrap.innerHTML = renderHubStateFilterPills(); // its counts depend on the kind filter too
     var kindFilteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (kindFilteredTracksWrap) kindFilteredTracksWrap.innerHTML = hubTracksGridHtml();
+  } else if (act === 'filter-hub-kind-scoped') {
+    var newScopedKind = el.getAttribute('data-kind');
+    if (newScopedKind === hubKindFilter) return;
+    hubKindFilter = newScopedKind;
+    hubTracksExpanded = false;
+    // pushState, not a real navigation -- this is an in-place filter toggle (same feel as the
+    // original pills), but the URL still needs to reflect it so the kind-scoped page stays
+    // bookmarkable/shareable (route() re-derives hubScopedState/hubKindFilter from the pathname
+    // on any later load, back/forward nav, or refresh, so this doesn't drift out of sync).
+    var newScopedPath = '/' + hubScopedState.toLowerCase() + (newScopedKind ? '/' + kindSlug(newScopedKind) : '');
+    history.pushState(null, '', newScopedPath);
+    var scopedKindWrap = document.getElementById('hub-kind-filter-wrap');
+    if (scopedKindWrap) scopedKindWrap.innerHTML = renderHubKindFilterPillsScoped();
+    var scopedGridWrap = document.getElementById('hub-tracks-grid-wrap');
+    if (scopedGridWrap) scopedGridWrap.innerHTML = hubTracksGridHtml();
   } else if (act === 'toggle-gift-tracks') {
     giftTracksExpanded = !giftTracksExpanded;
     var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
