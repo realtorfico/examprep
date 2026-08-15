@@ -172,6 +172,7 @@ function renderSiteHeader() {
     logo +
     '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
+    renderHeaderStatePicker() +
     '<div class="site-nav-cta">' + navCtaHtml + '</div>' +
     accountTrackBadge +
     '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
@@ -190,6 +191,24 @@ function renderSiteHeader() {
     '<div id="promo-ribbon-wrap" class="promo-ribbon"></div>';
   updateThemeButton();
   fillPromoRibbon();
+}
+
+// Always visible (not just on the hub) so switching states is available from anywhere on the
+// site, same as the theme/font controls next to it. renderSiteHeader() only runs a handful of
+// times per session (see its own comment), so its initial selected value here can be stale by
+// the time route() resolves the real state on boot -- updateHeaderStatePicker() (called at the
+// end of every route()) is what keeps it actually in sync going forward.
+function renderHeaderStatePicker() {
+  var codes = Object.keys(STATE_LABELS).filter(function (c) { return c !== 'US'; });
+  codes.sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
+  var options = '<option value="">All States</option>' + codes.map(function (c) {
+    return '<option value="' + c + '"' + (c === hubScopedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[c]) + '</option>';
+  }).join('');
+  return '<select class="header-state-picker" id="header-state-picker" data-act="pick-header-state" aria-label="Choose your state">' + options + '</select>';
+}
+function updateHeaderStatePicker() {
+  var picker = document.getElementById('header-state-picker');
+  if (picker) picker.value = hubScopedState || '';
 }
 
 function closeHeaderMenuIfOpen() {
@@ -935,12 +954,315 @@ var HUB_EXAMS = [
     description: 'The NMLS National Test Component: federal lending regulations, origination activities, and ethics.',
     breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
   },
+  {
+    examType: "ak_real_estate", shortName: "Alaska Real Estate", stateCode: "AK", examKind: 'Real Estate',
+    title: "Alaska Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ak_real_estate",
+    duration: "80 Minutes", questions: "40 Multiple Choice (State Law Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering the Alaska Real Estate Law Content Outline (Alaska Statutes Title 08, Chapter 88 and the Real Estate Commission's regulations at 12 AAC 64): powers of the Real Estate Commission, licensing, licensee duties and disclosures to the public, requirements governing licensee activities (advertising, handling of documents and monies, prohibited conduct), personal services agreements (listings, property management, buyer representation), and property management under the Alaska Landlord Tenant Act -- the state law portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Powers of the Real Estate Commission", "10%"], ["Licensing", "10%"], ["Licensee Duties & Disclosures to the Public", "28%"], ["Requirements Governing Licensee Activities", "25%"], ["Personal Services Agreements", "12%"], ["Property Management & Landlord Tenant Act", "15%"]],
+  },
+  {
+    examType: "al_real_estate", shortName: "Alabama Real Estate", stateCode: "AL", examKind: 'Real Estate',
+    title: "Alabama Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/al_real_estate",
+    duration: "60 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering the Alabama Real Estate License Law (Code of Alabama 1975, Title 34, Chapter 27) and the Alabama Real Estate Commission's administrative rules (Alabama Administrative Code Title 790): violations and grounds for disciplinary action, licensing requirements, license status and the Commission's role, RECAD, trust funds and estimated closing statements, broker, company and place-of-business licenses, and the Recovery Fund and disciplinary process -- the state-specific portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Violations & Grounds for Disciplinary Action", "38%"], ["Licensing Requirements, License Status & Role of the Commission", "25%"], ["RECAD, Trust Funds & Estimated Closing Statements", "15%"], ["Broker, Company & Place-of-Business Licenses", "12%"], ["Recovery Fund & the Disciplinary Process", "10%"]],
+  },
+  {
+    examType: "ar_real_estate", shortName: "Arkansas Real Estate", stateCode: "AR", examKind: 'Real Estate',
+    title: "Arkansas Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ar_real_estate",
+    duration: "60 Minutes", questions: "30 Multiple Choice (State-Specific Portion)", passScore: "21/30 Correct (70%)",
+    description: "Practice questions covering Arkansas Real Estate License Law (Arkansas Code Annotated Title 17, Chapter 42) and the Arkansas Real Estate Commission's Rules and Regulations: statutory requirements governing licensee activities (advertising, trust funds, sales contracts, agency agreements and broker price opinions), agency relationships and disclosure duties, the Commission's duties and powers (including the Recovery Fund and license discipline), licensing requirements, and other statutory requirements including timeshares and reporting violations -- the Arkansas law portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Statutory Requirements Governing Licensee Activities", "47%"], ["Agency Relationships & Disclosures", "27%"], ["Duties & Powers of the Real Estate Commission", "13%"], ["Licensing Requirements", "7%"], ["Other Statutory Requirements", "6%"]],
+  },
+  {
+    examType: "az_real_estate", shortName: "Arizona Real Estate", stateCode: "AZ", examKind: 'Real Estate',
+    title: "Arizona Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/az_real_estate",
+    duration: "90 Minutes", questions: "60 Multiple Choice (State-Specific Portion)", passScore: "45/60 Correct (75%)",
+    description: "Practice questions covering the Arizona Department of Real Estate's Arizona Real Estate Law Book (A.R.S. Title 32, Chapter 20 and A.A.C. Title 4, Chapter 28): timeshares, membership camping and cemetery regulation; licensing, education and Department administration; disciplinary grounds, the Recovery Fund, advertising and conduct rules; definitions, trust accounts, property management and related consumer statutes; and subdivided and unsubdivided land sales -- ADRE's full regulatory scope for real estate licensees, which is broader than the narrower state-specific portion content outline published for the standard Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Timeshares, Membership Camping & Cemetery Regulation", "24%"], ["Licensing, Education & Department Administration", "22%"], ["Disciplinary Grounds, Recovery Fund, Advertising & Conduct Rules", "21%"], ["Definitions, Trust Accounts, Property Management & Consumer Statutes", "18%"], ["Subdivided & Unsubdivided Land Sales", "15%"]],
+  },
+  {
+    examType: "co_real_estate", shortName: "Colorado Real Estate", stateCode: "CO", examKind: 'Real Estate',
+    title: "Colorado Real Estate Broker Exam", category: 'Real Estate Licensing', active: true, route: "/co_real_estate",
+    duration: "110 Minutes", questions: "74 Multiple Choice (State Portion)", passScore: "53/74 Correct (71.6%)",
+    description: "Practice questions covering the Colorado Real Estate Manual, Colorado Revised Statutes Title 12, Article 10, and 4 CCR 725-1 (Rules Regarding Real Estate Brokers): brokerage relationships and agency duties, broker licensing (education, experience, application review, errors & omissions insurance, renewal and status changes), definitions and the statutory framework, broker compensation, trust and escrow accounts, contracts, standard forms and closing, employing broker supervision and firm policies, and disciplinary grounds, violations and enforcement -- the state portion of the PSI-administered Broker exam.",
+    breakdown: [["Colorado Forms & Contracts", "31%"], ["Requirements Governing Licensee Activities", "15%"], ["Brokerage Relationships", "15%"], ["Closing & Settlement", "13%"], ["Additional Topics (Property Mgmt, Water Rights, Taxes, Fair Housing, Foreclosure)", "9%"], ["Licensing Requirements", "7%"], ["Record Keeping & Trust Accounts", "7%"], ["Duties & Powers of the Real Estate Commission", "3%"]],
+  },
+  {
+    examType: "ct_real_estate", shortName: "Connecticut Real Estate", stateCode: "CT", examKind: 'Real Estate',
+    title: "Connecticut Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ct_real_estate",
+    duration: "45 Minutes", questions: "35 Multiple Choice (State-Specific Portion)", passScore: "25/35 Correct (70%)",
+    description: "Practice questions covering Connecticut General Statutes Title 20, Chapter 392 (Real Estate Licensees) and its implementing Regulations of Connecticut State Agencies: Real Estate Commission powers, licensing requirements and registrations, licensee conduct covering deposits, disclosure, advertising and compensation, Connecticut real estate agency and designated-agency disclosure, and Connecticut-specific property, landlord-tenant and fair housing law -- the state-specific portion of the PSI-administered Salesperson exam.",
+    breakdown: [["Real Estate Commission, Licensing Requirements & Registrations", "20%"], ["Licensee Conduct: Deposits, Disclosure, Advertising & Compensation", "31%"], ["Real Estate Agency, Disclosure & Designated Agency", "26%"], ["Connecticut-Specific Property, Landlord-Tenant & Fair Housing Law", "23%"]],
+  },
+  {
+    examType: "de_real_estate", shortName: "Delaware Real Estate", stateCode: "DE", examKind: 'Real Estate',
+    title: "Delaware Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/de_real_estate",
+    duration: "80 Minutes", questions: "40 Multiple Choice (Delaware State Portion)", passScore: "Scaled Score of 70 (0–100 Scale)",
+    description: "Practice questions covering Delaware Code Title 24, Chapter 29 (Real Estate Services, Brokers, Associate Brokers and Salespersons) and the Delaware Real Estate Commission's Rules and Regulations (Title 24, Regulation 2900): the Commission's duties, powers and sanctions; licensing requirements; statutory requirements governing licensee conduct (advertising, broker/salesperson relationships, disclosures, handling of documents and monies, and public responsibility); and additional state topics including the Unit Property Act, the Delaware Uniform Common Interest Ownership Act, the Landlord-Tenant Code, transfer taxes, and the Delaware Fair Housing Act -- the state-specific portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Duties, Powers & Sanctions of the Real Estate Commission", "10%"], ["Licensing Requirements", "8%"], ["Statutory Requirements Governing Licensee Activities", "42%"], ["Additional State Topics (Condos, DUCIOA, Landlord-Tenant Code & Fair Housing)", "40%"]],
+  },
+  {
+    examType: "hi_real_estate", shortName: "Hawaii Real Estate", stateCode: "HI", examKind: 'Real Estate',
+    title: "Hawaii Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/hi_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "35/50 Correct (70%)",
+    description: "Practice questions covering the Hawaii Real Estate Brokers and Salespersons Law (Hawaii Revised Statutes Chapter 467) and the Real Estate Commission's Administrative Rules (Hawaii Administrative Rules Title 16, Chapter 99) -- the state-specific portion of the PSI-administered Salesperson exam: professional practices and conduct (trust accounts, advertising, agency disclosure and disciplinary grounds), ascertaining and disclosing material facts, types of ownership (including condominiums and time sharing plans), contracts and addenda, title and conveyances, financing, property management, escrow and closing statements, and land utilization and zoning.",
+    breakdown: [["Professional Practices & Conduct", "28%"], ["Ascertaining & Disclosing Material Facts", "16%"], ["Types of Ownership", "12%"], ["Contracts & Addenda", "12%"], ["Title & Conveyances", "8%"], ["Financing", "8%"], ["Property Management", "6%"], ["Escrow Process & Closing Statements", "6%"], ["Land Utilization", "4%"]],
+  },
+  {
+    examType: "ia_real_estate", shortName: "Iowa Real Estate", stateCode: "IA", examKind: 'Real Estate',
+    title: "Iowa Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ia_real_estate",
+    duration: "60 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering Iowa Code Chapter 543B (Real Estate Brokers and Salespersons) and Iowa Administrative Code 193E (Real Estate Commission): licensing, qualifications, application and commission administration, definitions and agency relationships/fiduciary duties, brokerage agreements and broker-salesperson relationships, trust accounts, E&amp;O insurance and advertising, disciplinary grounds and unlicensed practice enforcement, continuing education and property disclosure/closing, and property management and wholesaling -- the state-specific portion of the PSI-administered Salesperson exam.",
+    breakdown: [["Licensing, Qualifications, Application & Commission Administration", "20%"], ["Definitions, Agency Relationships & Fiduciary Duties", "16%"], ["Continuing Education, Property Disclosure & Closing", "16%"], ["Trust Accounts, E&O Insurance & Advertising", "14%"], ["Brokerage Agreements, Listings & Broker-Salesperson Relationships", "13%"], ["Disciplinary Grounds, Investigations & Unlicensed Enforcement", "13%"], ["Property Management & Wholesaling", "8%"]],
+  },
+  {
+    examType: "id_real_estate", shortName: "Idaho Real Estate", stateCode: "ID", examKind: 'Real Estate',
+    title: "Idaho Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/id_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 70 (Scale of 0-100)",
+    description: "Practice questions covering the Idaho Real Estate Commission's License Law and Rules (Idaho Code Title 54, Chapter 20 and IDAPA 24.37.01) -- the state-specific portion of the Salesperson exam: the Commission's duties and powers, licensing requirements, license law and rules governing advertising, trust accounts, document handling and prohibited conduct, brokerage representation and agency law, calculations and closing costs, and Idaho real estate principles and practices.",
+    breakdown: [["License Law & Rules of the Real Estate Commission", "40%"], ["Brokerage Representation (Agency Law)", "25%"], ["Idaho Principles & Practices", "15%"], ["Licensing Requirements", "10%"], ["Duties & Powers of the Real Estate Commission", "5%"], ["Calculations & Closing Costs", "5%"]],
+  },
+  {
+    examType: "in_real_estate", shortName: "Indiana Real Estate", stateCode: "IN", examKind: 'Real Estate',
+    title: "Indiana Real Estate Broker Exam", category: 'Real Estate Licensing', active: true, route: "/in_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 75 on a 0-100 Scale (Not a Raw Percentage)",
+    description: "Practice questions covering Indiana Code Title 25, Article 34.1 (the Real Estate Broker Licensing Act) and 876 IAC (Indiana Administrative Code, Indiana Real Estate Commission): the Real Estate Commission's powers and disciplinary authority, licensing requirements and license maintenance, statutory and regulatory requirements (advertising, compensation, brokerage agreements), statutes and rules governing licensee conduct and agency relationships, and real estate office procedures -- the state-specific portion of the Pearson VUE-administered Broker exam.",
+    breakdown: [["The Real Estate Commission", "10%"], ["Licensing", "18%"], ["Statutory & Regulatory Requirements", "24%"], ["Statutes & Rules Governing Licensees", "34%"], ["Real Estate Office Procedures", "14%"]],
+  },
+  {
+    examType: "ks_real_estate", shortName: "Kansas Real Estate", stateCode: "KS", examKind: 'Real Estate',
+    title: "Kansas Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ks_real_estate",
+    duration: "90 Minutes", questions: "30 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 70 (0-100 Scale, Not a Raw Percentage)",
+    description: "Practice questions covering the Kansas Real Estate Brokers' and Salespersons' License Act (K.S.A. 58-3034 et seq.), the Brokerage Relationships in Real Estate Transactions Act (BRRETA), and Kansas Administrative Regulations, Agency 86: agency relationships, fiduciary duties and brokerage agreements; licensing, qualifications, renewal and continuing education; trust accounts, the Recovery Fund and advertising; disciplinary grounds, prohibited practices and unlicensed-activity enforcement; and Commission administration and statutory definitions -- our question bank spans the full License Act and its implementing regulations (including broker-only subject matter such as trust accounts and exam qualifications), which is broader than the narrower 30-item state-specific content outline published for the standard Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Agency Relationships, Fiduciary Duties & Brokerage Agreements", "27%"], ["Licensing, Qualifications, Renewal & Continuing Education", "27%"], ["Trust Accounts, Recovery Fund & Advertising", "19%"], ["Disciplinary Grounds, Prohibited Practices & Enforcement", "16%"], ["Commission Administration & Definitions", "11%"]],
+  },
+  {
+    examType: "ky_real_estate", shortName: "Kentucky Real Estate", stateCode: "KY", examKind: 'Real Estate',
+    title: "Kentucky Real Estate Sales Associate Exam", category: 'Real Estate Licensing', active: true, route: "/ky_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "38/50 Correct (76%)",
+    description: "Practice questions covering Kentucky Revised Statutes Chapter 324 and the Real Estate Commission's regulations at 201 KAR Chapter 11 -- the state-specific portion of the PSI-administered Sales Associate exam: brokerage activities and requirements, requirements for a license, disclosures and agency issues, license law requirements for contracts, Real Estate Commission powers and enforcement, and property management.",
+    breakdown: [["Brokerage Activities & Requirements", "36%"], ["Requirements for a License", "20%"], ["Disclosures & Agency Issues", "16%"], ["License Law Requirements for Contracts", "12%"], ["Real Estate Commission Powers & Enforcement", "10%"], ["Property Management", "6%"]],
+  },
+  {
+    examType: "la_real_estate", shortName: "Louisiana Real Estate", stateCode: "LA", examKind: 'Real Estate',
+    title: "Louisiana Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/la_real_estate",
+    duration: "90 Minutes", questions: "55 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 70 (0-100 Scale, Not a Raw Percentage)",
+    description: "Practice questions covering the Louisiana Real Estate License Law (La. R.S. 37:1430-1470) and the Louisiana Real Estate Commission's Rules (Louisiana Administrative Code Title 46, Part LXVII): duties, overview and powers of the Real Estate Commission, investigations and discipline; licensing requirements, renewal, education and reciprocity; advertising, compensation, listings, offers and broker supervision; escrow/trust accounts, property management and recordkeeping; and agency relationships and required disclosures. This track covers License Law and Commission Rules subject matter only -- it does not include the separate Louisiana Civil Law System portion of the official state-specific content outline (property, successions, obligations/contracts, sales and leases under the Louisiana Civil Code), which Pearson VUE weights at roughly a quarter of the 55-item state-specific exam.",
+    breakdown: [["Licensing, Renewal, Education & Reciprocity", "41%"], ["Commission Powers, Investigations & Discipline", "22%"], ["Advertising, Compensation, Listings & Broker Supervision", "21%"], ["Escrow, Trust Accounts, Property Management & Recordkeeping", "11%"], ["Agency Relationships & Disclosures", "5%"]],
+  },
+  {
+    examType: "ma_real_estate", shortName: "Massachusetts Real Estate", stateCode: "MA", examKind: 'Real Estate',
+    title: "Massachusetts Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ma_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering Massachusetts General Laws Chapter 112, Sections 87PP-87DDD 1/2 and 254 CMR 2.00-7.00 (Board of Registration of Real Estate Brokers and Salespersons) -- the state-specific portion of the PSI-administered Salesperson exam: license requirements and the broker-salesperson relationship, agency relationships, disclosure and the home inspection brochure, advertising, client funds and conflicts of interest, licensing fees and the broker surety bond, disciplinary grounds and complaints, continuing education, and apartment-finding fee disclosure and rental recordkeeping.",
+    breakdown: [["Requirements Governing Licensees (Advertising, Agency, Disclosures & Commissions)", "33%"], ["Consumer Protection Laws", "12%"], ["Licensing Requirements", "10%"], ["Massachusetts Fair Housing Law", "10%"], ["Environmental Issues & Hazardous Materials", "10%"], ["Landlord Tenant Law", "10%"], ["Duties & Powers of the Board of Registration", "5%"], ["Contracts", "5%"], ["Additional Topics (Ownership, Condominiums & Registered Land)", "5%"]],
+  },
+  {
+    examType: "md_real_estate", shortName: "Maryland Real Estate", stateCode: "MD", examKind: 'Real Estate',
+    title: "Maryland Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/md_real_estate",
+    duration: "30 Minutes", questions: "30 Multiple Choice (State-Specific Portion)", passScore: "21/30 Correct (70%)",
+    description: "Practice questions covering the Maryland Real Estate Commission Law (Business Occupations and Professions Article, Title 17) and COMAR Title 09, Subtitle 11 -- the state-specific portion of the PSI-administered Salesperson exam: duties and powers of the Real Estate Commission, licensing requirements, brokerage relationships and required disclosures, supervision and handling of trust monies, business conduct (offers, commissions and advertising), and ethics.",
+    breakdown: [["Brokerage Relationships: Listing Agreements & Disclosure", "24%"], ["Business Conduct: Offers, Commissions & Advertising", "20%"], ["Supervision: Trust Monies & Recordkeeping", "17%"], ["Duties & Powers of the Real Estate Commission", "13%"], ["Licensing Requirements", "13%"], ["Ethics", "13%"]],
+  },
+  {
+    examType: "me_real_estate", shortName: "Maine Real Estate", stateCode: "ME", examKind: 'Real Estate',
+    title: "Maine Real Estate Sales Agent Exam", category: 'Real Estate Licensing', active: true, route: "/me_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "75% (Scaled Score 75+)",
+    description: "Practice questions covering the Maine Real Estate Commission's Maine Law content outline -- grounded in 32 M.R.S. Chapter 114 and the Commission's Rules (Code of Maine Rules 02-039, Chapters 300-410): the Real Estate Commission's powers and enforcement, Maine laws and rules governing licensee activities (listings, offers, trust accounts, material disclosures and advertising), law of agency/brokerage relationships, Maine-specific principles and practices (property transfer, the Landlord-Tenant Act, condominium law and closings), and Maine land-use law (shoreland zoning, subdivisions and underground oil storage tanks) -- the state-specific Maine Law portion of the Pearson VUE-administered Sales Agent exam.",
+    breakdown: [["Maine Real Estate Commission (Powers, Investigations & Sanctions)", "5%"], ["Maine Laws & Rules Governing Licensee Activities", "38%"], ["Law of Agency/Brokerage", "25%"], ["Maine-Specific Principles & Practices", "20%"], ["Maine Land-Use Law", "12%"]],
+  },
+  {
+    examType: "mn_real_estate", shortName: "Minnesota Real Estate", stateCode: "MN", examKind: 'Real Estate',
+    title: "Minnesota Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/mn_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering Minnesota Statutes Chapter 82, Sections 82.55-82.89 (Real Estate Broker, Salesperson, and Closing Agent Licensing Law): licensing, fees, examinations, and pre-license/continuing education; agency disclosure and brokerage contracts; advertising, compensation, records, and prohibited practices; trust accounts and specialty business operations; and discipline, public information, and the real estate education research and recovery fund -- the state-specific portion of the PSI-administered Salesperson exam.",
+    breakdown: [["Discipline, Penalties, Public Information & Recovery Fund", "20%"], ["Definitions, Pre-License Education & Continuing Education", "19%"], ["Advertising, Compensation, Records & Prohibited Practices", "19%"], ["Licensing, Fees, Examinations & Closing Agent Licensure", "17%"], ["Agency Disclosure & Brokerage Contracts", "16%"], ["Trust Accounts & Specialty Business Operations", "9%"]],
+  },
+  {
+    examType: "mo_real_estate", shortName: "Missouri Real Estate", stateCode: "MO", examKind: 'Real Estate',
+    title: "Missouri Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/mo_real_estate",
+    duration: "120 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering the Missouri Real Estate Practice Act (RSMo Chapter 339) and the statutory Agency Relationships subchapter (RSMo 339.710-339.855) -- the state-specific portion of the PSI-administered Salesperson exam: definitions and licensing requirements, the Missouri Real Estate Commission's structure, license administration and fees, agency relationship definitions, disclosure, and designated agency/brokerage agreements, seller and buyer agency duties, escrow/trust accounts and compensation, and disciplinary grounds, enforcement, and licensee liability.",
+    breakdown: [["Business Conduct & Practices", "42%"], ["Licenses & Application Requirements", "18%"], ["Disciplinary Proceedings & Enforcement", "15%"], ["Brokerage Relationships & Agency Disclosure", "15%"], ["General Rules, Definitions & Educational Requirements", "10%"]],
+  },
+  {
+    examType: "ms_real_estate", shortName: "Mississippi Real Estate", stateCode: "MS", examKind: 'Real Estate',
+    title: "Mississippi Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ms_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering the Mississippi Real Estate Brokers License Law of 1954 (Miss. Code Ann. §§ 73-35-1 to 73-35-105) and the Mississippi Real Estate Commission Rules and Regulations (Title 30, Miss. Admin. Code, Parts 1601-1603): out-of-state brokers/developers, recordkeeping and advertising/marketing rules, the Commission's powers and duties, licensing requirements and license maintenance, agency disclosure and duties to parties, property condition disclosures and trust accounts, and broker responsibilities including supervision of sales associates -- the state-specific portion of the PSI-administered Salesperson exam.",
+    breakdown: [["Out-of-State Brokers/Developers, Records & Advertising", "25%"], ["Commission Powers, Licensing Requirements & License Maintenance", "20%"], ["Agency Disclosure & Duties to Parties", "20%"], ["Property Condition Disclosures & Trust Accounts", "20%"], ["Broker Responsibilities & Supervision of Sales Associates", "15%"]],
+  },
+  {
+    examType: "mt_real_estate", shortName: "Montana Real Estate", stateCode: "MT", examKind: 'Real Estate',
+    title: "Montana Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/mt_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 75 (0-100 Scale, Not Raw Percent-Correct)",
+    description: "Practice questions covering the Montana Real Estate License Act (Montana Code Annotated Title 37, Chapter 51) and the Montana Board of Realty Regulation's implementing rules (Administrative Rules of Montana Title 24, Chapter 210): licensee conduct, disclosure, compensation and trust funds, advertising and brokerage/listing agreements, additional topics including errors and omissions insurance and landlord-tenant law, licensing activities and renewal, and the Board's investigative and disciplinary powers — the state-specific portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Licensee Conduct, Disclosure, Compensation & Trust Funds", "70%"], ["E&O Insurance, Land Description, Landlord-Tenant & Foreclosure", "15%"], ["Licensing Activities, Renewal & Status Changes", "8%"], ["Board Powers: Investigations, Hearings & Sanctions", "7%"]],
+  },
+  {
+    examType: "nd_real_estate", shortName: "North Dakota Real Estate", stateCode: "ND", examKind: 'Real Estate',
+    title: "North Dakota Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/nd_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering North Dakota Century Code Chapter 43-23 (State Real Estate Commission) and the implementing rules at North Dakota Administrative Code Title 70 -- the state-specific portion of the PSI-administered Salesperson exam: agency relationships, fiduciary duties, broker/salesperson relationships, brokerage agreements, listings, advertising and trust account handling; licensing qualifications, applications, renewal, nonresident reciprocity and continuing education; commission administration, investigations, discipline and unlicensed-practice enforcement; and closing practices and the Real Estate Education, Research and Recovery Fund.",
+    breakdown: [["Statutory Duties of Licensees: Agency, Advertising, Disclosure & Trust Accounts", "45%"], ["Licensing Requirements, Qualifications & Continuing Education", "29%"], ["Commission Powers, Discipline & Unlicensed Practice Enforcement", "16%"], ["Recovery Fund, Closing Statements & Additional Topics", "10%"]],
+  },
+  {
+    examType: "ne_real_estate", shortName: "Nebraska Real Estate", stateCode: "NE", examKind: 'Real Estate',
+    title: "Nebraska Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ne_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "38/50 Correct (75% Minimum)",
+    description: "Practice questions covering the Nebraska Real Estate License Act (Neb. Rev. Stat. &sect;&sect; 81-885 to 81-885.56), the agency relationships statute (&sect;&sect; 76-2401 to 76-2430), and the Real Estate Commission's implementing rules (NAC Titles 299, 301 and 305) -- the licensing and regulatory portion of the state-specific Salesperson exam: qualifications, applications and licensing procedures, commission administration and disciplinary enforcement, agency relationships and fiduciary duties, trust accounts and errors and omissions insurance, advertising and brokerage agreements, and property condition disclosure, continuing education, nonresident reciprocity and subdivided land registration.",
+    breakdown: [["Duties & Powers of the Real Estate Commission", "10%"], ["Licensing Requirements & Activities", "15%"], ["Statutory Requirements Governing Licensee Activities", "30%"], ["Agency: Duties, Disclosures & Transactions", "35%"], ["Additional Topics: Subdivided Land, Fair Housing & Equitable Interest", "10%"]],
+  },
+  {
+    examType: "nh_real_estate", shortName: "New Hampshire Real Estate", stateCode: "NH", examKind: 'Real Estate',
+    title: "New Hampshire Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/nh_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering the New Hampshire Real Estate Practice Act (RSA 331-A) and the Real Estate Commission's administrative rules (N.H. Code of Admin. Rules Rea 100-700): Commission administration and licensee definitions, licensing qualifications, applications, renewal, continuing education and nonresident reciprocity, agency relationships, fiduciary duties and brokerage agreements, advertising, trust accounts and property condition disclosure, and disciplinary grounds, investigations and barred practices -- the state-specific portion of the PSI-administered Salesperson exam.",
+    breakdown: [["Licensing, Qualifications, Applications & Continuing Education", "31%"], ["Agency Relationships, Fiduciary Duties & Brokerage Agreements", "22%"], ["Advertising, Trust Accounts & Property Condition Disclosure", "19%"], ["Disciplinary Grounds, Investigations & Barred Practices", "15%"], ["Commission Administration & Definitions", "13%"]],
+  },
+  {
+    examType: "nj_real_estate", shortName: "New Jersey Real Estate", stateCode: "NJ", examKind: 'Real Estate',
+    title: "New Jersey Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/nj_real_estate",
+    duration: "60 Minutes", questions: "30 Multiple Choice (State-Specific Portion of a 110-Question Combo Exam)", passScore: "21/30 Correct (70%)",
+    description: "Practice questions covering the New Jersey Real Estate License Act (N.J.S.A. 45:15) and the Real Estate Commission's implementing regulations (N.J.A.C. 11:5) — the state-specific regulatory subject matter tested on the New Jersey portion of the PSI-administered Salesperson exam: licensing qualifications, pre-license and continuing education, and license fees; agency relationships under the 2024 Real Estate Consumer Protection Enhancement Act, advertising, referrals and licensee conduct; trust accounts, discipline and the Real Estate Guaranty Fund; the Real Estate Timeshare Act; and the Subdivided Lands Full Disclosure Act.",
+    breakdown: [["Licensing Qualifications, Pre-License/Continuing Education & Fees", "29%"], ["Agency Relationships, Advertising & Licensee Conduct (NJAC)", "20%"], ["Trust Accounts, Discipline & Guaranty Fund", "20%"], ["Real Estate Timeshare Act", "18%"], ["Subdivided Lands Full Disclosure Act", "13%"]],
+  },
+  {
+    examType: "nm_real_estate", shortName: "New Mexico Real Estate", stateCode: "NM", examKind: 'Real Estate',
+    title: "New Mexico Real Estate Broker Examination", category: 'Real Estate Licensing', active: true, route: "/nm_real_estate",
+    duration: "60 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "38/50 Correct (75%)",
+    description: "Practice questions covering the New Mexico Real Estate Brokers and Salesmen Act (NMSA 1978 §§ 61-29-1 to 61-29-29) and the New Mexico Real Estate Commission's rules at NMAC Title 16, Chapter 61 -- the state-specific portion of the PSI-administered Broker Examination for New Mexico's Associate Broker license: licensing, qualifications, applications and commission administration, agency, fiduciary duties and broker relationships, trust accounts, the Real Estate Recovery Fund and errors and omissions insurance, advertising, property management and closing practices, continuing education, nonresident reciprocity and timeshare registration, and discipline, investigations and unlicensed practice enforcement.",
+    breakdown: [["Licensing, Qualifications, Applications & Commission Administration", "24%"], ["Agency, Fiduciary Duties & Broker Relationships", "19%"], ["Trust Accounts, Recovery Fund & E&O Insurance", "17%"], ["Advertising, Property Management & Closing Practices", "15%"], ["Continuing Education, Nonresident Reciprocity & Timeshare Registration", "14%"], ["Discipline, Investigations & Unlicensed Enforcement", "11%"]],
+  },
+  {
+    examType: "nv_real_estate", shortName: "Nevada Real Estate", stateCode: "NV", examKind: 'Real Estate',
+    title: "Nevada Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/nv_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering Nevada Revised Statutes (NRS) Chapter 645 and Nevada Administrative Code (NAC) Chapter 645 -- Real Estate Brokers and Salespersons: licensing qualifications, examinations and license issuance, agency relationships and licensee duties, broker office supervision and trust accounts, brokerage agreements and advance fees, advertising and required disclosures, disciplinary grounds, investigations and hearings, and continuing education, business brokers and property management -- the state-specific portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["Duties & Powers of the Commission", "2%"], ["Licensing Requirements", "3%"], ["Agency & Duties Owed", "20%"], ["License Practice, Supervision & Advertising", "24%"], ["Residential, CIC & Environmental Disclosures", "20%"], ["Contracts, Brokerage Agreements & Earnest Money", "23%"], ["Record Keeping & Trust Accounts", "3%"], ["Subdivisions, Timeshares, Water Rights & Solar", "5%"]],
+  },
+  {
+    examType: "ok_real_estate", shortName: "Oklahoma Real Estate", stateCode: "OK", examKind: 'Real Estate',
+    title: "Oklahoma Real Estate Provisional Sales Associate Exam", category: 'Real Estate Licensing', active: true, route: "/ok_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "70% Scaled Score (State-Specific Portion)",
+    description: "Practice questions covering the Oklahoma Real Estate License Code (59 O.S. § 858-101 et seq.) and Title 605 of the Oklahoma Administrative Code: laws and rules affecting Oklahoma real estate practice, the Oklahoma Broker Relationships Act, property management and landlord-tenant requirements, and mandatory property disclosures and hazards — Pearson VUE’s own four content areas for the state-specific portion of the Provisional Sales Associate exam — plus additional Code and Rules coverage (licensing and application, trust and escrow accounts, the Education and Recovery Fund, nonresident licensing, and investigations/discipline) that extends beyond that 40-item outline.",
+    breakdown: [["Laws & Rules Affecting Oklahoma Real Estate Practice", "50%"], ["Oklahoma Broker Relationships Act", "20%"], ["Property Management", "15%"], ["Disclosures & Hazards", "15%"]],
+  },
+  {
+    examType: "or_real_estate", shortName: "Oregon Real Estate", stateCode: "OR", examKind: 'Real Estate',
+    title: "Oregon Real Estate Broker Exam", category: 'Real Estate Licensing', active: true, route: "/or_real_estate",
+    duration: "75 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "38/50 Correct (76%)",
+    description: "Practice questions covering Oregon Revised Statutes Chapter 696 (Real Estate and Escrow Activities) and Oregon Administrative Rules Chapter 863 (Real Estate Agency) -- the state-specific portion of the PSI-administered Broker license exam: Oregon real estate related statutes, regulation of broker activities and broker/principal broker relationships, license law and disciplinary measures, agency law and rules, document handling and recordkeeping, property management, and handling of clients' funds. Oregon's entry-level license is titled \"Real Estate Broker\" (the supervisory tier is a separate \"Principal Broker\" license); this track also draws on broader ORS 696/OAR 863 subject matter -- escrow agent licensing, real estate property manager licensing, and marketing organization/wholesaling regulation -- that goes beyond PSI's official 50-item Broker State Section outline.",
+    breakdown: [["Oregon Real Estate Related Statutes", "30%"], ["Regulation of Broker Activities", "24%"], ["License Law & Disciplinary Measures", "12%"], ["Agency Law & Rules", "10%"], ["Document Handling & Recordkeeping", "10%"], ["Property Management", "8%"], ["Handling of Clients' Funds", "6%"]],
+  },
+  {
+    examType: "ri_real_estate", shortName: "Rhode Island Real Estate", stateCode: "RI", examKind: 'Real Estate',
+    title: "Rhode Island Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ri_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 70 (0-100 Scale)",
+    description: "Practice questions covering Rhode Island's real estate licensing law -- R.I. Gen. Laws Chapter 5-20.5 (Real Estate Brokers and Salespersons), Chapter 5-20.6 (Relationships in Residential Real Estate Transactions), and Chapter 5-20.8 (Real Estate Sales Disclosures), together with the Real Estate Commission's implementing rule at 230-RICR-30-20-2 -- the state-specific portion of the Pearson VUE-administered Salesperson exam: Department/Commission duties and obligations, licensing requirements and eligibility (including the Recovery Account and E&amp;O insurance), statutory requirements governing licensee conduct (advertising, disclosure, trust funds, commissions and agency relationships), and additional Rhode Island-specific topics such as Fair Housing, landlord-tenant law, lead and property-condition disclosures, and nonresident transactions.",
+    breakdown: [["Duties &amp; Obligations Under Licensing Law (Department &amp; Real Estate Commission)", "4%"], ["Licensing Requirements, Eligibility, Recovery Account &amp; E&amp;O Insurance", "12%"], ["Statutory Requirements Governing Licensees (Advertising, Disclosure, Trust Funds &amp; Commissions)", "48%"], ["Additional RI-Specific Topics (Fair Housing, Landlord-Tenant, Disclosures &amp; Related Statutes)", "36%"]],
+  },
+  {
+    examType: "sc_real_estate", shortName: "South Carolina Real Estate", stateCode: "SC", examKind: 'Real Estate',
+    title: "South Carolina Real Estate Associate Exam", category: 'Real Estate Licensing', active: true, route: "/sc_real_estate",
+    duration: "80 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering the South Carolina Real Estate License Act (S.C. Code Title 40, Chapter 57) and the Real Estate Commission's Regulations (S.C. Code of Regulations, Chapter 105): the Commission's powers and licensing requirements, statutes governing licensee and non-licensee conduct (advertising, compensation, disclosure, and handling of monies), South Carolina agency and non-agency relationships, additional South Carolina statutes (residential property disclosure, fair housing, landlord-tenant and consumer protection topics), and closing details -- the state-specific portion of the PSI-administered Real Estate Associate exam.",
+    breakdown: [["Real Estate Commission & Licensing Requirements", "22%"], ["Statutes Governing Licensee & Non-Licensee Activities", "28%"], ["SC Agency & Non-Agency Relationships & Issues", "28%"], ["Additional SC Statutes & Topics", "15%"], ["Closing Details", "7%"]],
+  },
+  {
+    examType: "sd_real_estate", shortName: "South Dakota Real Estate", stateCode: "SD", examKind: 'Real Estate',
+    title: "South Dakota Real Estate Broker Associate Exam", category: 'Real Estate Licensing', active: true, route: "/sd_real_estate",
+    duration: "120 Minutes", questions: "52 Multiple Choice (State-Specific Portion)", passScore: "39/52 Correct (75%)",
+    description: "Practice questions covering South Dakota real estate licensing law (SDCL Title 36, Chapter 21A) and the Real Estate Commission's rules (ARSD Article 20:69) -- the state portion of the PSI-administered Broker Associate exam (South Dakota's entry-level real estate license): licensing, qualifications, applications and Commission administration; agency, fiduciary duties, disclosure and brokerage relationships; trust accounts, advertising, errors and omissions insurance and the recovery fund; discipline, investigations, unlicensed practice and continuing education; and property management and closing practices.",
+    breakdown: [["Licensing, Qualifications, Applications & Commission Administration", "30%"], ["Agency, Fiduciary Duties, Disclosure & Brokerage Relationships", "21%"], ["Trust Accounts, Advertising, E&O Insurance & Recovery Fund", "20%"], ["Discipline, Investigations, Unlicensed Practice & Continuing Education", "17%"], ["Property Management & Closing/Barred Practices", "12%"]],
+  },
+  {
+    examType: "tn_real_estate", shortName: "Tennessee Real Estate", stateCode: "TN", examKind: 'Real Estate',
+    title: "Tennessee Real Estate Affiliate Broker Exam", category: 'Real Estate Licensing', active: true, route: "/tn_real_estate",
+    duration: "80 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "28/40 Correct (70%)",
+    description: "Practice questions covering the Tennessee Real Estate Broker License Act of 1973 (Tenn. Code Ann. Title 62, Chapter 13) and the Real Estate Commission's Rules (Tenn. Comp. R. and Regs. Chapter 1260) -- the state-specific portion of the PSI-administered Affiliate Broker exam: Commission powers and licensing requirements, advertising and marketing, broker/affiliate relationships, handling of documents, trust/escrow funds and consumer protection, agency and disclosure issues, and special areas of practice -- plus additional Tennessee-specific licensing topics (vacation lodging and rental location agents, time-share programs, and commercial real estate broker liens) drawn from the same statute and rules.",
+    breakdown: [["Documents, Trust/Escrow Funds & Consumer Protection", "27%"], ["Commission Powers & Licensing Requirements", "20%"], ["Advertising & Marketing", "18%"], ["Agency & Disclosure Issues", "15%"], ["Broker/Affiliate Relationships", "13%"], ["Special Areas of Practice", "7%"]],
+  },
+  {
+    examType: "ut_real_estate", shortName: "Utah Real Estate", stateCode: "UT", examKind: 'Real Estate',
+    title: "Utah Real Estate Sales Agent Exam", category: 'Real Estate Licensing', active: true, route: "/ut_real_estate",
+    duration: "90 Minutes", questions: "50 Multiple Choice (Utah State-Specific Portion)", passScore: "Scaled Score of 70 (0-100 Scale)",
+    description: "Practice questions covering the Utah Real Estate Licensing and Practices Act (Utah Code Title 61, Chapter 2f) and its implementing regulations, Utah Administrative Code R162-2f: licensee practice (advertising, handling money, agency relationships and disclosure, and approved forms), licensing and license maintenance, real estate office procedures and trust accounts, enforcement and disciplinary action, closing statements, and property management &mdash; the Utah state-law portion of the Pearson VUE-administered Sales Agent exam.",
+    breakdown: [["Licensee Practice: Advertising, Money Handling, Agency & Approved Forms", "33%"], ["Licensing, Qualifications & License Maintenance", "16%"], ["Definitions, Property Management, Education/Recovery Fund & Additional State Topics", "19%"], ["Closing Statements", "14%"], ["Real Estate Office Procedures & Trust Accounts", "9%"], ["Enforcement & Disciplinary Action", "9%"]],
+  },
+  {
+    examType: "vt_real_estate", shortName: "Vermont Real Estate", stateCode: "VT", examKind: 'Real Estate',
+    title: "Vermont Real Estate Salesperson State Examination", category: 'Real Estate Licensing', active: true, route: "/vt_real_estate",
+    duration: "45 Minutes", questions: "40 Multiple Choice (Vermont-Specific Practice Set)", passScore: "30/40 Correct (75%)",
+    description: "Practice questions covering 26 V.S.A. Chapter 41 (Real Estate Brokers and Salespersons) and the Vermont Real Estate Commission's Administrative Rules: definitions, licensing qualifications and commission administration, applications, renewal and continuing education, agency disclosure, fiduciary duties and brokerage agreements, disciplinary grounds and unlicensed practice enforcement, trust accounts and advertising, and property condition disclosure and closing practices -- the genuinely Vermont-specific subject matter tested on the OPR-administered State Examination, distinct from PSI's National Examination.",
+    breakdown: [["Agency Disclosure, Fiduciary Duties & Brokerage Agreements", "23%"], ["Definitions, Licensing Qualifications & Commission Administration", "21%"], ["Applications, Renewal, Continuing Education & Reciprocity", "17%"], ["Disciplinary Grounds, Investigations & Unlicensed Practice", "14%"], ["Trust Accounts & Advertising", "13%"], ["Property Condition Disclosure & Closing Practices", "12%"]],
+  },
+  {
+    examType: "wi_real_estate", shortName: "Wisconsin Real Estate", stateCode: "WI", examKind: 'Real Estate',
+    title: "Wisconsin Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/wi_real_estate",
+    duration: "240 Minutes", questions: "140 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 75 (0-100 Scale)",
+    description: "Practice questions covering Wisconsin Statutes Chapter 452 and Wisconsin Administrative Code chs. REEB 11, 12, 15, 16, 17, 18, 23, 24, and 25 (Real Estate Examining Board rules): licensing requirements, prelicense and continuing education, duties and prohibited conduct, investigation, discipline and penalties, trust accounts, fees and commissions, agency relationships and disclosure, and board authority and firm structure. This covers the licensing and regulatory portion of the Pearson VUE-administered Salesperson exam's state-specific content -- not the separate national portion, and not every topic on the Examining Board's official 140-item state-portion content outline (which also covers financing/valuation math, land use controls, contract-form specifics, fair housing, and federal antitrust law).",
+    breakdown: [["Licensing Requirements, Prelicensing & Renewal Education", "25%"], ["Duties, Prohibited Conduct & Discipline", "21%"], ["Trust Accounts, Fees & Commissions", "19%"], ["Definitions, Board Authority & Firm Structure", "19%"], ["Agency Disclosure, Property Condition & Unlicensed Practice", "16%"]],
+  },
+  {
+    examType: "wv_real_estate", shortName: "West Virginia Real Estate", stateCode: "WV", examKind: 'Real Estate',
+    title: "West Virginia Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/wv_real_estate",
+    duration: "60 Minutes", questions: "50 Multiple Choice (State-Specific Portion)", passScore: "Scaled Score of 70 (0-100 Scale, Not Raw Percent-Correct)",
+    description: "Practice questions covering the West Virginia Real Estate License Act (W. Va. Code Chapter 30, Article 40) and the Real Estate Commission's Title 174 legislative rules -- the general powers and duties of the Real Estate Commission (audits, complaints, investigations and discipline), licensing (application, renewal, transfer, continuing education and exemptions), real estate practice (scope of practice, advertising, trust funds, brokerage agreements and closing), agency relationships and disclosure, and West Virginia fair housing -- the state-specific portion of the Pearson VUE-administered Salesperson exam.",
+    breakdown: [["General Powers & Duties of the Commission (Audits, Complaints & Discipline)", "18%"], ["Licensing (Renewal, Transfer, CE & Exemptions)", "34%"], ["Real Estate Practice (Scope, Advertising & Trust Funds)", "30%"], ["Agency Relationships (Notice of Agency & Types of Agency)", "8%"], ["West Virginia Fair Housing", "10%"]],
+  },
+  {
+    examType: "wy_real_estate", shortName: "Wyoming Real Estate", stateCode: "WY", examKind: 'Real Estate',
+    title: "Wyoming Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/wy_real_estate",
+    duration: "90 Minutes", questions: "40 Multiple Choice (State-Specific Portion)", passScore: "75% (Scaled Score 75+)",
+    description: "Practice questions covering the Wyoming Real Estate License Act (Wyoming Statutes Title 33, Chapter 28) and the Wyoming Real Estate Commission's Rules (Chapters 1-8) -- the state-specific portion of the Pearson VUE-administered Salesperson exam: the Commission's powers, investigations and sanctions; licensing, license renewal and continuing education; advertising, broker-salesperson relationships, compensation, disclosure, trust funds and grounds for disciplinary action; and the Real Estate Recovery Fund, land descriptions, landlord-tenant relationships, foreclosure/redemption, statute of frauds, and other additional topics.",
+    breakdown: [["The Commission's Powers, Investigations & Sanctions", "9%"], ["Licensing, Renewal & Continuing Education", "20%"], ["Licensee Conduct: Advertising, Disclosure, Trust Funds & Discipline", "41%"], ["Recovery Fund, Land Description, Landlord-Tenant & Additional Topics", "30%"]],
+  },
 ];
 
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
 // tracks like MLO, shown as its own filter option rather than lumped into "All" invisibly. Add an
 // entry here whenever a new state's first track is added (e.g. TX, FL, NY).
-var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', OH: 'Ohio', GA: 'Georgia', NC: 'North Carolina', VA: 'Virginia', MI: 'Michigan', WA: 'Washington', US: 'National' };
+var STATE_LABELS = { CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York', IL: 'Illinois', PA: 'Pennsylvania', OH: 'Ohio', GA: 'Georgia', NC: 'North Carolina', VA: 'Virginia', MI: 'Michigan', WA: 'Washington', AK: "Alaska", AL: "Alabama", AR: "Arkansas", AZ: "Arizona", CO: "Colorado", CT: "Connecticut", DE: "Delaware", HI: "Hawaii", IA: "Iowa", ID: "Idaho", IN: "Indiana", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", MA: "Massachusetts", MD: "Maryland", ME: "Maine", MN: "Minnesota", MO: "Missouri", MS: "Mississippi", MT: "Montana", ND: "North Dakota", NE: "Nebraska", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NV: "Nevada", OK: "Oklahoma", OR: "Oregon", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", UT: "Utah", VT: "Vermont", WI: "Wisconsin", WV: "West Virginia", WY: "Wyoming", US: 'National' };
+
+// URL-safe slug per examKind, for state-scoped routes like /oh/driver -- kept as an explicit map
+// rather than a generic slugify() so an examKind's display text (e.g. "Commercial Driver (CDL)")
+// can diverge from its URL slug ("cdl") without the URL getting ugly or the two silently drifting
+// if the display label is ever reworded.
+var HUB_KIND_SLUGS = {
+  'Real Estate': 'real-estate',
+  'Driver': 'driver',
+  'Commercial Driver (CDL)': 'cdl',
+  'Motorcycle': 'motorcycle',
+  'Boating': 'boating',
+  'Notary': 'notary',
+  'Mortgage Loan Origination': 'mlo',
+};
+function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
+function kindFromSlug(slug) {
+  for (var k in HUB_KIND_SLUGS) { if (HUB_KIND_SLUGS[k] === slug) return k; }
+  return '';
+}
+
+// A pathname's first segment is only ever treated as a state route if it's a stateCode that
+// genuinely has at least one HUB_EXAMS entry -- guards against e.g. some future 2-letter track
+// examType prefix or a stray typo'd path silently rendering as an (empty) state page.
+function knownStateCode(code) {
+  if (!code) return null;
+  var upper = code.toUpperCase();
+  return HUB_EXAMS.some(function (e) { return e.stateCode === upper; }) ? upper : null;
+}
+
+// Written by app.js whenever the visitor lands on (or picks) a specific state, or explicitly
+// chooses "browse all states" (value 'ALL'); read server-side by _worker.js to decide whether "/"
+// should redirect to "/<state>" on a visitor's next arrival. Not read back by app.js itself --
+// the resolved state for the CURRENT load always comes from the URL path (see route()), so this
+// is purely a signal for next time, same spirit as a "remember my region" preference.
+function setStateCookie(value) {
+  document.cookie = 'pxq_state=' + encodeURIComponent(value) + '; path=/; max-age=31536000; SameSite=Lax';
+}
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
 // or null. Inactive tracks use route:'#' (shared/non-unique) so they're deliberately excluded --
@@ -1631,6 +1953,272 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: 'register you for, or count toward, the real Washington managing broker licensing exam or any required upgrade education or experience.',
     passScoreNote: 'the same overall threshold as the real state-portion exam — 33 of 44 correct',
   },
+  ak_real_estate: {
+    orgLine: "the Alaska Real Estate Commission",
+    footerRequirement: "do not fulfill the 40-hour pre-license education requirement or any Alaska real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 40-hour pre-license education requirement for an Alaska real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state law portion of the exam (grounded in Alaska Statutes Title 08, Chapter 88 and the Real Estate Commission's regulations at 12 AAC 64), not the separate 80-item national/general portion, and not every topic on the Commission's official Alaska Real Estate Law Content Outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission as a single four-hour combined session covering both the national and state law portions (candidates must pass both to be licensed), and pre-license education must be completed through a Commission-approved provider. Alaska scores each portion on an equated 0-100 scaled score with a passing score of 75, not a simple raw item count or percentage; this practice exam's 40-question, 75%-pass format models the state law portion's real item count as a practice-sizing convention, not Alaska's actual psychometric scoring method. While we strive to align our content with the current Commission regulations and Alaska statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 40-hour pre-license education.",
+    passScoreNote: "a practice-sizing convention matching the real state law portion's 40-item count — 30 of 40 correct (75%) — though Alaska actually scores each exam portion on an equated 0-100 scaled score (passing score of 75), not a raw percentage",
+  },
+  al_real_estate: {
+    orgLine: "the Alabama Real Estate Commission (AREC)",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement (or the 30-hour post-license course required within the first six months of licensure to remain active) or any Alabama real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for an Alabama real estate salesperson license (or the separate 30-hour post-license course that must be completed within the first six months of licensure to remain active), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Alabama Real Estate License Law, Code of Alabama 1975, Title 34, Chapter 27, and the Commission's administrative rules, Alabama Administrative Code Title 790), not the separate 80-item national/general portion. Alabama's real Salesperson exam does not raw-score the state-specific portion on its own — Pearson VUE combines both portions into a single equated scaled score (0 to 100) with a passing score of 70, and failing the overall exam requires retaking the entire test; the 40-question/70%-pass format used here models the state portion's official item count and Alabama's real numeric passing score as a practice-sizing convention, not a literal reproduction of that blended scoring method. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Alabama Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission rules and Alabama statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "a practice-sizing convention modeled on the state portion's official 40-item count and Alabama's real overall passing scaled score of 70 — not a literal reproduction of Pearson VUE's blended scoring method, which combines the state and national portions into one equated score rather than scoring the state portion separately",
+  },
+  ar_real_estate: {
+    orgLine: "the Arkansas Real Estate Commission (AREC)",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement (of which 30 hours must be the basic principles of real estate course), the 18-hour post-license course required within six months of initial licensure, or any Arkansas real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for an Arkansas real estate salesperson license (of which 30 hours must be the basic principles of real estate course), or the separate 18-hour post-license course salespersons must complete within six months of initial licensure to remain active, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the Arkansas law portion of the Salesperson exam (grounded in Arkansas Code Annotated Title 17, Chapter 42, and the Real Estate Commission's Rules and Regulations), not the separate 80-item national/general portion. Arkansas's real Salesperson exam scores the general and state-law portions independently — you may pass one and retake only the other within six months — and each portion's real passing standard is a Pearson-equated scaled score of 70 (not literally a raw percentage of questions correct); the 30-question/70%-pass format used here models the state-law portion's official scored-item count and Arkansas's real numeric passing score as a practice-sizing convention, not a literal reproduction of Pearson's equating method. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Arkansas Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current AREC Real Estate License Law and Commission Rules and Regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "a practice-sizing convention modeled on the state-law portion's official 30-item scored count and Arkansas's real passing scaled score of 70 — not a literal reproduction of Pearson VUE's scaled-scoring/equating method, since Arkansas's actual passing standard isn't a raw percentage of questions correct",
+  },
+  az_real_estate: {
+    orgLine: "the Arizona Department of Real Estate (ADRE)",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (or the separate 6-hour Arizona Contract Writing Course required before licensure) or any Arizona real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Arizona's 90-hour pre-license education requirement for a real estate salesperson license (or the separate 6-hour Arizona Contract Writing Course required before licensure), and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Arizona Department of Real Estate's own Arizona Real Estate Law Book (A.R.S. Title 32, Chapter 20 and A.A.C. Title 4, Chapter 28). Our question bank spans the Law Book's full scope for ADRE licensees — including subdivided and unsubdivided land sales, timeshares, membership camping, and cemetery regulation — rather than only the narrower 60-item state-specific content outline published for the standard Salesperson exam, so it does not correspond one-to-one with that outline or its item weighting; it also does not cover the separate 80-question national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of ADRE, and pre-license education must be completed through an ADRE-approved school. While we strive to align our content with the current Arizona Real Estate Law Book and ADRE Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real ADRE Salesperson exam or the required 90-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 45 of 60 correct (75%)",
+  },
+  co_real_estate: {
+    orgLine: "the Colorado Real Estate Commission",
+    footerRequirement: "do not fulfill Colorado's 168-hour pre-license education requirement (Real Estate Law and Practice, Colorado Contracts and Regulations, Trust Accounts and Recordkeeping, Current Legal Issues, Real Estate Closings, and Practical Applications) or any Colorado real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Colorado's 168-hour pre-license education requirement for a real estate broker license (six required courses: Real Estate Law and Practice, Colorado Contracts and Regulations, Trust Accounts and Recordkeeping, Current Legal Issues, Real Estate Closings, and Practical Applications), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state portion of the exam (grounded in Colorado Revised Statutes Title 12, Article 10 and 4 CCR 725-1, the Real Estate Commission's Rules), not the separate 80-question national portion, and not every topic on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Division of Real Estate, and pre-license education must be completed through a Commission-approved school, DPOS-approved school, or accredited college or university. While we strive to align our content with the current Colorado Real Estate Manual, Colorado Revised Statutes Title 12, Article 10, and 4 CCR 725-1, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 168-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state portion -- 53 of 74 correct (71.6%)",
+  },
+  ct_real_estate: {
+    orgLine: "the Connecticut Real Estate Commission",
+    footerRequirement: "do not fulfill the 60-hour Real Estate Principles and Practices pre-license education requirement or any Connecticut real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Connecticut's 60-hour Real Estate Principles and Practices pre-license education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Connecticut General Statutes Title 20, Chapter 392 and its implementing regulations), not the separate national/general portion, and not every topic on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Connecticut Department of Consumer Protection and the Real Estate Commission, and pre-license education must be completed through a DCP-approved school. While we strive to align our content with the current PSI Candidate Information Bulletin and Connecticut General Statutes and regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the real state-specific portion's published threshold — PSI requires at least 70%, which does not divide evenly across 35 questions, so this practice exam uses the nearest whole-number pass bar of 25 of 35 correct (71.4%)",
+  },
+  de_real_estate: {
+    orgLine: "the Delaware Real Estate Commission",
+    footerRequirement: "do not fulfill the 99-hour pre-license education requirement or any Delaware real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Delaware's 99-hour pre-license education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (Delaware Laws, Rules, and Regulations), grounded in Delaware Code Title 24, Chapter 29 and the Real Estate Commission's Regulation 2900 — not the separate 80-item national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Delaware Real Estate Commission, and pre-license education must be completed through a Commission-approved school. Our topic breakdown mirrors Pearson VUE's own published state-portion content outline for the Salesperson exam (Duties and Powers of the Commission, Licensing Requirements, Statutory Requirements Governing Licensees, and Additional State Topics — 40 scored items total, effective June 1, 2020). Note: Pearson VUE publishes a single four-hour time limit for the combined national-plus-state exam and does not separately publish a time limit for the 40-item state portion alone, and grades using an equated scaled score (passing score of 70 on a 0–100 scale) rather than a simple raw-percentage-correct count; the duration and 70%-pass format used on this track are practice-sizing conventions consistent with that published passing score, not a literal reproduction of Pearson VUE's scoring method. While we strive to align our content with the current Real Estate Commission Rules and Delaware Code, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Delaware Real Estate Commission exam or the required 99-hour pre-license education.",
+    passScoreNote: "the real state portion's published passing score is an equated scaled score of 70 (of 0–100), not a simple raw-percent count; this practice track uses a comparable 28-of-40 (70%) raw-correct threshold as a practice-sizing convention, not a literal reproduction of Pearson VUE's scoring method",
+  },
+  hi_real_estate: {
+    orgLine: "the Hawaii Real Estate Commission",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement or any Hawaii real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for a Hawaii real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Real Estate Commission's own Hawaii Administrative Rules, Title 16, Chapter 99, and Hawaii Revised Statutes Chapter 467) — not the separate 80-item national/general portion, and not every topic on PSI's official Hawaii state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Hawaii Administrative Rules and Hawaii Revised Statutes, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 35 of 50 correct",
+  },
+  ia_real_estate: {
+    orgLine: "the Iowa Real Estate Commission",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement or any Iowa real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for an Iowa real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Iowa Code Chapter 543B and Iowa Administrative Code 193E), not the separate 80-question national portion, and not every topic on the Commission's own content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-license education must be completed through a commission-approved school within the 12 months before testing. While we strive to align our content with the current Iowa Code and Administrative Code, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 28 of 40 correct (70%)",
+  },
+  id_real_estate: {
+    orgLine: "the Idaho Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement or any Idaho real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Idaho's 90-hour prelicense education requirement for a real estate salesperson license (Module 1: 45 hours of fundamental real estate concepts, and Module 2: 45 hours of listing, selling, buying and closing practice), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Idaho Code Title 54, Chapter 20 and IDAPA 24.37.01), not the separate national/general portion. The real Idaho state-specific exam is graded on a scaled score from 0-100, with a passing score of 70 — not a raw percentage of questions answered correctly — so the 75%-correct threshold used on this practice exam is a practice-sizing convention, not the Commission's actual scoring methodology. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and prelicense education must be completed through a Commission-approved school. While we strive to align our content with the current Commission Rules and Idaho statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "a practice-sizing convention — 30 of 40 correct (75%) — the real state-specific portion is graded on a scaled score of 0-100 with a passing score of 70, not a raw percentage of questions correct",
+  },
+  in_real_estate: {
+    orgLine: "the Indiana Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement or any Indiana real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for an Indiana real estate broker license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Real Estate Commission's own licensing law, Indiana Code Title 25, Article 34.1, and its administrative rules at 876 IAC), not the separate national/general portion. The real state-specific exam is graded on a proprietary scaled score — a passing score of 75 on a 0-100 scale, set by the Indiana Professional Licensing Agency (IPLA) in conjunction with Pearson VUE — rather than a raw percentage of correct answers; this practice exam's 75%-correct threshold is a study-progress convention only, not a recreation of that scoring method. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the IPLA and Real Estate Commission, and pre-license education must be completed through a Commission-approved provider. While we strive to align our content with the current Indiana Code and 876 IAC, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "not comparable to a raw percentage — the real state-specific portion is graded on a proprietary scaled score (0-100 scale, passing = 75) set by the IPLA in conjunction with Pearson VUE, so this practice exam's 75%-correct threshold is a study-progress convention only",
+  },
+  ks_real_estate: {
+    orgLine: "the Kansas Real Estate Commission",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement (a 30-hour Principles of Real Estate course plus a separate 30-hour Kansas Practice Course) or any Kansas real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Kansas's 60-hour pre-license education requirement for a real estate salesperson license (a 30-hour Principles of Real Estate course plus a separate 30-hour Kansas Practice Course, both approved by the Real Estate Commission), and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Kansas Real Estate Brokers' and Salespersons' License Act (K.S.A. 58-3034 et seq.), the Brokerage Relationships in Real Estate Transactions Act (BRRETA), and Kansas Administrative Regulations, Agency 86. Our question bank spans the full License Act and its implementing regulations — including broker-only subject matter such as trust accounts and license-qualification standards — rather than only the narrower 30-item Kansas state-specific content outline published for the standard Salesperson exam, so it does not correspond one-to-one with that outline or its item weighting; it also does not cover the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. The real Kansas state-portion exam is scored on a scaled 0-to-100 basis with a passing score of 70 — not a literal count or percentage of questions answered correctly — so the practice pass threshold used on this site is a study-sizing convention, not a transcription of the real scoring method. While we strive to align our content with the current Commission regulations and Kansas statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "a study-sizing convention — the real Kansas state-specific portion is scored on a scaled 0-to-100 basis with a passing score of 70, not a raw percentage or fixed correct-answer count",
+  },
+  ky_real_estate: {
+    orgLine: "the Kentucky Real Estate Commission (KREC)",
+    footerRequirement: "do not fulfill the 96-hour pre-license education requirement (or the separate 48-hour post-license education required within the first two years of licensure) or any Kentucky real estate sales associate training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 96-hour pre-license education requirement for a Kentucky real estate sales associate license (or the separate 48-hour post-license education required within the first two years of an active license), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Kentucky Revised Statutes Chapter 324 and the Real Estate Commission's regulations at 201 KAR Chapter 11), not the separate national/general portion, and not every topic on the Commission's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current KRS Chapter 324 and 201 KAR Chapter 11, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 96-hour pre-license education.",
+    passScoreNote: "the same 75%-correct threshold as the real state-specific portion -- since 75% of 50 items is 37.5, PSI requires the next whole question, 38 of 50 correct",
+  },
+  la_real_estate: {
+    orgLine: "the Louisiana Real Estate Commission (LREC)",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (Real Estate 101) or the separate 45-hour post-license education requirement due within 180 days of initial licensure, or any other Louisiana real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Louisiana's 90-hour pre-license education requirement for a real estate salesperson license (Real Estate 101), or the separate 45-hour post-license education requirement due within 180 days of initial licensure, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Louisiana Real Estate License Law (La. R.S. 37:1430-1470) and the Real Estate Commission's Rules (Louisiana Administrative Code Title 46, Part LXVII). Our question bank covers four of the five sections on Pearson VUE's official state-specific content outline — Commission duties/powers, licensing requirements, statutory requirements governing licensee activities, and Louisiana law of agency/disclosures — but does NOT cover the outline's separate Louisiana Civil Law System section (property, successions, obligations/contracts, sales and leases under the Louisiana Civil Code), which Pearson VUE weights at roughly a quarter of the 55-item state-specific exam; it also does not cover the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through an LREC-certified real estate school. The real state-specific exam reports a scaled score from 0 to 100, not raw percent-correct — a passing score of 70 is required; the practice threshold used here reuses that same number as a study-sizing convention, not a transcription of the real scoring method. While we strive to align our content with the current Louisiana Real Estate License Law and Commission Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "a study-sizing convention reusing the real scaled-score threshold — the real Louisiana state-specific portion is scored on a scaled 0-to-100 basis with a passing score of 70, not a raw percentage or fixed correct-answer count",
+  },
+  ma_real_estate: {
+    orgLine: "the Massachusetts Board of Registration of Real Estate Brokers and Salespersons",
+    footerRequirement: "do not fulfill the 40-hour pre-licensure salesperson education requirement or any Massachusetts real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 40-hour pre-licensure education requirement for a Massachusetts real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in M.G.L. c. 112, &sect;&sect; 87PP&ndash;87DDD 1/2 and 254 CMR 2.00&ndash;7.00), not the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Board of Registration of Real Estate Brokers and Salespersons, and pre-licensure education must be completed through a Board-approved school. Massachusetts scores the General and State portions of the exam independently — candidates who pass one portion and fail the other are only required to retake the failed portion (within the authorized period) — and this practice exam models only the 40-question State portion at its real 70%-correct passing threshold, not the combined 120-question sitting. While we strive to align our content with the current PSI Candidate Information Bulletin and Massachusetts statute and regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Board of Registration exam or the required 40-hour pre-licensure education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 28 of 40 correct (70%)",
+  },
+  md_real_estate: {
+    orgLine: "the Maryland Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill the 60-hour pre-license education requirement for a Maryland real estate salesperson license (which must include a 3 clock-hour course in real estate ethics) or any Maryland real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for a Maryland real estate salesperson license (which must include a 3 clock-hour course in real estate ethics approved by the Commission), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Maryland Real Estate Commission Law, Business Occupations and Professions Article, Title 17, and COMAR Title 09, Subtitle 11), not the separate 80-question national portion, and not every topic on PSI's official Maryland State Portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission Laws, Rules and Regulations and Maryland statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 21 of 30 correct (70%), a straight raw-count percentage, not a scaled score",
+  },
+  me_real_estate: {
+    orgLine: "the Maine Real Estate Commission",
+    footerRequirement: "do not fulfill the 55-hour Sales Agent Course pre-license education requirement or any Maine real estate sales agent training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 55-hour Sales Agent Course pre-license education requirement for a Maine real estate sales agent license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the Maine Law (state-specific) portion of the exam, grounded in 32 M.R.S. Chapter 114 and the Real Estate Commission's Rules (Code of Maine Rules 02-039, Chapters 300-410) — not the separate national/general portion, and not every topic on the Commission's official Maine Law content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission Rules and Maine statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 55-hour Sales Agent Course pre-license education.",
+    passScoreNote: "a practice approximation of the real Maine Law portion's scaled-score-75 requirement (0-100 scale) — the real exam reports a proprietary scaled score, not raw percent-correct",
+  },
+  mn_real_estate: {
+    orgLine: "the Minnesota Department of Commerce",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (Course I, II & III) or any Minnesota real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Minnesota's 90-hour pre-license education requirement for a real estate salesperson license (Course I, Course II, and Course III, 30 hours each, completed at a Department of Commerce-approved real estate school), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Minnesota Statutes Chapter 82, Sections 82.55-82.89), not the separate 80-question national portion, and not necessarily every item on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Minnesota Department of Commerce, and pre-license education must be completed through a Commerce-approved school. While we strive to align our content with the current Minnesota Statutes Chapter 82, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Department of Commerce exam or the required 90-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion -- 30 of 40 correct",
+  },
+  mo_real_estate: {
+    orgLine: "the Missouri Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill the 48-hour salesperson pre-examination course requirement (or the 24-hour Missouri Real Estate Practice (MREP) course required before license application) or any Missouri real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 48-hour salesperson pre-examination course requirement for a Missouri real estate salesperson license (or the separate 24-hour Missouri Real Estate Practice (MREP) course required before submitting a license application), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Missouri Real Estate Practice Act, RSMo Chapter 339, and the statutory Agency Relationships subchapter, RSMo 339.710-339.855) — not the separate 100-question national/general portion, and not every topic on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Missouri Real Estate Commission, and pre-examination education must be completed through an MREC-accredited real estate school. While we strive to align our content with the current PSI Candidate Handbook and Missouri statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 48-hour pre-examination education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 30 of 40 correct (75%), a straight raw-count percentage, not a scaled score",
+  },
+  ms_real_estate: {
+    orgLine: "the Mississippi Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill the 60-classroom-hour pre-license education requirement or any Mississippi real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-classroom-hour pre-license education requirement for a Mississippi real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific licensing/regulatory subject matter (grounded in the Real Estate Brokers License Law of 1954 and the Commission's own Rules and Regulations) — not the separate 80-question national/general portion of the exam, and organized more broadly than PSI's official 40-item State Portion content outline, which groups the same subject matter into 9 categories. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and the 60 classroom hours of pre-license education must be completed through a college/community college course or a Commission-approved pre-license provider. While we strive to align our content with the current Commission License Law and Rules and Regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 30 of 40 correct (75%)",
+  },
+  mt_real_estate: {
+    orgLine: "the Montana Board of Realty Regulation",
+    footerRequirement: "do not fulfill the 70-hour pre-license education requirement or any Montana real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Montana's 70-hour pre-license education requirement for a real estate salesperson license (completed within the 24 months before applying, per ARM 24.210.611), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Montana Real Estate License Act and the Board of Realty Regulation's own rules), not the separate national/general portion, and not every topic on Pearson VUE's official state-specific content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Montana Board of Realty Regulation, and pre-license education must be completed through a Board-approved provider. The real exam reports a scaled score (0 to 100), not a raw percentage or question count, so our 75%-threshold practice format is an approximation, not a literal match. While we strive to align our content with the Montana Real Estate License Act (MCA Title 37, Chapter 51) and the Board's rules (ARM Title 24, Chapter 210), it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Montana Salesperson exam or the required 70-hour pre-license education.",
+    passScoreNote: "an approximation of the real state-specific portion's scaled-score-75 threshold (0-100 scale) — not a literal raw percentage",
+  },
+  nd_real_estate: {
+    orgLine: "the North Dakota Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement for a North Dakota real estate salesperson license (or the additional 60-hour requirement for a broker's license) or any North Dakota real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for a North Dakota real estate salesperson license (or the additional 60-hour requirement for a broker's license), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in North Dakota Century Code Chapter 43-23, State Real Estate Commission, and the implementing rules at North Dakota Administrative Code Title 70), not the separate 100-question national portion, and not every topic on PSI's official North Dakota State Portion content outline — our question bank does not cover the outline's subdivided/out-of-state land sales registration and disclosure requirements, since North Dakota Century Code Chapter 43-23 contains no such provisions. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current North Dakota Century Code and Administrative Code, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 30 of 40 correct (75%), a straight raw-count percentage, not a scaled score",
+  },
+  ne_real_estate: {
+    orgLine: "the Nebraska Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (or the 12-hour post-licensure course required within 180 days of license issuance) or any Nebraska real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for a Nebraska real estate salesperson license (or the separate 12-hour post-licensure course required within 180 days of license issuance), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Nebraska Real Estate License Act, Neb. Rev. Stat. &sect;&sect; 81-885 to 81-885.56, the agency relationships statute at &sect;&sect; 76-2401 to 76-2430, and the Real Estate Commission's implementing rules at NAC Titles 299, 301 and 305) -- not the separate national/general portion, and not every topic on the Commission's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Nebraska Real Estate License Act and Commission rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion -- 75% correct (Pearson VUE scores against a flat 75%-or-higher bar; since 50 items don't divide evenly at 75%, the practical minimum passing raw score is 38 of 50, since 37/50 falls just under the line)",
+  },
+  nh_real_estate: {
+    orgLine: "the New Hampshire Real Estate Commission",
+    footerRequirement: "do not fulfill the 40-hour pre-licensing education requirement or any New Hampshire real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 40-hour pre-licensing education requirement for a New Hampshire real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam, grounded in the Real Estate Practice Act (RSA 331-A) and the Real Estate Commission's administrative rules (N.H. Code of Admin. Rules Rea 100-700) — not the separate national/general portion, and not the full official state-portion content outline published by PSI: our coverage tracks the outline's Real Estate Commission, Licensure, Regulation of Licensee Conduct, and Regulation of Agency Conduct categories, but does not include the outline's separate \"New Hampshire Principles and Practice\" category (about a quarter of the state portion), which tests substantive New Hampshire statutes outside real estate licensing law, such as the state Human Rights Act, environmental and hazardous-substance statutes, the Condominium Act, planning and zoning, wetlands, taxation, manufactured housing, and recordation and descent-and-distribution law. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-licensing education must be completed through a Commission-approved school. While we strive to align our content with the current Commission rules and New Hampshire statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 40-hour pre-licensing education.",
+    passScoreNote: "the same threshold as the real state-specific portion — 28 of 40 correct (70%)",
+  },
+  nj_real_estate: {
+    orgLine: "the New Jersey Real Estate Commission (NJREC)",
+    footerRequirement: "do not fulfill the 75-hour prelicensure education requirement or any New Jersey real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy New Jersey's 75-hour prelicensure education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the New Jersey Real Estate License Act (N.J.S.A. 45:15) and the Real Estate Commission's implementing regulations (N.J.A.C. 11:5), including the Subdivided Lands Full Disclosure Act, the Real Estate Timeshare Act, and the 2024 agency-relationships law. New Jersey's real Salesperson exam, administered by PSI, is a single 110-question \"combo\" exam (80 national questions plus 30 New Jersey-specific questions) passed with one blended 70% score (77 of 110 correct); PSI does not publish a separately-graded cut score for the state-specific questions alone, and our content covers only that state-specific regulatory subject matter, not the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and prelicensure education must be completed through a Commission-approved school. While we strive to align our content with the current License Act and N.J.A.C. 11:5 regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered New Jersey Real Estate Commission exam or the required 75-hour prelicensure education.",
+    passScoreNote: "the same 70% passing threshold as the real exam's blended national+state combo score — 77 of 110 correct — applied here to our 30 state-specific questions (21 of 30); PSI does not publish a separately-graded cut score for the state portion alone",
+  },
+  nm_real_estate: {
+    orgLine: "the New Mexico Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (30 hours each of Real Estate Principles and Practice, Real Estate Law, and Broker Basics) or any New Mexico real estate Associate Broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for a New Mexico real estate Associate Broker license (30 hours each of Real Estate Principles and Practice, Real Estate Law, and Broker Basics), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the PSI-administered Broker Examination (grounded in the Real Estate Brokers and Salesmen Act, NMSA 1978 §§ 61-29-1 to 61-29-29, and the Commission's rules at NMAC Title 16, Chapter 61) — not the separate national portion, and not necessarily every topic on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved provider. New Mexico's entry-level license is titled \"Associate Broker\" — there is no separate \"salesperson\" license tier — and the same Broker Examination and state-portion content outline also applies to Qualifying Broker candidates, who must additionally complete a Brokerage Office Administration course. While we strive to align our content with the current Commission Rules and New Mexico statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "the same threshold reported for the real state-specific portion — a minimum score of 75 (75%), i.e. 38 of 50 correct per PSI-based secondary sources",
+  },
+  nv_real_estate: {
+    orgLine: "the Nevada Real Estate Division (NRED)",
+    footerRequirement: "do not fulfill the 120-hour pre-license education requirement or any Nevada real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Nevada's 120-hour pre-license education requirement for a real estate salesperson license (45 hours real estate principles, 45 hours real estate law including 18 hours of Nevada law, 15 hours on the preparation of contracts, and 15 hours on agency, per NAC 645.435), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in NRS Chapter 645 and NAC Chapter 645), not the separate national/general portion. Our question bank also includes additional Chapter 645 subject matter -- continuing education standards, business brokers and commercial broker liens, property management, pre-license school regulation, and owner/developer regulation -- that goes beyond the Real Estate Division's published 8-category, 40-item state-specific content outline for the Salesperson exam; treat that additional material as supplementary statute and regulation study, not an exam-outline-mapped section. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE, but registration and payment must first be completed directly through the Nevada Real Estate Division's own portal, and pre-license education must be completed through a Division-approved school. While we strive to align our content with the current NRS Chapter 645, NAC Chapter 645, and the Division's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Division exam or the required 120-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion -- 30 of 40 correct (75%); NRED reports this as a straight percent-correct score (with statistical equating across exam forms to offset form difficulty), not a separately scaled 0-100 score",
+  },
+  ok_real_estate: {
+    orgLine: "the Oklahoma Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-hour pre-license education requirement (or the 45-hour post-license course required before a provisional license's first expiration) or any Oklahoma real estate provisional sales associate training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for an Oklahoma real estate provisional sales associate license (or the separate 45-hour post-license course required before the provisional license's first expiration), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers the Oklahoma Real Estate License Code and Rules more broadly than the state-specific exam portion's own four-category outline (laws and rules affecting practice, the Broker Relationships Act, property management, and disclosures/hazards) — including additional Code and Rules topics (trust and escrow accounts, the Education and Recovery Fund, instructor/school approval, and nonresident licensing) not separately broken out on that outline, some of which correspond to Broker-only exam content rather than the Salesperson/Provisional Sales Associate state portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current OREC License Code and Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
+    passScoreNote: "a practice approximation of the real state-specific portion's scaled-score-70 requirement (Pearson VUE reports a scaled score on the 40-item state portion, not raw percent-correct)",
+  },
+  or_real_estate: {
+    orgLine: "the Oregon Real Estate Agency (OREA)",
+    footerRequirement: "do not fulfill the 150-clock-hour pre-license education requirement (the seven Agency-approved courses required under OAR 863-022-0010) for an Oregon real estate broker license, or any Oregon real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 150-clock-hour pre-license education requirement for an Oregon real estate broker license (seven Agency-approved courses under OAR 863-022-0010: Real Estate Law, Oregon Real Estate Practice, and Real Estate Finance at 30 clock-hours each, Real Estate Brokerage at 20, Contracts and Agency Law at 15 each, and Property Management at 10), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in ORS Chapter 696 and OAR Chapter 863), not the separate 80-question national portion. Because our question bank is built from the full ORS 696/OAR 863 compilation rather than only PSI's 50-item Broker State Section outline, it also includes broader subject matter — escrow agent licensing, real estate property manager licensing (a separate license type with its own, separate 130-item PSI exam), and marketing organization/wholesaling registration — that the real Broker exam's state-specific portion does not actually test; not every topic on PSI's official outline is guaranteed equal weight here. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Oregon Real Estate Agency, and pre-license education must be completed through an Agency-approved school. While we strive to align our content with the current Oregon Revised Statutes Chapter 696 and Oregon Administrative Rules Chapter 863, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Oregon Real Estate Agency exam or the required 150-hour pre-license education.",
+    passScoreNote: "the same 75%-correct threshold as the real state-specific portion -- since 75% of 50 items is 37.5, PSI requires the next whole question, 38 of 50 correct",
+  },
+  ri_real_estate: {
+    orgLine: "the Rhode Island Department of Business Regulation (DBR)",
+    footerRequirement: "do not fulfill the 45-hour pre-license education requirement or any Rhode Island real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Rhode Island's 45-hour pre-license education requirement for a real estate salesperson license (R.I. Gen. Laws § 5-20.5-4(b)), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the Salesperson exam (grounded in R.I. Gen. Laws Chapters 5-20.5, 5-20.6, and 5-20.8, together with the Real Estate Commission's implementing rule 230-RICR-30-20-2) — not the separate national/general portion, and not every topic on Pearson VUE's published state content outline. The real state-portion exam is scored on a proprietary 0-100 scaled score (passing score 70), not a literal percentage of questions answered correctly; this practice exam uses raw percent-correct against that same 70 threshold as an approximation. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Rhode Island Department of Business Regulation, and pre-license education must be completed through a Department-approved school. While we strive to align our content with the current statute and Commission rule, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Salesperson exam or the required 45-hour pre-license education.",
+    passScoreNote: "a practice approximation of the real state portion's scaled-score-70 requirement (the actual score is a 0-100 scaled score, not raw percent-correct)",
+  },
+  sc_real_estate: {
+    orgLine: "the South Carolina Real Estate Commission",
+    footerRequirement: "do not fulfill the 60-hour Unit I / 30-hour Unit II pre-license education requirement (90 hours total) or any South Carolina real estate associate training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy South Carolina's pre-license education requirement for a real estate associate license -- sixty hours of Unit I (Fundamentals of Real Estate Principles and Practices) plus thirty hours of Unit II (Advanced Real Estate Principles), though state law permits sitting for the license examination after completing Unit I alone -- and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the PSI-administered Real Estate Associate exam (grounded in the Real Estate Commission's own Regulations and S.C. Code Title 40, Chapter 57), not the separate national portion, which candidates must also pass to qualify for licensure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved provider. While we strive to align our content with the current PSI Candidate Information Bulletin and South Carolina Real Estate Commission Regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Real Estate Commission exam or the required pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion -- 28 of 40 correct (70%)",
+  },
+  sd_real_estate: {
+    orgLine: "the South Dakota Real Estate Commission",
+    footerRequirement: "do not fulfill the 116-hour pre-license education requirement or any South Dakota real estate Broker Associate training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 116-hour pre-license education requirement for a South Dakota real estate Broker Associate license (South Dakota's entry-level real estate license, the equivalent of what many other states call a \"salesperson\" license), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state portion of the exam (grounded in SDCL Title 36, Chapter 21A and the Real Estate Commission's rules at ARSD Article 20:69) — not the separate national/general portion, and not every topic on PSI's official State Content Outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the South Dakota Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current SDCL 36-21A and ARSD 20:69, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 116-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state portion — 39 of 52 correct (75%)",
+  },
+  tn_real_estate: {
+    orgLine: "the Tennessee Real Estate Commission (TREC)",
+    footerRequirement: "do not fulfill the 60-hour pre-license (Real Estate Principles/Fundamentals) education requirement (or the additional 30-hour Course for New Affiliates required before licensure) or any Tennessee affiliate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour Real Estate Principles/Fundamentals pre-license education requirement to sit for a Tennessee affiliate broker license exam (or the separate 30-hour \"Course for New Affiliates\" required before a license is issued), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers the licensing and regulatory portion of the state-specific exam (grounded in the Tennessee Real Estate Broker License Act of 1973, Tenn. Code Ann. Title 62, Chapter 13, and the Real Estate Commission's Rules, Tenn. Comp. R. and Regs. Chapter 1260) -- not the separate national/general portion, and not every topic on PSI's official 40-item Affiliate Broker State Portion content outline; it also covers additional Tennessee-specific licensing topics (vacation lodging/rental location agents, time-share programs, and commercial real estate broker liens) that extend beyond that narrower exam blueprint. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current TREC Rules and Tennessee statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
+    passScoreNote: "the same threshold as the real state-specific portion -- 28 of 40 correct",
+  },
+  ut_real_estate: {
+    orgLine: "the Utah Division of Real Estate (DRE)",
+    footerRequirement: "do not fulfill the 120-hour real estate sales agent pre-license education requirement or any Utah real estate sales agent training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Utah's 120-classroom-hour pre-license education requirement for a real estate sales agent license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Real Estate Licensing and Practices Act (Utah Code Title 61, Chapter 2f) and its implementing Utah Administrative Code R162-2f, and mapped to the official Utah state-law content outline for the Sales Agent exam. Utah's real Sales Agent exam is a single Pearson VUE-administered test that combines an 80-item national/general section with a 50-item Utah state-law section in one continuous four-hour appointment, not two separately scheduled exams; each section is scored separately on a scaled 0-100 point system, with a passing score of 70 on the state-law section — not a raw number or percentage of questions answered correctly. Because our question bank is grounded in the full licensing statute and rules rather than the narrower candidate exam outline alone, it also covers some material — including real estate auctions and timeshare-type products, and school/instructor certification — that falls outside Pearson VUE's official 50-item state-section outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Division of Real Estate, and pre-license education must be completed through a Division-approved school. While we strive to align our content with the current Utah Code, Administrative Code R162-2f, and Pearson VUE's content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Sales Agent exam or the required 120-hour pre-license education.",
+    passScoreNote: "a scaled score of 70 (on Pearson VUE's 0-100 scale) on the real state-law section — not a raw number or percentage of questions answered correctly.",
+  },
+  vt_real_estate: {
+    orgLine: "the Vermont Real Estate Commission",
+    footerRequirement: "do not fulfill the 40-hour pre-licensing course requirement (or the 8-hour post-licensure education required within 90 days of initial licensure) or any Vermont real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Vermont's 40-hour pre-licensing course requirement for a real estate salesperson license (or the separate 8-hour post-licensure education required within 90 days of initial licensure, per 26 V.S.A. &sect; 2293), and does not issue any official course-completion certificate &mdash; our content is a supplementary study aid only, grounded in 26 V.S.A. Chapter 41 and the Real Estate Commission's Administrative Rules (effective December 1, 2015). <strong>Important scope note:</strong> Vermont licensure actually requires passing two separate exams &mdash; a National Examination, still administered by PSI (schedule.psiexams.com), and a Vermont State Examination. Unlike most states in this project, Vermont's State Examination is not run by a private testing vendor: as of February 27, 2021, the Office of Professional Regulation (OPR) discontinued using PSI for the state portion and now administers it directly as an untimed part of the online license application itself, with no publicly published question count, time limit, or passing percentage. Our content here is a practice set for that Vermont-specific subject matter, not a reproduction of the actual application-embedded exam, and the 40-question/75%-pass practice format used here is a practice-sizing convention, not an official Vermont exam format. Completing practice exams here also does not register you for, count toward, or submit any part of the official State or National Examination; official National Examination scheduling is handled by PSI, and pre-licensing education must be completed through an OPR-approved provider. While we strive to align our content with the current Vermont Real Estate Commission Administrative Rules and 26 V.S.A. Chapter 41, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Vermont State Examination, PSI's National Examination, or the required 40-hour pre-licensing education.",
+    passScoreNote: "a practice-sizing convention for this Vermont-specific practice content -- 30 of 40 correct (75%) -- since OPR publishes no official question count or passing percentage for the self-administered State Examination",
+  },
+  wi_real_estate: {
+    orgLine: "the Wisconsin Real Estate Examining Board",
+    footerRequirement: "do not fulfill the 72-hour pre-license education requirement for a Wisconsin real estate salesperson license, or any other Wisconsin real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Wisconsin's 72-hour pre-license education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the licensing and regulatory portion of the state-specific exam (grounded in Wisconsin Statutes Chapter 452 and Wisconsin Administrative Code chs. REEB 11, 12, 15, 16, 17, 18, 23, 24, and 25) — not the separate national portion, and not every topic on the Real Estate Examining Board's official 140-item state-portion content outline (which also covers property valuation/financing math, land use controls, contract-form specifics, fair housing, and federal antitrust law). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Examining Board, and pre-license education must be completed through a DSPS-approved school. Wisconsin's real exam also reports a scaled score on a 0-100 scale (a passing score of 75, set by the DSPS in conjunction with Pearson), not a raw percent-correct count — this practice exam uses a comparable 75% raw-score threshold for simplicity. While we strive to align our content with the current REEB Administrative Code and Wisconsin Statutes Chapter 452, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Examining Board exam or the required 72-hour pre-license education.",
+    passScoreNote: "a comparable threshold to the real exam's DSPS-set cut score — a scaled score of 75 on Pearson's 0-100 scale, not a raw percent-correct count",
+  },
+  wv_real_estate: {
+    orgLine: "the West Virginia Real Estate Commission",
+    footerRequirement: "do not fulfill the 90-clock-hour (six-semester-credit-hour) pre-license education requirement or any other West Virginia real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-clock-hour pre-license education requirement (equivalent to six college semester credit hours) for a West Virginia real estate salesperson license, and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the West Virginia Real Estate License Act, W. Va. Code Chapter 30, Article 40, and the Real Estate Commission's Title 174 legislative rules), not the separate national/general portion, and not every topic on the Commission's official state-specific content outline -- our question bank does not include a dedicated West Virginia Fair Housing section, which the Commission's outline weights at 10% of the state-specific exam. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. West Virginia reports a scaled score (0-100), not the raw number or percentage of questions answered correctly, so our 70%-to-pass practice format models the Commission's published 70 passing score as a study benchmark, not a literal raw-score match. While we strive to align our content with the current West Virginia Real Estate License Act and Commission rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-clock-hour pre-license education.",
+    passScoreNote: "the Real Estate Commission's published passing score of 70 for the state-specific portion -- though Pearson VUE reports a scaled score (0-100), not the raw number of questions correct",
+  },
+  wy_real_estate: {
+    orgLine: "the Wyoming Real Estate Commission",
+    footerRequirement: "do not fulfill the 72-hour pre-license education requirement (Salesperson Course I -- 40 hours, Salesperson Course II -- 24 hours, and the separate Wyoming Law Course -- 8 hours) or any Wyoming real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 72-hour pre-license education requirement for a Wyoming real estate salesperson license (Salesperson Course I, Salesperson Course II, and the separate Wyoming Law Course), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Wyoming Real Estate License Act, Wyoming Statutes Title 33, Chapter 28, and the Real Estate Commission's own Rules, Chapters 1-8) — not the separate national/general portion, and not every topic on Pearson VUE's official state-portion content outline. Wyoming reports a scaled score (0-100), not a raw percent-correct score, on the real exam, with a passing score of 75 on both portions. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission Rules and Wyoming statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 72-hour pre-license education.",
+    passScoreNote: "a practice approximation of the real scaled-score-75 requirement — Wyoming reports a 0-100 scaled score, not raw percent-correct",
+  },
 };
 function trackCompliance(examType) {
   return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.ca_notary;
@@ -1652,8 +2240,16 @@ function currentTrackOrNull() {
 
 var HUB_TRACKS_COLLAPSED_COUNT = 4;
 var hubTracksExpanded = false;
-var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA')
+var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA') -- only used
+                          // by the legacy all-states pill UI (hubScopedState === null), see below.
 var hubKindFilter = ''; // '' = All exam kinds; otherwise a HUB_EXAMS examKind value (e.g. 'Driver')
+// null = the flat, de-emphasized "browse all states" catalog (old behavior: state+kind pills,
+// hubStateFilter drives the state side of it). A stateCode = the default single-state hub
+// (reached via "/<state>" -- see route()): no state pills at all, kind pills scoped to just that
+// state's tracks, "browse all states" is a single link out instead of one filter among many.
+// Cross-state purchase intent is ~nil for a licensing-exam product, so this is the default; the
+// all-states view is the escape hatch, not the other way around.
+var hubScopedState = null;
 
 // A track matches the current filter pair if it satisfies whichever of state/kind is active --
 // the two filters combine (AND), not just one at a time.
@@ -1704,8 +2300,41 @@ function renderHubKindFilterPills() {
     }).join('') + '</div>';
 }
 
+// ---- Default single-state hub (hubScopedState set) -------------------------
+// No state pills here at all (the state is fixed by the URL) -- just a "you're looking at X"
+// line and the de-emphasized way out, plus kind pills scoped to only what that state actually
+// has. A full page navigation (real <a href>, not pushState) on both, matching how every other
+// pathname change in this app already works (e.g. clicking a track card) -- introducing an
+// in-place SPA transition just for this would be a second navigation model for no real benefit.
+function renderHubScopedContextBar() {
+  var name = STATE_LABELS[hubScopedState] || hubScopedState;
+  return '<div class="hub-scoped-context-bar">' +
+    '<span>Showing licensing tracks for <strong>' + escapeHtml(name) + '</strong></span>' +
+    '<a href="/" class="hub-scoped-all-link" data-act="browse-all-states">browse all states instead</a>' +
+    '</div>';
+}
+function renderHubKindFilterPillsScoped() {
+  var tracksInState = HUB_EXAMS.filter(function (e) { return e.stateCode === hubScopedState; });
+  var kinds = [];
+  tracksInState.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  kinds.sort(function (a, b) { return a.localeCompare(b); });
+  var options = [['', 'All Types (' + tracksInState.length + ')']].concat(kinds.map(function (k) {
+    var count = tracksInState.filter(function (e) { return e.examKind === k; }).length;
+    return [k, k + ' (' + count + ')'];
+  }));
+  if (options.length <= 2) return ''; // this state only has one exam kind so far -- nothing to filter
+  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
+    options.map(function (o) {
+      var active = hubKindFilter === o[0];
+      var href = '/' + hubScopedState.toLowerCase() + (o[0] ? '/' + kindSlug(o[0]) : '');
+      return '<a href="' + href + '" class="' + (active ? 'active' : '') + '"' +
+        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</a>';
+    }).join('') + '</div>';
+}
+
 function hubTracksGridHtml() {
-  var filtered = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, hubKindFilter); });
+  var effectiveStateFilter = hubScopedState || hubStateFilter;
+  var filtered = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, effectiveStateFilter, hubKindFilter); });
   var cardsArr = hubTrackCards(filtered);
   var truncated = !hubTracksExpanded && cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT;
   var visible = truncated ? cardsArr.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : cardsArr;
@@ -1840,6 +2469,19 @@ function giftTracksGridHtml() {
 function renderHub() {
   var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
   var upcomingCount = HUB_EXAMS.length - activeCount;
+  // Scoped mode (hubScopedState set, the default -- see route()) drops the state-pill row
+  // entirely (the state's fixed by the URL) and swaps it for the "you're looking at X" bar plus
+  // kind pills scoped to only that state's tracks. Unscoped mode is the de-emphasized "browse all
+  // states" escape hatch, unchanged from before: both filter pill rows, hubStateFilter-driven.
+  var tracksHeaderHtml = hubScopedState
+    ? '<div class="hub-section-header" id="tracks"><h2>' + escapeHtml(STATE_LABELS[hubScopedState] || hubScopedState) + ' Licensing Tracks</h2>' +
+      '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
+      '<div id="hub-scoped-context-wrap">' + renderHubScopedContextBar() + '</div>' +
+      '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPillsScoped() + '</div>'
+    : '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
+      '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
+      '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
+      '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>';
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -1869,10 +2511,7 @@ function renderHub() {
     '</div>' +
     trustStripHtml() +
     howItWorksHtml() +
-    '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
-    '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
-    '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
-    '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>' +
+    tracksHeaderHtml +
     '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>' +
     comparisonTableHtml() +
     guaranteeCtaBandHtml();
@@ -2018,7 +2657,7 @@ function fillReadinessCard() {
       size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
     });
     var tiles = [
-      { value: s.totalQuestions, label: 'Practice Questions' },
+      { value: s.totalQuestions, label: 'Practice Questions Across All Tracks' },
       { value: s.examsCompleted, label: 'Mock Exams' },
       { value: s.tracksLive, label: 'Live Tracks' },
     ];
@@ -2583,6 +3222,388 @@ var RESOURCES = {
     { title: 'WAC 308-124C — Real Estate Records and Responsibilities', type: 'pdf', url: 'https://apps.leg.wa.gov/wac/default.aspx?cite=308-124C',
       desc: 'Washington\'s regulations on managing broker recordkeeping and supervisory responsibilities — a primary source behind the managing broker state exam content, alongside RCW 18.85.111 (education/experience requirements), WAC 308-124E (trust accounts), and WAC 308-124B (firms/branch offices).',
       topic: 'General Reference', free: true },
+  ],
+  ak_real_estate: [
+    { title: "Alaska Real Estate Commission — Statutes and Regulations (Rev. 09/20/2024)", type: "pdf", url: "https://www.commerce.alaska.gov/web/portals/5/pub/recregulations.pdf",
+      desc: "The Real Estate Commission's own compiled publication of AS Title 08, Chapter 88 and 12 AAC 64 — the authoritative source the state law portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Alaska Statutes Title 08, Chapter 88 (Real Estate Brokers and Other Licensees)", type: "pdf", url: "https://law.justia.com/codes/alaska/title-8/chapter-88/",
+      desc: "The Alaska Real Estate License Act — the statutory basis for the Commission's regulations.",
+      topic: "General Reference", free: true },
+  ],
+  al_real_estate: [
+    { title: "Alabama Administrative Code, Title 790 (Alabama Real Estate Commission Rules)", type: "pdf", url: "https://admincode.legislature.state.al.us/administrative-code/790",
+      desc: "The official Alabama Real Estate Commission administrative rules, published by the Alabama Legislature — the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Code of Alabama 1975, Title 34, Chapter 27 (Real Estate License Law of 1951)", type: "pdf", url: "https://law.justia.com/codes/alabama/title-34/chapter-27/",
+      desc: "The Alabama Real Estate License Law of 1951 — the statutory basis for the Commission's administrative rules.",
+      topic: "General Reference", free: true },
+  ],
+  ar_real_estate: [
+    { title: "Arkansas Real Estate Commission — License Law & Regulations Booklets", type: "pdf", url: "https://arec.arkansas.gov/forms-publications/booklets/",
+      desc: "The Arkansas Real Estate Commission's official Booklets page, publishing the current Real Estate License Law and Commission Rules and Regulations booklets — the authoritative source the Arkansas law portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Arkansas Code Annotated Title 17, Chapter 42 (Real Estate License Law)", type: "pdf", url: "https://law.justia.com/codes/arkansas/title-17/subtitle-2/chapter-42/",
+      desc: "The codified Arkansas Real Estate License Law — the statutory basis for the Commission's Rules and Regulations.",
+      topic: "General Reference", free: true },
+  ],
+  az_real_estate: [
+    { title: "Arizona Real Estate Law Book (ADRE)", type: "pdf", url: "https://azre.gov/resources/law-book",
+      desc: "The official compiled statute and rule reference published by the Arizona Department of Real Estate — reproduces A.R.S. Title 32, Chapter 20 and A.A.C. Title 4, Chapter 28 verbatim, and is the authoritative source this practice content is grounded in.",
+      topic: "General Reference", free: true },
+    { title: "Arizona Department of Real Estate (ADRE)", type: "pdf", url: "https://azre.gov",
+      desc: "The Arizona Department of Real Estate's official site — the state agency that licenses and regulates real estate, cemetery, membership camping, subdivided land and timeshare activity in Arizona.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE — Arizona Real Estate Candidate Handbook", type: "pdf", url: "https://www.pearsonvue.com/us/en/az/realestate.html",
+      desc: "Pearson VUE's official Arizona real estate licensing page, including the Candidate Handbook and the state-specific exam content outline — Pearson VUE administers the licensing exam on ADRE's behalf.",
+      topic: "General Reference", free: true },
+  ],
+  co_real_estate: [
+    { title: "Colorado Real Estate Manual", type: "pdf", url: "https://dre.colorado.gov/real-estate-manual-and-position-statements",
+      desc: "The official study manual compiled by the Colorado Division of Real Estate -- the source PSI's own candidate bulletin names as the basis for the state portion of the exam.",
+      topic: "General Reference", free: true },
+    { title: "4 CCR 725-1 (Rules Regarding Real Estate Brokers)", type: "pdf", url: "https://dre.colorado.gov/program-rules-notices-of-rule-making-hearings",
+      desc: "The Colorado Real Estate Commission's current binding administrative rules, published by the Division of Real Estate.",
+      topic: "General Reference", free: true },
+    { title: "Colorado Revised Statutes Title 12, Article 10 (Real Estate)", type: "pdf", url: "https://law.justia.com/codes/colorado/title-12/division-of-real-estate/article-10/",
+      desc: "The Colorado real estate licensing statute -- the statutory basis for the Real Estate Commission's Rules.",
+      topic: "General Reference", free: true },
+  ],
+  ct_real_estate: [
+    { title: "Connecticut Real Estate Commission (Department of Consumer Protection)", type: "pdf", url: "https://portal.ct.gov/dcp/occupational-and-professional-division/occupational-boards/connecticut-real-estate-commission",
+      desc: "The official Connecticut DCP page for the Real Estate Commission — the authoritative source for licensing requirements and regulatory oversight.",
+      topic: "General Reference", free: true },
+    { title: "Connecticut General Statutes Title 20, Chapter 392 (Real Estate Licensees)", type: "pdf", url: "https://www.cga.ct.gov/current/pub/chap_392.htm",
+      desc: "The Connecticut statute governing real estate broker and salesperson licensing — the statutory basis for the state-specific portion of the exam.",
+      topic: "General Reference", free: true },
+    { title: "PSI Candidate Information Bulletin — Connecticut Real Estate Salesperson and Broker Licensing", type: "pdf", url: "https://test-takers.psiexams.com/ctre",
+      desc: "PSI's official candidate bulletin, published in conjunction with the Connecticut Real Estate Commission — the source of the exam format and the state-portion content outline this track's breakdown is based on.",
+      topic: "General Reference", free: true },
+  ],
+  de_real_estate: [
+    { title: "Delaware Real Estate Commission", type: "pdf", url: "https://dpr.delaware.gov/boards/realestate/",
+      desc: "The Delaware Real Estate Commission's official site (Division of Professional Regulation) — the authoritative source the licensing law and Commission Rules are based on.",
+      topic: "General Reference", free: true },
+    { title: "Delaware Code, Title 24, Chapter 29 (Real Estate Services, Brokers, Associate Brokers and Salespersons)", type: "pdf", url: "https://delcode.delaware.gov/title24/c029/index.html",
+      desc: "The Delaware Code Online chapter governing real estate licensing — the statutory basis (24 Del. C. §§ 2900-2940) for the Commission's Rules and Regulations.",
+      topic: "General Reference", free: true },
+    { title: "Delaware Administrative Code, Title 24, Regulation 2900 (Real Estate Commission Rules)", type: "pdf", url: "https://regulations.delaware.gov/AdminCode/title24/2900.shtml",
+      desc: "The Real Estate Commission's implementing Rules and Regulations (Rules 1.0-16.0), published by the Delaware Office of the Registrar of Regulations.",
+      topic: "General Reference", free: true },
+  ],
+  hi_real_estate: [
+    { title: "Hawaii Administrative Rules, Title 16, Chapter 99 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://cca.hawaii.gov/pvl/files/2013/08/99-C.pdf",
+      desc: "The official implementing rules of the Hawaii Real Estate Commission, published by the Department of Commerce and Consumer Affairs — the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Hawaii Revised Statutes Chapter 467 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://www.capitol.hawaii.gov/hrscurrent/Vol10_Ch0436-0474/HRS0467/",
+      desc: "The Hawaii Real Estate Brokers and Salespersons Law — the statutory basis for the Real Estate Commission's Administrative Rules.",
+      topic: "General Reference", free: true },
+  ],
+  ia_real_estate: [
+    { title: "Iowa Code Chapter 543B (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://www.legis.iowa.gov/law/iowaCode/chapter?name=543B",
+      desc: "The official Iowa Code chapter published by the Iowa Legislature — the statutory basis for real estate brokerage and salesperson licensing in Iowa.",
+      topic: "General Reference", free: true },
+    { title: "Iowa Administrative Code 193E (Real Estate Commission)", type: "pdf", url: "https://www.legis.iowa.gov/law/administrativeRules/chapters?agency=193E",
+      desc: "The official compiled administrative rules published by the Iowa Legislature — the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  id_real_estate: [
+    { title: "Idaho Real Estate License Law and Rules (Idaho Real Estate Commission Booklet)", type: "pdf", url: "https://dopl.idaho.gov/wp-content/uploads/2026/03/Idaho-Real-Estate-License-Law-Rules-Booklet-FINAL-VERSION.pdf",
+      desc: "The Idaho Real Estate Commission's own compiled booklet — the authoritative source this practice content is grounded in, containing Idaho Code Title 54, Chapter 20, IDAPA 24.37.01 (Rules of the Idaho Real Estate Commission), and the Commission's numbered interpretive Guidelines.",
+      topic: "General Reference", free: true },
+    { title: "Idaho Code Title 54, Chapter 20 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://legislature.idaho.gov/statutesrules/idstat/title54/t54ch20/",
+      desc: "The Idaho Real Estate License Law — the statutory basis for the Commission's Rules and the state-specific portion of the licensing exam.",
+      topic: "General Reference", free: true },
+  ],
+  in_real_estate: [
+    { title: "Indiana Professional Licensing Agency — Real Estate Commission", type: "pdf", url: "https://www.in.gov/pla/professions/real-estate-home/",
+      desc: "The Indiana Professional Licensing Agency's official Real Estate Commission page — the authoritative source for licensing requirements, applications, and Commission administration.",
+      topic: "General Reference", free: true },
+    { title: "Indiana Code Title 25, Article 34.1 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://codes.findlaw.com/in/title-25-professions-and-occupations/",
+      desc: "The Real Estate Broker Licensing Act — the statutory basis for Indiana's broker licensing law and the Real Estate Commission's authority, together with IC 25-1-11 (disciplinary grounds) and 876 IAC (implementing administrative rules).",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE — Indiana Real Estate Candidate Handbook", type: "pdf", url: "https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/091500.pdf",
+      desc: "The official candidate handbook published by Pearson VUE (the Commission's exam vendor) — includes the exam format, scaled scoring method, and the state-specific content outline this practice content's breakdown is based on.",
+      topic: "General Reference", free: true },
+  ],
+  ks_real_estate: [
+    { title: "Kansas Real Estate Brokers' and Salespersons' License Act & BRRETA (K.S.A. 58-3034 et seq.)", type: "pdf", url: "https://ksrevisor.gov/statutes/chapters/ch58/",
+      desc: "The official Kansas Office of the Revisor of Statutes publication of the Real Estate Brokers' and Salespersons' License Act and the Brokerage Relationships in Real Estate Transactions Act (BRRETA) — the statutory basis this practice content is grounded in.",
+      topic: "General Reference", free: true },
+    { title: "K.A.R. Agency 86 (Kansas Real Estate Commission Regulations)", type: "pdf", url: "https://www.law.cornell.edu/regulations/kansas/agency-86",
+      desc: "The Kansas Administrative Regulations governing real estate licensees, mirrored verbatim by Cornell Law School's Legal Information Institute from the Secretary of State's official text — covers examination/registration and licensee duties.",
+      topic: "General Reference", free: true },
+    { title: "Kansas Real Estate Commission (KREC)", type: "pdf", url: "https://www.krec.ks.gov",
+      desc: "The Kansas Real Estate Commission's official site — the state agency that establishes licensing standards and regulates real estate brokers and salespersons in Kansas.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE — Kansas Real Estate Candidate Handbook", type: "pdf", url: "https://www.pearsonvue.com/us/en/ks/realestate.html",
+      desc: "Pearson VUE's official Kansas real estate licensing page, including the Candidate Handbook and the state-specific exam content outline — Pearson VUE develops and administers the licensing exam on the Commission's behalf.",
+      topic: "General Reference", free: true },
+  ],
+  ky_real_estate: [
+    { title: "Kentucky Revised Statutes Chapter 324 (Real Estate Brokers and Sales Associates)", type: "pdf", url: "https://apps.legislature.ky.gov/law/statutes/chapter.aspx?id=38853",
+      desc: "The Kentucky Real Estate License Act, published by the Legislative Research Commission -- the statutory basis for the Real Estate Commission's regulations.",
+      topic: "General Reference", free: true },
+    { title: "201 KAR Chapter 11 (Real Estate Commission)", type: "pdf", url: "https://apps.legislature.ky.gov/law/kar/titles/201/011/",
+      desc: "The Kentucky Real Estate Commission's official administrative regulations, published by the Legislative Research Commission -- the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  la_real_estate: [
+    { title: "Louisiana Real Estate License Law (La. R.S. 37:1430-1470)", type: "pdf", url: "https://legis.la.gov/Legis/Law.aspx?d=93259",
+      desc: "The official codified Louisiana Real Estate License Law, published by the Louisiana State Legislature — the statutory basis for real estate licensing, Commission powers, and licensee conduct requirements in Louisiana.",
+      topic: "General Reference", free: true },
+    { title: "Louisiana Administrative Code Title 46, Part LXVII (Real Estate Commission Rules)", type: "pdf", url: "https://www.doa.la.gov/media/mtuakm0q/46v67.docx",
+      desc: "The Louisiana Real Estate Commission's official implementing Rules and Regulations, linked directly from LREC's own Laws and Rules page — the authoritative source for licensing, education, escrow/trust account, and disciplinary content on this track.",
+      topic: "General Reference", free: true },
+    { title: "Louisiana Real Estate Commission (LREC)", type: "pdf", url: "https://lrec.gov",
+      desc: "The Louisiana Real Estate Commission's official site — the state agency that licenses and regulates real estate brokers and salespersons in Louisiana.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE — Louisiana Real Estate Candidate Handbook", type: "pdf", url: "https://www.pearsonvue.com/us/en/la/realestate.html",
+      desc: "Pearson VUE's official Louisiana real estate licensing page, including the Candidate Handbook and the state-specific exam content outline — Pearson VUE administers the licensing exam on LREC's behalf.",
+      topic: "General Reference", free: true },
+  ],
+  ma_real_estate: [
+    { title: "Massachusetts Board of Registration of Real Estate Brokers and Salespersons", type: "pdf", url: "https://www.mass.gov/orgs/board-of-registration-of-real-estate-brokers-and-salespersons",
+      desc: "The Massachusetts Board of Registration of Real Estate Brokers and Salespersons' official site — the authoritative source for licensing law and regulations.",
+      topic: "General Reference", free: true },
+    { title: "M.G.L. c. 112, Sections 87PP-87DDD 1/2 (Real Estate Brokers and Salesmen)", type: "pdf", url: "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXVI/Chapter112",
+      desc: "The Massachusetts General Laws chapter creating the Board of Registration of Real Estate Brokers and Salespersons and governing licensing, conduct, agency disclosure, and discipline.",
+      topic: "General Reference", free: true },
+    { title: "254 CMR 2.00-7.00 (Code of Massachusetts Regulations)", type: "pdf", url: "https://www.mass.gov/lists/statutes-and-regulations-real-estate-brokers-and-salespersons",
+      desc: "The Board's official regulations page listing the current 254 CMR rules on licensure procedure, professional standards, real estate schools, continuing education, and rental fee disclosure.",
+      topic: "General Reference", free: true },
+  ],
+  md_real_estate: [
+    { title: "Md. Code Ann., Business Occupations and Professions Article, Title 17 (Real Estate Brokers)", type: "pdf", url: "https://mgaleg.maryland.gov/2023RS/Statute_Web/gbo/gbo.pdf",
+      desc: "The official compiled statute published by the Maryland General Assembly, Department of Legislative Services — the authoritative statutory basis for the state-specific portion of the exam.",
+      topic: "General Reference", free: true },
+    { title: "COMAR Title 09, Subtitle 11 (Real Estate Commission)", type: "pdf", url: "https://regs.maryland.gov/us/md/exec/comar/09.11/index.full.html",
+      desc: "The Code of Maryland Regulations implementing Title 17, published by the Division of State Documents — covers licensing, brokerage relationships, trust money handling, advertising, and Commission procedure.",
+      topic: "General Reference", free: true },
+    { title: "PSI Real Estate Candidate Information Bulletin (Maryland)", type: "pdf", url: "https://test-takers.psiexams.com/api/content/bulletin/529",
+      desc: "The official exam scheduling, format, and Maryland State Portion content outline published by PSI Services LLC, the Real Estate Commission's contracted exam vendor.",
+      topic: "General Reference", free: true },
+  ],
+  me_real_estate: [
+    { title: "Maine Real Estate Commission Rules (Code of Maine Rules 02-039, Chapters 300-410)", type: "pdf", url: "https://www.maine.gov/pfr/professionallicensing/sites/maine.gov.pfr.professionallicensing/files/inline-files/RealEstateCommission-Rules-Adopted-October-26-2025_0.pdf",
+      desc: "The Maine Real Estate Commission's official consolidated Rules, adopted October 26, 2025 -- the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "32 M.R.S. Chapter 114 (Real Estate Brokerage License Act)", type: "pdf", url: "https://www.mainelegislature.org/legis/statutes/32/title32ch114.pdf",
+      desc: "The Maine Real Estate Brokerage License Act -- the statutory basis for the Commission's Rules.",
+      topic: "General Reference", free: true },
+  ],
+  mn_real_estate: [
+    { title: "Minnesota Statutes Chapter 82 (Real Estate Sales Regulations, Sections 82.55-82.89)", type: "pdf", url: "https://www.revisor.mn.gov/statutes/cite/82/full",
+      desc: "The official chapter text published by the Office of the Revisor of Statutes, Minnesota Legislature -- the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Minnesota Department of Commerce -- Real Estate Licensing", type: "pdf", url: "https://mn.gov/commerce/licensing/list/real-estate/",
+      desc: "The Minnesota Department of Commerce's official real estate licensing page -- the authoritative source for salesperson licensing requirements, pre-license education, and PSI exam scheduling.",
+      topic: "General Reference", free: true },
+  ],
+  mo_real_estate: [
+    { title: "RSMo Chapter 339 (Real Estate Agents, Brokers, Appraisers and Escrow Agents)", type: "pdf", url: "https://revisor.mo.gov/main/OneChapter.aspx?chapter=339",
+      desc: "The official Missouri Revised Statutes chapter published by the Missouri Revisor of Statutes — the authoritative statutory basis for the state-specific portion of the exam, covering broker/salesperson licensing, agency relationships, discipline, and escrow accounts.",
+      topic: "General Reference", free: true },
+    { title: "PSI Missouri Real Estate Candidate Handbook", type: "pdf", url: "https://test-takers.psiexams.com/api/content/bulletin/4645",
+      desc: "The official PSI candidate handbook for Missouri's real estate licensing exams, published on behalf of the Missouri Real Estate Commission — includes the state-specific content outline with item counts per topic, exam-day policies, and score reporting.",
+      topic: "General Reference", free: true },
+    { title: "Missouri Real Estate Commission (MREC)", type: "pdf", url: "https://pr.mo.gov/realestate.asp",
+      desc: "The Missouri Real Estate Commission's official site — the state agency that licenses and regulates real estate brokers and salespersons under RSMo Chapter 339.",
+      topic: "General Reference", free: true },
+  ],
+  ms_real_estate: [
+    { title: "Mississippi Real Estate License Law (Miss. Code Ann. §§ 73-35-1 to 73-35-105, plus §§ 89-1-501 to 89-1-527)", type: "pdf", url: "https://www.mrec.ms.gov/wp-content/uploads/2026/07/MREC_LICENSE_LAW_2026_REVISED-7-01-2026.pdf",
+      desc: "The Mississippi Real Estate Commission's own compiled statute text (Real Estate Brokers License Law of 1954, plus the bundled residential property condition disclosure statute) — the authoritative source the licensing, conduct, and discipline provisions are based on.",
+      topic: "General Reference", free: true },
+    { title: "Mississippi Real Estate Commission Rules and Regulations (Title 30, Miss. Admin. Code, Parts 1601-1603)", type: "pdf", url: "https://www.mrec.ms.gov/wp-content/uploads/2025/02/MREC_RULES_AND_REGULATIONS_REV_02-21-2025.pdf",
+      desc: "The Commission's official administrative rules — licensing, agency disclosure, trust accounts, advertising, continuing education, out-of-state offerings/timeshares, and errors & omissions insurance requirements.",
+      topic: "General Reference", free: true },
+  ],
+  mt_real_estate: [
+    { title: "Montana Board of Realty Regulation", type: "pdf", url: "https://boards.bsd.dli.mt.gov/realty-regulation/",
+      desc: "The Montana Board of Realty Regulation's official site — the authoritative source for licensing requirements and the regulations the state-specific exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Montana Code Annotated, Title 37, Chapter 51 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://mca.legmt.gov/bills/mca/title_0370/chapter_0510/parts_index.html",
+      desc: "The Montana Real Estate License Act, published by the Montana Legislature — the statutory basis for the Board of Realty Regulation's rules.",
+      topic: "General Reference", free: true },
+    { title: "Administrative Rules of Montana, Title 24, Chapter 210 (Board of Realty Regulation)", type: "pdf", url: "https://www.law.cornell.edu/regulations/montana/department-24/chapter-24.210",
+      desc: "The Board of Realty Regulation's implementing rules — the authoritative source the licensing/regulatory portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  nd_real_estate: [
+    { title: "North Dakota Century Code Chapter 43-23 (State Real Estate Commission)", type: "pdf", url: "https://ndlegis.gov/cencode/t43c23.pdf",
+      desc: "The official codified North Dakota Century Code chapter published by the North Dakota Legislative Branch — the statutory basis for real estate licensing, Commission powers, and licensee conduct requirements in North Dakota.",
+      topic: "General Reference", free: true },
+    { title: "North Dakota Administrative Code Title 70 (Real Estate Commission)", type: "pdf", url: "https://ndlegis.gov/information/acdata/html/title70.html",
+      desc: "The North Dakota Real Estate Commission's official implementing rules, published by the North Dakota Legislative Branch — covers commission administration, licensure, licensee responsibilities, continuing education, and errors and omissions insurance.",
+      topic: "General Reference", free: true },
+    { title: "North Dakota Real Estate Commission", type: "pdf", url: "https://www.realestatend.org",
+      desc: "The North Dakota Real Estate Commission's official site — the state agency that licenses and regulates real estate brokers and salespersons in North Dakota.",
+      topic: "General Reference", free: true },
+    { title: "PSI Real Estate Candidate Information Bulletin (North Dakota)", type: "pdf", url: "https://realestatend.org/image/cache/NDREC_Candidate_Information_Bulletin.pdf",
+      desc: "The official exam scheduling, format, and North Dakota State Portion content outline published by PSI Services LLC, the Real Estate Commission's contracted exam vendor.",
+      topic: "General Reference", free: true },
+  ],
+  ne_real_estate: [
+    { title: "Nebraska Real Estate License Act (Neb. Rev. Stat. §§ 81-885 to 81-885.56)", type: "pdf", url: "https://nrec.nebraska.gov/sites/default/files/doc/Legal/License%20Manual%20PDF/1licenseact.pdf",
+      desc: "The official compiled License Act text published by the Nebraska Real Estate Commission -- the core statutory basis for the state-specific portion of the exam.",
+      topic: "General Reference", free: true },
+    { title: "Nebraska Administrative Code Title 299 (Real Estate Commission Rules)", type: "pdf", url: "https://nrec.nebraska.gov/sites/default/files/doc/Legal/License%20Manual%20PDF/2licensemanualrulestitle299.pdf",
+      desc: "The Real Estate Commission's official implementing rules -- covering licensing, trust accounts, continuing education, errors and omissions insurance, and discipline.",
+      topic: "General Reference", free: true },
+    { title: "Nebraska Agency Relationships Statute (Neb. Rev. Stat. §§ 76-2401 to 76-2430)", type: "pdf", url: "https://nrec.nebraska.gov/sites/default/files/doc/Legal/License%20Manual%20PDF/4licensemanualArticle%2024.pdf",
+      desc: "The Nebraska Real Estate Commission's official compiled text of the agency relationships statute -- the statutory basis for licensee agency duties and disclosure requirements.",
+      topic: "General Reference", free: true },
+  ],
+  nh_real_estate: [
+    { title: "New Hampshire Real Estate Practice Act (RSA Chapter 331-A)", type: "pdf", url: "https://gc.nh.gov/rsa/html/xxx/331-a/331-a-mrg.htm",
+      desc: "The official statute published by the New Hampshire General Court — the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "N.H. Code of Administrative Rules, Rea 100-700 (New Hampshire Real Estate Commission)", type: "pdf", url: "https://gc.nh.gov/rules/state_agencies/rea100-700.html",
+      desc: "The Real Estate Commission's implementing administrative rules — the regulatory counterpart to RSA 331-A.",
+      topic: "General Reference", free: true },
+    { title: "New Hampshire Real Estate Commission — Examination Information", type: "pdf", url: "https://www.oplc.nh.gov/find-board/nh-real-estate-commission/real-estate-examination-information",
+      desc: "The Commission's official examination-information page, including PSI's Candidate Information Bulletin — the authoritative source the exam format and content outline are based on.",
+      topic: "General Reference", free: true },
+  ],
+  nj_real_estate: [
+    { title: "New Jersey Real Estate Commission (NJREC)", type: "pdf", url: "https://www.nj.gov/dobi/division_rec/index.htm",
+      desc: "The official New Jersey Real Estate Commission site, within the Department of Banking and Insurance — the authoritative source the License Act and N.J.A.C. 11:5 regulations are based on.",
+      topic: "General Reference", free: true },
+    { title: "New Jersey Statutes (N.J.S.A. 45:15 — Real Estate License Act)", type: "pdf", url: "https://lis.njleg.state.nj.us/nxt/gateway.dll?f=templates&fn=default.htm",
+      desc: "The New Jersey Legislature's official statute database — linked directly from the Real Estate Commission's own site as the authoritative source for N.J.S.A. 45:15.",
+      topic: "General Reference", free: true },
+  ],
+  nm_real_estate: [
+    { title: "New Mexico Real Estate Commission — Statutes, Rules, and Rule Hearings", type: "pdf", url: "https://www.rld.nm.gov/boards-and-commissions/individual-boards-and-commissions/real-estate-commission/statutes-rules-and-rule-hearings/",
+      desc: "The New Mexico Real Estate Commission's official statutes and rules page, published by the Regulation and Licensing Department — the authoritative source the licensing/regulatory portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "NMSA 1978, Chapter 61, Article 29 (Real Estate Brokers and Salesmen Act)", type: "pdf", url: "https://law.justia.com/codes/new-mexico/chapter-61/article-29/",
+      desc: "The New Mexico Real Estate Brokers and Salesmen Act — the statutory basis for the Real Estate Commission's rules, including the Real Estate Recovery Fund Act (NMSA 1978 §§ 61-29-20 to 61-29-29).",
+      topic: "General Reference", free: true },
+  ],
+  nv_real_estate: [
+    { title: "Nevada Real Estate Division (NRED)", type: "pdf", url: "https://red.nv.gov",
+      desc: "The Nevada Real Estate Division's official site -- the authoritative source for licensing requirements, exam registration, and the current content outline the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "NRS Chapter 645 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://www.leg.state.nv.us/NRS/NRS-645.html",
+      desc: "The Nevada Revised Statutes chapter governing real estate brokers and salespersons -- the statutory basis for the Division's licensing and conduct requirements.",
+      topic: "General Reference", free: true },
+    { title: "NAC Chapter 645 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://www.leg.state.nv.us/NAC/NAC-645.html",
+      desc: "The Nevada Administrative Code chapter implementing NRS Chapter 645, including the pre-license education hour requirements (NAC 645.435) and licensee conduct rules.",
+      topic: "General Reference", free: true },
+  ],
+  ok_real_estate: [
+    { title: "Oklahoma Real Estate Commission", type: "pdf", url: "https://oklahoma.gov/orec.html",
+      desc: "The Oklahoma Real Estate Commission's official site — the state regulatory agency that licenses provisional sales associates, brokers, and schools, and retains Pearson VUE as its exam vendor.",
+      topic: "General Reference", free: true },
+    { title: "Oklahoma Real Estate License Code and Rules (As of Nov. 1, 2025)", type: "pdf", url: "https://oklahoma.gov/content/dam/ok/en/orec/documents/meetings/Nov%201%202025%20Oklahoma%20Real%20Estate%20Commission%20Code%20and%20Rules%20Book.pdf",
+      desc: "OREC's official compiled volume reproducing the Oklahoma Real Estate License Code (59 O.S. § 858-101 et seq., including the Broker Relationships Act and the Education and Recovery Fund provisions) and Title 605 of the Oklahoma Administrative Code verbatim — the authoritative source this practice content is based on.",
+      topic: "General Reference", free: true },
+  ],
+  or_real_estate: [
+    { title: "Oregon Revised Statutes Chapter 696 (Real Estate and Escrow Activities)", type: "pdf", url: "https://www.oregonlegislature.gov/bills_laws/ors/ors696.html",
+      desc: "The official codified Oregon Revised Statutes Chapter 696, published by the Oregon State Legislature -- the core licensing act and statutory basis for the Broker exam's state-specific portion.",
+      topic: "General Reference", free: true },
+    { title: "Oregon Administrative Rules Chapter 863 (Real Estate Agency)", type: "pdf", url: "https://secure.sos.state.or.us/oard/displayChapterRules.action?selectedChapter=174",
+      desc: "The Real Estate Agency's binding administrative rules, published by the Oregon Secretary of State's Administrative Rules Database -- covers broker licensing, conduct, trust accounts, agency relationships, and discipline.",
+      topic: "General Reference", free: true },
+    { title: "PSI Candidate Information Bulletin (Oregon Real Estate Agency)", type: "pdf", url: "https://proctor2.psionline.com/media/programs/380%20OR%20RE.pdf",
+      desc: "PSI Services LLC's official Candidate Information Bulletin for the Oregon Real Estate Agency's Broker, Principal Broker, and Property Manager examinations -- the source for exam format, content outlines, and registration procedures.",
+      topic: "General Reference", free: true },
+    { title: "Oregon Real Estate Agency", type: "pdf", url: "https://www.oregon.gov/rea",
+      desc: "The Oregon Real Estate Agency's official site -- the state agency that licenses and regulates real estate brokers, principal brokers, property managers, and escrow agents in Oregon.",
+      topic: "General Reference", free: true },
+  ],
+  ri_real_estate: [
+    { title: "R.I. Gen. Laws Chapter 5-20.5 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://webserver.rilegislature.gov/Statutes/TITLE5/5-20.5/INDEX.HTM",
+      desc: "Rhode Island's primary real estate licensing statute, published by the Rhode Island General Assembly -- the authoritative source most of the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "230-RICR-30-20-2 (Real Estate Brokers and Salespersons Rule)", type: "pdf", url: "https://rules.sos.ri.gov/regulations/part/230-30-20-2",
+      desc: "The Rhode Island Real Estate Commission's implementing rule, published by the Department of State's eRules system -- the authoritative source for licensing procedures, pre-license education, and disciplinary standards.",
+      topic: "General Reference", free: true },
+    { title: "Rhode Island DBR -- Real Estate Section", type: "pdf", url: "https://dbr.ri.gov/divisions/commercial-licensing/real-estate",
+      desc: "The Rhode Island Department of Business Regulation's official real estate licensing page -- application process, approved schools, and the Pearson VUE candidate handbook link.",
+      topic: "General Reference", free: true },
+  ],
+  sc_real_estate: [
+    { title: "South Carolina Real Estate Commission", type: "pdf", url: "https://llr.sc.gov/re/",
+      desc: "The South Carolina Real Estate Commission's official site -- the authoritative source the license law, regulations, and licensing process are based on.",
+      topic: "General Reference", free: true },
+    { title: "South Carolina Real Estate License Act (S.C. Code of Laws, Title 40, Chapter 57)", type: "pdf", url: "https://www.scstatehouse.gov/code/t40c057.php",
+      desc: "The South Carolina Real Estate License Act -- the statutory basis for the Commission's Regulations and the state-specific portion of the exam.",
+      topic: "General Reference", free: true },
+    { title: "South Carolina Real Estate Commission Regulations (S.C. Code of Regulations, Chapter 105)", type: "pdf", url: "https://www.scstatehouse.gov/coderegs/Chapter%20105.pdf",
+      desc: "The official regulations published by the South Carolina Real Estate Commission -- the authoritative source the licensing/regulatory portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  sd_real_estate: [
+    { title: "South Dakota Real Estate License Laws & Administrative Rules", type: "pdf", url: "https://dlr.sd.gov/realestate/publications/license_law_book.pdf",
+      desc: "The South Dakota Real Estate Commission's own compiled pamphlet reprinting SDCL Title 36, Chapter 21A and ARSD Article 20:69 -- the authoritative source the state portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "South Dakota Real Estate Commission", type: "pdf", url: "https://dlr.sd.gov/realestate/",
+      desc: "The South Dakota Real Estate Commission's official site, including licensing and pre-license education requirements, approved schools, and PSI exam registration.",
+      topic: "General Reference", free: true },
+  ],
+  tn_real_estate: [
+    { title: "Tennessee Real Estate Commission (TREC)", type: "pdf", url: "https://www.tn.gov/commerce/regboards/trec.html",
+      desc: "The Tennessee Real Estate Commission's official site -- the authoritative source the license law and rules are based on.",
+      topic: "General Reference", free: true },
+    { title: "Tenn. Code Ann. Title 62, Chapter 13 (Tennessee Real Estate Broker License Act of 1973)", type: "pdf", url: "https://law.justia.com/codes/tennessee/title-62/chapter-13/",
+      desc: "The Tennessee Real Estate Broker License Act of 1973 -- the statutory basis for the Commission's Rules.",
+      topic: "General Reference", free: true },
+    { title: "Tenn. Comp. R. & Regs. Chapter 1260 (Real Estate Commission Rules)", type: "pdf", url: "https://publications.tnsosfiles.com/rules/1260/1260.htm",
+      desc: "The official administrative rules published by the Tennessee Secretary of State -- the authoritative source the licensing, conduct, and state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  ut_real_estate: [
+    { title: "Utah Division of Real Estate — Real Estate Licensing", type: "pdf", url: "https://commerce.utah.gov/realestate/real-estate/licensing/",
+      desc: "The Utah Division of Real Estate's official licensing site — the authoritative source Utah's Sales Agent licensing requirements are based on.",
+      topic: "General Reference", free: true },
+    { title: "Utah Code Title 61, Chapter 2f (Real Estate Licensing and Practices Act)", type: "pdf", url: "https://le.utah.gov/xcode/Title61/Chapter2F/C61-2f_1800010118000101.pdf",
+      desc: "The official codified Utah statute published by the Utah State Legislature — the statutory basis for the Division of Real Estate's licensing and practice rules.",
+      topic: "General Reference", free: true },
+    { title: "Utah Administrative Code R162-2f (Real Estate Licensing and Practices Rules)", type: "pdf", url: "https://www.law.cornell.edu/regulations/utah/commerce/title-R162/rule-R162-2f",
+      desc: "The Utah Real Estate Commission's implementing regulations, republished verbatim by Cornell Law School's Legal Information Institute (Utah's own adminrules.utah.gov portal is a JavaScript application without a stable direct link to this rule).",
+      topic: "General Reference", free: true },
+  ],
+  vt_real_estate: [
+    { title: "Vermont Real Estate Commission Administrative Rules", type: "pdf", url: "https://outside.vermont.gov/dept/sos/office_professional_regulation/professions/real_estate_broker_salesperson/real_estate_broker_salesperson_administrative_rules.pdf",
+      desc: "The Real Estate Commission's official Administrative Rules (effective December 1, 2015), published by the Vermont Office of Professional Regulation -- the authoritative source for licensing standards and conduct requirements tested on the exam.",
+      topic: "General Reference", free: true },
+    { title: "26 V.S.A. Chapter 41 (Real Estate Brokers and Salespersons)", type: "pdf", url: "https://legislature.vermont.gov/statutes/chapter/26/041",
+      desc: "The Vermont statute governing real estate broker and salesperson licensing -- the statutory basis for the Real Estate Commission's Administrative Rules.",
+      topic: "General Reference", free: true },
+    { title: "Vermont OPR -- Real Estate Brokers & Salespersons", type: "pdf", url: "https://sos.vermont.gov/real-estate-brokers-salespersons/",
+      desc: "The Vermont Office of Professional Regulation's official real estate licensing page -- the authoritative source for application instructions, the State Examination process, and pre-licensing education requirements.",
+      topic: "General Reference", free: true },
+  ],
+  wi_real_estate: [
+    { title: "Wisconsin Statutes Chapter 452 (Real Estate Practice)", type: "pdf", url: "https://docs.legis.wisconsin.gov/statutes/statutes/452",
+      desc: "Wisconsin's Real Estate Practice statute, published by the Wisconsin Legislature — the statutory basis for the Real Estate Examining Board's rules.",
+      topic: "General Reference", free: true },
+    { title: "Wisconsin Administrative Code chs. REEB 11-25 (Real Estate Examining Board Rules)", type: "pdf", url: "https://docs.legis.wisconsin.gov/code/admin_code/reeb",
+      desc: "The official rules published by the Wisconsin Real Estate Examining Board — the authoritative source the licensing and regulatory portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  wv_real_estate: [
+    { title: "West Virginia Real Estate Commission -- Law & Rules", type: "pdf", url: "https://rec.wv.gov/Law/Pages/default.aspx",
+      desc: "The Real Estate Commission's own compiled page linking to the current Title 174 legislative rules -- the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "W. Va. Code Chapter 30, Article 40 (West Virginia Real Estate License Act)", type: "pdf", url: "https://code.wvlegislature.gov/30-40/",
+      desc: "The West Virginia Legislature's official, continuously-updated codification -- the statutory basis for the Real Estate Commission's Title 174 rules.",
+      topic: "General Reference", free: true },
+  ],
+  wy_real_estate: [
+    { title: "Wyoming Real Estate License Act (Wyoming Statutes Title 33, Chapter 28)", type: "pdf", url: "https://wyoleg.gov/statutes/compress/title33.pdf",
+      desc: "The official statute published by the Wyoming Legislative Service Office — the authoritative source the state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "Wyoming Real Estate Commission Rules (Chapters 1-8)", type: "pdf", url: "https://realestate.wyo.gov/real-estate-commission/rules-regulations",
+      desc: "The Wyoming Real Estate Commission's official Rules & Regulations page — the authoritative source the Commission's implementing rules are based on.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE Candidate Handbook — Wyoming Real Estate", type: "pdf", url: "https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/095100.pdf",
+      desc: "The official exam scheduling and content-outline reference from Pearson VUE, the Real Estate Commission's contracted exam vendor.",
+      topic: "General Reference", free: true },
   ],
 };
 
@@ -4794,12 +5815,29 @@ function route() {
   if (hashView === 'redeem') { renderRedeem(); return; }
   if (hashView === 'refund') { renderRefundRequest(); return; }
   if (hashView === 'gift') { renderGift(); return; }
-  if (location.pathname === '/' || location.pathname === '') renderHub();
-  else {
-    var track = activeTrackForPath(location.pathname);
-    if (track) { state.examType = track.examType; renderTrackApp(); }
-    else renderHub();
+  if (location.pathname === '/' || location.pathname === '') {
+    // Reached only when _worker.js didn't redirect (no usable cookie/geolocation -- see its own
+    // comment) or the visitor explicitly chose "browse all states" (cookie 'ALL'). Either way,
+    // that's the flat all-states catalog, unscoped.
+    hubScopedState = null;
+    renderHub();
+    updateHeaderStatePicker();
+    return;
   }
+  var statePathMatch = location.pathname.match(/^\/([a-z]{2})(?:\/([a-z-]+))?\/?$/i);
+  var matchedState = statePathMatch ? knownStateCode(statePathMatch[1]) : null;
+  if (matchedState) {
+    hubScopedState = matchedState;
+    hubKindFilter = statePathMatch[2] ? (kindFromSlug(statePathMatch[2]) || '') : '';
+    hubTracksExpanded = false;
+    setStateCookie(matchedState); // keeps future "/" visits landing here without re-geolocating
+    renderHub();
+    updateHeaderStatePicker();
+    return;
+  }
+  var track = activeTrackForPath(location.pathname);
+  if (track) { state.examType = track.examType; renderTrackApp(); }
+  else renderHub();
 }
 
 window.addEventListener('hashchange', route);
@@ -5004,6 +6042,14 @@ document.addEventListener('change', function (e) {
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-exam-age-category') {
     examAgeCategoryOverride = e.target.value;
     renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-header-state') {
+    var chosenState = e.target.value;
+    setStateCookie(chosenState || 'ALL');
+    // Real navigation, not pushState -- picking a state is a big enough context switch (whole
+    // page re-renders scoped/unscoped) that a full reload matches how every other pathname change
+    // in this app already behaves (e.g. clicking a track card), rather than introducing a second
+    // navigation model just for this one control.
+    location.href = chosenState ? '/' + chosenState.toLowerCase() : '/';
   }
 });
 
@@ -5103,6 +6149,11 @@ document.addEventListener('click', async function (e) {
     hubTracksExpanded = !hubTracksExpanded;
     var hubTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (hubTracksWrap) hubTracksWrap.innerHTML = hubTracksGridHtml();
+  } else if (act === 'browse-all-states') {
+    // No preventDefault -- href="/" is a real link, so the click handler's only job is to record
+    // the explicit "I want all states" choice (cookie 'ALL') before the normal navigation to "/"
+    // proceeds, so _worker.js's redirect doesn't just bounce them straight back to this state.
+    setStateCookie('ALL');
   } else if (act === 'filter-hub-state') {
     var newStateFilter = el.getAttribute('data-state');
     if (newStateFilter === hubStateFilter) return;

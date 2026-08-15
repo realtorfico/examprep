@@ -696,6 +696,23 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; }
 
+/* Header state picker -- always visible next to the theme/font controls (see renderSiteHeader),
+   sized/bordered like the other pill controls next to it rather than a bare native <select>. */
+.header-state-picker {
+  border: 1.5px solid var(--border); border-radius: 999px; background: transparent; color: var(--fg);
+  padding: 0.4rem 1.6rem 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
+.header-state-picker:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Default scoped-state hub's "you're looking at X" bar, replacing the state-pill row entirely --
+   see the hubScopedState comment near renderHub(). */
+.hub-scoped-context-bar {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between;
+  font-size: 0.85rem; color: var(--muted); padding: 0.3rem 0;
+}
+.hub-scoped-all-link { color: var(--muted); text-decoration: underline; }
+.hub-scoped-all-link:hover { color: var(--accent); }
+
 /* Buy page's "other tracks" comparison strip -- browse/switch, not a cart (see loadOtherTracksPricing). */
 .buy-other-tracks-card { margin-top: 1rem; }
 .buy-other-tracks-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 0.6rem; }
