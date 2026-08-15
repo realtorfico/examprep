@@ -19,14 +19,16 @@
  * fresh visitor to "/" needs to land on "/<state>" already. That decision has to happen here,
  * server-side, before any HTML ships -- app.js can't see request.cf, and redirecting client-side
  * after the all-states page has already painted would be a visible flash-then-swap. Precedence:
- * 1) an explicit pxq_state cookie (set by app.js once a visitor has picked a state, or 'ALL' if
- *    they deliberately chose "browse all states") always wins over geolocation.
+ * 1) an explicit pxq_state cookie (set by app.js once a visitor has landed on or picked a state)
+ *    always wins over geolocation.
  * 2) otherwise, Cloudflare's per-request geolocation (request.cf.regionCode) picks a first-guess
  *    state. app.js sets the cookie itself once it lands on "/<state>", so this redirect only
  *    ever fires once per visitor (or until they clear cookies).
  * 3) no cookie and no usable geolocation (non-US visitor, bot, VPN Cloudflare can't place) -> no
- *    redirect, "/" serves the all-states catalog directly. That's also the deliberately-chosen
- *    behavior for crawlers, so Google indexes the full-catalog page at the root.
+ *    redirect, "/" serves the all-states catalog directly -- there's no user-facing way to reach
+ *    that catalog otherwise (no state picker option, no link points at it), it exists purely as
+ *    the graceful fallback for "we genuinely don't know your state yet." Also the deliberately-
+ *    chosen behavior for crawlers, so Google indexes the full-catalog page at the root.
  * Explicitly marked private/no-store: this is a per-visitor decision (their own cookie or their
  * own IP's geolocation) and must never be cached by Cloudflare's shared edge cache -- a cached
  * redirect would leak one visitor's detected state to every later visitor hitting the same

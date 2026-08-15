@@ -201,7 +201,9 @@ function renderSiteHeader() {
 function renderHeaderStatePicker() {
   var codes = Object.keys(STATE_LABELS).filter(function (c) { return c !== 'US'; });
   codes.sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
-  var options = '<option value="">All States</option>' + codes.map(function (c) {
+  // No "All States" option -- cross-state browsing isn't a real user need for a licensing-exam
+  // product (per-decision), so the picker only ever points at one real state's own tracks.
+  var options = codes.map(function (c) {
     return '<option value="' + c + '"' + (c === hubScopedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[c]) + '</option>';
   }).join('');
   return '<select class="header-state-picker" id="header-state-picker" data-act="pick-header-state" aria-label="Choose your state">' + options + '</select>';
@@ -2308,9 +2310,11 @@ function renderHubKindFilterPills() {
 // in-place SPA transition just for this would be a second navigation model for no real benefit.
 function renderHubScopedContextBar() {
   var name = STATE_LABELS[hubScopedState] || hubScopedState;
+  // No "browse all states" link -- cross-state browsing isn't a real user need for a
+  // licensing-exam product (per-decision), so there's deliberately no path back to the flat
+  // all-states catalog from here. Switching states is still always possible via the header picker.
   return '<div class="hub-scoped-context-bar">' +
     '<span>Showing licensing tracks for <strong>' + escapeHtml(name) + '</strong></span>' +
-    '<a href="/" class="hub-scoped-all-link" data-act="browse-all-states">browse all states instead</a>' +
     '</div>';
 }
 function renderHubKindFilterPillsScoped() {
@@ -2657,7 +2661,7 @@ function fillReadinessCard() {
       size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
     });
     var tiles = [
-      { value: s.totalQuestions, label: 'Practice Questions Across All Tracks' },
+      { value: s.totalQuestions, label: 'Practice Questions<br>Across All Tracks' },
       { value: s.examsCompleted, label: 'Mock Exams' },
       { value: s.tracksLive, label: 'Live Tracks' },
     ];
@@ -6044,12 +6048,12 @@ document.addEventListener('change', function (e) {
     renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-header-state') {
     var chosenState = e.target.value;
-    setStateCookie(chosenState || 'ALL');
+    setStateCookie(chosenState);
     // Real navigation, not pushState -- picking a state is a big enough context switch (whole
-    // page re-renders scoped/unscoped) that a full reload matches how every other pathname change
-    // in this app already behaves (e.g. clicking a track card), rather than introducing a second
-    // navigation model just for this one control.
-    location.href = chosenState ? '/' + chosenState.toLowerCase() : '/';
+    // page re-renders) that a full reload matches how every other pathname change in this app
+    // already behaves (e.g. clicking a track card), rather than introducing a second navigation
+    // model just for this one control.
+    location.href = '/' + chosenState.toLowerCase();
   }
 });
 
@@ -6149,11 +6153,6 @@ document.addEventListener('click', async function (e) {
     hubTracksExpanded = !hubTracksExpanded;
     var hubTracksWrap = document.getElementById('hub-tracks-grid-wrap');
     if (hubTracksWrap) hubTracksWrap.innerHTML = hubTracksGridHtml();
-  } else if (act === 'browse-all-states') {
-    // No preventDefault -- href="/" is a real link, so the click handler's only job is to record
-    // the explicit "I want all states" choice (cookie 'ALL') before the normal navigation to "/"
-    // proceeds, so _worker.js's redirect doesn't just bounce them straight back to this state.
-    setStateCookie('ALL');
   } else if (act === 'filter-hub-state') {
     var newStateFilter = el.getAttribute('data-state');
     if (newStateFilter === hubStateFilter) return;
