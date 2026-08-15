@@ -2412,32 +2412,23 @@ function fillHubPricing(tracks) {
 // visited independently. Reuses hubExamMatchesFilters/hubTrackCards/fillHubPricing though, since
 // the matching/card/pricing logic itself is identical, just gift-scoped to active tracks only
 // (nothing to gift that isn't purchasable) and a different collapsed-count/CTA.
-var GIFT_TRACKS_COLLAPSED_COUNT = 4;
+var GIFT_TRACKS_COLLAPSED_COUNT = 6;
 var giftTracksExpanded = false;
-var giftStateFilter = '';
 var giftKindFilter = '';
 
+// Scoped to hubScopedState (the same site-wide "current state" the hub uses, kept in sync by
+// route() -- see its own comment) rather than a separate gift-page-local state filter: which
+// state you're in is a global header-level concept now, not something to re-pick per page.
+// Falls back to every active track only in the same rare "we don't know your state" case the hub
+// itself falls back for (hubScopedState null) -- not a normal, reachable path.
 function giftActiveTracks() {
-  return HUB_EXAMS.filter(function (e) { return e.active; });
+  return HUB_EXAMS.filter(function (e) { return e.active && (!hubScopedState || e.stateCode === hubScopedState); });
 }
 
-function renderGiftStateFilterPills() {
-  var activeTracks = giftActiveTracks();
-  var codes = [];
-  activeTracks.forEach(function (e) { if (codes.indexOf(e.stateCode) === -1) codes.push(e.stateCode); });
-  codes.sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
-  var allCount = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, '', giftKindFilter); }).length;
-  var options = [['', 'All States (' + allCount + ')']].concat(codes.map(function (c) {
-    var count = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, c, giftKindFilter); }).length;
-    return [c, (STATE_LABELS[c] || c) + ' (' + count + ')'];
-  }));
-  if (options.length <= 2) return '';
-  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by state">' +
-    options.map(function (o) {
-      var active = giftStateFilter === o[0];
-      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-gift-state" data-state="' + o[0] + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
-    }).join('') + '</div>';
+function renderGiftScopedContextBar() {
+  if (!hubScopedState) return '';
+  var name = STATE_LABELS[hubScopedState] || hubScopedState;
+  return '<div class="hub-scoped-context-bar"><span>Showing gift options for <strong>' + escapeHtml(name) + '</strong></span></div>';
 }
 
 function renderGiftKindFilterPills() {
@@ -2445,9 +2436,8 @@ function renderGiftKindFilterPills() {
   var kinds = [];
   activeTracks.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
   kinds.sort(function (a, b) { return a.localeCompare(b); });
-  var allCount = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, ''); }).length;
-  var options = [['', 'All Types (' + allCount + ')']].concat(kinds.map(function (k) {
-    var count = activeTracks.filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, k); }).length;
+  var options = [['', 'All Types (' + activeTracks.length + ')']].concat(kinds.map(function (k) {
+    var count = activeTracks.filter(function (e) { return e.examKind === k; }).length;
     return [k, k + ' (' + count + ')'];
   }));
   if (options.length <= 2) return '';
@@ -2460,7 +2450,7 @@ function renderGiftKindFilterPills() {
 }
 
 function giftTracksGridHtml() {
-  var filtered = giftActiveTracks().filter(function (e) { return hubExamMatchesFilters(e, giftStateFilter, giftKindFilter); });
+  var filtered = giftActiveTracks().filter(function (e) { return !giftKindFilter || e.examKind === giftKindFilter; });
   var cardsArr = hubTrackCards(filtered, 'gift');
   var truncated = !giftTracksExpanded && cardsArr.length > GIFT_TRACKS_COLLAPSED_COUNT;
   var visible = truncated ? cardsArr.slice(0, GIFT_TRACKS_COLLAPSED_COUNT) : cardsArr;
@@ -5400,7 +5390,6 @@ function renderGiftPurchaseSuccess(code, recipientEmail) {
 // rather than an unfiltered wall of all 27+ active tracks.
 function renderGift() {
   giftTracksExpanded = false;
-  giftStateFilter = '';
   giftKindFilter = '';
   appEl.innerHTML =
     '<section class="refer-hero">' +
@@ -5409,7 +5398,7 @@ function renderGift() {
     '<p>Buy full access to any track for someone else. They get their own code by email (or you get a ' +
     'shareable one) — no account needed from you, and they redeem it whenever they\'re ready.</p>' +
     '</section>' +
-    '<div id="gift-state-filter-wrap">' + renderGiftStateFilterPills() + '</div>' +
+    '<div id="gift-scoped-context-wrap">' + renderGiftScopedContextBar() + '</div>' +
     '<div id="gift-kind-filter-wrap">' + renderGiftKindFilterPills() + '</div>' +
     '<div id="gift-tracks-grid-wrap">' + giftTracksGridHtml() + '</div>';
 }
@@ -5819,6 +5808,27 @@ function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
                             // per session), so it needs to close itself independently.
+
+  // Resolves hubScopedState from the pathname unconditionally, before any of the hash-route
+  // early-returns below -- otherwise a hash-only page (e.g. #/gift, reached via a plain "#/gift"
+  // link with no state prefix) would never see this run at all on a fresh session and would fall
+  // back to an unscoped null, even though the pathname itself (already redirected to "/<state>"
+  // by _worker.js) says otherwise. A pathname that's neither a state route nor "/" (e.g. a
+  // specific track's own page) leaves hubScopedState untouched, so browsing into a track and back
+  // doesn't lose context.
+  var statePathMatch = location.pathname.match(/^\/([a-z]{2})(?:\/([a-z-]+))?\/?$/i);
+  var matchedState = statePathMatch ? knownStateCode(statePathMatch[1]) : null;
+  if (matchedState) {
+    hubScopedState = matchedState;
+    setStateCookie(matchedState); // keeps future "/" visits landing here without re-geolocating
+  } else if (location.pathname === '/' || location.pathname === '') {
+    // Reached only when _worker.js didn't redirect (no usable cookie/geolocation -- see its own
+    // comment). That's the flat all-states catalog, unscoped -- there's no user-facing way to
+    // choose this deliberately anymore (see renderHubScopedContextBar/renderHeaderStatePicker).
+    hubScopedState = null;
+  }
+  updateHeaderStatePicker();
+
   var hashView = (location.hash || '').replace('#/', '');
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
@@ -5833,23 +5843,13 @@ function route() {
   if (hashView === 'refund') { renderRefundRequest(); return; }
   if (hashView === 'gift') { renderGift(); return; }
   if (location.pathname === '/' || location.pathname === '') {
-    // Reached only when _worker.js didn't redirect (no usable cookie/geolocation -- see its own
-    // comment) or the visitor explicitly chose "browse all states" (cookie 'ALL'). Either way,
-    // that's the flat all-states catalog, unscoped.
-    hubScopedState = null;
     renderHub();
-    updateHeaderStatePicker();
     return;
   }
-  var statePathMatch = location.pathname.match(/^\/([a-z]{2})(?:\/([a-z-]+))?\/?$/i);
-  var matchedState = statePathMatch ? knownStateCode(statePathMatch[1]) : null;
   if (matchedState) {
-    hubScopedState = matchedState;
     hubKindFilter = statePathMatch[2] ? (kindFromSlug(statePathMatch[2]) || '') : '';
     hubTracksExpanded = false;
-    setStateCookie(matchedState); // keeps future "/" visits landing here without re-geolocating
     renderHub();
-    updateHeaderStatePicker();
     return;
   }
   var track = activeTrackForPath(location.pathname);
@@ -6207,17 +6207,6 @@ document.addEventListener('click', async function (e) {
     giftTracksExpanded = !giftTracksExpanded;
     var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
     if (giftTracksWrap) giftTracksWrap.innerHTML = giftTracksGridHtml();
-  } else if (act === 'filter-gift-state') {
-    var newGiftStateFilter = el.getAttribute('data-state');
-    if (newGiftStateFilter === giftStateFilter) return;
-    giftStateFilter = newGiftStateFilter;
-    giftTracksExpanded = false;
-    var giftFilterWrap = document.getElementById('gift-state-filter-wrap');
-    if (giftFilterWrap) giftFilterWrap.innerHTML = renderGiftStateFilterPills();
-    var giftKindFilterWrap = document.getElementById('gift-kind-filter-wrap');
-    if (giftKindFilterWrap) giftKindFilterWrap.innerHTML = renderGiftKindFilterPills();
-    var giftFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
-    if (giftFilteredTracksWrap) giftFilteredTracksWrap.innerHTML = giftTracksGridHtml();
   } else if (act === 'filter-gift-kind') {
     var newGiftKindFilter = el.getAttribute('data-kind');
     if (newGiftKindFilter === giftKindFilter) return;
@@ -6225,8 +6214,6 @@ document.addEventListener('click', async function (e) {
     giftTracksExpanded = false;
     var giftKindWrap = document.getElementById('gift-kind-filter-wrap');
     if (giftKindWrap) giftKindWrap.innerHTML = renderGiftKindFilterPills();
-    var giftStateFilterWrap = document.getElementById('gift-state-filter-wrap');
-    if (giftStateFilterWrap) giftStateFilterWrap.innerHTML = renderGiftStateFilterPills();
     var giftKindFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
     if (giftKindFilteredTracksWrap) giftKindFilteredTracksWrap.innerHTML = giftTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
