@@ -5119,11 +5119,21 @@ function drawBuyForm(pricing, giftIntent) {
 // deliberately just a browse/switch list, not a cart: each account/purchase is still scoped to
 // exactly one exam_type (see the users/codes schema), so "adding" a second track here means
 // switching to that track's own buy page, not combining a multi-item order.
+// Scoped to the current track's own state (same reasoning as the hub's default state view --
+// cross-state relevance is ~nil for a licensing-exam product: an Ohio Real Estate buyer caring
+// about Wyoming Notary is noise, not a cross-sell). Capped at BUY_OTHER_TRACKS_LIMIT even
+// within-state, since a state's own track count is only going to grow.
+var BUY_OTHER_TRACKS_LIMIT = 6;
 function loadOtherTracksPricing() {
   var wrap = document.getElementById('buy-other-tracks-wrap');
   if (!wrap) return;
-  var others = HUB_EXAMS.filter(function (e) { return e.active && e.examType !== state.examType; });
+  var currentTrack = trackByExamType(state.examType);
+  var currentStateCode = currentTrack ? currentTrack.stateCode : null;
+  var others = HUB_EXAMS.filter(function (e) {
+    return e.active && e.examType !== state.examType && e.stateCode === currentStateCode;
+  }).slice(0, BUY_OTHER_TRACKS_LIMIT);
   if (!others.length) return;
+  var label = 'Also studying for something else' + (currentStateCode && STATE_LABELS[currentStateCode] ? ' in ' + escapeHtml(STATE_LABELS[currentStateCode]) : '') + '?';
   Promise.all(others.map(function (t) {
     return apiFetch('/pricing?examType=' + encodeURIComponent(t.examType))
       .then(function (p) { return { track: t, priceCents: p.priceCents }; })
@@ -5137,7 +5147,7 @@ function loadOtherTracksPricing() {
     }).join('');
     if (!rows) return;
     wrap.innerHTML = '<div class="card buy-other-tracks-card">' +
-      '<div class="buy-other-tracks-label">Also studying for something else?</div>' +
+      '<div class="buy-other-tracks-label">' + label + '</div>' +
       rows + '</div>';
   }).catch(function () { /* best-effort -- not shown if pricing can't be fetched */ });
 }
