@@ -2240,7 +2240,7 @@ function currentTrackOrNull() {
   return (current && current.active) ? current : null;
 }
 
-var HUB_TRACKS_COLLAPSED_COUNT = 4;
+var HUB_TRACKS_COLLAPSED_COUNT = 6;
 var hubTracksExpanded = false;
 var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA') -- only used
                           // by the legacy all-states pill UI (hubScopedState === null), see below.
