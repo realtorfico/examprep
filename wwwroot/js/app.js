@@ -7135,5 +7135,10 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
     renderSiteHeader();
     renderSiteFooter();
     route();
+    // route() is what actually resolves hubScopedState (from the pathname, or -- for a track's own
+    // page -- from the track itself, see the activeTrackForPath branch), and both renders above ran
+    // before it -- so the footer's "top 3 state tracks" fell back to whatever's first in HUB_EXAMS
+    // (California) rather than the visitor's real state. Re-render now that it's resolved.
+    renderSiteFooter();
   });
 })();
