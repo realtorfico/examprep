@@ -844,6 +844,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .track-landing-breadcrumb { font-size: 0.8rem; margin-bottom: 0.5rem; }
 .track-landing-breadcrumb a { color: var(--muted); }
 .track-landing-breadcrumb a:hover { color: var(--accent); }
+.track-landing-state-hint { font-size: 0.78rem; margin: 0 0 0.75rem; }
 .track-landing h1 { margin-top: 0.5rem; }
 .track-landing-official { margin-top: 0.75rem; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }

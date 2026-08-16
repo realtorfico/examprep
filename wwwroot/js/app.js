@@ -4986,6 +4986,7 @@ function renderTrackLanding() {
     '<div class="track-landing">' +
     '<nav class="track-landing-breadcrumb muted" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
     escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</nav>' +
+    '<p class="muted track-landing-state-hint">Not studying for ' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '? Use the state picker in the header above to switch.</p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +
