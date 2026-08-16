@@ -3025,7 +3025,7 @@ function guaranteeCtaBandHtml() {
 var COMPARISON_FEATURES = [
   // [feature, "Free Practice Sites", "Other Paid Apps", "PassExamHQ"]
   ['State-specific, 2026-current content', 'varies', 'varies', true],
-  ['Unlimited practice questions', true, 'varies', true],
+  ['Unlimited practice questions', 'varies', 'varies', true],
   ['Full timed mock exam simulator', 'varies', 'varies', true],
   ['Voice-enabled answering & read-aloud', false, false, true],
   ['Weak-topic progress tracking', false, 'varies', true],
