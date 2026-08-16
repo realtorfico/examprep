@@ -333,7 +333,13 @@ function renderSiteFooter() {
   var currentTrack = currentTrackOrNull();
   var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
   var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : tracksHomeHref();
-  var sampleTracks = HUB_EXAMS.filter(function (e) { return e.active; }).slice(0, 3);
+  // Prefer the visitor's own scoped state's tracks (falls back to whatever's first in HUB_EXAMS --
+  // which happens to always be California -- if unscoped, or pads with other states' tracks if the
+  // scoped state itself has fewer than 3 active tracks).
+  var activeTracks = HUB_EXAMS.filter(function (e) { return e.active; });
+  var scopedTracks = hubScopedState ? activeTracks.filter(function (e) { return e.stateCode === hubScopedState; }) : [];
+  var sampleTracks = scopedTracks.length >= 3 ? scopedTracks.slice(0, 3)
+    : scopedTracks.concat(activeTracks.filter(function (e) { return scopedTracks.indexOf(e) === -1; })).slice(0, 3);
 
   var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
     '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
