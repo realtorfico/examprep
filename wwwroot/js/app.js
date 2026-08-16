@@ -1236,6 +1236,34 @@ var HUB_EXAMS = [
     description: "Practice questions covering the Real Estate License Act (TRELA), Texas Occupations Code Chapter 1101, and the Texas Real Estate Commission's (TREC) rules at 22 TAC Chapters 531, 533, 534, and 535: TREC's commission duties, powers and enforcement, licensing qualifications, education and renewal, standards of professional conduct and trust accounts, agency and brokerage relationships, and contracts and disclosure -- the state law portion of the Pearson VUE-administered Sales Agent exam.",
     breakdown: [["Agency/Brokerage (Disclosure, Intermediary Practice & Broker-Sales Agent Relationships)", "27.5%"], ["Standards of Conduct (Ethics, Discipline & Trust Accounts)", "22.5%"], ["Contracts (Promulgated Forms, Statute of Frauds & Seller Disclosure)", "22.5%"], ["Special Topics (Community Property, Homestead & Landlord-Tenant)", "12.5%"], ["Commission Duties & Powers (Complaints, Hearings & Penalties)", "7.5%"], ["Licensing (Requirements, Education & Renewal)", "7.5%"]],
   },
+  {
+    examType: "al_notary", shortName: "Alabama Notary", stateCode: "AL", examKind: 'Notary',
+    title: "Alabama Notary Public Practice Questions", category: 'State Licensing', active: true, route: "/al_notary",
+    duration: "Untimed", questions: "62 Multiple Choice", passScore: "Education-Only — No State Exam",
+    description: "Practice questions covering the Alabama Notary Public Act (Code of Alabama 1975, Title 36, Chapter 20), effective 9/1/2023: commissioning, qualifications and training, notarial powers and identification, seal and journal requirements, remote (two-way audio-video) notarization, and discipline and misconduct reporting. Alabama does not administer a separate graded notary exam — notaries are commissioned at the county level by the Probate Judge after completing the mandatory Alabama Probate Judges Association / Alabama Law Institute training course — so this bank is a self-study companion to that course, not a simulation of a pass/fail test.",
+    breakdown: [["Commissioning, Qualifications & Training", "21%"], ["Powers, Notarial Acts & Identification", "21%"], ["Seal, Journal, Fees & Special Documents", "23%"], ["Remote (Two-Way Audio-Video) Notarization", "16%"], ["Discipline, Penalties & Misconduct Reporting", "19%"]],
+  },
+  {
+    examType: "fl_notary", shortName: "Florida Notary", stateCode: "FL", examKind: 'Notary',
+    title: "Florida Notary Public Practice Questions", category: 'State Licensing', active: true, route: "/fl_notary",
+    duration: "Untimed", questions: "97 Multiple Choice", passScore: "Education-Only — No State Exam",
+    description: "Practice questions covering Florida Statutes Chapter 117 (Notaries Public), Part I general provisions and Part II online notarizations: qualifications and application, bond/seal/records and status changes, notarial certificates and fees, electronic and remote online notarization, core notarial duties, solemnizing marriages, prohibited acts and discipline, and special positions and authentication. Florida does not administer a separate graded notary exam — notaries are appointed and commissioned by the Governor after completing a 3-hour education course — so this bank is a self-study companion to that course, not a simulation of a pass/fail test.",
+    breakdown: [["Qualifications, Application & Commissioning", "13%"], ["Bond, Seal, Records & Status Changes", "12%"], ["Notarial Certificates, ID & Fees", "12%"], ["Electronic & Remote Online Notarization", "17%"], ["Core Notarial Duties", "12%"], ["Solemnizing Marriages", "8%"], ["Prohibited Acts, Discipline & Penalties", "14%"], ["Special Positions & Authentication", "12%"]],
+  },
+  {
+    examType: "ga_notary", shortName: "Georgia Notary", stateCode: "GA", examKind: 'Notary',
+    title: "Georgia Notary Public Practice Questions", category: 'State Licensing', active: true, route: "/ga_notary",
+    duration: "Untimed", questions: "82 Multiple Choice", passScore: "Education-Only — No State Exam",
+    description: "Practice questions covering O.C.G.A. Title 45, Chapter 17 (Notaries Public): notarial powers, duties, fees and limitations, definitions and qualifications, commissioning and oath, seal and certificate requirements, military ex officio notaries, changes of status and discipline, and authentication/apostille. Georgia's own statute is explicit that there is no separate written exam — O.C.G.A. § 45-17-8(h) requires all new and renewing notaries to complete GSCCCA-administered training instead, so this bank is a self-study companion to that training, not a simulation of a pass/fail test.",
+    breakdown: [["Notarial Powers, Duties, Fees & Limitations", "23%"], ["Definitions, Qualifications & Application", "18%"], ["Commissioning, Oath, Term & Fees", "15%"], ["Seal, Signature & Certificate Requirements", "13%"], ["Military Ex Officio Notaries", "12%"], ["Change of Status, Discipline & Enforcement", "11%"], ["Authentication & Apostille", "8%"]],
+  },
+  {
+    examType: "tx_notary", shortName: "Texas Notary", stateCode: "TX", examKind: 'Notary',
+    title: "Texas Notary Public Practice Questions", category: 'State Licensing', active: true, route: "/tx_notary",
+    duration: "Untimed", questions: "95 Multiple Choice", passScore: "Education-Only — No State Exam",
+    description: "Practice questions covering Texas Government Code Chapter 406 (Notary Public; Commissioner of Deeds) and Civil Practice and Remedies Code Chapter 121 (Acknowledgments and Proofs): eligibility and application, bond/oath/commission/seal, recordkeeping, the new SB 693 education requirement, authority and prohibited acts, status changes, commissioner of deeds, and online/electronic notarization. Texas's Senate Bill 693 (effective 9/1/2025, applying to applications from 1/1/2026) requires a Secretary of State-run education course, but no graded assessment for that course is confirmed in the enacted statute or on the Secretary of State's site — so this bank is a self-study companion to the education requirement, not a simulation of a pass/fail test.",
+    breakdown: [["Eligibility, Application & Qualification", "14%"], ["Bond, Oath, Commission & Seal", "9%"], ["Notary Records & Recordkeeping", "8%"], ["SB 693 Education & CE Requirement", "8%"], ["Authority, Fees & Prohibited Acts", "14%"], ["Status Changes, Removal & Administration", "9%"], ["Commissioner of Deeds", "6%"], ["Online & Electronic Notarization", "16%"], ["Acknowledgments & Proofs", "15%"]],
+  },
 ];
 
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
@@ -2248,6 +2276,34 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 180-classroom-hour pre-license education requirement for a Texas real estate sales agent license (six TREC-approved 30-hour qualifying courses: Principles of Real Estate I, Principles of Real Estate II, Law of Agency, Law of Contracts, Promulgated Contract Forms, and Real Estate Finance), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state law portion of the exam (grounded in the Real Estate License Act (TRELA), Texas Occupations Code Chapter 1101, and TREC's rules at 22 TAC Chapters 531, 533, 534, and 535), not the separate 80-item national/general portion, and not every topic on TREC's own published state law content outline — our question bank does not include a dedicated Special Topics section, which TREC's outline weights at 12.5% of the state law exam (community property, homestead protections and tax exemptions, the Deceptive Trade Practices Act, landlord-tenant issues, foreclosure and short sales, recording statutes, mechanic's and materialman's liens, the Veterans Land Board, homeowners associations, wills and estates, and equitable interest). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of TREC as a single combined national-plus-state sitting (candidates must pass both separately-scored portions to be licensed, and may retake only the portion they fail), and pre-license education must be completed through a TREC-approved qualifying education provider. While we strive to align our content with the current TRELA statute and TREC Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real TREC Sales Agent exam or the required 180-hour pre-license education.",
     passScoreNote: "the same threshold as the real state law portion — 28 of 40 correct (70%)",
+  },
+  al_notary: {
+    orgLine: "the Probate Judge in the notary's Alabama county of residence, in coordination with the Alabama Probate Judges Association and Alabama Law Institute training program",
+    footerRequirement: "do not fulfill Alabama's mandatory Alabama Probate Judges Association / Alabama Law Institute notary training course, or issue a notary commission",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions does not fulfill Alabama's mandatory notary training course, administered jointly by the Alabama Probate Judges Association and the Alabama Law Institute, and does not issue any official course-completion certificate or notary commission — our content is a supplementary study aid only. Alabama does not administer a separate graded notary exam; commissioning is handled at the county level by the Probate Judge as part of the training-and-application process. Completing practice questions here also does not register you for, or schedule, that official process. While we strive to align our content with the current Alabama Notary Public Act (Code of Alabama Title 36, Chapter 20), it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Alabama notary commissioning process or the required Alabama Probate Judges Association / Alabama Law Institute training course.",
+    passScoreNote: "a self-directed study benchmark we set for practice purposes only — Alabama does not publish or require any official passing score, since there is no separate graded notary exam",
+  },
+  fl_notary: {
+    orgLine: "the Office of the Governor of Florida",
+    footerRequirement: "do not fulfill Florida's mandatory 3-hour notary education course, or issue a notary commission",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions does not fulfill Florida's mandatory 3-hour notary education course, and does not issue any official course-completion certificate or notary commission — our content is a supplementary study aid only. Florida does not administer a separate graded notary exam; notaries are appointed and commissioned directly by the Office of the Governor under Fla. Stat. § 117.01(1) as part of the education-and-application process. Completing practice questions here also does not register you for, or schedule, that official process. While we strive to align our content with the current Florida Statutes Chapter 117, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Florida notary commissioning process or the required 3-hour notary education course.",
+    passScoreNote: "a self-directed study benchmark we set for practice purposes only — Florida does not publish or require any official passing score, since there is no separate graded notary exam",
+  },
+  ga_notary: {
+    orgLine: "the Clerk of Superior Court in the notary's Georgia county of residence, and the Georgia Superior Court Clerks' Cooperative Authority (GSCCCA), which administers the mandatory training",
+    footerRequirement: "do not fulfill Georgia's mandatory GSCCCA-administered notary training, or issue a notary commission",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions does not fulfill Georgia's mandatory GSCCCA-administered notary training required under O.C.G.A. § 45-17-8(h), and does not issue any official course-completion certificate or notary commission — our content is a supplementary study aid only. Georgia's statute is explicit that there is no separate written notary exam; notaries are commissioned at the county level by the Clerk of Superior Court after completing GSCCCA training. Completing practice questions here also does not register you for, or schedule, that official process. While we strive to align our content with the current O.C.G.A. Title 45, Chapter 17, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Georgia notary commissioning process or the required GSCCCA-administered training.",
+    passScoreNote: "a self-directed study benchmark we set for practice purposes only — Georgia does not publish or require any official passing score, since O.C.G.A. § 45-17-8(h) explicitly requires no separate written exam",
+  },
+  tx_notary: {
+    orgLine: "the Texas Secretary of State",
+    footerRequirement: "do not fulfill Texas's SB 693 notary education requirement administered by the Secretary of State, or issue a notary commission",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions does not fulfill Texas's SB 693 notary education requirement, administered exclusively by the Secretary of State, and does not issue any official course-completion certificate or notary commission — our content is a supplementary study aid only. As of this writing, no graded assessment tied to that education requirement is confirmed in the enacted statute (Tex. Gov't Code §§ 406.006, 406.011, 406.023(d)) or on the Secretary of State's site, so we make no claim this bank simulates any such assessment. Completing practice questions here also does not register you for, or schedule, the official commissioning process. While we strive to align our content with current Texas Government Code Chapter 406 and Civil Practice and Remedies Code Chapter 121, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Texas notary commissioning process or the required SB 693 Secretary of State education course.",
+    passScoreNote: "a self-directed study benchmark we set for practice purposes only — Texas has not published any official passing score, since no graded assessment for the SB 693 education requirement is confirmed to exist",
   },
 };
 function trackCompliance(examType) {
@@ -3647,6 +3703,26 @@ var RESOURCES = {
       topic: "General Reference", free: true },
     { title: "Texas Occupations Code Chapter 1101 (Real Estate License Act / TRELA)", type: "pdf", url: "https://statutes.capitol.texas.gov/Docs/OC/htm/OC.1101.htm",
       desc: "The Real Estate License Act (TRELA) — the statutory basis for TREC's rules at 22 TAC Chapters 531, 533, 534, and 535.",
+      topic: "General Reference", free: true },
+  ],
+  al_notary: [
+    { title: "Alabama Probate Judges Association — Notary Public Training", type: "pdf", url: "https://alpja.org/?page_id=2845",
+      desc: "The official Alabama Probate Judges Association page on the mandatory notary training course jointly developed with the Alabama Law Institute — the authoritative source this content is based on.",
+      topic: "General Reference", free: true },
+  ],
+  fl_notary: [
+    { title: "Florida Statutes Chapter 117 — Notaries Public", type: "pdf", url: "http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0100-0199/0117/0117.html",
+      desc: "The official Florida Legislature's online text of Chapter 117 (Notaries Public), Parts I and II — the authoritative source this content is based on.",
+      topic: "General Reference", free: true },
+  ],
+  ga_notary: [
+    { title: "Georgia Superior Court Clerks' Cooperative Authority — Notary & Apostilles", type: "pdf", url: "https://www.gsccca.org/notary-and-apostilles",
+      desc: "The official GSCCCA notary section, the body designated by O.C.G.A. § 45-17-8(h) to administer Georgia's mandatory notary training — the authoritative source this content is based on.",
+      topic: "General Reference", free: true },
+  ],
+  tx_notary: [
+    { title: "Texas Secretary of State — Notary Public", type: "pdf", url: "https://www.sos.texas.gov/statdoc/notary-public.shtml",
+      desc: "The official Texas Secretary of State notary public page, covering commission types, eligibility, and the SB 693 education requirement — the authoritative source this content is based on.",
       topic: "General Reference", free: true },
   ],
 };
