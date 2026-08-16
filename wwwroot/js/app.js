@@ -6442,7 +6442,21 @@ function route() {
     return;
   }
   var track = activeTrackForPath(location.pathname);
-  if (track) { state.examType = track.examType; renderTrackApp(); }
+  if (track) {
+    state.examType = track.examType;
+    // Track pages don't carry a "/xx" state prefix (they're "/fl_notary", not "/fl/notary"), so the
+    // matchedState branch above never fires for them -- on a fresh/hard load (real <a href> nav
+    // between pages is the norm here, not pushState; see renderHubScopedContextBar's comment)
+    // hubScopedState would otherwise stay whatever it initialized to (null), which is exactly the
+    // "chosen state disappears" bug. Every track belongs to exactly one state, so just sync directly
+    // from the track itself instead of depending on the pathname or cookie to carry it.
+    if (track.stateCode && hubScopedState !== track.stateCode) {
+      hubScopedState = track.stateCode;
+      setStateCookie(track.stateCode);
+      updateHeaderStatePicker();
+    }
+    renderTrackApp();
+  }
   else renderHub();
 }
 
