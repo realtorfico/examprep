@@ -40,7 +40,7 @@ var examAgeCategoryOverride = '';
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
 var examDiscardConfirmPending = false; // in-page confirmation for "discard this attempt and start over?"
-var sampleState = { questions: null, index: 0, answered: null };
+var sampleState = { questions: null, index: 0, answered: null, examType: null };
 var recognition = null;
 var isRecording = false;
 
@@ -6265,12 +6265,19 @@ function renderPromoVerify(token) {
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
-  appEl.innerHTML = '<h1>Try a free sample</h1>' +
+  // currentTrackOrNull() (not a bare state.examType read) so this never silently falls back to
+  // whatever state.examType happens to default to (ca_notary) when reached from a context that
+  // never actually picked a track -- if there's genuinely no track in play, send the visitor to
+  // pick one instead of quietly showing California's sample questions under a generic title.
+  var track = currentTrackOrNull();
+  if (!track) { location.hash = ''; location.href = tracksHomeHref(); return; }
+  appEl.innerHTML = '<h1>Try a Free Sample: ' + escapeHtml(track.shortName || track.title) + '</h1>' +
     '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>';
-  if (!sampleState.questions) {
+  if (!sampleState.questions || sampleState.examType !== track.examType) {
     try {
-      var res = await apiFetch('/sample?examType=' + encodeURIComponent(state.examType));
+      var res = await apiFetch('/sample?examType=' + encodeURIComponent(track.examType));
       sampleState.questions = res.questions;
+      sampleState.examType = track.examType;
       sampleState.index = 0;
       sampleState.answered = null;
     } catch (e) {
@@ -6282,12 +6289,13 @@ async function renderSample() {
 }
 
 function drawSampleQuestion() {
+  var track = trackByExamType(sampleState.examType) || {};
   if (sampleState.index >= sampleState.questions.length) {
     appEl.innerHTML =
-      '<h1>That was the sample</h1>' +
+      '<h1>That Was the Sample: ' + escapeHtml(track.shortName || track.title || '') + '</h1>' +
       '<p class="muted">Enter an access code to unlock the full question bank and track your progress.</p>' +
       '<div class="sample-done-cta">' +
-      '<a class="btn-primary hub-cta" href="' + (trackByExamType(state.examType) || {}).route + '">Enter access code →</a>' +
+      '<a class="btn-primary hub-cta" href="' + (track.route || tracksHomeHref()) + '">Enter access code →</a>' +
       '<a class="btn-secondary hub-cta" href="#/resources">See free study resources →</a>' +
       '</div>';
     return;
@@ -6313,6 +6321,7 @@ function drawSampleQuestion() {
     : '';
 
   appEl.innerHTML =
+    '<h1>Try a Free Sample: ' + escapeHtml(track.shortName || track.title || '') + '</h1>' +
     '<p class="muted">Free sample — question ' + (sampleState.index + 1) + ' of ' + sampleState.questions.length + '</p>' +
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
