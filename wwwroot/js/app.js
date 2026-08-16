@@ -3061,8 +3061,8 @@ function fillReadinessCard() {
     });
     var tiles = [
       { value: s.totalQuestions, label: 'Practice Questions<br>Across All Tracks' },
-      { value: s.examsCompleted, label: 'Mock Exams' },
       { value: s.tracksLive, label: 'Live Tracks' },
+      { value: s.examsCompleted, label: 'Mock Exams' },
     ];
     wrap.innerHTML = '<div class="hub-readiness-card">' +
       '<p class="hub-readiness-label">Real Results, Not Marketing Copy</p>' +
