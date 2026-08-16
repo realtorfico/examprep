@@ -556,6 +556,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-order-price { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
 .buy-promo-note { font-size: 0.8rem; font-weight: 700; color: var(--highlight); margin: 0.3rem 0 0; }
 .buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
+/* Two hub-cta buttons (or a button + a link) stacked in sequence need their own gap -- .hub-cta
+   itself carries no margin (it's also used solo all over the site), so any page stacking more
+   than one must wrap them in this rather than rely on accidental button/anchor spacing. */
+.buy-cta-group { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.1rem; }
 /* Gold accent treatment (reuses the same highlight language as .exam-disclaimer-callout/
    .news-flash-banner) -- the guarantee is a trust/reassurance callout, a natural fit for the
    "CTAs, checkmarks, highlights" role gold plays throughout the redesign. */
@@ -694,7 +698,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .font-size-pill button:first-child { border-right: 1px solid var(--border); }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
-.redeem-sample-hint { text-align: center; font-size: 0.85rem; }
+.redeem-sample-hint { text-align: center; font-size: 0.85rem; margin-top: 0.85rem; }
 
 /* Header state picker -- always visible next to the theme/font controls (see renderSiteHeader),
    sized/bordered like the other pill controls next to it rather than a bare native <select>. */

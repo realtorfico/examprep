@@ -1330,7 +1330,7 @@ var HUB_EXAMS = [
   {
     examType: "me_notary", shortName: "Maine Notary", stateCode: "ME", examKind: 'Notary',
     title: "Maine Notary Public Exam Prep", category: 'State Licensing', active: true, route: "/me_notary",
-    duration: "Untimed", questions: "25 Multiple Choice (215-Question Practice Pool)", passScore: "80% (self-study benchmark; Maine's real 15-question application exam has no published passing score)",
+    duration: "Untimed", questions: "15 Multiple Choice (215-Question Practice Pool)", passScore: "80% (self-study benchmark; Maine's real 15-question application exam has no published passing score)",
     description: "Practice questions covering Maine Revised Statutes Title 4, Chapter 39 (the Revised Uniform Law on Notarial Acts, or RULONA) and the Secretary of State's implementing rules at C.M.R. Chapter 700: general provisions and commissioning, notarial acts and procedures, certificates, stamps and journal recordkeeping, electronic and remote notarization and technology-provider standards, jurisdiction and interstate/foreign recognition, prohibited acts and conflicts of interest, and complaint/discipline procedure. Maine's real notary exam, by contrast, is unusually light — just 15 multiple-choice/true-false/select-all questions embedded directly in the official paper application (Form ME NOT APP), plus a separate 8-term matching exercise, completed open-book and unproctored at home with no numeric passing score published anywhere — making this 215-question bank a far deeper self-study resource than the state's own exam.",
     breakdown: [["Electronic & Remote Notarization", "24%"], ["General Provisions, Commissioning & Application", "18%"], ["Prohibited Acts, Conflicts of Interest & Discipline", "18%"], ["Notarial Acts & Procedures", "11%"], ["Notary Ethics, Practical Administration & Statutory Construction", "11%"], ["Certificates, Stamps & Journal Recordkeeping", "10%"], ["Jurisdiction, Interstate/Foreign Recognition & Certified Copies", "8%"]],
   },
@@ -1407,7 +1407,7 @@ var HUB_EXAMS = [
   {
     examType: "ut_notary", shortName: "Utah Notary", stateCode: "UT", examKind: 'Notary',
     title: "Utah Notary Public Exam Prep", category: 'State Licensing', active: true, route: "/ut_notary",
-    duration: "Untimed", questions: "50 Multiple Choice (222-Question Practice Pool)", passScore: "80% (Self-Study Benchmark) -- Utah's real online exam uses a different, weighted structure: 61 of 65 points (93.8%) required on a 35-question test",
+    duration: "Untimed", questions: "35 Multiple Choice (222-Question Practice Pool)", passScore: "80% (Self-Study Benchmark) -- Real Utah exam uses a different weighted-point system: 61 of 65 points (93.8%) required",
     description: "Practice questions covering Utah's Notaries Public Reform Act (Utah Code Title 46, Chapter 1, Sections 46-1-2 to 46-1-23): general provisions and definitions, commissioning, qualifications and bond, notarial acts and certificates, signature, seal and journal recordkeeping, remote and electronic notarization, and fees and prohibited acts/discipline. Utah's real notary exam is taken online directly through notary.utah.gov and administered by the Office of the Lieutenant Governor (Utah has no Secretary of State) -- it is 35 multiple-choice questions worth 65 total points (10 questions worth 4 points, 25 worth 1 point), and candidates must score 61 points or higher to pass, per the Lt. Governor's official Notary Public Study Guide and Handbook. Our own 50-question mock exam format differs from that weighted structure, so we grade practice attempts against our own 80% self-study benchmark rather than replicating the real exam's point system; content is drawn from a broader 222-question practice pool for variety across repeated attempts.",
     breakdown: [["Signature, Seal & Journal Recordkeeping", "27%"], ["Commissioning, Qualifications & Bond", "24%"], ["Fees & Prohibited Acts/Discipline", "16%"], ["Notarial Acts & Certificates", "12%"], ["General Provisions & Definitions", "11%"], ["Remote & Electronic Notarization", "10%"]],
   },
@@ -4988,8 +4988,10 @@ function renderTrackLanding() {
     '<li>✓ Per-topic progress tracking</li>' +
     '<li>✓ Pass-or-money-back guarantee</li>' +
     '</ul>' +
+    '<div class="buy-cta-group">' +
     '<a class="btn-primary hub-cta" href="#/buy">Get Instant Access →</a>' +
     '<a class="btn-secondary hub-cta" href="#/sample">Try a free sample →</a>' +
+    '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="#/redeem">Redeem it →</a></p>' +
     (officialLinkHtml ? '<div class="track-landing-official">' + officialLinkHtml + '</div>' : '') +
     '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
@@ -6232,14 +6234,18 @@ function renderPromoVerify(token) {
     appEl.innerHTML = '<div class="narrow-page"><h1>Email confirmed ✅</h1>' +
       '<p class="muted">' + (res.promoTitle ? 'You\'re all set for "' + escapeHtml(res.promoTitle) + '." ' : '') +
       'Go back to wherever you were applying your promo code and click Apply again — it\'ll go through now.</p>' +
+      '<div class="buy-cta-group">' +
       '<a class="btn-primary hub-cta" href="#/buy">Back to checkout →</a>' +
-      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend →</a></div>';
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend →</a>' +
+      '</div></div>';
   }).catch(function () {
     appEl.innerHTML = '<div class="narrow-page"><h1>Could not confirm</h1>' +
       '<p class="muted">This link may be invalid or expired (links are good for 7 days). Go back to wherever ' +
       'you applied the code and click Apply again to get a new one.</p>' +
+      '<div class="buy-cta-group">' +
       '<a class="btn-secondary hub-cta" href="#/buy">Back to checkout</a>' +
-      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend</a></div>';
+      '<a class="btn-secondary hub-cta" href="#/refer">Back to Refer-a-Friend</a>' +
+      '</div></div>';
   });
 }
 
