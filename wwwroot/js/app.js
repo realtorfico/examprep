@@ -3009,22 +3009,21 @@ function guaranteeCtaBandHtml() {
 // ---- Home page: comparison table (Round 2 redesign decision) --------------
 // PassExamHQ's own checkmarks are all real, confirmed features (mic/voice answering,
 // difficulty-filtered practice, timed exam mode, per-topic progress, guarantee). The "Other Paid
-// Apps" column's checkmarks were verified against a real representative competitor's current App
-// Store/Play Store listings (Aug 2026) -- re-verify before reusing this table later, app feature
-// sets drift over time. The column is deliberately labeled generically rather than naming that
-// competitor: naming it would just hand a curious visitor a specific product to go research
-// instead of buying here, with no real upside to offset that. "Free Practice Sites" is likewise a
-// generic category, not one named product, so its marks describe the category rather than claim
-// something about any specific site -- 'varies' where free sites commonly differ rather than a
-// flat yes/no.
+// Apps" column is NOT verified against any specific competitor's current listing -- it's a
+// generic-category estimate, deliberately hedged toward 'varies' rather than a flat checkmark
+// wherever a feature isn't something every paid app in this space can be assumed to have. Same
+// deliberately generic-category treatment as "Free Practice Sites" -- neither column names or
+// claims something about one specific product, and both use 'varies' rather than a flat yes/no
+// wherever there's genuine spread across the category. Re-review before reusing this table if it's
+// ever pointed at a genuinely researched/named competitor instead.
 var COMPARISON_FEATURES = [
   // [feature, "Free Practice Sites", "Other Paid Apps", "PassExamHQ"]
-  ['State-specific, 2026-current content', 'varies', true, true],
-  ['Unlimited practice questions', true, true, true],
-  ['Full timed mock exam simulator', 'varies', true, true],
+  ['State-specific, 2026-current content', 'varies', 'varies', true],
+  ['Unlimited practice questions', true, 'varies', true],
+  ['Full timed mock exam simulator', 'varies', 'varies', true],
   ['Voice-enabled answering & read-aloud', false, false, true],
-  ['Weak-topic progress tracking', false, true, true],
-  ['Explanation on every question', 'varies', true, true],
+  ['Weak-topic progress tracking', false, 'varies', true],
+  ['Explanation on every question', 'varies', 'varies', true],
   ['Pass-or-money-back guarantee', false, false, true],
 ];
 function comparisonCell(v, highlight) {
