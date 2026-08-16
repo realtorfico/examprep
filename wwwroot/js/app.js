@@ -339,11 +339,14 @@ function renderSiteFooter() {
   // only 1 or 2 links here; cross-state browsing isn't a real user need for a licensing-exam
   // product (same reasoning as renderHubScopedContextBar's "no all-states link" decision). Falls
   // back to the first 3 active tracks overall only when genuinely unscoped (hubScopedState null).
+  // This is just the synchronous starting order (HUB_EXAMS array order) -- loadFooterExamLinksPricing()
+  // (called below, after the innerHTML assignment) swaps it for real price-descending order once
+  // pricing resolves, since price isn't known client-side until fetched.
   var activeTracks = HUB_EXAMS.filter(function (e) { return e.active; });
   var scopedTracks = hubScopedState ? activeTracks.filter(function (e) { return e.stateCode === hubScopedState; }) : [];
   var sampleTracks = hubScopedState ? scopedTracks.slice(0, 3) : activeTracks.slice(0, 3);
 
-  var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
+  var exverse = '<div><h3>Exams</h3><ul class="footer-link-list" id="footer-exams-links">' +
     '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
     sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
     '</ul></div>';
@@ -373,6 +376,33 @@ function renderSiteFooter() {
     '</div>' +
     '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>. © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '</div>';
+  loadFooterExamLinksPricing();
+}
+
+// Reorders the footer's "Exams" links to the 3 highest-priced tracks in the scoped state, once
+// pricing resolves (unknown client-side until fetched -- HUB_EXAMS carries no price field).
+// scopedAtCallTime guards against a late response landing after the visitor has since navigated to
+// a different state (same idea as quizStatsToken/quizRenderToken elsewhere in this file).
+function loadFooterExamLinksPricing() {
+  if (!hubScopedState) return; // unscoped catalog keeps the static default order -- no state to sort within
+  var scopedAtCallTime = hubScopedState;
+  var tracksInState = HUB_EXAMS.filter(function (e) { return e.active && e.stateCode === scopedAtCallTime; });
+  if (tracksInState.length <= 1) return; // nothing to reorder
+  Promise.all(tracksInState.map(function (t) {
+    return apiFetch('/pricing?examType=' + encodeURIComponent(t.examType))
+      .then(function (p) { return { track: t, priceCents: p.priceCents }; })
+      .catch(function () { return null; });
+  })).then(function (results) {
+    if (hubScopedState !== scopedAtCallTime) return; // stale -- visitor switched states before this resolved
+    var priced = results.filter(Boolean);
+    if (!priced.length) return; // best-effort -- keep the already-shown default-order list
+    priced.sort(function (a, b) { return b.priceCents - a.priceCents; });
+    var top3 = priced.slice(0, 3).map(function (r) { return r.track; });
+    var listEl = document.getElementById('footer-exams-links');
+    if (!listEl) return;
+    listEl.innerHTML = '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
+      top3.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('');
+  }).catch(function () {}); // best-effort -- keep the already-shown default-order list
 }
 
 // ---- Site news banner ------------------------------------------------------
