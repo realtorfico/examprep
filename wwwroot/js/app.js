@@ -136,7 +136,7 @@ function renderSiteHeader() {
   var loggedIn = !!getToken();
   var logo = '<span class="site-logo">' +
     '<span class="site-logo-icon">' + LOGO_SVG + '</span>' +
-    '<span class="site-logo-text"><a href="/" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
+    '<span class="site-logo-text"><a href="' + siteHomeHref() + '" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
     '<a href="#/guarantee" class="site-logo-tagline">Pass Exam - Or Your Money Back</a></span>' +
     '</span>';
 
@@ -149,13 +149,13 @@ function renderSiteHeader() {
   // guessing. Redeem needs no track at all (global route, see route()) -- the code you submit
   // determines the track server-side, so this link never has to pick one.
   var currentTrack = currentTrackOrNull();
-  var referHref = currentTrack ? (currentTrack.route + '#/refer') : '/#tracks';
-  var navLinksHtml = '<a href="/#tracks">Exam tracks</a>' +
+  var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
+  var navLinksHtml = '<a href="' + tracksHomeHref() + '">Exam tracks</a>' +
     '<a href="#/guarantee">Guarantee</a>' +
     '<a href="' + referHref + '">Refer &amp; earn</a>' +
     '<a href="#/gift">Gift a track 🎁</a>';
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
-    '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
+    '<a class="btn-primary btn-sm" href="' + tracksHomeHref() + '">Browse exams</a>';
   // Prominent, always-visible "which track am I logged into" indicator -- accountExamType
   // specifically (the account's real track), NOT currentTrack above (whichever track's PAGE is
   // being viewed, which could differ, e.g. a driver-track account browsing the notary track's
@@ -192,6 +192,14 @@ function renderSiteHeader() {
   updateThemeButton();
   fillPromoRibbon();
 }
+
+// Bare "/" is the unscoped-catalog fallback (see route()'s "else if (location.pathname === '/')"
+// branch) -- any nav link built with a literal "/" or "/#tracks" lands there and wipes
+// hubScopedState back to null, which is exactly the "chosen state disappears from the header"
+// bug. Every "go back home" / "browse tracks" link should route through these instead, so a
+// visitor already scoped to a state stays scoped when they navigate away from a track and back.
+function siteHomeHref() { return hubScopedState ? '/' + hubScopedState.toLowerCase() : '/'; }
+function tracksHomeHref() { return hubScopedState ? '/' + hubScopedState.toLowerCase() + '#tracks' : '/#tracks'; }
 
 // Always visible (not just on the hub) so switching states is available from anywhere on the
 // site, same as the theme/font controls next to it. renderSiteHeader() only runs a handful of
@@ -323,12 +331,12 @@ function renderSiteFooter() {
   var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
   var currentTrack = currentTrackOrNull();
-  var referHref = currentTrack ? (currentTrack.route + '#/refer') : '/#tracks';
-  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : '/#tracks';
+  var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
+  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : tracksHomeHref();
   var sampleTracks = HUB_EXAMS.filter(function (e) { return e.active; }).slice(0, 3);
 
   var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
-    '<li><a href="/#tracks">All exam tracks</a></li>' +
+    '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
     sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
     '</ul></div>';
   var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
@@ -3081,8 +3089,8 @@ function renderRedeem(error) {
   // track's pathname they might historically have inherited -- deep-link into the current track if
   // there is one, otherwise send to the tracks picker rather than guessing.
   var currentTrack = currentTrackOrNull();
-  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : '/#tracks';
-  var buyHref = currentTrack ? (currentTrack.route + '#/buy') : '/#tracks';
+  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : tracksHomeHref();
+  var buyHref = currentTrack ? (currentTrack.route + '#/buy') : tracksHomeHref();
   appEl.innerHTML =
     '<div class="redeem-page">' +
     '<div class="redeem-icon">🔐</div>' +
@@ -4971,7 +4979,7 @@ function renderTrackLanding() {
 
   appEl.innerHTML =
     '<div class="track-landing">' +
-    '<nav class="track-landing-breadcrumb muted" aria-label="Breadcrumb"><a href="/#tracks">Exams</a> / ' +
+    '<nav class="track-landing-breadcrumb muted" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
     escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</nav>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
