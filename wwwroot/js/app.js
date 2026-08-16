@@ -333,13 +333,15 @@ function renderSiteFooter() {
   var currentTrack = currentTrackOrNull();
   var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
   var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : tracksHomeHref();
-  // Prefer the visitor's own scoped state's tracks (falls back to whatever's first in HUB_EXAMS --
-  // which happens to always be California -- if unscoped, or pads with other states' tracks if the
-  // scoped state itself has fewer than 3 active tracks).
+  // Strictly the visitor's own scoped state's tracks -- never padded with other states' tracks
+  // (which in practice always meant California, since it's first in HUB_EXAMS) just because the
+  // scoped state itself has fewer than 3 active tracks. A 1- or 2-track state legitimately shows
+  // only 1 or 2 links here; cross-state browsing isn't a real user need for a licensing-exam
+  // product (same reasoning as renderHubScopedContextBar's "no all-states link" decision). Falls
+  // back to the first 3 active tracks overall only when genuinely unscoped (hubScopedState null).
   var activeTracks = HUB_EXAMS.filter(function (e) { return e.active; });
   var scopedTracks = hubScopedState ? activeTracks.filter(function (e) { return e.stateCode === hubScopedState; }) : [];
-  var sampleTracks = scopedTracks.length >= 3 ? scopedTracks.slice(0, 3)
-    : scopedTracks.concat(activeTracks.filter(function (e) { return scopedTracks.indexOf(e) === -1; })).slice(0, 3);
+  var sampleTracks = hubScopedState ? scopedTracks.slice(0, 3) : activeTracks.slice(0, 3);
 
   var exverse = '<div><h3>Exams</h3><ul class="footer-link-list">' +
     '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
