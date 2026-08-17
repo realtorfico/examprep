@@ -2966,6 +2966,17 @@ function renderHub() {
     comparisonTableHtml() +
     guaranteeCtaBandHtml();
 
+  // "#tracks" links (tracksHomeHref(), the header state picker after a switch, etc.) are all real
+  // navigations to a fresh page load -- the browser's own fragment auto-scroll fires (if at all)
+  // before #app has any content, since this is a client-rendered page, so it can't be relied on.
+  // #tracks itself is set synchronously just above, so it's safe to scroll to right here. Instant,
+  // not smooth -- this is a landing position on page load, not an in-page action like the
+  // scroll-to-tracks button's click-triggered smooth scroll.
+  if (location.hash === '#tracks') {
+    var tracksAnchorEl = document.getElementById('tracks');
+    if (tracksAnchorEl) tracksAnchorEl.scrollIntoView({ block: 'start' });
+  }
+
   // Rendered above synchronously so the page itself never waits on this -- promos fill in a
   // moment later once fetched, same "progressive enhancement" idea as the admin Stats page's
   // accuracy table.
@@ -6712,8 +6723,11 @@ document.addEventListener('change', function (e) {
     // Real navigation, not pushState -- picking a state is a big enough context switch (whole
     // page re-renders) that a full reload matches how every other pathname change in this app
     // already behaves (e.g. clicking a track card), rather than introducing a second navigation
-    // model just for this one control.
-    location.href = '/' + chosenState.toLowerCase();
+    // model just for this one control. Lands on #tracks (same anchor tracksHomeHref() uses)
+    // rather than the bare hub root -- without it, picking a state dropped the visitor back at the
+    // top of the marketing hero, and reaching the actual track list for their new state meant
+    // scrolling past all of it again -- especially bad on mobile where the hero stacks tall.
+    location.href = '/' + chosenState.toLowerCase() + '#tracks';
   }
 });
 
