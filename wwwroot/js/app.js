@@ -879,7 +879,7 @@ var HUB_EXAMS = [
   {
     examType: 'nc_notary', shortName: 'North Carolina Notary', stateCode: 'NC', examKind: 'Notary',
     title: 'North Carolina Notary Public Exam', category: 'State Licensing', active: true, route: '/nc_notary',
-    duration: 'Untimed', questions: '50 Multiple Choice (131-Question Practice Pool)', passScore: '40/50 Correct (80%)',
+    duration: 'Untimed', questions: '50 Multiple Choice (237-Question Practice Pool)', passScore: '40/50 Correct (80%)',
     description: 'Practice questions covering the North Carolina Notary Public Act (General Statutes Chapter 10B): general provisions and commissioning, notarial acts, powers, limitations and fees, electronic and remote notarization, signature, seal and certificate forms, and changes in status, enforcement and validation -- grounded in the statutory 80% pass threshold set by G.S. 10B-8.',
     breakdown: [['General Provisions & Commissioning', '26%'], ['Notarial Acts, Powers, Limitations & Fees', '21%'], ['Electronic & Remote Notarization', '21%'], ['Signature, Seal & Certificate Forms', '16%'], ['Changes in Status, Enforcement & Validation', '16%']],
   },
