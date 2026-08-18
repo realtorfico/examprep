@@ -361,6 +361,7 @@ function renderSiteFooter() {
     '</ul></div>';
   var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/about">About us</a></li>' +
+    '<li><a href="#/faq">FAQ</a></li>' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
@@ -530,7 +531,7 @@ var HELP_CHAT_FAQ = [
   },
 ];
 var HELP_CHAT_FALLBACK_HTML = 'I\'m not able to answer that one yet — this is a simple FAQ helper, not a full support agent. ' +
-  'Try rephrasing, or <a href="#/contact">contact us</a> directly and a real person will help.';
+  'Try rephrasing, check the full <a href="#/faq">FAQ page</a>, or <a href="#/contact">contact us</a> directly and a real person will help.';
 var HELP_CHAT_SUGGESTIONS = ['How do I redeem my code?', 'What if I don\'t pass?', 'Can I try before buying?'];
 
 var helpChatMessages = []; // { role: 'user'|'bot', html: string }
@@ -735,6 +736,158 @@ function renderAbout() {
     'examination vendor, and completing our practice questions or mock exams does not register you for, or ' +
     'substitute for, any official state or federal exam.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
+}
+
+// Grouped Q&A, one <details> per item (native disclosure -- no JS needed for expand/collapse,
+// accessible by default). Deliberately more thorough than the help-chat widget's 16-entry FAQ
+// (HELP_CHAT_FAQ, near the top of this file) -- this is the "read the whole thing" version,
+// that one's the "quick lookup while you're mid-task" version. Keep both, don't try to unify
+// them into one dataset -- the chat widget's entries are terse on purpose (chat bubble width),
+// this page's are meant to be read start to finish.
+var FAQ_CATEGORIES = [
+  {
+    category: 'Getting Started',
+    items: [
+      { q: 'What is PassExamHQ?', a: function () {
+        return 'Independent practice question banks for state and national licensing exams, built directly from official ' +
+          'handbooks for each specific state and track. See the full <a href="#/about">About page</a>.';
+      } },
+      { q: 'Which states and exams do you cover?', a: function () {
+        return '<a href="' + tracksHomeHref() + '">Browse all tracks</a> to see what\'s currently live for your state.';
+      } },
+      { q: 'Can I try questions before buying?', a: function () {
+        return 'Yes — every track has free sample questions, no account needed. Open any track from the ' +
+          '<a href="' + tracksHomeHref() + '">tracks page</a> to try one.';
+      } },
+      { q: 'Do I need to create an account?', a: function () {
+        return 'No separate signup. Your access code (emailed after purchase or redemption) is your entire login — see ' +
+          '"How do I redeem my code?" below.';
+      } },
+    ],
+  },
+  {
+    category: 'Buying & Pricing',
+    items: [
+      { q: 'How much does a track cost, and is it a subscription?', a: function () {
+        return 'Each track is a single one-time payment, not a subscription — pay once and keep access for good. ' +
+          'Prices vary by track; <a href="' + tracksHomeHref() + '">browse tracks</a> to see the current price for yours.';
+      } },
+      { q: 'What payment methods do you accept?', a: function () {
+        return 'Card, Apple Pay, or Google Pay — checkout runs through Stripe, and whichever wallet your device supports shows up automatically.';
+      } },
+      { q: 'Do you offer discounts or promo codes?', a: function () {
+        return 'When a discount is active it shows right on the buy page. Some discounts need a code (enter it in the ' +
+          'promo field and click Apply); others auto-apply for a qualifying email domain (e.g. a student discount for a .edu address) with no code needed.';
+      } },
+      { q: 'Can I buy a track as a gift?', a: function () {
+        return 'Yes — <a href="#/gift">gift a track</a>. You can enter the recipient\'s email and we\'ll send their code directly, ' +
+          'or leave it blank and get a shareable code to send yourself.';
+      } },
+    ],
+  },
+  {
+    category: 'Your Access Code',
+    items: [
+      { q: 'How do I redeem my code?', a: function () {
+        return 'Go to <a href="#/redeem">Redeem code</a> and enter it exactly as emailed. That logs you in on this device — ' +
+          'no password to create or remember.';
+      } },
+      { q: 'Do I need a password?', a: function () {
+        return 'No. Your code is the entire login mechanism, by design — one thing to keep track of, not a code and a password.';
+      } },
+      { q: 'Can I use my code on more than one device?', a: function () {
+        return 'Yes — re-enter the same code on another device\'s <a href="#/redeem">Redeem code</a> page and it logs that device into the same account.';
+      } },
+      { q: "I lost my code, or never received the email — what now?", a: function () {
+        return '<a href="#/contact">Contact us</a> with the email you purchased or were gifted with, and we\'ll help track it down.';
+      } },
+    ],
+  },
+  {
+    category: 'Studying & Practice',
+    items: [
+      { q: "What's included once I unlock a track?", a: function () {
+        return 'The full question bank for unlimited practice, a timed mock exam plus a "Toughest 45" drill of the hardest ' +
+          'questions, voice-enabled answering and read-aloud, a study resource library, and per-topic progress tracking.';
+      } },
+      { q: 'Can questions be read aloud to me?', a: function () {
+        return 'Yes — voice-enabled practice can read each question aloud, and you can answer by voice too, right from the practice quiz.';
+      } },
+      { q: 'Can I practice by difficulty level?', a: function () {
+        return 'Yes — the practice quiz has an Easy / Moderate / Hard / Extremely Hard filter, plus "All," so you can drill weak spots specifically.';
+      } },
+      { q: 'How many questions are on my exam, and how long is it?', a: function () {
+        return 'This varies a lot by track — open your specific track\'s page (from the <a href="' + tracksHomeHref() + '">tracks list</a>) ' +
+          'for its exact question count, time limit, and passing score.';
+      } },
+    ],
+  },
+  {
+    category: 'Progress Tracking',
+    items: [
+      { q: 'How do I know if I\'m ready for the real exam?', a: function () {
+        return 'Once you\'re logged in, the Progress tab shows Accuracy (how often you\'re getting questions right) and Coverage ' +
+          '(how much of the bank you\'ve actually practiced) broken down per topic — so you know exactly what to restudy, not just an overall score.';
+      } },
+    ],
+  },
+  {
+    category: 'Guarantee & Refunds',
+    items: [
+      { q: "What if I take the real exam and don't pass?", a: function () {
+        return 'We refund <span class="js-refund-pct">' + refundFailurePercent + '</span>% of your purchase, as long as you maintained at least ' +
+          '<span class="js-accuracy-pct">' + progressAccuracyPassPct + '</span>% Accuracy and <span class="js-coverage-pct">' + progressCoveragePassPct +
+          '</span>% Coverage on the Progress tab. Full details on the <a href="#/guarantee">guarantee page</a>.';
+      } },
+      { q: 'Can I get a refund if I just change my mind?', a: function () {
+        return 'Yes — a 7-day, no-questions-asked refund covers that separately from the pass-guarantee above.';
+      } },
+      { q: 'How do I request a refund?', a: function () { return 'Start a <a href="#/refund">refund request</a> here.'; } },
+    ],
+  },
+  {
+    category: 'Referrals, Points & Gifts',
+    items: [
+      { q: 'How does referring friends work?', a: function () {
+        return 'Refer friends and earn points toward free access — find your track\'s "Refer & earn" link from its ' +
+          '<a href="' + tracksHomeHref() + '">track page</a>.';
+      } },
+      { q: 'How do I check my referral points?', a: function () {
+        return 'On the buy page, click "Check my points" — you can apply them toward that purchase\'s total right there.';
+      } },
+    ],
+  },
+  {
+    category: 'Account & Legal',
+    items: [
+      { q: 'What data do you store about me?', a: function () { return 'See exactly what and why on our <a href="#/privacy">privacy page</a>.'; } },
+      { q: 'Where are your terms of service?', a: function () { return '<a href="#/terms">Terms of service</a>.'; } },
+      { q: "My question isn't answered here", a: function () { return '<a href="#/contact">Contact us</a> and we\'ll reply to your email.'; } },
+    ],
+  },
+];
+
+function refreshFaqDynamicSpans() {
+  loadSiteConfig().then(function () {
+    document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
+    document.querySelectorAll('.js-accuracy-pct').forEach(function (el) { el.textContent = progressAccuracyPassPct; });
+    document.querySelectorAll('.js-coverage-pct').forEach(function (el) { el.textContent = progressCoveragePassPct; });
+  });
+}
+
+function renderFaq() {
+  appEl.innerHTML = '<div class="narrow-page"><h1>Frequently Asked Questions</h1>' +
+    '<p class="muted">Quick answers on buying, your access code, studying, and the guarantee. Still stuck? ' +
+    '<a href="#/contact">Contact us</a> or use the chat bubble in the corner.</p>' +
+    FAQ_CATEGORIES.map(function (cat) {
+      return '<section class="faq-category"><h2>' + escapeHtml(cat.category) + '</h2>' +
+        cat.items.map(function (item) {
+          return '<details class="faq-item"><summary>' + escapeHtml(item.q) + '</summary>' +
+            '<div class="faq-answer muted">' + item.a() + '</div></details>';
+        }).join('') + '</section>';
+    }).join('') +
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
+  refreshFaqDynamicSpans();
 }
 
 function renderContact() {
@@ -7905,6 +8058,7 @@ function route() {
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
   if (hashView === 'about') { renderAbout(); return; }
+  if (hashView === 'faq') { renderFaq(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
   // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the

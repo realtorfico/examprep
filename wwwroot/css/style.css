@@ -638,6 +638,19 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    matches the redesign's readability guideline (~60-75 char measure) without shrinking #app
    itself, which functional screens (quiz/exam/tables) still need the full fluid width for. */
 .narrow-page { max-width: 640px; margin: 0 auto; }
+/* FAQ page -- native <details>/<summary> disclosure per item, no JS needed for expand/collapse. */
+.faq-category { margin-top: 1.75rem; }
+.faq-category h2 { font-size: 1.15rem; margin-bottom: 0.6rem; }
+.faq-item {
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2);
+  padding: 0.7rem 0.9rem; margin-bottom: 0.6rem;
+}
+.faq-item summary { cursor: pointer; font-weight: 600; list-style: none; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::before { content: '+ '; color: var(--accent); font-weight: 700; }
+.faq-item[open] summary::before { content: '– '; }
+.faq-item .faq-answer { margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.5; }
+.faq-item .faq-answer a { color: var(--accent); }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
    site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
 .refer-hero {
