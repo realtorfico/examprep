@@ -583,7 +583,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
 .buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
-.buy-order-price { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+/* Doc audit's "larger bold" pricing ask -- bumped from 1.6rem. */
+.buy-order-price { font-family: 'Fraunces', Georgia, serif; font-size: 1.85rem; font-weight: 700; color: var(--accent); }
 .buy-promo-note {
   font-size: 0.95rem; font-weight: 700; color: var(--highlight); margin: 0.5rem 0 0;
   display: inline-flex; align-items: center; padding: 0.3rem 0.7rem; border-radius: 999px;
@@ -799,7 +800,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .buy-other-track-row:last-child { margin-bottom: 0; }
 .buy-other-track-row:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface-2)); }
-.buy-other-track-price { font-weight: 700; color: var(--accent); }
+.buy-other-track-price { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
 
 .quiz-controls-row { margin-bottom: 0.85rem; }
 .quiz-controls-content { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -1114,7 +1115,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
 .exam-track-resources { font-size: 0.72rem; margin-bottom: 0.35rem; }
-.exam-track-price { font-size: 1.05rem; font-weight: 800; color: var(--accent); flex-shrink: 0; }
+/* Doc audit's "larger bold" pricing ask -- bumped from 1.05rem. Shared by the hub grid, the gift
+   page's cards, AND the track landing page's main price (id="landing-price", same class) -- the
+   landing page gets its own further bump right below since it has a whole card's worth of room
+   for the price to be the clear visual anchor, unlike the compact grid cards. */
+.exam-track-price { font-size: 1.2rem; font-weight: 800; color: var(--accent); flex-shrink: 0; }
+#landing-price { font-size: 1.85rem; }
 .exam-track-view-link { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
 .exam-track-card:hover .exam-track-view-link { text-decoration: underline; }
 /* .exam-track-desc / .exam-specs / .breakdown-* / .pct-* below are no longer used by the hub
