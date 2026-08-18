@@ -100,6 +100,17 @@ function optionButtonHtml(letter, text, cls, attrs) {
 // style="..." attributes -- so --font-scale can't be set with style.setProperty(). fontScale is
 // bounded [0.85, 1.4] in 0.05 steps (12 values, see font-up/down below), so a small fixed set of
 // font-scale-NN classes (see style.css) covers it instead.
+// Site's actual resolved light/dark, accounting for the explicit toggle (data-theme) falling
+// back to the OS preference when the user's on "system". Used to tell Turnstile which chrome to
+// render -- it defaults to 'auto' (OS preference only), which can mismatch the site's own theme
+// and render as a stark white/black box against the opposite-themed card (doc audit's Cloudflare
+// widget complaint).
+function resolvedColorScheme() {
+  var attr = document.documentElement.getAttribute('data-theme');
+  if (attr === 'light' || attr === 'dark') return attr;
+  return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+}
+
 function applyTheme(theme, fontScale) {
   var root = document.documentElement;
   if (theme && theme !== 'system') root.setAttribute('data-theme', theme);
@@ -4367,6 +4378,7 @@ function renderTurnstileWidget(attemptsLeft) {
     var el = document.querySelector('#turnstile-container');
     if (el) window.turnstile.render(el, {
       sitekey: TURNSTILE_SITE_KEY,
+      theme: resolvedColorScheme(),
       // Buy page only: waitForTurnstileToken gives up after ~10s and fails the payment element
       // closed ("Could not load payment options") if the challenge hasn't resolved by then --
       // without this, a slow/late Turnstile success never gets picked back up. Re-mounting here
@@ -8538,6 +8550,14 @@ document.addEventListener('click', async function (e) {
     applyTheme(nextTheme, local.fontScale);
     updateThemeButton();
     if (getToken()) apiFetch('/prefs', { method: 'POST', body: { theme: nextTheme } }).catch(function () {});
+    // Turnstile's own chrome is set at render time (see renderTurnstileWidget's theme param) --
+    // toggling the site theme afterward would otherwise leave an already-mounted widget stuck in
+    // the old theme, mismatched against the card around it. Re-mount it if one's on screen.
+    var mountedTurnstileEl = document.querySelector('#turnstile-container');
+    if (mountedTurnstileEl && window.turnstile) {
+      try { window.turnstile.remove(mountedTurnstileEl); } catch (ignored) { /* not yet rendered */ }
+      renderTurnstileWidget();
+    }
   } else if (act === 'font-up' || act === 'font-down') {
     var l = loadLocalPrefs();
     var next = Math.max(0.85, Math.min(1.4, l.fontScale + (act === 'font-up' ? 0.05 : -0.05)));

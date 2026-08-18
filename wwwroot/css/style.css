@@ -535,6 +535,16 @@ nav.sub-tabs a[aria-current="page"] {
 input[type="text"], input[type="email"], input[type="date"], input[type="number"], select, textarea {
   width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
   background: var(--surface-2); color: var(--fg); font-size: 1rem; font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+/* Smooth accent focus ring -- these fields previously fell back to the browser's default focus
+   outline (a hard, theme-unaware black/blue rectangle), one of the doc-audit's "Form Inputs"
+   polish items. :focus-visible (not plain :focus) so mouse clicks don't show a ring, only
+   keyboard/programmatic focus. */
+input[type="text"]:focus-visible, input[type="email"]:focus-visible, input[type="date"]:focus-visible,
+input[type="number"]:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 textarea { resize: vertical; }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
@@ -638,17 +648,39 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    matches the redesign's readability guideline (~60-75 char measure) without shrinking #app
    itself, which functional screens (quiz/exam/tables) still need the full fluid width for. */
 .narrow-page { max-width: 640px; margin: 0 auto; }
-/* FAQ page -- native <details>/<summary> disclosure per item, no JS needed for expand/collapse. */
-.faq-category { margin-top: 1.75rem; }
-.faq-category h2 { font-size: 1.15rem; margin-bottom: 0.6rem; }
-.faq-item {
-  border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2);
-  padding: 0.7rem 0.9rem; margin-bottom: 0.6rem;
+/* FAQ page -- native <details>/<summary> disclosure per item, no JS needed for expand/collapse.
+   Each category is one joined card (border/radius live on the category, not per-item) with items
+   as transparent rows separated by a soft divider, instead of each question being its own
+   bordered "pill" -- the doc audit's "blocky gray pills -> smooth accordion" complaint stemmed
+   from the old per-item box-in-a-box look, which stacked its own border/radius/background inside
+   the page's already-bordered .narrow-page content. */
+.faq-category {
+  margin-top: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius-xl);
+  background: var(--card); overflow: hidden;
 }
-.faq-item summary { cursor: pointer; font-weight: 600; list-style: none; }
+.faq-category h2 {
+  font-size: 1.15rem; margin: 0; padding: 1rem 1.25rem;
+  background: var(--surface-2); border-bottom: 1px solid var(--border);
+}
+.faq-item {
+  border: none; border-bottom: 1px solid var(--border); border-radius: 0;
+  background: transparent; padding: 0.9rem 1.25rem; margin-bottom: 0;
+}
+.faq-item:last-child { border-bottom: none; }
+.faq-item summary {
+  cursor: pointer; font-weight: 600; list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  transition: color 0.15s;
+}
+.faq-item summary:hover { color: var(--accent); }
 .faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::before { content: '+ '; color: var(--accent); font-weight: 700; }
-.faq-item[open] summary::before { content: '– '; }
+/* A plain "+" that rotates into an "x" on open, instead of swapping "+ "/"– " text -- a smooth
+   transform transition reads as more polished than a content swap, which can't animate. */
+.faq-item summary::after {
+  content: '+'; color: var(--accent); font-weight: 700; font-size: 1.3rem; line-height: 1;
+  flex-shrink: 0; transition: transform 0.25s ease;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
 .faq-item .faq-answer { margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.5; }
 .faq-item .faq-answer a { color: var(--accent); }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
@@ -813,7 +845,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.3rem;
   width: fit-content; margin: 1.75rem auto; padding: 0.9rem 1.75rem;
   border: 1px solid var(--border); border-radius: var(--radius-xl);
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  /* Subtle top-down micro-gradient instead of a flat tint -- doc audit's "glassmorphic cards with
+     micro-gradients" ask for the hero's stat callouts. */
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 .hub-hero-question-stat-value { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.1rem, 1.7rem + 1.4vw, 2.75rem); font-weight: 700; color: var(--accent); line-height: 1; }
 .hub-hero-question-stat-label { font-size: 0.8rem; color: var(--muted); line-height: 1.3; }
@@ -831,7 +866,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 #hub-readiness-wrap:empty { display: none; }
 .hub-readiness-card {
   margin-top: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--highlight);
-  border-radius: var(--radius-xl); background: var(--card); padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-xl);
+  /* Faint top-down accent wash over the base card color, same micro-gradient language as
+     .hub-hero-question-stat above, rather than a flat --card fill. */
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--card)), var(--card) 65%);
+  padding: 1.25rem 1.5rem;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 34px -20px rgba(15, 23, 42, 0.45);
 }
 @media (min-width: 800px) { .hub-readiness-card { margin-top: 0; } }
@@ -1022,9 +1061,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
 }
 .exam-track-card.is-active {
+  position: relative;
   border-color: var(--accent-deep); border-width: 2px;
   background: color-mix(in srgb, var(--accent-deep) 7%, var(--surface-2));
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
+}
+/* Navy-to-gold accent bar on the one card you can actually buy -- gives the active track a
+   premium, "this is the one" edge (doc audit's "Card Accents" ask) using the brand's own
+   accent/highlight pairing rather than a generic indigo-to-sky gradient. overflow:hidden on the
+   base .exam-track-card rule clips this to the card's own rounded top corners. */
+.exam-track-card.is-active::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--highlight));
 }
 .exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent); }
 /* Upcoming (not yet active) tracks read as clearly secondary to the one you can actually use --
@@ -1178,12 +1226,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    app.js): the single highest-attention slot on the page, directly under the sticky nav. Shows
    the most relevant home-placement promo when one's active; reuses promoBannersHtml()'s existing
    markup/dismiss wiring rather than a new render path, just restyled here from a card to a slim
-   full-width gold bar. Falls back to the guarantee tagline when no promo is active, rather than
-   running a separate always-on guarantee bar alongside it. */
+   full-width bar. Falls back to the guarantee tagline when no promo is active, rather than
+   running a separate always-on guarantee bar alongside it.
+   Background matches #site-header's own --card fill (not a --highlight color wash) so the ribbon
+   reads as a continuation of the header bar, not a separate colored stripe wedged between the
+   header and the page content -- in light mode a gold-tinted background here read as a distinct
+   pale cream band against the surrounding near-white header/page (doc audit's "remove the cream
+   top banner line" complaint). The gold/accent attention-grab now lives entirely in the icon and
+   bold text instead of the bar's fill. */
 .promo-ribbon .promo-banner {
   margin-bottom: 0; border-radius: 0; border-width: 0 0 1px;
-  background: color-mix(in srgb, var(--highlight) 14%, var(--card));
-  border-color: color-mix(in srgb, var(--highlight) 35%, var(--border));
+  background: var(--card);
+  border-color: var(--border);
   padding: 0.5rem 1.5rem; justify-content: center;
 }
 .promo-ribbon .promo-banner-body { flex: 0 1 auto; font-size: 0.82rem; }
@@ -1191,12 +1245,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .promo-ribbon .promo-banner-cta { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
 .promo-ribbon-fallback {
   display: block; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none;
-  background: color-mix(in srgb, var(--highlight) 10%, var(--card));
-  border-bottom: 1px solid color-mix(in srgb, var(--highlight) 30%, var(--border));
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
   padding: 0.5rem 1.5rem; font-size: 0.82rem; font-weight: 600; color: var(--fg);
 }
 .promo-ribbon-fallback strong { color: var(--accent); }
-.promo-ribbon-fallback:hover { background: color-mix(in srgb, var(--highlight) 18%, var(--card)); }
+.promo-ribbon-fallback:hover { background: var(--surface-2); }
 
 .hub-cta { display: block; width: 100%; text-align: center; text-decoration: none; }
 .sample-done-cta { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
