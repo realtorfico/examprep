@@ -7405,6 +7405,17 @@ function updateBuyTotalDisplay() {
 
 var stripeObj = null;         // the Stripe(publishableKey) instance, created once and reused
 var stripeElementsObj = null; // current Elements group, re-created whenever the quoted amount changes
+// Guards against overlapping mountStripePaymentElement() calls stomping each other. On initial
+// load there are TWO independent triggers -- loadStripeSdk's own callback, and Turnstile's resolve
+// callback (added specifically to retry a mount that gave up before Turnstile finished, see
+// renderTurnstileWidget) -- that can both fire close together. Turnstile tokens are single-use
+// server-side, but window.turnstile.getResponse() keeps returning the same cached string after
+// it's been spent, so a second concurrent call unknowingly resubmits an already-consumed token,
+// gets rejected, and its error handler would otherwise overwrite the FIRST call's already-mounted,
+// working payment form with the generic "Could not load payment options" message. Only the most
+// recently *invoked* call is allowed to touch the DOM/state -- a stale call's result (success or
+// failure) is dropped once a newer call has started.
+var stripeMountSeq = 0;
 
 // Fetches a fresh PaymentIntent (reflecting the current email/points-checkbox state -- same
 // "just-in-time, always current" idea as PayPal's createOrder callback, just triggered by
@@ -7419,7 +7430,9 @@ function mountStripePaymentElement() {
   }
   var payBtn = document.getElementById('stripe-pay-button');
   if (payBtn) payBtn.disabled = true;
+  var mySeq = ++stripeMountSeq;
   waitForTurnstileToken(function (turnstileToken) {
+    if (mySeq !== stripeMountSeq) return; // superseded by a newer call while we waited on Turnstile
     var emailEl = document.getElementById('buy-email');
     var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
     var applyCheckbox = document.getElementById('apply-points-checkbox');
@@ -7428,6 +7441,7 @@ function mountStripePaymentElement() {
     apiFetch('/stripe/create-intent', {
       method: 'POST', body: { examType: state.examType, turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined },
     }).then(function (r) {
+      if (mySeq !== stripeMountSeq) return; // a newer call already mounted its own result -- don't clobber it
       buyPromoDiscountCents = r.promoDiscountCents || 0;
       updateBuyTotalDisplay();
       if (promoResultEl && buyPromoDiscountCents > 0) {
@@ -7450,6 +7464,7 @@ function mountStripePaymentElement() {
       paymentElement.mount('#stripe-payment-element');
       if (payBtn) payBtn.disabled = false;
     }).catch(function (err) {
+      if (mySeq !== stripeMountSeq) return; // superseded -- a newer call is handling this, don't show a stale error
       // An invalid/expired code, or one whose email requirement isn't met, shouldn't strand
       // checkout -- clear it and retry at full (or points-discounted) price so the buyer can
       // still complete the purchase. The code stays typed in the input either way, so fixing the
