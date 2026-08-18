@@ -1306,7 +1306,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .help-chat-close {
   background: transparent; border: none; color: var(--muted); cursor: pointer;
-  font-size: 1rem; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 6px;
+  font-size: 1.1rem; line-height: 1; border-radius: 999px;
+  width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 .help-chat-close:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
 .help-chat-messages { flex: 1; overflow-y: auto; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.6rem; }

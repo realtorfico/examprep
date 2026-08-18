@@ -588,6 +588,12 @@ function openHelpChatIfNeeded() {
   appendHelpChatMessage('bot', helpChatSuggestionsHtml());
 }
 
+function closeHelpChat() {
+  helpChatOpen = false;
+  var helpChatPanelEl = document.getElementById('help-chat-panel');
+  if (helpChatPanelEl) helpChatPanelEl.hidden = true;
+}
+
 function sendHelpChatQuestion(question) {
   question = question.trim();
   if (!question) return;
@@ -8326,10 +8332,12 @@ document.addEventListener('click', async function (e) {
   if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
   var act = el.getAttribute('data-act');
   if (act === 'toggle-help-chat') {
-    helpChatOpen = !helpChatOpen;
-    var helpChatPanelEl = document.getElementById('help-chat-panel');
-    if (helpChatPanelEl) helpChatPanelEl.hidden = !helpChatOpen;
     if (helpChatOpen) {
+      closeHelpChat();
+    } else {
+      helpChatOpen = true;
+      var helpChatPanelEl = document.getElementById('help-chat-panel');
+      if (helpChatPanelEl) helpChatPanelEl.hidden = false;
       openHelpChatIfNeeded();
       var helpChatInputEl = document.getElementById('help-chat-input');
       if (helpChatInputEl) helpChatInputEl.focus();
@@ -8731,6 +8739,21 @@ document.addEventListener('click', async function (e) {
 document.addEventListener('click', function (e) {
   var openMenu = document.querySelector('.profile-menu.open');
   if (openMenu && !openMenu.contains(e.target)) openMenu.classList.remove('open');
+});
+
+// Redundant close paths for the help chat panel -- reported hard to close via the small ✕ alone
+// (an imprecise click/tap on a fixed-corner button is a real failure mode, not a one-off), so
+// this adds click-outside and Escape as backup, same click-outside pattern as .profile-menu
+// above. #help-chat-root (not just .help-chat-panel) is the "inside" boundary, so a click on the
+// toggle bubble itself -- also inside that root, already handled by the toggle-help-chat
+// dispatcher above -- doesn't get double-processed here.
+document.addEventListener('click', function (e) {
+  if (!helpChatOpen) return;
+  var root = document.getElementById('help-chat-root');
+  if (root && !root.contains(e.target)) closeHelpChat();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && helpChatOpen) closeHelpChat();
 });
 
 // ---- Update checker ---------------------------------------------------
