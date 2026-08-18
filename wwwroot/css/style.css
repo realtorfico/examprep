@@ -1300,6 +1300,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   box-shadow: 0 12px 32px color-mix(in srgb, var(--fg) 22%, transparent);
   display: flex; flex-direction: column; overflow: hidden;
 }
+/* This class's own `display: flex` above (author CSS) otherwise silently overrides the browser's
+   built-in `[hidden] { display: none }` UA rule -- author styles beat UA styles at equal
+   specificity regardless of source order, so the hidden attribute was doing nothing visually
+   while every JS-side check of the .hidden property kept reporting it as working. Higher
+   specificity here ([class][attr] beats [class] alone) is what actually makes it disappear. */
+.help-chat-panel[hidden] { display: none; }
 .help-chat-panel-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-weight: 700;
