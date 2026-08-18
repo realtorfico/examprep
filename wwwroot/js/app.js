@@ -137,7 +137,7 @@ function renderSiteHeader() {
   var logo = '<span class="site-logo">' +
     '<span class="site-logo-icon">' + LOGO_SVG + '</span>' +
     '<span class="site-logo-text"><a href="' + siteHomeHref() + '" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
-    '<a href="#/guarantee" class="site-logo-tagline">Pass Exam - Or Your Money Back</a></span>' +
+    '<span class="site-logo-tagline">Pass Exam - Or Your Money Back</span></span>' +
     '</span>';
 
   // Marketing nav + CTAs (ported from v0's site-header.tsx) -- inline on desktop, folded into a
@@ -150,8 +150,10 @@ function renderSiteHeader() {
   // determines the track server-side, so this link never has to pick one.
   var currentTrack = currentTrackOrNull();
   var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
-  var navLinksHtml = '<a href="' + tracksHomeHref() + '">Exam tracks</a>' +
-    '<a href="#/guarantee">Guarantee</a>' +
+  // "Exam tracks" (nav) and "Guarantee" (nav) dropped as redundant: "Browse exams" (CTA below)
+  // already covers the tracks link, and the guarantee page is still reachable via the promo
+  // ribbon's "Pass or X% of Your Money Back" link -- no need for three links to the same place.
+  var navLinksHtml =
     '<a href="' + referHref + '">Refer &amp; earn</a>' +
     '<a href="#/gift">Gift a track 🎁</a>';
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
@@ -358,6 +360,7 @@ function renderSiteFooter() {
     '<li><a href="' + sampleHref + '">Free sample questions</a></li>' +
     '</ul></div>';
   var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
+    '<li><a href="#/about">About us</a></li>' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
@@ -522,6 +525,26 @@ function renderPrivacy() {
     'behalf; if you\'re referred by a friend, the same applies to you. We never sell or share this data. ' +
     'Payments are processed by Stripe directly; we don\'t see or store your payment details. Contact whoever ' +
     'issued your code with any privacy questions.</p>' +
+    '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
+}
+
+function renderAbout() {
+  appEl.innerHTML = '<div class="narrow-page"><h1>About PassExamHQ</h1>' +
+    '<p class="muted">PassExamHQ builds independent practice question banks for state and national licensing ' +
+    'exams — driver\'s license and CDL knowledge tests, motorcycle endorsements, notary public exams, real ' +
+    'estate licensing, boating safety, and more — each one built directly from the current official handbook ' +
+    'or manual for that specific state and track, not a generic national bank reused everywhere.</p>' +
+    '<p class="muted">Every track is a single one-time purchase, not a subscription: pay once, keep access. ' +
+    'That access includes the full question bank for unlimited practice, timed mock exams that mirror the ' +
+    'real format, voice-enabled answering and read-aloud, and per-topic progress tracking so you know what to ' +
+    'actually restudy before test day — not just an overall score.</p>' +
+    '<p class="muted">We back every track with a pass-or-money-back guarantee (see the full ' +
+    '<a href="#/guarantee">guarantee terms</a>), and our results page shows real, unedited numbers pulled ' +
+    'straight from our own database, not invented marketing figures.</p>' +
+    '<p class="muted">PassExamHQ is an independent study tool. We are not affiliated with, authorized by, ' +
+    'sponsored by, or endorsed by any state department of motor vehicles, state licensing agency, or official ' +
+    'examination vendor, and completing our practice questions or mock exams does not register you for, or ' +
+    'substitute for, any official state or federal exam.</p>' +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
 }
 
@@ -3762,12 +3785,9 @@ function renderHub() {
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Try Free Sample</button>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
     '</div>' +
+    // "No code yet? Buy instant access or refer friends" dropped as redundant -- the "Try Free
+    // Sample"/"Browse All Tracks" CTAs right above already cover that path.
     '<p class="muted hub-hero-subtext">Already have a code? <a href="#/redeem">Enter it here</a></p>' +
-    // Buying and referring are both track-specific flows -- unlike redeeming a code (whose outcome
-    // is determined by the code itself, not which track's page you land on), assuming any one
-    // particular track here (before the visitor has picked one) would be a default/preference this
-    // site doesn't make. Scroll to the picker instead, same as "Try Free Sample" above.
-    '<p class="muted hub-hero-subtext">No code yet? <a href="#" data-act="scroll-to-tracks">Buy instant access</a> or <a href="#" data-act="scroll-to-tracks">refer friends for free access</a></p>' +
     '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
@@ -3989,7 +4009,17 @@ function renderTurnstileWidget(attemptsLeft) {
   attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s of retrying, then give up quietly
   if (window.turnstileReady && window.turnstile) {
     var el = document.querySelector('#turnstile-container');
-    if (el) window.turnstile.render(el, { sitekey: TURNSTILE_SITE_KEY });
+    if (el) window.turnstile.render(el, {
+      sitekey: TURNSTILE_SITE_KEY,
+      // Buy page only: waitForTurnstileToken gives up after ~10s and fails the payment element
+      // closed ("Could not load payment options") if the challenge hasn't resolved by then --
+      // without this, a slow/late Turnstile success never gets picked back up. Re-mounting here
+      // the moment the token actually lands fixes that without touching the other pages that
+      // share this same widget (redeem/refer/refund/contact all poll fresh on their own submit).
+      callback: function () {
+        if (document.getElementById('stripe-payment-element')) mountStripePaymentElement();
+      },
+    });
   } else if (attemptsLeft > 0 && document.querySelector('#turnstile-container')) {
     setTimeout(function () { renderTurnstileWidget(attemptsLeft - 1); }, 200);
   }
@@ -6219,8 +6249,8 @@ function renderTrackLanding() {
 
   appEl.innerHTML =
     '<div class="track-landing">' +
-    '<nav class="track-landing-breadcrumb muted" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
-    escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</nav>' +
+    '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
+    '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
     '<p class="muted track-landing-state-hint">Not studying for ' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '? Use the state picker in the header above to switch.</p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
@@ -6229,6 +6259,7 @@ function renderTrackLanding() {
     '<div class="buy-layout">' +
     '<div class="buy-value-col"><div class="card">' + specsHtml + breakdownHtml + '</div></div>' +
     '<div class="card">' +
+    '<div id="track-landing-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="exam-track-price" id="landing-price">…</div>' +
     '<ul class="buy-feature-list">' +
     '<li>✓ Full question bank, unlimited practice</li>' +
@@ -6265,6 +6296,13 @@ function renderTrackLanding() {
     if (el) el.textContent = '';
   });
   loadOtherTracksPricing();
+  // Same "home" promos the hub shows -- this page IS the funnel entry point for this specific
+  // track, so a discount visible on the unscoped hub should be visible here too.
+  Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
+    var r = results[0];
+    var wrap = document.getElementById('track-landing-promotions-wrap');
+    if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
+  }).catch(function () { /* best-effort -- page still works without it */ });
 }
 
 // Tabbed Quiz/Exam/Progress teaser, embedded directly on the landing page (client-side tab switch,
@@ -6815,10 +6853,15 @@ function renderBuy(giftIntent) {
 
 function drawBuyForm(pricing, giftIntent) {
   var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
-  var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
+  var track = trackByExamType(state.examType);
+  var trackTitle = (track || {}).title || 'PassExamHQ';
   buyPromoCode = null;
   buyPromoDiscountCents = 0;
+  var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
+    (track ? '<a href="' + track.route + '">' + escapeHtml(track.stateCode ? (STATE_LABELS[track.stateCode] || track.stateCode) : trackTitle) + '</a> / ' : '') +
+    '<span class="breadcrumb-current">Get Instant Access</span></nav>';
   appEl.innerHTML =
+    breadcrumbHtml +
     '<h1>Get Instant Access</h1>' +
     '<p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p>' +
     '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
@@ -6877,7 +6920,7 @@ function drawBuyForm(pricing, giftIntent) {
     '<label class="muted buy-email-label buy-promo-label">Promo code (optional)</label>' +
     '<div class="buy-promo-row">' +
     '<input type="text" id="buy-promo-input" placeholder="e.g. SAVE20">' +
-    '<button class="btn-secondary btn-sm" type="button" data-act="apply-promo-code">Apply</button>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="apply-promo-code" disabled>Apply</button>' +
     '</div>' +
     '<div id="buy-promo-result"></div>' +
     '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
@@ -6892,7 +6935,7 @@ function drawBuyForm(pricing, giftIntent) {
     '</div>' +
     '</div>' +
     '</div>' +
-    '<p class="muted redeem-sample-hint">Already have a code? <a href="' + (trackByExamType(state.examType) || {}).route + '">Enter it here</a></p>' +
+    '<p class="redeem-sample-hint buy-redeem-hint">Already have a code? <a href="' + (trackByExamType(state.examType) || {}).route + '">Enter it here</a></p>' +
     '<div id="buy-other-tracks-wrap"></div>';
   renderTurnstileWidget();
   loadOtherTracksPricing();
@@ -6901,6 +6944,13 @@ function drawBuyForm(pricing, giftIntent) {
   // no code to type or Apply button to click for that case.
   var buyEmailEl = document.getElementById('buy-email');
   if (buyEmailEl) buyEmailEl.addEventListener('blur', function () { mountStripePaymentElement(); });
+  var buyPromoInputEl = document.getElementById('buy-promo-input');
+  var buyPromoApplyBtn = document.querySelector('[data-act="apply-promo-code"]');
+  if (buyPromoInputEl && buyPromoApplyBtn) {
+    buyPromoInputEl.addEventListener('input', function () {
+      buyPromoApplyBtn.disabled = !buyPromoInputEl.value.trim();
+    });
+  }
   var giftCheckboxEl = document.getElementById('buy-gift-checkbox');
   if (giftCheckboxEl) giftCheckboxEl.addEventListener('change', function () {
     var fieldsEl = document.getElementById('buy-gift-fields');
@@ -6941,7 +6991,7 @@ function loadOtherTracksPricing() {
       .catch(function () { return null; });
   })).then(function (results) {
     var rows = results.filter(Boolean).map(function (r) {
-      return '<a class="buy-other-track-row" href="' + r.track.route + '#/buy">' +
+      return '<a class="buy-other-track-row" href="' + r.track.route + '">' +
         '<span>' + escapeHtml(r.track.shortName || r.track.title) + '</span>' +
         '<span class="buy-other-track-price">$' + (r.priceCents / 100).toFixed(2) + '</span>' +
         '</a>';
@@ -7657,6 +7707,7 @@ function route() {
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
+  if (hashView === 'about') { renderAbout(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
   // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the

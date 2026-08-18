@@ -168,13 +168,11 @@ body {
   font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--fg); text-decoration: none;
 }
 .site-logo-accent { color: var(--accent); }
-/* The tagline is its own link (to the guarantee details page), separate from the word's link
-   (home) -- a subtle dotted underline signals it's clickable without looking like a normal link. */
+/* Plain text, not a link -- delinked as redundant with the guarantee page's other header links. */
 .site-logo-tagline {
   font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--muted); width: fit-content;
+  color: var(--muted); width: fit-content;
 }
-.site-logo-tagline:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
 #app {
   width: 100%; max-width: 580px; background: var(--card); border: 1px solid var(--border);
@@ -554,7 +552,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-value-col { display: flex; flex-direction: column; gap: 1.25rem; }
 .buy-order-summary-top { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; margin-bottom: 0.3rem; }
 .buy-order-price { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
-.buy-promo-note { font-size: 0.8rem; font-weight: 700; color: var(--highlight); margin: 0.3rem 0 0; }
+.buy-promo-note {
+  font-size: 0.95rem; font-weight: 700; color: var(--highlight); margin: 0.5rem 0 0;
+  display: inline-flex; align-items: center; padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--highlight) 14%, transparent);
+}
 .buy-feature-list { list-style: none; padding: 0; margin: 0.9rem 0 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; }
 /* Two hub-cta buttons (or a button + a link) stacked in sequence need their own gap -- .hub-cta
    itself carries no margin (it's also used solo all over the site), so any page stacking more
@@ -699,12 +701,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .font-size-pill button:first-child { border-right: 1px solid var(--border); }
 .font-size-pill button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; margin-top: 0.85rem; }
+.buy-redeem-hint { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; }
+.buy-redeem-hint a { font-weight: 700; }
 
 /* Header state picker -- always visible next to the theme/font controls (see renderSiteHeader),
    sized/bordered like the other pill controls next to it rather than a bare native <select>. */
 .header-state-picker {
   border: 1.5px solid var(--border); border-radius: 999px; background: transparent; color: var(--fg);
   padding: 0.4rem 1.6rem 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  max-width: 8rem; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
 }
 .header-state-picker:hover { color: var(--accent); border-color: var(--accent); }
 
@@ -856,9 +861,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    content width tier as the home page's comparison/outcomes sections, since it's a sales page,
    not a dense functional screen. */
 .track-landing { max-width: min(92vw, 1400px); margin: 0 auto; }
-.track-landing-breadcrumb { font-size: 0.8rem; margin-bottom: 0.5rem; }
+.track-landing-breadcrumb { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.85rem; }
 .track-landing-breadcrumb a { color: var(--muted); }
 .track-landing-breadcrumb a:hover { color: var(--accent); }
+.track-landing-breadcrumb .breadcrumb-current { color: var(--fg); }
 .track-landing-state-hint { font-size: 0.78rem; margin: 0 0 0.75rem; }
 .track-landing h1 { margin-top: 0.5rem; }
 .track-landing-official { margin-top: 0.75rem; }
@@ -1136,7 +1142,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   .promotions-wrap .promo-banner-cta { width: 100%; text-align: center; }
 }
 .promo-banner-body { flex: 1; min-width: 12rem; font-size: 0.88rem; }
-.promo-banner-body strong { color: var(--accent); font-size: 1.05rem; }
+.promo-banner-body strong { color: var(--accent); font-size: 1.05rem; display: block; margin-bottom: 0.4rem; }
 .promo-banner-code { margin-left: 0.4rem; }
 .promo-banner-cta { flex-shrink: 0; width: auto; padding: 0.5rem 1rem; }
 .promo-banner-dismiss {
@@ -1158,6 +1164,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.5rem 1.5rem; justify-content: center;
 }
 .promo-ribbon .promo-banner-body { flex: 0 1 auto; font-size: 0.82rem; }
+.promo-ribbon .promo-banner-body strong { display: inline; margin-bottom: 0; }
 .promo-ribbon .promo-banner-cta { padding: 0.3rem 0.8rem; font-size: 0.78rem; }
 .promo-ribbon-fallback {
   display: block; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none;
