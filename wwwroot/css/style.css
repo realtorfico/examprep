@@ -196,6 +196,27 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
+/* Utility controls (state picker, font size, theme toggle) merged into one segmented pill instead
+   of three separately-bordered controls sitting loose in the row -- doc audit's "Unified Controls"
+   ask. Each child keeps its own element (select / two buttons / a button) but gives up its
+   individual border/background/radius to this shared chrome; thin dividers between segments read
+   as one control. Branded CTAs, the track badge, and the profile menu stay outside it -- those
+   aren't the "adjuster" controls the audit meant to consolidate. */
+.header-util-cluster {
+  display: flex; align-items: stretch;
+  border: 1.5px solid var(--border); border-radius: 999px; overflow: hidden;
+  background: var(--surface-2);
+}
+.header-util-cluster .header-state-picker {
+  border: none; border-right: 1px solid var(--border); border-radius: 0;
+  background: transparent; max-width: 7rem;
+}
+.header-util-cluster .font-size-pill { border: none; border-right: 1px solid var(--border); border-radius: 0; }
+.header-util-cluster .font-size-pill button:first-child { border-right: 1px solid var(--border); }
+.header-util-cluster #theme-toggle-btn {
+  border: none; border-radius: 0; background: transparent; color: var(--fg); box-shadow: none;
+}
+.header-util-cluster #theme-toggle-btn:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); }
 /* Prominent "which track am I logged into" indicator (renderSiteHeader()) -- always visible, not
    tucked into the profile dropdown, since guessing this wrong is exactly what caused the earlier
    "why does this say California Notary" confusion. */
@@ -226,8 +247,9 @@ a { color: var(--accent); }
 }
 
 /* Marketing nav + CTAs (ported from v0's site-header.tsx) -- inline on wider screens, folded into
-   the mobile drawer below 800px. A separate cluster from .control-group's existing font/theme/
-   profile controls (unchanged), not merged into one, so this is additive. */
+   the mobile drawer below 800px. Separate from .control-group's .header-util-cluster (state/font/
+   theme) and profile controls -- CTAs stay their own branded buttons, not folded into the neutral
+   utility pill. */
 .site-nav { display: none; gap: 1.5rem; align-items: center; }
 .site-nav a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.15s; }
 .site-nav a:hover { color: var(--fg); }

@@ -185,15 +185,21 @@ function renderSiteHeader() {
     logo +
     '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
+    // Utility controls (state/font/theme) merged into one segmented pill cluster -- doc audit's
+    // "Unified Controls" ask -- rather than three separately-bordered pills sitting loose in the
+    // row. Branded CTAs/track badge/profile stay outside it, unchanged, since those aren't the
+    // "adjuster" controls the audit meant.
+    '<div class="header-util-cluster">' +
     renderHeaderStatePicker() +
-    '<div class="site-nav-cta">' + navCtaHtml + '</div>' +
-    accountTrackBadge +
-    '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
     '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +
     '<button data-act="font-up">A+</button>' +
     '</div>' +
     '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme"></button>' +
+    '</div>' +
+    '<div class="site-nav-cta">' + navCtaHtml + '</div>' +
+    accountTrackBadge +
+    '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
     (loggedIn ? renderProfileMenu() : '') +
     '</div>' +
     '<div class="site-mobile-drawer" id="site-mobile-drawer">' +
