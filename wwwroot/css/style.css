@@ -1266,3 +1266,53 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .resources-promo-cta { display: flex; gap: 0.6rem; margin-top: 0.6rem; flex-wrap: wrap; }
 .resources-promo-cta a { text-decoration: none; }
+
+/* ---- Help chat widget (v1: canned FAQ answers) ----------------------------
+   #help-chat-root is a sibling of #site-header/#app/#site-footer (see index.html), fixed to the
+   viewport rather than the document, so it floats above every page at a consistent corner
+   regardless of scroll position or which route is showing. z-index above the sticky header
+   (40) so the toggle button/panel are never hidden behind it. */
+#help-chat-root { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; }
+.help-chat-toggle {
+  width: 3.4rem; height: 3.4rem; border-radius: 999px; border: none; cursor: pointer;
+  background: var(--accent); color: var(--accent-foreground); font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--fg) 20%, transparent);
+}
+.help-chat-toggle:hover { background: var(--accent-hover, var(--accent)); }
+.help-chat-panel {
+  position: absolute; right: 0; bottom: calc(3.4rem + 0.75rem);
+  width: min(22rem, calc(100vw - 2rem)); height: min(28rem, calc(100vh - 8rem));
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--fg) 22%, transparent);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.help-chat-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-weight: 700;
+}
+.help-chat-close {
+  background: transparent; border: none; color: var(--muted); cursor: pointer;
+  font-size: 1rem; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 6px;
+}
+.help-chat-close:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
+.help-chat-messages { flex: 1; overflow-y: auto; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.help-chat-msg { max-width: 88%; padding: 0.55rem 0.75rem; border-radius: 12px; font-size: 0.88rem; line-height: 1.4; }
+.help-chat-msg a { color: inherit; text-decoration: underline; }
+.help-chat-msg-bot { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--border); }
+.help-chat-msg-user { align-self: flex-end; background: var(--accent); color: var(--accent-foreground); }
+.help-chat-suggestions { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+.help-chat-suggestion {
+  background: transparent; border: 1px solid var(--border); border-radius: 999px; color: var(--accent);
+  padding: 0.35rem 0.75rem; font-size: 0.82rem; cursor: pointer; text-align: left;
+}
+.help-chat-suggestion:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.help-chat-input-row { display: flex; gap: 0.5rem; padding: 0.75rem; border-top: 1px solid var(--border); }
+.help-chat-input-row input {
+  flex: 1; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2);
+  color: var(--fg); padding: 0.5rem 0.7rem; font-size: 0.88rem;
+}
+@media (max-width: 480px) {
+  #help-chat-root { right: 0.6rem; bottom: 0.6rem; }
+  .help-chat-panel { width: calc(100vw - 1.2rem); }
+}

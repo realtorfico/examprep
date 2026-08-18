@@ -408,6 +408,195 @@ function loadFooterExamLinksPricing() {
   }).catch(function () {}); // best-effort -- keep the already-shown default-order list
 }
 
+// ---- Help chat widget (v1: canned FAQ answers, no LLM/API key) ------------
+// Rendered once at boot into #help-chat-root (sibling of #site-header/#app/#site-footer, NOT
+// inside appEl) so it survives every route() re-render and keeps its conversation across
+// navigation, same reasoning as the header/footer living outside appEl. Matching is pure
+// client-side keyword scoring -- no network call, no cost, no server to build. Designed so a
+// later real-LLM upgrade only has to replace answerHelpChatQuestion()'s body (swap the local
+// match for a fetch to a new /chat endpoint) -- the message-thread UI itself doesn't change.
+var HELP_CHAT_FAQ = [
+  {
+    keywords: ['redeem', 'access code', 'enter code', 'enter my code', 'activate code', 'activate my code'],
+    question: 'How do I redeem my access code?',
+    answer: function () {
+      return 'Go to <a href="#/redeem">Redeem code</a> and enter the code exactly as it was emailed to you — that code is your entire login, no password needed.';
+    },
+  },
+  {
+    keywords: ['buy', 'purchase', 'price', 'cost', 'how much', 'pricing'],
+    question: 'How much does a track cost?',
+    answer: function () {
+      return 'Each track is a single one-time payment, not a subscription — pay once and keep access. Prices vary by track; ' +
+        '<a href="' + tracksHomeHref() + '">browse tracks</a> to see the current price for the one you need.';
+    },
+  },
+  {
+    keywords: ['refund', 'guarantee', 'money back', "don't pass", "doesn't pass", "didn't pass", 'do not pass', 'did not pass', 'fail the exam', 'failed the exam', "if i fail"],
+    question: 'What if I don\'t pass the real exam?',
+    answer: function () {
+      return 'We back every track with a pass-or-money-back guarantee — if you take the real exam and don\'t pass, we refund ' +
+        refundFailurePercent + '% of your purchase. See the <a href="#/guarantee">full guarantee terms</a> or ' +
+        'start a <a href="#/refund">refund request</a>.';
+    },
+  },
+  {
+    keywords: ['gift', 'buy for someone', 'buy for a friend', 'present'],
+    question: 'Can I gift a track to someone else?',
+    answer: function () {
+      return 'Yes — <a href="#/gift">gift a track</a> and we\'ll send the recipient their own access code, or hand you a ' +
+        'shareable code if you\'d rather deliver it yourself.';
+    },
+  },
+  {
+    keywords: ['refer', 'referral', 'points', 'invite a friend', 'invite friends', 'earn free', 'free access'],
+    question: 'How does referring friends work?',
+    answer: function () {
+      return 'Refer friends and earn points toward free access — see <a href="' + tracksHomeHref() + '#tracks">a track\'s page</a> ' +
+        'and use its "Refer & earn" link, or check your points from the buy page\'s "Check my points" button.';
+    },
+  },
+  {
+    keywords: ['sample', 'try free', 'free questions', 'demo', 'before i buy', 'before buying', 'try it first', 'try before'],
+    question: 'Can I try questions before buying?',
+    answer: function () {
+      return 'Yes — every track has free sample questions with no account needed. ' +
+        '<a href="' + tracksHomeHref() + '">Browse tracks</a> and open any one to try a sample.';
+    },
+  },
+  {
+    keywords: ['discount', 'promo code', 'coupon', 'student discount', 'promotion'],
+    question: 'Do you offer discounts?',
+    answer: function () {
+      return 'When a discount is active it\'ll show right on the buy page, and there\'s a promo code field there too if you have one — enter it and click Apply before paying.';
+    },
+  },
+  {
+    keywords: ['voice', 'read aloud', 'read out loud', 'audio', 'listen to questions'],
+    question: 'What does voice-enabled practice mean?',
+    answer: function () {
+      return 'Questions can be read aloud to you, and you can answer by voice too — it\'s built into the practice quiz once you\'re unlocked into a track.';
+    },
+  },
+  {
+    keywords: ['mock exam', 'timed test', 'practice test', 'how many questions', 'exam format'],
+    question: 'How is the mock exam formatted?',
+    answer: function () {
+      return 'Each track\'s mock exam mirrors that state/track\'s real question count, time limit, and passing score — open the specific ' +
+        'track\'s page for its exact numbers, since they vary a lot by track.';
+    },
+  },
+  {
+    keywords: ['progress', 'accuracy', 'coverage', 'track my progress', 'how am i doing'],
+    question: 'How do I track my progress?',
+    answer: function () {
+      return 'Once you\'re logged in with your code, the Progress tab shows your Accuracy and Coverage per topic, so you know exactly what to restudy before test day.';
+    },
+  },
+  {
+    keywords: ['login', 'log in', 'account', 'sign in', 'password', 'my code'],
+    question: 'How do I log in?',
+    answer: function () {
+      return 'There\'s no password to manage — your access code is your login. ' +
+        '<a href="#/redeem">Enter it here</a> if you haven\'t already.';
+    },
+  },
+  {
+    keywords: ['states', 'which exams', 'what tracks', 'available tracks', 'what do you offer'],
+    question: 'Which states/tracks are available?',
+    answer: function () {
+      return '<a href="' + tracksHomeHref() + '">Browse all tracks</a> to see what\'s currently live for your state.';
+    },
+  },
+  {
+    keywords: ['about', 'who are you', 'what is this site', 'what is passexamhq'],
+    question: 'What is PassExamHQ?',
+    answer: function () { return 'Short version on <a href="#/about">our About page</a> — independent practice question banks built from official state handbooks, one-time purchase, no subscription.'; },
+  },
+  {
+    keywords: ['privacy', 'my data', 'my information'],
+    question: 'What data do you store about me?',
+    answer: function () { return 'See our <a href="#/privacy">privacy page</a> for exactly what we store and why.'; },
+  },
+  {
+    keywords: ['terms', 'legal', 'terms of service'],
+    question: 'Where are your terms of service?',
+    answer: function () { return 'Here: <a href="#/terms">Terms of service</a>.'; },
+  },
+  {
+    keywords: ['contact', 'support', 'talk to someone', 'human', 'help me', 'real person'],
+    question: 'How do I reach a real person?',
+    answer: function () { return 'Send us a note on the <a href="#/contact">Contact us</a> page and we\'ll reply to your email.'; },
+  },
+];
+var HELP_CHAT_FALLBACK_HTML = 'I\'m not able to answer that one yet — this is a simple FAQ helper, not a full support agent. ' +
+  'Try rephrasing, or <a href="#/contact">contact us</a> directly and a real person will help.';
+var HELP_CHAT_SUGGESTIONS = ['How do I redeem my code?', 'What if I don\'t pass?', 'Can I try before buying?'];
+
+var helpChatMessages = []; // { role: 'user'|'bot', html: string }
+var helpChatOpen = false;
+
+function scoreHelpChatEntry(entry, queryLower) {
+  var score = 0;
+  entry.keywords.forEach(function (k) { if (queryLower.indexOf(k) !== -1) score++; });
+  return score;
+}
+function answerHelpChatQuestion(query) {
+  var queryLower = query.toLowerCase();
+  var best = null, bestScore = 0;
+  HELP_CHAT_FAQ.forEach(function (entry) {
+    var s = scoreHelpChatEntry(entry, queryLower);
+    if (s > bestScore) { bestScore = s; best = entry; }
+  });
+  return best ? best.answer() : HELP_CHAT_FALLBACK_HTML;
+}
+
+function helpChatSuggestionsHtml() {
+  return '<div class="help-chat-suggestions">' + HELP_CHAT_SUGGESTIONS.map(function (q) {
+    return '<button type="button" class="help-chat-suggestion" data-act="help-chat-suggestion" data-question="' + escapeHtml(q) + '">' + escapeHtml(q) + '</button>';
+  }).join('') + '</div>';
+}
+
+function renderHelpChatWidget() {
+  var root = document.getElementById('help-chat-root');
+  if (!root) return;
+  root.innerHTML =
+    '<button class="help-chat-toggle" type="button" data-act="toggle-help-chat" aria-label="Open help chat">💬</button>' +
+    '<div class="help-chat-panel" id="help-chat-panel" hidden>' +
+    '<div class="help-chat-panel-header"><span>PassExamHQ Help</span>' +
+    '<button class="help-chat-close" type="button" data-act="toggle-help-chat" aria-label="Close help chat">✕</button></div>' +
+    '<div class="help-chat-messages" id="help-chat-messages"></div>' +
+    '<form class="help-chat-input-row" data-act="help-chat-send">' +
+    '<input type="text" id="help-chat-input" placeholder="Ask a question…" autocomplete="off">' +
+    '<button class="btn-primary btn-sm" type="submit">Send</button>' +
+    '</form>' +
+    '</div>';
+}
+
+function appendHelpChatMessage(role, html) {
+  helpChatMessages.push({ role: role, html: html });
+  var listEl = document.getElementById('help-chat-messages');
+  if (!listEl) return;
+  listEl.insertAdjacentHTML('beforeend', '<div class="help-chat-msg help-chat-msg-' + role + '">' + html + '</div>');
+  listEl.scrollTop = listEl.scrollHeight;
+}
+
+function openHelpChatIfNeeded() {
+  if (helpChatMessages.length) return;
+  appendHelpChatMessage('bot', 'Hi! I can answer quick questions about buying, redeeming a code, the guarantee, and more. What do you need?');
+  appendHelpChatMessage('bot', helpChatSuggestionsHtml());
+}
+
+function sendHelpChatQuestion(question) {
+  question = question.trim();
+  if (!question) return;
+  appendHelpChatMessage('user', escapeHtml(question));
+  var inputEl = document.getElementById('help-chat-input');
+  if (inputEl) inputEl.value = '';
+  // Tiny delay so a reply that's actually instant still reads as "answering", not "static lookup".
+  setTimeout(function () { appendHelpChatMessage('bot', answerHelpChatQuestion(question)); }, 350);
+}
+
 // ---- Site news banner ------------------------------------------------------
 // Dismissible via localStorage keyed by id, so a future announcement (new id) reappears
 // for everyone even if they dismissed an older one. Rendered on the hub (home page) and
@@ -7799,7 +7988,11 @@ async function submitAnswer(choice) {
 
 document.addEventListener('submit', async function (e) {
   var act = e.target.getAttribute && e.target.getAttribute('data-act');
-  if (act === 'stripe-pay-submit') {
+  if (act === 'help-chat-send') {
+    e.preventDefault();
+    var helpChatInputEl = document.getElementById('help-chat-input');
+    sendHelpChatQuestion(helpChatInputEl ? helpChatInputEl.value : '');
+  } else if (act === 'stripe-pay-submit') {
     e.preventDefault();
     await submitStripePayment();
   } else if (act === 'redeem-submit') {
@@ -7978,7 +8171,18 @@ document.addEventListener('click', async function (e) {
   // the router would fall back to the default tab, undoing the tab switch this handler just made.
   if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
   var act = el.getAttribute('data-act');
-  if (act === 'listen') {
+  if (act === 'toggle-help-chat') {
+    helpChatOpen = !helpChatOpen;
+    var helpChatPanelEl = document.getElementById('help-chat-panel');
+    if (helpChatPanelEl) helpChatPanelEl.hidden = !helpChatOpen;
+    if (helpChatOpen) {
+      openHelpChatIfNeeded();
+      var helpChatInputEl = document.getElementById('help-chat-input');
+      if (helpChatInputEl) helpChatInputEl.focus();
+    }
+  } else if (act === 'help-chat-suggestion') {
+    sendHelpChatQuestion(el.getAttribute('data-question') || '');
+  } else if (act === 'listen') {
     speak(questionReadText(state.question));
   } else if (act === 'answer') {
     stopSpeaking();
@@ -8419,6 +8623,7 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   applyTheme(local.theme, local.fontScale);
   renderSiteHeader();
   renderSiteFooter();
+  renderHelpChatWidget(); // outside appEl -- rendered once here only, so it survives every route() re-render
   // Must know which track the token (if any) actually belongs to, AND have any admin
   // track-deactivation override applied, BEFORE #app's first render -- otherwise
   // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment
