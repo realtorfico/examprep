@@ -764,7 +764,15 @@ var HUB_EXAMS = [
     title: 'New York Notary Public Exam', category: 'State Licensing', active: true, route: '/ny_notary',
     duration: '60 Minutes', questions: '40 Multiple Choice', passScore: '70% (28/40 Correct)',
     description: 'Practice questions covering the New York Notary Public License Law: appointment and professional conduct, powers and duties, statutory fees, real property acknowledgments, and the rules and regulations governing notaries.',
-    breakdown: [['Appointment, Qualifications & Professional Conduct', '18%'], ['Powers, Duties, Fees & Electronic Notarization', '22%'], ['Rules & Regulations (19 NYCRR Part 182) and Definitions/Fees', '39%'], ['Real Property Law, Restrictions & Criminal Liability', '21%']],
+    // Rebuilt 2026-08-17 directly from the NY DOS's own March 2026 Notary Public License Law
+    // booklet (local copy: temp/handbooks/ny/notary.txt), matching its actual section structure
+    // rather than a generic 4-bucket template. NY publishes no official exam blueprint/topic
+    // weighting -- these percentages are this booklet's own body-text proportion per section
+    // (line count per section / total body line count), not a state-disclosed weighting. "Real
+    // Property Law" is a real, standalone top-level section of this law (Real Property Law
+    // §298-333: acknowledgments and proofs), not a stray real-estate-track leftover -- NY notaries
+    // routinely acknowledge deeds/mortgages, and the booklet itself quotes case law on exactly that.
+    breakdown: [['Appointment & Qualifications (Executive Law §130–133)', '15%'], ['Powers & Duties, Fees & Advertising (Executive Law §134–138, 142-a)', '29%'], ['Real Property Law: Acknowledgments & Proofs (§298–333)', '16%'], ['Restrictions, Violations & Penal Law (Judiciary Law §484–485)', '11%'], ['Electronic Notarization & Recordkeeping (19 NYCRR Part 182)', '29%']],
   },
   {
     examType: 'il_driver', shortName: 'Illinois Driver', stateCode: 'IL', examKind: 'Driver',
