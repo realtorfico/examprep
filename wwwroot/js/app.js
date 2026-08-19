@@ -7304,14 +7304,24 @@ function drawBuyForm(pricing, giftIntent) {
         '</select>'
       : '') +
     '</div>' +
+    // Points-check and promo-code are two independent, unrelated checkout actions that used to
+    // stack as their own full-width rows -- side by side on anything wider than a phone instead,
+    // to cut the form's vertical height (per-user request).
+    '<div class="buy-secondary-actions-row">' +
+    '<div class="buy-points-check">' +
+    '<label class="muted buy-email-label">Have referral points?</label>' +
     '<button class="btn-secondary btn-sm" type="button" data-act="check-points">Check my points</button>' +
     '<div id="points-result"></div>' +
-    '<label class="muted buy-email-label buy-promo-label">Promo code (optional)</label>' +
+    '</div>' +
+    '<div class="buy-promo-check">' +
+    '<label class="muted buy-email-label">Promo code (optional)</label>' +
     '<div class="buy-promo-row">' +
     '<input type="text" id="buy-promo-input" placeholder="e.g. SAVE20">' +
     '<button class="btn-secondary btn-sm" type="button" data-act="apply-promo-code" disabled>Apply</button>' +
     '</div>' +
     '<div id="buy-promo-result"></div>' +
+    '</div>' +
+    '</div>' +
     '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
     '<div id="turnstile-container"></div>' +
     '<p class="muted stripe-card-note">💳 Pay by card, Apple Pay, or Google Pay — whichever your device supports shows up automatically below.</p>' +

@@ -665,6 +665,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-promo-label { margin-top: 0.75rem; }
 .buy-promo-row { display: flex; gap: 0.5rem; }
 .buy-promo-row input { flex: 1; }
+/* Points-check and promo-code are two independent, unrelated checkout actions -- side by side on
+   anything wider than a phone instead of each taking its own full-width row, to shorten the
+   payment form (per-user request to reduce the buy page's vertical height). */
+.buy-secondary-actions-row { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.75rem; }
+@media (min-width: 420px) {
+  .buy-secondary-actions-row { flex-direction: row; align-items: flex-start; gap: 1rem; }
+  .buy-points-check { flex: 0 1 auto; }
+  .buy-promo-check { flex: 1 1 auto; min-width: 0; }
+}
 #buy-promo-result, #refer-promo-result { margin-top: 0.4rem; font-size: 0.85rem; }
 .buy-total-line { font-weight: 700; margin: 0.75rem 0 0; }
 /* Narrows prose-heavy pages (legal/guarantee/contact/refund/refer) within the wider #app shell --
