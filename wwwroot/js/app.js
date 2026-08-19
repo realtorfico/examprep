@@ -837,7 +837,7 @@ var FAQ_CATEGORIES = [
     category: 'Studying & Practice',
     items: [
       { q: "What's included once I unlock a track?", a: function () {
-        return 'The full question bank for unlimited practice, a timed mock exam plus a "Toughest 45" drill of the hardest ' +
+        return 'The full question bank for unlimited practice, a timed mock exam plus a "Weak Spots" drill of the hardest ' +
           'questions, voice-enabled answering and read-aloud, a study resource library, and per-topic progress tracking.';
       } },
       { q: 'Can questions be read aloud to me?', a: function () {
@@ -2279,6 +2279,27 @@ var HUB_EXAMS = [
     duration: "Untimed", questions: "Default: 40 Multiple Choice (No Official Count Exists -- Not Published by WYDOT's Manual, Testing Page, FAQ, or W.S. 31-7-114) -- 281-Question Practice Pool", passScore: "80% (Self-Study Benchmark -- No Official Threshold Published)",
     description: "Practice questions covering the Wyoming Rules of the Road Driver License Manual (2021 edition, published by WYDOT's Driver Services Program): driver license classes and restriction codes, testing and documentation requirements, fees, renewals and the Graduated Driver License system (age-restricted 'extreme inconvenience' licenses at 14-15, intermediate licenses at 16, full privileges at 16.5-17 with a 50-hour supervised-driving requirement including 10 night hours), vehicle equipment, seat belt and child-restraint law, traffic-sign shapes and colors, signals and pavement markings, railroad crossings, speed limits, right-of-way at intersections and roundabouts, required stops and school buses, changing lanes and turning, passing, parking, interstate driving, traffic crashes, sharing the road with motorcycles, bicycles, heavy vehicles, animals and pedestrians, defensive driving and space-cushion technique, reduced-light and night driving, weather conditions, emergency situations, DUI/alcohol/drug law, license suspensions/revocations/penalties, and health, vision and definitions. WYDOT's manual turned out unusually rich for a small state -- concrete, testable figures throughout include the full speed-limit table, BAC thresholds (0.08 adult / 0.02 youthful / 0.05 supporting-evidence), detailed DWUI suspension and ignition-interlock schedules by offense number, child-restraint fines ($60/$110) and the federal FMVSS 213 requirement, following-distance multipliers by condition, headlight-dimming distances, and the 20-mph Move Over Law reduction. Real exam mechanics were actively researched across four official sources -- the full manual text, WYDOT's own Testing Requirements page, WYDOT's FAQ page, and the governing statute (W.S. 31-7-114) -- and none of them publish a written-test item count, passing score, or time limit. The only related figure WYDOT does disclose concerns a separate, differently-scored driving skills test: a retest is delayed to three days if an applicant misses 13 or more items on that skills-test scoring sheet, a detail reflected in this question bank but not conflated with the unconfirmed written-test numbers. This 281-question bank is our own self-study practice pool.",
     breakdown: [["Licensing, Testing, Fees & GDL Requirements","15%"],["Vehicle Equipment, Safety Belts & Child Restraints","7%"],["Traffic Signs, Signals, Markings & Railroad Crossings","12%"],["Speed, Right-of-Way, Intersections & Required Stops","12%"],["Lane Changes, Turning, Passing, Parking & Interstate Driving","13%"],["Traffic Crashes, Sharing the Road & Defensive Driving","13%"],["Night Driving, Weather & Emergency Situations","11%"],["DUI/Alcohol/Drug Law, Suspensions, Revocations & Penalties","11%"],["Health, Vision, Hearing, Distracted Driving & Definitions","6%"]],
+  },
+  {
+    examType: 'al_cdl', shortName: 'Alabama CDL', stateCode: 'AL', examKind: 'Commercial Driver (CDL)',
+    title: 'Alabama CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/al_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Alabama Commercial Driver License Manual (ALEA Driver License Division, 2005 CDL Testing System / AAMVA, Version July 2017): CDL vehicle classes and licensing, vehicle inspection and distracted driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content.',
+    breakdown: [['CDL Licensing, Vehicle Inspection & Cargo/Passenger Safety', '49%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '29%'], ['Hazardous Materials', '14%'], ['School Bus', '8%']],
+  },
+  {
+    examType: 'ak_cdl', shortName: 'Alaska CDL', stateCode: 'AK', examKind: 'Commercial Driver (CDL)',
+    title: 'Alaska CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ak_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Alaska Commercial Driver License Manual (Alaska DMV, Division of Motor Vehicles): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The manual states directly that the minimum passing score for all knowledge tests is 80%.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '50%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '24%'], ['Hazardous Materials', '17%'], ['School Bus', '9%']],
+  },
+  {
+    examType: 'az_cdl', shortName: 'Arizona CDL', stateCode: 'AZ', examKind: 'Commercial Driver (CDL)',
+    title: 'Arizona CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/az_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by ADOT)', passScore: '40/50 Correct (80% -- Confirmed Directly in the ADOT Manual)',
+    description: 'Practice questions covering the Arizona Commercial Driver License Manual (ADOT Motor Vehicle Division, Customer Service Guide for Commercial Drivers, Revised 01/2026): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The manual states directly that applicants must answer at least 80% of questions correctly to pass each knowledge test; the 50-question count follows the federally standardized AAMVA format (49 CFR 383.135(a)) used by every other state\'s CDL General Knowledge test, corroborated by multiple third-party AZ CDL prep sources, since ADOT\'s own manual text doesn\'t spell out the item count verbatim.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '45%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '27%'], ['Hazardous Materials', '19%'], ['School Bus', '9%']],
   },
 ];
 
@@ -3888,6 +3909,49 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Wyoming WYDOT written knowledge test, driving skills test, or any instruction permit, driver license, or driving privilege.",
     passScoreNote: "a self-directed study benchmark we set for practice purposes -- WYDOT does not publicly disclose an item count, passing score, or time limit for its real written knowledge test anywhere checked (the manual, WYDOT's Testing Requirements page, WYDOT's FAQ page, and the governing statute W.S. 31-7-114); the only related figure WYDOT discloses concerns the separate, differently-scored driving skills test, where a retest is delayed to three days if an applicant misses 13 or more items on that test's own scoring sheet",
   },
+  al_cdl: {
+    orgLine: 'the Alabama Law Enforcement Agency (ALEA), Driver License Division',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Alabama CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Alabama CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here does not ' +
+      'register you for, or schedule, the official ALEA CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Alabama Law Enforcement Agency, and ELDT must be completed through a provider listed on the ' +
+      'FMCSA Training Provider Registry. While we strive to align our content with the current Alabama Commercial Driver License ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed ' +
+      'exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real ALEA CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold as the real ALEA CDL General Knowledge test — 40 of 50 correct',
+  },
+  ak_cdl: {
+    orgLine: 'the Alaska Division of Motor Vehicles (DMV), Department of Administration',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Alaska CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Alaska CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Completing practice exams here does not ' +
+      'register you for, or schedule, the official Alaska DMV CDL knowledge test, skills test, or road test; official testing must ' +
+      'be scheduled directly through the Alaska DMV, and ELDT must be completed through a provider listed on the FMCSA Training ' +
+      'Provider Registry. While we strive to align our content with the current Alaska Commercial Driver License Manual, it is ' +
+      'provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Alaska DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold stated directly in the Alaska CDL Manual — the minimum passing score for all knowledge tests is 80%, i.e. 40 of 50 correct',
+  },
+  az_cdl: {
+    orgLine: 'the Arizona Department of Transportation (ADOT), Motor Vehicle Division',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Arizona CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Arizona CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The ADOT Commercial Driver License Manual ' +
+      'confirms the real General Knowledge test requires at least 80% correct to pass, but does not spell out the exact item count; ' +
+      'this practice exam follows the federally standardized 50-question AAMVA format (49 CFR 383.135(a)) used by every other ' +
+      'state\'s CDL knowledge test. Completing practice exams here does not register you for, or schedule, the official ADOT CDL ' +
+      'knowledge test, skills test, or road test; official testing must be scheduled directly through ADOT MVD, and ELDT must be ' +
+      'completed through a provider listed on the FMCSA Training Provider Registry. While we strive to align our content with the ' +
+      'current Arizona Commercial Driver License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real ADOT CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same 80% threshold confirmed directly in the ADOT manual; the 50-question/40-correct count follows the federally standardized AAMVA format rather than an ADOT-published item count',
+  },
 };
 function trackCompliance(examType) {
   return TRACK_COMPLIANCE[examType] || TRACK_COMPLIANCE.ca_notary;
@@ -4435,7 +4499,7 @@ function renderTabs(active) {
   // its definition for why (an account bound to one track viewing a different track's route).
   var loggedIn = isLoggedInForCurrentTrack();
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
-  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Toughest 45'], ['progress', 'Progress'], ['info', 'Info']];
+  var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Weak Spots'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">' + escapeHtml((trackByExamType(state.examType) || {}).shortName || '') + '</div>' : '';
   return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = gated[t[0]] && !loggedIn;
@@ -5842,6 +5906,21 @@ var RESOURCES = {
       desc: "WYDOT's official Testing Requirements page -- confirms the written knowledge test covers traffic-control devices, safe driving practices and traffic laws, but does not publish an item count, passing score, or time limit.",
       topic: "General Reference", free: true },
   ],
+  al_cdl: [
+    { title: 'Alabama Commercial Driver License Manual', type: 'pdf', url: 'https://www.alea.gov/sites/default/files/CDL%20Manuals%204.9.24.pdf',
+      desc: 'The official CDL manual published by the Alabama Law Enforcement Agency (ALEA) Driver License Division — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ak_cdl: [
+    { title: 'Alaska Commercial Driver License Manual', type: 'pdf', url: 'https://dmv.alaska.gov/media/u3lpkfmv/cdlmanual.pdf',
+      desc: 'The official CDL manual published by the Alaska Division of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  az_cdl: [
+    { title: 'Arizona Commercial Driver License Manual', type: 'pdf', url: 'https://apps.azdot.gov/files/mvd/mvd-forms-lib/40-7802.pdf',
+      desc: 'The official CDL manual (Customer Service Guide for Commercial Drivers) published by the Arizona Department of Transportation Motor Vehicle Division — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
 };
 
 var RESOURCE_TYPE_LABEL = {
@@ -6325,11 +6404,11 @@ var progressExamAttempts = []; // standard + toughest45 attempts merged into one
 var examAttemptOpenId = null; // attemptId currently expanded, or null (accordion -- one at a time -- attemptIds are globally unique across modes so this is unambiguous)
 var examAttemptDetailCache = {}; // attemptId -> { review } | { error: true }, fetched lazily on first open
 var examAttemptsExpanded = false; // collapsed by default, same "Show all" pattern as the topics table below
-var examAttemptsSort = { key: 'date', dir: 'desc' }; // newest first by default; click a header to re-sort (e.g. by Mode, to group Toughest 45 attempts together)
+var examAttemptsSort = { key: 'date', dir: 'desc' }; // newest first by default; click a header to re-sort (e.g. by Mode, to group Weak Spots attempts together)
 var EXAM_ATTEMPTS_COLLAPSED_COUNT = 2;
-var EXAM_ATTEMPT_MODE_LABELS = { standard: 'Standard', toughest45: 'Toughest 45' };
+var EXAM_ATTEMPT_MODE_LABELS = { standard: 'Standard', toughest45: 'Weak Spots' };
 
-// Per-attempt exam history for the Progress tab -- same attempts list as the Exam/Toughest 45
+// Per-attempt exam history for the Progress tab -- same attempts list as the Exam/Weak Spots
 // tabs' own history pages, but each row expands in place to show just the wrong questions (with
 // the correct answer + explanation), mirroring the admin console's user → attempt → per-question
 // drill-down. The full per-question detail (/exam/attempt) isn't in the /exam/history list
@@ -6352,7 +6431,7 @@ function examAttemptSortValue(a, key) {
   return a.submittedAt;
 }
 
-// Standard and Toughest 45 attempts merged into one sortable table (a Mode column tells them
+// Standard and Weak Spots attempts merged into one sortable table (a Mode column tells them
 // apart) rather than two near-identical cards -- they carry the same fields, and a reader browsing
 // recent activity doesn't care which bucket an attempt landed in until they want to filter by it,
 // at which point sorting by Mode groups them.
@@ -6665,7 +6744,7 @@ function renderTrackLanding() {
     '<div class="exam-track-price" id="landing-price">…</div>' +
     '<ul class="buy-feature-list">' +
     '<li>✓ Full question bank, unlimited practice</li>' +
-    '<li>✓ Timed mock exam &amp; Toughest 45 drills</li>' +
+    '<li>✓ Timed mock exam &amp; Weak Spots drills</li>' +
     '<li>✓ Voice-enabled answering &amp; read-aloud</li>' +
     '<li>✓ Per-topic progress tracking</li>' +
     '<li>✓ Pass-or-money-back guarantee</li>' +
@@ -6780,13 +6859,13 @@ function renderAdditionalInfo() {
     linkCards;
 }
 
-// ---- Timed mock exam (+ "Toughest 45", a harder variant) ------------------
+// ---- Timed mock exam (+ "Weak Spots", a harder variant) ------------------
 // A single-sitting, timed simulation of the real exam -- no per-question feedback, free
 // navigation between questions, and a countdown clock computed from the server's own
 // startedAt (not a client-only timer), so a refresh mid-sitting resumes in place rather than
 // restarting the clock or handing out a fresh question set.
 //
-// Both the regular exam and "Toughest 45" (same timed format, but every question is drawn from
+// Both the regular exam and "Weak Spots" (same timed format, but every question is drawn from
 // ones you've previously gotten wrong -- see pickToughest45Questions in the Worker) share all of
 // this code, distinguished only by a `mode` ('standard' | 'toughest45') threaded through every
 // function and echoed in the server's exam_attempts row, rather than duplicating ~250 lines for a
@@ -6837,7 +6916,7 @@ async function renderExamIntro(mode) {
     : '<li><strong>' + config.questionCount + ' questions</strong>, drawn at random from the full question bank</li>';
   var isUntimed = !config.durationSec;
   appEl.innerHTML = renderTabs(examTabKey(mode)) +
-    '<h1>' + (isToughest ? 'Toughest 45' : (isUntimed ? 'Practice Exam' : 'Timed Practice Exam')) + '</h1>' +
+    '<h1>' + (isToughest ? 'Weak Spots' : (isUntimed ? 'Practice Exam' : 'Timed Practice Exam')) + '</h1>' +
     (isToughest ? '<p class="muted page-intro-text">Same format as the practice exam, but every question is one you\'ve missed before -- a focused drill on your actual weak spots.</p>' : '') +
     '<div class="card mockexam-intro-card">' +
     '<p>This mimics the real exam format as closely as possible:</p>' +
@@ -6873,7 +6952,7 @@ async function renderExamIntro(mode) {
 
 async function renderExamHistory(mode) {
   mode = mode || 'standard';
-  var examLabel = mode === 'toughest45' ? 'Toughest 45 exam' : 'practice exam';
+  var examLabel = mode === 'toughest45' ? 'Weak Spots exam' : 'practice exam';
   appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading past attempts…</p>';
   try {
     var res = await apiFetch('/exam/history?mode=' + mode);
@@ -6920,7 +6999,7 @@ async function beginExam(mode) {
     var attempt = await apiFetch('/exam/start', { method: 'POST', body: { mode: mode, unseenOnly: unseenOnly, ageCategory: examAgeCategoryOverride || undefined } });
     enterExamSitting(attempt, mode);
   } catch (e) {
-    // Toughest 45 has no backfill -- a user with nothing currently wrong gets 'no_questions' here,
+    // Weak Spots has no backfill -- a user with nothing currently wrong gets 'no_questions' here,
     // which deserves an explanation ("go miss some questions first") rather than a generic error.
     // Same idea for "unseen only" -- a user who's seen the whole bank gets 'no_unseen_questions'.
     var errCode = e.data && e.data.error;
@@ -7083,7 +7162,7 @@ function examSittingDied() {
     'finished from another device or browser tab on this account. Answers entered after that point ' +
     'were not saved, sorry about that.</p>' +
     '<a class="btn-primary hub-cta" href="' + examMainHash(examState.mode) + '">← Back to ' +
-    (examState.mode === 'toughest45' ? 'Toughest 45' : 'Exam') + '</a>';
+    (examState.mode === 'toughest45' ? 'Weak Spots' : 'Exam') + '</a>';
 }
 
 async function selectExamAnswer(choice) {
@@ -7171,7 +7250,7 @@ function renderExamResults(result, opts) {
   var ctaHtml = opts.fromHistory
     ? '<a class="btn-secondary hub-cta" href="' + examHistoryHash(mode) + '">← Back to past attempts</a>'
     : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart" data-mode="' + mode + '">Take another ' +
-      (mode === 'toughest45' ? 'Toughest 45 exam' : 'practice exam') + ' →</button>';
+      (mode === 'toughest45' ? 'Weak Spots exam' : 'practice exam') + ' →</button>';
 
   appEl.innerHTML = renderTabs(examTabKey(mode)) +
     '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +

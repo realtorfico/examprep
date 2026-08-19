@@ -991,7 +991,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .locked-preview-tabs button.active { background: var(--accent); color: var(--accent-foreground); }
 .locked-preview-body { position: relative; min-height: 280px; }
-.locked-preview-mockup { padding: 1.25rem; filter: blur(2px) grayscale(0.35); opacity: 0.5; pointer-events: none; user-select: none; }
+.locked-preview-mockup { padding: 1.25rem; filter: blur(1px) grayscale(0.15); opacity: 0.75; pointer-events: none; user-select: none; }
 .locked-preview-meta { font-size: 0.78rem; margin-bottom: 0.4rem; }
 .locked-preview-exam-bar {
   display: flex; justify-content: space-between; align-items: center; background: var(--accent);
@@ -1003,7 +1003,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .locked-preview-overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
   justify-content: center; text-align: center; gap: 0.5rem; padding: 1.5rem;
-  background: color-mix(in srgb, var(--card) 55%, transparent);
+  background: color-mix(in srgb, var(--card) 35%, transparent);
 }
 .locked-preview-overlay p { max-width: 22rem; color: var(--fg); font-weight: 600; font-size: 0.92rem; }
 .locked-preview-icon {
