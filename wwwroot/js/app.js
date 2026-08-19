@@ -3901,8 +3901,24 @@ function trackCompliance(examType) {
 // prefer). Null when neither resolves to a real active track. Callers must handle null explicitly,
 // typically by sending the visitor to the tracks picker (/#tracks) rather than falling back to any
 // particular track -- no track gets default or preferential treatment anywhere on the site.
+// Persists across page loads (localStorage, same pattern as examprep_theme/examprep_font) --
+// state.examType itself does NOT: it's an in-memory var that only gets set while route() is
+// actually resolving a track's own pathname, and resets to '' on every fresh navigation (this
+// site uses real <a href> page loads, not pushState). Without this, a visitor who clicks into a
+// track, looks around, then goes back to the hub and clicks Refer/Sample would land back on the
+// generic tracks picker instead of the track they were just looking at, purely because it's now a
+// new page load. Only meant to steer someone who HASN'T bought/redeemed yet -- currentTrackOrNull()
+// below only reaches this fallback when logged out (or logged in with no real account track).
+var LAST_VIEWED_TRACK_KEY = 'examprep_last_track';
+function rememberLastViewedTrack(examType) {
+  try { localStorage.setItem(LAST_VIEWED_TRACK_KEY, examType); } catch (ignored) { /* private browsing, etc. */ }
+}
+function lastViewedTrackExamType() {
+  try { return localStorage.getItem(LAST_VIEWED_TRACK_KEY) || ''; } catch (ignored) { return ''; }
+}
+
 function currentTrackOrNull() {
-  var examType = (getToken() && accountExamType) ? accountExamType : state.examType;
+  var examType = (getToken() && accountExamType) ? accountExamType : (state.examType || lastViewedTrackExamType());
   var current = trackByExamType(examType);
   return (current && current.active) ? current : null;
 }
@@ -8150,6 +8166,7 @@ function route() {
   var track = activeTrackForPath(location.pathname);
   if (track) {
     state.examType = track.examType;
+    rememberLastViewedTrack(track.examType);
     // Track pages don't carry a "/xx" state prefix (they're "/fl_notary", not "/fl/notary"), so the
     // matchedState branch above never fires for them -- on a fresh/hard load (real <a href> nav
     // between pages is the norm here, not pushState; see renderHubScopedContextBar's comment)
