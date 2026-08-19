@@ -659,6 +659,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 #points-result { margin-top: 0.5rem; }
 .points-apply-label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; margin-top: 0.4rem; }
 .buy-gift-toggle { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-weight: 600; margin: 0.75rem 0 0.5rem; }
+/* Email input + gift toggle: stacked (checkbox below, its own margin above for breathing room)
+   on a phone, one row (email flexing to fill, checkbox at its natural width) from 420px up --
+   same breakpoint as .buy-secondary-actions-row below. */
+.buy-email-gift-row { display: flex; flex-direction: column; }
+@media (min-width: 420px) {
+  .buy-email-gift-row { flex-direction: row; align-items: center; gap: 0.75rem; }
+  .buy-email-gift-row input { flex: 1; min-width: 0; }
+  .buy-email-gift-row .buy-gift-toggle { flex-shrink: 0; margin: 0; white-space: nowrap; }
+}
 .buy-gift-fields { padding: 0.75rem; border: 1px dashed var(--border); border-radius: 8px; margin-bottom: 0.75rem; }
 .buy-gift-fields textarea { width: 100%; resize: vertical; font: inherit; }
 .buy-gift-hint { font-size: 0.8rem; margin-top: 0.3rem; }

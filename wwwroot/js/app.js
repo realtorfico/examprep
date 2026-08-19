@@ -7279,8 +7279,13 @@ function drawBuyForm(pricing, giftIntent) {
     '<div class="buy-payment-col">' +
     '<div class="card">' +
     '<label class="muted buy-email-label">Your Email Address (to send your instant access receipt & code)</label>' +
+    // Email input + gift toggle on one row on anything wider than a phone -- were two stacked
+    // full-width rows, but the checkbox is compact and directly related (whose email this
+    // purchase's email is), so pairing them saves another row of height (per-user request).
+    '<div class="buy-email-gift-row">' +
     '<input type="email" id="buy-email" placeholder="you@example.com">' +
     '<label class="buy-gift-toggle"><input type="checkbox" id="buy-gift-checkbox"' + (giftIntent ? ' checked' : '') + '> 🎁 This is a gift</label>' +
+    '</div>' +
     '<div id="buy-gift-fields" class="buy-gift-fields"' + (giftIntent ? '' : ' hidden') + '>' +
     '<label class="muted buy-email-label">Recipient\'s email (optional — we\'ll send them the code)</label>' +
     '<input type="email" id="buy-gift-recipient-email" placeholder="friend@example.com">' +
