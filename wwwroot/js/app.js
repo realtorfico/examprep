@@ -7250,7 +7250,6 @@ function drawBuyForm(pricing, giftIntent) {
     breadcrumbHtml +
     '<h1>Get Instant Access</h1>' +
     '<p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p>' +
-    '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col">' +
     '<div class="card buy-order-summary">' +
@@ -7266,6 +7265,10 @@ function drawBuyForm(pricing, giftIntent) {
     '<li>✓ Lifetime access</li>' +
     '</ul>' +
     '</div>' +
+    // Moved below the track name/price card (was above it, right under the page title) --
+    // per-user request, so the discount promos read as "here's how to save on what you just saw
+    // the price of" rather than competing with the page title for first attention.
+    '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="card buy-guarantee-card">' +
     '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
     '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +

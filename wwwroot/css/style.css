@@ -1318,6 +1318,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   }
   .promotions-wrap .promo-banner-dismiss { position: absolute; top: 0.5rem; right: 0.5rem; }
   .promotions-wrap .promo-banner-cta { width: 100%; text-align: center; }
+  /* The buy page's checkout-promotions-wrap now lives inside .buy-value-col (one half of the
+     2-column buy layout), not full page width -- the fixed 4-across grid above (sized for a
+     full-width row) would squeeze each promo into an unreadably narrow sliver here. Flexible
+     column count instead, sized to whatever the column actually has. */
+  .buy-value-col .promotions-wrap { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
 }
 .promo-banner-body { flex: 1; min-width: 12rem; font-size: 0.88rem; }
 .promo-banner-body strong { color: var(--accent); font-size: 1.05rem; display: block; margin-bottom: 0.4rem; }
