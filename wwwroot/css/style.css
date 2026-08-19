@@ -789,6 +789,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .hub-scoped-all-link { color: var(--muted); text-decoration: underline; }
 .hub-scoped-all-link:hover { color: var(--accent); }
+/* The one thing worth noticing in "Showing licensing tracks for X" / "Not studying for X?" --
+   plain <strong> just bolds it inline with the rest of the muted sentence; this pulls it out in
+   the accent color too, at the hub (.hub-scoped-context-bar) and the track landing page
+   (.track-landing-state-hint) alike. */
+.state-name-emphasis { color: var(--accent); font-weight: 800; }
+.hub-scoped-state-hint { font-size: 0.85rem; margin: 0.3rem 0 0; }
 
 /* Buy page's "other tracks" comparison strip -- browse/switch, not a cart (see loadOtherTracksPricing). */
 .buy-other-tracks-card { margin-top: 1rem; }
@@ -942,6 +948,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .track-landing-breadcrumb .breadcrumb-current { color: var(--fg); }
 .track-landing-state-hint { font-size: 0.78rem; margin: 0 0 0.75rem; }
 .track-landing h1 { margin-top: 0.5rem; }
+/* .page-intro-text's shared 65ch prose cap is right for the short blurbs it's used for elsewhere
+   (guarantee page, resources, etc.), but this page's exam.description is a full paragraph of real
+   detail -- capped to 65ch inside a container that can run up to 1400px wide, it visually reads as
+   using barely half the page. Let it use the full .track-landing width instead. */
+.track-landing-description { max-width: none; }
 .track-landing-official { margin-top: 0.75rem; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }

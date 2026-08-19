@@ -1,7 +1,14 @@
 // Vanilla JS, no framework/bundler. Hash-routed within a track's path (e.g. /notary); pathname-routed
 // at the top level, matched against HUB_EXAMS's active tracks (see activeTrackForPath).
 var appEl = document.getElementById('app');
-var state = { question: null, answered: null, examType: 'ca_notary', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
+// examType starts empty, NOT a real track -- it's only ever set once the visitor actually lands on
+// a specific track's page (route()'s activeTrackForPath branch) or logs in/redeems (accountExamType
+// takes over at that point). A hardcoded default here (this used to be 'ca_notary') meant every
+// logged-out visitor who'd only ever seen the hub/state-scoped pages silently "had" California
+// Notary as their current track -- currentTrackOrNull() falls back to this when logged out, so the
+// footer's Refer/Sample links and the header nav's Refer link all hard-linked to CA Notary
+// regardless of which state's hub the visitor was actually browsing.
+var state = { question: null, answered: null, examType: '', quizDifficulty: localStorage.getItem('examprep_quiz_difficulty') || '' };
 // Which track the current token actually grants access to -- distinct from state.examType, which
 // tracks whatever route is currently being VIEWED. Without this, an account bound to one track
 // (e.g. ca_notary) navigating to a different track's route (e.g. /ca_driver) would pass the naive
@@ -3974,8 +3981,13 @@ function renderHubScopedContextBar() {
   // licensing-exam product (per-decision), so there's deliberately no path back to the flat
   // all-states catalog from here. Switching states is still always possible via the header picker.
   return '<div class="hub-scoped-context-bar">' +
-    '<span>Showing licensing tracks for <strong>' + escapeHtml(name) + '</strong></span>' +
-    '</div>';
+    '<span>Showing licensing tracks for <strong class="state-name-emphasis">' + escapeHtml(name) + '</strong></span>' +
+    '</div>' +
+    // Same "wrong state? here's the fix" hint the track landing page already gives -- the hub's
+    // own state-scoped view had no equivalent, even though landing here (e.g. via a stale link, a
+    // shared bookmark, or an inaccurate geolocation guess) is exactly when a visitor most needs it.
+    '<p class="muted hub-scoped-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(name) +
+    '</strong>? Use the state picker in the header above to switch.</p>';
 }
 function renderHubKindFilterPillsScoped() {
   var tracksInState = HUB_EXAMS.filter(function (e) { return e.stateCode === hubScopedState; });
@@ -4289,7 +4301,7 @@ function comparisonCell(v, highlight) {
 function comparisonTableHtml() {
   return '<section class="comparison-section">' +
     '<h2 class="comparison-heading">A Better Way to Pass Your Exam</h2>' +
-    '<p class="muted comparison-subheading">How PassExamHQ stacks up against typical DMV prep options.</p>' +
+    '<p class="muted comparison-subheading">How PassExamHQ stacks up against typical licensing-exam prep options.</p>' +
     '<div class="comparison-table-scroll"><table class="comparison-table">' +
     '<thead><tr><th></th><th>Free Practice Sites</th><th>Other Paid Apps</th><th class="comparison-us-col">PassExamHQ</th></tr></thead>' +
     '<tbody>' +
@@ -6625,11 +6637,11 @@ function renderTrackLanding() {
     '<div class="track-landing">' +
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
     '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
-    '<p class="muted track-landing-state-hint">Not studying for ' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '? Use the state picker in the header above to switch.</p>' +
+    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? Use the state picker in the header above to switch.</p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +
-    '<p class="muted page-intro-text">' + exam.description + '</p>' +
+    '<p class="muted page-intro-text track-landing-description">' + exam.description + '</p>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col"><div class="card">' + specsHtml + breakdownHtml + '</div></div>' +
     '<div class="card">' +
@@ -7940,9 +7952,9 @@ function renderPromoVerify(token) {
 // ---- Free sample (no access code needed) -----------------------------------
 
 async function renderSample() {
-  // currentTrackOrNull() (not a bare state.examType read) so this never silently falls back to
-  // whatever state.examType happens to default to (ca_notary) when reached from a context that
-  // never actually picked a track -- if there's genuinely no track in play, send the visitor to
+  // currentTrackOrNull() (not a bare state.examType read) so this never silently claims a track
+  // when reached from a context that never actually picked one -- if there's genuinely no track
+  // in play (empty state.examType, logged out), send the visitor to
   // pick one instead of quietly showing California's sample questions under a generic title.
   var track = currentTrackOrNull();
   if (!track) { location.hash = ''; location.href = tracksHomeHref(); return; }
@@ -8850,7 +8862,7 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   // the common case (no token, no override). The header/footer sync calls above necessarily ran
   // before this resolves too (with accountExamType still null and no override applied yet) --
   // re-render both once the real values are in, so a logged-in visitor's Refer/sample links
-  // reflect their own track's account instead of whatever state.examType happened to default to.
+  // reflect their own track's account instead of no track/whatever page they'd last viewed.
   Promise.all([loadSiteConfig(), loadAccountExamType()]).then(function () {
     renderSiteHeader();
     renderSiteFooter();
