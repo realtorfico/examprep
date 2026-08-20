@@ -8192,10 +8192,88 @@ async function renderTrackApp() {
   else await renderQuiz();
 }
 
+// ---- Site visit tracking (first-party analytics beacon) -------------------
+// Fires on every route() call (initial load + hash/pathname nav) plus once more on tab-hide via
+// sendBeacon (more reliable than a fetch when a tab is closing). session_id (sessionStorage) is
+// this browser tab's session, one row server-side (see examprep-api's /track/visit); visitor_id
+// (localStorage) persists across sessions so the admin's Visitors tab can spot repeat visits by
+// the same browser. IP/geo/user-agent are always read server-side from the request itself --
+// nothing sent from here is trusted as identity, this only ever describes what a visitor did.
+function uuidV4() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+function getOrCreateVisitorId() {
+  var id = localStorage.getItem('pxq_visitor_id');
+  if (!id) { id = uuidV4(); localStorage.setItem('pxq_visitor_id', id); }
+  return id;
+}
+function getOrCreateSessionId() {
+  var id = sessionStorage.getItem('pxq_session_id');
+  if (!id) { id = uuidV4(); sessionStorage.setItem('pxq_session_id', id); }
+  return id;
+}
+function getSessionPages() {
+  try { return JSON.parse(sessionStorage.getItem('pxq_session_pages') || '[]'); } catch (e) { return []; }
+}
+function getFirstTouchUtm() {
+  try { return JSON.parse(sessionStorage.getItem('pxq_first_touch') || 'null'); } catch (e) { return null; }
+}
+var visitBeaconTimer = null;
+function trackPageview() {
+  var path = location.pathname + (location.hash || '');
+  var pages = getSessionPages();
+  if (pages[pages.length - 1] !== path) {
+    pages.push(path);
+    if (pages.length > 200) pages = pages.slice(-200);
+    sessionStorage.setItem('pxq_session_pages', JSON.stringify(pages));
+  }
+  var firstTouch = getFirstTouchUtm();
+  if (!firstTouch) {
+    var params = new URLSearchParams(location.search);
+    firstTouch = {
+      referrer: document.referrer || '',
+      utmSource: params.get('utm_source') || '',
+      utmMedium: params.get('utm_medium') || '',
+      utmCampaign: params.get('utm_campaign') || '',
+    };
+    sessionStorage.setItem('pxq_first_touch', JSON.stringify(firstTouch));
+  }
+  // Debounced -- a burst of route() calls (e.g. programmatic redirects chaining through several
+  // hash changes on load) shouldn't fire a beacon per intermediate hop, just the settled view.
+  clearTimeout(visitBeaconTimer);
+  visitBeaconTimer = setTimeout(function () { sendVisitBeacon(pages, firstTouch, false); }, 400);
+}
+function sendVisitBeacon(pages, firstTouch, isFinal) {
+  var payload = {
+    sessionId: getOrCreateSessionId(),
+    visitorId: getOrCreateVisitorId(),
+    pages: pages,
+    referrer: firstTouch.referrer,
+    utmSource: firstTouch.utmSource,
+    utmMedium: firstTouch.utmMedium,
+    utmCampaign: firstTouch.utmCampaign,
+  };
+  if (isFinal && navigator.sendBeacon) {
+    navigator.sendBeacon(API_BASE + '/track/visit', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+    return;
+  }
+  apiFetch('/track/visit', { method: 'POST', body: payload }).catch(function () { /* best-effort */ });
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'hidden') {
+    sendVisitBeacon(getSessionPages(), getFirstTouchUtm() || { referrer: '', utmSource: '', utmMedium: '', utmCampaign: '' }, true);
+  }
+});
+
 function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
                             // per session), so it needs to close itself independently.
+  trackPageview();
 
   // Resolves hubScopedState from the pathname unconditionally, before any of the hash-route
   // early-returns below -- otherwise a hash-only page (e.g. #/gift, reached via a plain "#/gift"
