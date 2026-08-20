@@ -8222,8 +8222,32 @@ function getSessionPages() {
 function getFirstTouchUtm() {
   try { return JSON.parse(sessionStorage.getItem('pxq_first_touch') || 'null'); } catch (e) { return null; }
 }
+// Self-service opt-out (e.g. for the site owner's own browsing) -- visiting
+// "?pxq_exclude=1" once permanently stops this browser from sending any tracking beacons,
+// regardless of IP (survives switching wifi/mobile/VPN, unlike the admin's IP exclusion list in
+// Settings). "?pxq_exclude=0" re-enables it. The flag itself never leaves the browser -- this is
+// enforced entirely client-side by just never sending the beacon, not a server-side filter.
+function isTrackingExcluded() { return localStorage.getItem('pxq_tracking_excluded') === '1'; }
+var optOutLinkChecked = false;
+function checkTrackingOptOutLink() {
+  var params = new URLSearchParams(location.search);
+  if (!params.has('pxq_exclude')) return;
+  var val = params.get('pxq_exclude');
+  if (val === '0') localStorage.removeItem('pxq_tracking_excluded');
+  else localStorage.setItem('pxq_tracking_excluded', '1');
+  params.delete('pxq_exclude');
+  var newSearch = params.toString();
+  history.replaceState(null, '', location.pathname + (newSearch ? '?' + newSearch : '') + location.hash);
+  setTimeout(function () {
+    alert(val === '0'
+      ? 'Visit tracking re-enabled for this browser.'
+      : 'Visit tracking disabled for this browser — your visits will no longer be recorded.');
+  }, 0);
+}
 var visitBeaconTimer = null;
 function trackPageview() {
+  if (!optOutLinkChecked) { optOutLinkChecked = true; checkTrackingOptOutLink(); }
+  if (isTrackingExcluded()) return;
   var path = location.pathname + (location.hash || '');
   var pages = getSessionPages();
   if (pages[pages.length - 1] !== path) {
@@ -8264,7 +8288,7 @@ function sendVisitBeacon(pages, firstTouch, isFinal) {
   apiFetch('/track/visit', { method: 'POST', body: payload }).catch(function () { /* best-effort */ });
 }
 document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState === 'hidden') {
+  if (document.visibilityState === 'hidden' && !isTrackingExcluded()) {
     sendVisitBeacon(getSessionPages(), getFirstTouchUtm() || { referrer: '', utmSource: '', utmMedium: '', utmCampaign: '' }, true);
   }
 });
