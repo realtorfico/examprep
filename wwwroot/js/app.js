@@ -187,17 +187,21 @@ function renderSiteHeader() {
       '<span class="header-track-badge-icon">🎓</span><span class="header-track-badge-label">' + escapeHtml(accountTrack.shortName || accountTrack.title) + '</span></a>'
     : '';
 
+  // State picker lives inside .site-nav (folds into the ☰ drawer below the breakpoint, same as the
+  // nav links/CTAs) rather than the always-visible util cluster -- it was the single widest element
+  // in that cluster and the main cause of the header wrapping badly on phones and on a narrowed
+  // desktop window (see user report 2026-08-19). The util cluster now only ever holds font/theme,
+  // small enough to never wrap on its own.
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
     logo +
-    '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
+    '<nav class="site-nav" aria-label="Primary">' + renderHeaderStatePicker('desktop') + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
-    // Utility controls (state/font/theme) merged into one segmented pill cluster -- doc audit's
-    // "Unified Controls" ask -- rather than three separately-bordered pills sitting loose in the
-    // row. Branded CTAs/track badge/profile stay outside it, unchanged, since those aren't the
-    // "adjuster" controls the audit meant.
+    // Utility controls (font/theme) merged into one segmented pill cluster -- doc audit's "Unified
+    // Controls" ask -- rather than two separately-bordered pills sitting loose in the row. Branded
+    // CTAs/track badge/profile stay outside it, unchanged, since those aren't the "adjuster"
+    // controls the audit meant.
     '<div class="header-util-cluster">' +
-    renderHeaderStatePicker() +
     '<div class="font-size-pill" role="group" aria-label="Font size">' +
     '<button data-act="font-down">A-</button>' +
     '<button data-act="font-up">A+</button>' +
@@ -210,6 +214,7 @@ function renderSiteHeader() {
     (loggedIn ? renderProfileMenu() : '') +
     '</div>' +
     '<div class="site-mobile-drawer" id="site-mobile-drawer">' +
+    '<div class="site-mobile-drawer-picker">' + renderHeaderStatePicker('mobile') + '</div>' +
     '<nav aria-label="Mobile">' + navLinksHtml + '</nav>' +
     '<div class="site-mobile-drawer-cta">' + navCtaHtml + '</div>' +
     '</div>' +
@@ -232,7 +237,11 @@ function tracksHomeHref() { return hubScopedState ? '/' + hubScopedState.toLower
 // times per session (see its own comment), so its initial selected value here can be stale by
 // the time route() resolves the real state on boot -- updateHeaderStatePicker() (called at the
 // end of every route()) is what keeps it actually in sync going forward.
-function renderHeaderStatePicker() {
+// idSuffix keeps ids unique -- the picker now renders twice (inline in .site-nav at wide widths,
+// again inside .site-mobile-drawer below the breakpoint), and duplicate ids are invalid HTML. The
+// pick-header-state change handler reads e.target.value directly so it works from either instance;
+// updateHeaderStatePicker() below syncs both by class instead of a single id lookup.
+function renderHeaderStatePicker(idSuffix) {
   var codes = Object.keys(STATE_LABELS).filter(function (c) { return c !== 'US'; });
   codes.sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
   // No "All States" option -- cross-state browsing isn't a real user need for a licensing-exam
@@ -240,11 +249,13 @@ function renderHeaderStatePicker() {
   var options = codes.map(function (c) {
     return '<option value="' + c + '"' + (c === hubScopedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[c]) + '</option>';
   }).join('');
-  return '<select class="header-state-picker" id="header-state-picker" data-act="pick-header-state" aria-label="Choose your state">' + options + '</select>';
+  var id = 'header-state-picker' + (idSuffix ? '-' + idSuffix : '');
+  return '<select class="header-state-picker" id="' + id + '" data-act="pick-header-state" aria-label="Choose your state">' + options + '</select>';
 }
 function updateHeaderStatePicker() {
-  var picker = document.getElementById('header-state-picker');
-  if (picker) picker.value = hubScopedState || '';
+  document.querySelectorAll('.header-state-picker').forEach(function (picker) {
+    picker.value = hubScopedState || '';
+  });
 }
 
 function closeHeaderMenuIfOpen() {
@@ -4059,7 +4070,8 @@ function renderHubScopedContextBar() {
   var name = STATE_LABELS[hubScopedState] || hubScopedState;
   // No "browse all states" link -- cross-state browsing isn't a real user need for a
   // licensing-exam product (per-decision), so there's deliberately no path back to the flat
-  // all-states catalog from here. Switching states is still always possible via the header picker.
+  // all-states catalog from here. Switching states is still always possible via the header picker
+  // (tucked into the ☰ menu below the nav-links/CTA breakpoint, see .top-controls in style.css).
   return '<div class="hub-scoped-context-bar">' +
     '<span>Showing licensing tracks for <strong class="state-name-emphasis">' + escapeHtml(name) + '</strong></span>' +
     '</div>' +
@@ -4067,7 +4079,7 @@ function renderHubScopedContextBar() {
     // own state-scoped view had no equivalent, even though landing here (e.g. via a stale link, a
     // shared bookmark, or an inaccurate geolocation guess) is exactly when a visitor most needs it.
     '<p class="muted hub-scoped-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(name) +
-    '</strong>? Use the state picker in the header above to switch.</p>';
+    '</strong>? Use the state picker to switch — on mobile, open the ☰ menu first.</p>';
 }
 function renderHubKindFilterPillsScoped() {
   var tracksInState = HUB_EXAMS.filter(function (e) { return e.stateCode === hubScopedState; });
@@ -6732,7 +6744,7 @@ function renderTrackLanding() {
     '<div class="track-landing">' +
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
     '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
-    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? Use the state picker in the header above to switch.</p>' +
+    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? Use the state picker to switch — on mobile, open the ☰ menu first.</p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +

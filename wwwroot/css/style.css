@@ -196,20 +196,19 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
 }
 .control-group { display: flex; gap: 0.5rem; align-items: center; }
-/* Utility controls (state picker, font size, theme toggle) merged into one segmented pill instead
-   of three separately-bordered controls sitting loose in the row -- doc audit's "Unified Controls"
-   ask. Each child keeps its own element (select / two buttons / a button) but gives up its
-   individual border/background/radius to this shared chrome; thin dividers between segments read
-   as one control. Branded CTAs, the track badge, and the profile menu stay outside it -- those
-   aren't the "adjuster" controls the audit meant to consolidate. */
+/* Utility controls (font size, theme toggle) merged into one segmented pill instead of two
+   separately-bordered controls sitting loose in the row -- doc audit's "Unified Controls" ask.
+   Each child keeps its own element (two buttons / a button) but gives up its individual
+   border/background/radius to this shared chrome; a thin divider between segments reads as one
+   control. Branded CTAs, the track badge, and the profile menu stay outside it -- those aren't the
+   "adjuster" controls the audit meant to consolidate. The state picker used to live here too, but
+   it was the single widest element in the row and the main cause of the header wrapping badly on
+   phones and on a narrowed desktop window (see user report 2026-08-19) -- it now lives in .site-nav
+   instead, folding into the ☰ drawer at the same breakpoint as the nav links/CTAs. */
 .header-util-cluster {
   display: flex; align-items: stretch;
   border: 1.5px solid var(--border); border-radius: 999px; overflow: hidden;
   background: var(--surface-2);
-}
-.header-util-cluster .header-state-picker {
-  border: none; border-right: 1px solid var(--border); border-radius: 0;
-  background: transparent; max-width: 7rem;
 }
 .header-util-cluster .font-size-pill { border: none; border-right: 1px solid var(--border); border-radius: 0; }
 .header-util-cluster .font-size-pill button:first-child { border-right: 1px solid var(--border); }
@@ -246,11 +245,14 @@ a { color: var(--accent); }
   .control-group { gap: 0.35rem; }
 }
 
-/* Marketing nav + CTAs (ported from v0's site-header.tsx) -- inline on wider screens, folded into
-   the mobile drawer below 800px. Separate from .control-group's .header-util-cluster (state/font/
-   theme) and profile controls -- CTAs stay their own branded buttons, not folded into the neutral
-   utility pill. */
+/* Marketing nav + state picker + CTAs (ported from v0's site-header.tsx) -- inline on wider screens,
+   folded into the ☰ drawer below 900px, all at the same breakpoint so nothing is left stranded in
+   the always-visible row (that mismatch -- state picker always visible while nav/CTA weren't -- was
+   the original cause of the wrap; see the .header-util-cluster comment above). Separate from
+   .control-group's .header-util-cluster (font/theme) and profile controls -- CTAs stay their own
+   branded buttons, not folded into the neutral utility pill. */
 .site-nav { display: none; gap: 1.5rem; align-items: center; }
+.site-nav .header-state-picker { max-width: 8rem; }
 .site-nav a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.15s; }
 .site-nav a:hover { color: var(--fg); }
 .site-nav-cta { display: none; gap: 0.5rem; }
@@ -268,7 +270,11 @@ a { color: var(--accent); }
 .site-mobile-drawer nav { display: flex; flex-direction: column; gap: 0.35rem; }
 .site-mobile-drawer nav a { color: var(--fg); text-decoration: none; font-size: 0.95rem; font-weight: 600; padding: 0.5rem 0.1rem; }
 .site-mobile-drawer-cta { display: flex; flex-direction: column; gap: 0.6rem; }
-@media (min-width: 800px) {
+.site-mobile-drawer-picker .header-state-picker { width: 100%; }
+/* 900px, not 800px -- gives real headroom above the header's actual minimum content width instead
+   of a dead zone where nav/CTAs try to show inline but don't quite fit, which is what produced the
+   "wraps badly on a narrowed desktop window" report even well above phone widths. */
+@media (min-width: 900px) {
   .site-nav, .site-nav-cta { display: flex; }
   .header-menu-toggle, .site-mobile-drawer, .site-mobile-drawer.open { display: none; }
 }
