@@ -2312,6 +2312,90 @@ var HUB_EXAMS = [
     description: 'Practice questions covering the Arizona Commercial Driver License Manual (ADOT Motor Vehicle Division, Customer Service Guide for Commercial Drivers, Revised 01/2026): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The manual states directly that applicants must answer at least 80% of questions correctly to pass each knowledge test; the 50-question count follows the federally standardized AAMVA format (49 CFR 383.135(a)) used by every other state\'s CDL General Knowledge test, corroborated by multiple third-party AZ CDL prep sources, since ADOT\'s own manual text doesn\'t spell out the item count verbatim.',
     breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '45%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '27%'], ['Hazardous Materials', '19%'], ['School Bus', '9%']],
   },
+  {
+    examType: 'ar_cdl', shortName: 'Arkansas CDL', stateCode: 'AR', examKind: 'Commercial Driver (CDL)',
+    title: 'Arkansas CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ar_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Arkansas DPS)', passScore: '40/50 Correct (80% -- Federal Minimum per 49 CFR 383.135(a), Not Independently Restated by the Arkansas Manual)',
+    description: 'Practice questions covering the Arkansas Commercial Driver License Manual (AAMVA 2022 Modernized CDL Testing System, Version: March 2025, with the state-specific supplement published by the Arkansas Department of Public Safety / Arkansas State Police): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Neither the Arkansas manual nor the DPS site spells out an exact knowledge-test item count or a state-specific passing percentage; this practice exam follows the federally standardized 50-question AAMVA format and the 80%-correct (40/50) minimum set by 49 CFR 383.135(a), the same convention used for other states\' CDL knowledge tests whose manuals don\'t publish their own figures.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '51%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '27%'], ['Hazardous Materials', '15%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'co_cdl', shortName: 'Colorado CDL', stateCode: 'CO', examKind: 'Commercial Driver (CDL)',
+    title: 'Colorado CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/co_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by CO DMV)', passScore: '40/50 Correct (80% -- Federal AAMVA/FMCSA Minimum, Not Independently Published by CO DMV)',
+    description: 'Practice questions covering the Colorado Commercial Driver License Manual (2023 CDL Testing System, DR 2251, June 2023, Colorado Department of Revenue – Division of Motor Vehicles): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Colorado issues a Commercial Learner\'s Permit that must be held at least 14 days before the skills test, offers the knowledge test in English and Spanish (the Hazmat endorsement test is English-only), and issues CDLs with a 4-year validity period; drivers aged 18-20 may qualify for an intrastate-only \'K\' restricted CDL. Neither the Colorado manual nor the state DMV site publishes a Colorado-specific passing percentage or knowledge-test item count; this practice exam follows the federally standardized 80%-correct / 50-question AAMVA General Knowledge format (49 CFR 383.135(a)) used across CDL knowledge testing nationwide.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '33%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '45%'], ['Hazardous Materials', '15%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'ct_cdl', shortName: 'Connecticut CDL', stateCode: 'CT', examKind: 'Commercial Driver (CDL)',
+    title: 'Connecticut CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ct_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- Confirmed Directly by the CT DMV)', passScore: '40/50 Correct (80% -- Confirmed Directly by the CT DMV)',
+    description: 'Practice questions covering the Connecticut Commercial Driver License Manual (R-295 Rev. 12/2024, AAMVA 2022 Modernized CDL Testing System), published by the Connecticut Department of Motor Vehicles: CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Unlike many states, Connecticut\'s exam mechanics are explicitly published by the CT DMV: the General Knowledge test is 50 questions with 40 correct (80%) required to pass; endorsement knowledge tests are shorter (Hazardous Materials: 30 questions/24 correct; Air Brakes: 25 questions/20 correct; other single endorsements: 20 questions/16 correct); testing is by appointment only at CT DMV offices, with a $16 general knowledge test fee, $5 per endorsement test, and a $30 skills test fee.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '50%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '27%'], ['Hazardous Materials', '16%'], ['School Bus', '7%']],
+  },
+{
+    examType: 'de_cdl', shortName: 'Delaware CDL', stateCode: 'DE', examKind: 'Commercial Driver (CDL)',
+    title: 'Delaware CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/de_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by DE DMV)', passScore: '40/50 Correct (80% -- Federal Minimum per 49 CFR 383.135(a), Not Independently Published by DE DMV)',
+    description: 'Practice questions covering the Delaware Commercial Driver\'s Manual (2022 CDL Testing System, Version 4.0, AAMVA Modernized Testing System, Release Date: February 2025), published by the Delaware Department of Transportation / Division of Motor Vehicles: CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. No official DE.gov source explicitly states the exact knowledge-test item count or passing score; this practice exam follows the federally standardized 50-question/80%-correct AAMVA format (49 CFR 383.135(a)) used by every other state\'s CDL knowledge test, corroborated by third-party DE CDL prep sources.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '34%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '44%'], ['Hazardous Materials', '15%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'hi_cdl', shortName: 'Hawaii CDL', stateCode: 'HI', examKind: 'Commercial Driver (CDL)',
+    title: 'Hawaii CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/hi_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by a Hawaii County CDL Office)', passScore: '40/50 Correct (80% -- Federally Standardized Under 49 CFR 383.135(a))',
+    description: 'Practice questions covering the Hawaii Commercial Driver License Manual (2005 CDL Testing System / AAMVA, Version July 2017, Hawaii: May 2023 update), used statewide by Hawaii\'s four County Commercial Driver Licensing Offices (Honolulu, Hawaii, Maui, and Kauai counties): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The manual and the county CDL offices\' fee schedules describe the knowledge test process but don\'t spell out an exact item count for any test; the 50-question count follows the federally standardized AAMVA format (49 CFR 383.135(a)) used by every other state\'s CDL General Knowledge test, and the 80% passing threshold is set directly by that same federal regulation.',
+    breakdown: [['CDL Licensing', '9%'], ['Driving Safely, Basic Control & On-Road', '24%'], ['Cargo & Passenger Transport', '14%'], ['Air Brakes, Combination Vehicles & Doubles/Triples', '21%'], ['Tank Vehicles & Hazardous Materials', '19%'], ['School Bus & Vehicle Inspection', '13%']],
+  },
+  {
+    examType: 'id_cdl', shortName: 'Idaho CDL', stateCode: 'ID', examKind: 'Commercial Driver (CDL)',
+    title: 'Idaho CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/id_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- Confirmed Directly in the ITD Manual\'s Knowledge Test Information Table)', passScore: '40/50 Correct (80% -- Confirmed Directly in the ITD Manual)',
+    description: 'Practice questions covering the Idaho Commercial Driver License Manual (Idaho Transportation Department, Division of Motor Vehicles, 2022 CDL Testing System, July 2026 Edition): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The manual\'s own Knowledge Test Information table (Section 1) states the General Knowledge test is 50 questions with 40 correct required to pass (80%), the same table that separately confirms item counts for every endorsement test (Hazmat 30/24, Air Brakes 25/20, and Combination Vehicles/Tank Vehicles/Doubles-Triples/Passenger/School Bus at 20/16 each).',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control, On-Road Driving & Cargo/Passenger Safety', '55%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '25%'], ['Hazardous Materials', '13%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'il_cdl', shortName: 'Illinois CDL', stateCode: 'IL', examKind: 'Commercial Driver (CDL)',
+    title: 'Illinois CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/il_cdl',
+    duration: '60 Minutes', questions: '30 Multiple Choice (General Knowledge -- Confirmed Directly in the Illinois CDL Guide, Section 1.4.1)', passScore: '24/30 Correct (80% -- Confirmed Directly in the Illinois Guide)',
+    description: 'Practice questions covering the Illinois Commercial Driver\'s License Guide (Illinois Secretary of State, document code DSD CDL 10.30, July 2025 edition): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. The guide\'s own Section 1.4.1 (Computerized Written Knowledge Testing) states directly that the General (core) Knowledge test consists of 30 standardized multiple-choice questions with an 80% minimum passing score (24 correct) -- a smaller item count than the 50-question format used by many other states. Illinois also runs its own state-authored guide with features not present in the standard AAMVA model: a distinct Class D non-CDL license category, a combined Hazardous Materials & Tank Vehicle (X) endorsement alongside the standard P/N/S/H/T letters, and an Illinois-specific Charter Bus (C) endorsement for buses transporting school children on district charter trips.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '56%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '23%'], ['Hazardous Materials', '15%'], ['School Bus', '6%']],
+  },
+  {
+    examType: 'in_cdl', shortName: 'Indiana CDL', stateCode: 'IN', examKind: 'Commercial Driver (CDL)',
+    title: 'Indiana CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/in_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Indiana BMV)', passScore: '40/50 Correct (80% -- Federal Minimum Confirmed in the Indiana-Specific BMV Supplement)',
+    description: 'Practice questions covering the Indiana Commercial Driver\'s License Manual (Indiana Bureau of Motor Vehicles (BMV), AAMVA \'Modernized Testing System\' base manual, cover-dated September 9, 2022), supplemented by the official Indiana-Specific Commercial Driver\'s License Applicant Information document (form SP 283): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Neither the base AAMVA manual nor the Indiana-specific BMV supplement states an exact knowledge-test item count or number-correct-to-pass; this practice exam follows the federally standardized 50-question AAMVA format (49 CFR 383.135(a)) used by every other state\'s CDL knowledge test, since Indiana\'s official sources confirm only the federal 80% minimum passing score and don\'t spell out the item count verbatim.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '32%'], ['Driving Safely, Air Brakes, Combination, Doubles/Triples & Tank Vehicles', '43%'], ['Hazardous Materials', '17%'], ['School Bus', '8%']],
+  },
+  {
+    examType: 'ia_cdl', shortName: 'Iowa CDL', stateCode: 'IA', examKind: 'Commercial Driver (CDL)',
+    title: 'Iowa CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ia_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- Confirmed Directly on the Iowa DOT CDL Testing Page)', passScore: '40/50 Correct (80% -- Confirmed Directly on the Iowa DOT CDL Testing Page)',
+    description: 'Practice questions covering the Iowa Commercial Driver License Manual (Iowa Department of Transportation, National CDL Manual, 2005 AAMVA Testing System with Iowa Supplemental Sections 11 and 12): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Iowa\'s own official CDL Testing page publishes an explicit \'Types of CDL knowledge tests (number of questions/allowed to miss)\' table -- General Knowledge is 50 questions with 40 correct required to pass (80%, 10 allowed wrong) -- and Iowa\'s manual carries a distinctive state-specific rule that the pre-trip inspection\'s service brake check step is verbally described only, with no physical demonstration required.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '31%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '47%'], ['Hazardous Materials', '15%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'ks_cdl', shortName: 'Kansas CDL', stateCode: 'KS', examKind: 'Commercial Driver (CDL)',
+    title: 'Kansas CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ks_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by KDOR)', passScore: '40/50 Correct (80% -- Federal Minimum Under 49 CFR 383.135(a); Kansas Manual Does Not State an Exact Item Count)',
+    description: 'Practice questions covering the Kansas Commercial Driver\'s License Manual (Kansas Department of Revenue, Division of Vehicles, AAMVA Modernized Testing System base manual, Version: March 2025): CDL licensing and vehicle inspection, basic control and on-road driving, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, and school bus endorsement content. Kansas\'s manual and ksrevenue.gov\'s CDL pages do not publish an exact knowledge-test item count or passing score; only the 80% minimum passing score, federally standardized under 49 CFR 383.135(a), is asserted here, and this practice exam follows the same 50-question AAMVA format used by every other state\'s CDL General Knowledge test.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '32%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '46%'], ['Hazardous Materials', '15%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'ky_cdl', shortName: 'Kentucky CDL', stateCode: 'KY', examKind: 'Commercial Driver (CDL)',
+    title: 'Kentucky CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ky_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Kentucky Commercial Driver\'s License Manual (Kentucky State Police / Kentucky Transportation Cabinet Division of Driver Licensing, Modernized Testing System, base AAMVA content Version: September 9, 2022, Kentucky-specific sections revised 12/2024): CDL licensing, vehicle inspection, and basic control/on-road driving; transporting cargo and passengers safely; air brakes, combination vehicles, doubles/triples, and tank vehicles; hazardous materials; and school bus endorsement content. Kentucky\'s manual directly confirms real exam mechanics in its Kentucky-specific front matter: the General Knowledge test is 50 questions, the Class A Combination Vehicles test is 20 questions, Air Brakes is 25 questions, Doubles/Triples, Tankers, and Passenger Transport are each 20 questions, Hazardous Materials is 30 questions, and School Bus is 20 questions -- every test requires at least 80% correct to pass.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '32%'], ['Driving Safely (General Safe Driving Practices)', '20%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '25%'], ['Hazardous Materials', '16%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'la_cdl', shortName: 'Louisiana CDL', stateCode: 'LA', examKind: 'Commercial Driver (CDL)',
+    title: 'Louisiana CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/la_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Louisiana OMV)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Louisiana OMV)',
+    description: 'Practice questions covering the Louisiana Commercial Driver\'s License Manual (Louisiana Department of Public Safety & Corrections, Office of Motor Vehicles, 2005 CDL Testing System, Version: July 2017): CDL licensing (Class A/B/C license types, the manual\'s six knowledge-test endorsements, restrictions, and disqualification penalties), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. Neither the base manual, the Louisiana Administrative Code Title 55 Third-Party-Tester provisions, nor the official OMV CDL Driver Education webpage states an exact knowledge-test question count or number-correct-to-pass for any Louisiana CDL test; several third-party prep sites claim 50 questions/40 correct (80%), but this could not be confirmed on any official LA.gov or dps.louisiana.gov source. What is confirmed directly from official Louisiana sources is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests, so this practice exam follows that same 50-question/40-correct format used by every other CDL-track state.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '54%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '22%'], ['Hazardous Materials', '17%'], ['School Bus', '7%']],
+  },
 ];
 
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
@@ -3962,6 +4046,209 @@ var TRACK_COMPLIANCE = {
       'driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real ADOT CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the same 80% threshold confirmed directly in the ADOT manual; the 50-question/40-correct count follows the federally standardized AAMVA format rather than an ADOT-published item count',
+  },
+  ar_cdl: {
+    orgLine: 'the Arkansas Department of Public Safety (DPS) / Arkansas State Police',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Arkansas CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level ' +
+      'Driver Training (ELDT) requirement or any Arkansas CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Neither the Arkansas Commercial Driver ' +
+      'License Manual nor the Arkansas DPS site spells out an exact knowledge-test item count or a state-specific passing ' +
+      'percentage; only the federal minimum of 80% correct (49 CFR 383.135(a)) is solid, so this practice exam follows the ' +
+      'federally standardized 50-question AAMVA format and that 80%/40-correct threshold, the same convention used for other ' +
+      'states\' CDL knowledge tests whose manuals don\'t publish their own figures. Completing practice exams here does not ' +
+      'register you for, or schedule, the official Arkansas DPS CDL knowledge test, skills test, or road test; official testing ' +
+      'must be scheduled directly through Arkansas DPS / Arkansas State Police, and ELDT must be completed through a provider ' +
+      'listed on the FMCSA Training Provider Registry. While we strive to align our content with the current Arkansas Commercial ' +
+      'Driver License Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice ' +
+      'or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Arkansas DPS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the 80% correct (40/50) threshold is the federal minimum set by 49 CFR 383.135(a) — neither the Arkansas CDL manual nor the DPS site publish their own item count or passing percentage, so this follows the same federally standardized AAMVA format used elsewhere',
+  },
+  co_cdl: {
+    orgLine: 'the Colorado Department of Revenue, Division of Motor Vehicles',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Colorado CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Colorado CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Neither the Colorado Commercial ' +
+      'Driver License Manual nor the Colorado DMV website publishes a Colorado-specific knowledge-test item count or ' +
+      'passing percentage; this practice exam follows the federally standardized 50-question, 80%-correct AAMVA General ' +
+      'Knowledge format (49 CFR 383.135(a)) used across CDL knowledge testing nationwide. Completing practice exams here ' +
+      'does not register you for, or schedule, the official Colorado CDL knowledge test, skills test, or road test; ' +
+      'official testing must be scheduled directly through the Colorado DMV, and ELDT must be completed through a ' +
+      'provider listed on the FMCSA Training Provider Registry. While we strive to align our content with the current ' +
+      'Colorado Commercial Driver License Manual, it is provided "as-is" for self-study and does not constitute legal ' +
+      'or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Colorado DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federal AAMVA/FMCSA minimum of 80% correct (49 CFR 383.135(a)); Colorado\'s own manual and DMV site do not publish a CO-specific item count or passing percentage, so this practice exam follows the standardized 50-question/40-correct format',
+  },
+  ct_cdl: {
+    orgLine: 'the Connecticut Department of Motor Vehicles (CT DMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Connecticut CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Connecticut CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The CT DMV\'s Commercial Learner\'s Permit ' +
+      'overview page confirms the real General Knowledge test is 50 questions with 40 correct (80%) required to pass, and that ' +
+      'endorsement knowledge tests are shorter (Hazardous Materials: 30 questions/24 correct; Air Brakes: 25 questions/20 correct; ' +
+      'other single endorsements: 20 questions/16 correct); testing is scheduled by appointment only at CT DMV offices, with a $16 ' +
+      'general knowledge test fee, a $5 fee per endorsement test, and a $30 skills test fee. Completing practice exams here does ' +
+      'not register you for, or schedule, the official CT DMV CDL knowledge test, skills test, or road test; official testing must ' +
+      'be scheduled directly through CT DMV, and ELDT must be completed through a provider listed on the FMCSA Training Provider ' +
+      'Registry. While we strive to align our content with the current Connecticut Commercial Driver License Manual, it is ' +
+      'provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real CT DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same 80% threshold confirmed directly on the CT DMV\'s Commercial Learner\'s Permit overview page — the General Knowledge test is 50 questions with 40 correct required to pass',
+  },
+de_cdl: {
+    orgLine: 'the Delaware Department of Transportation (DelDOT), Division of Motor Vehicles',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Delaware CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Delaware CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. No official DE.gov source could be confirmed ' +
+      'that spells out the exact CDL knowledge-test item count or passing score; this practice exam follows the federal minimum ' +
+      'passing standard (49 CFR 383.135(a), 80% correct) and the federally standardized 50-question AAMVA format used by every ' +
+      'other state\'s CDL knowledge test. Completing practice exams here does not register you for, or schedule, the official ' +
+      'DelDOT DMV CDL knowledge test, skills test, or road test; official testing must be scheduled directly through DelDOT DMV, ' +
+      'and ELDT must be completed through a provider listed on the FMCSA Training Provider Registry. While we strive to align our ' +
+      'content with the current Delaware Commercial Driver\'s Manual, it is provided "as-is" for self-study and does not ' +
+      'constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DelDOT DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federal minimum passing standard (49 CFR 383.135(a)) of 80% correct; the 50-question/40-correct count follows the federally standardized AAMVA format rather than a DelDOT-published item count',
+  },
+  hi_cdl: {
+    orgLine: 'Hawaii\'s county Commercial Driver Licensing Offices (Honolulu, Hawaii, Maui, and Kauai counties), using the statewide Hawaii Commercial Driver License Manual',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Hawaii CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Hawaii CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The Hawaii Commercial Driver License Manual ' +
+      'and the county CDL offices\' fee schedules describe the knowledge test process but do not spell out the exact item count; ' +
+      'this practice exam follows the federally standardized 50-question AAMVA format (49 CFR 383.135(a)) used by every other ' +
+      'state\'s CDL knowledge test, and that same regulation sets the 80% passing threshold. Completing practice exams here does ' +
+      'not register you for, or schedule, the official CDL knowledge test, skills test, or road test at any Hawaii County ' +
+      'Commercial Driver Licensing Office; official testing must be scheduled directly through your county\'s CDL office ' +
+      '(Honolulu, Hawaii, Maui, or Kauai), and ELDT must be completed through a provider listed on the FMCSA Training Provider ' +
+      'Registry. While we strive to align our content with the current Hawaii Commercial Driver License Manual, it is provided ' +
+      '"as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Hawaii county CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the 80% minimum passing score set directly by federal regulation (49 CFR 383.135(a)), which governs Hawaii\'s county-administered CDL knowledge tests; the 50-question/40-correct count follows the federally standardized AAMVA format rather than a county-published item count',
+  },
+  id_cdl: {
+    orgLine: 'the Idaho Transportation Department (ITD), Division of Motor Vehicles',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Idaho CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Idaho CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The ITD Commercial Driver License Manual\'s ' +
+      'own Knowledge Test Information table confirms the General Knowledge test is 50 questions with at least 40 correct (80%) ' +
+      'required to pass, and separately confirms exact item counts for every endorsement test. Completing practice exams here ' +
+      'does not register you for, or schedule, the official ITD CDL knowledge test, skills test, or road test; official testing ' +
+      'must be scheduled directly through an ITD county CDL license office or a licensed third-party CDL examiner, and ELDT must ' +
+      'be completed through a provider listed on the FMCSA Training Provider Registry. While we strive to align our content with ' +
+      'the current Idaho Commercial Driver License Manual, it is provided "as-is" for self-study and does not constitute legal ' +
+      'or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real ITD CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same 80% threshold confirmed directly in the ITD manual\'s own Knowledge Test Information table — 40 of 50 correct required to pass the General Knowledge test',
+  },
+  il_cdl: {
+    orgLine: 'the Illinois Secretary of State (SOS)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Illinois CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Illinois CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The Illinois Secretary of State\'s Commercial ' +
+      'Driver License Guide confirms the real General Knowledge test consists of 30 questions with an 80% minimum passing score ' +
+      '(24 correct) — stated directly in Section 1.4.1 of the guide, not inferred from a generic federal format. Completing ' +
+      'practice exams here does not register you for, or schedule, the official Illinois CDL knowledge test, skills test, or road ' +
+      'test; official testing must be scheduled directly through the Illinois Secretary of State, and ELDT must be completed ' +
+      'through a provider listed on the FMCSA Training Provider Registry. While we strive to align our content with the current ' +
+      'Illinois Commercial Driver License Guide, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Illinois Secretary of State CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same 80% threshold confirmed directly in the Illinois CDL Guide; the 30-question/24-correct General Knowledge count is stated explicitly in Section 1.4.1 of the guide itself, not inferred from a generic federal format',
+  },
+  in_cdl: {
+    orgLine: 'the Indiana Bureau of Motor Vehicles (BMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Indiana CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Indiana CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Neither the Indiana Commercial Driver\'s ' +
+      'License Manual nor the Indiana-specific BMV CDL Applicant Information supplement (form SP 283) spells out an exact ' +
+      'knowledge-test item count or number-correct-to-pass; both confirm only the federally standardized 80% minimum passing ' +
+      'score (49 CFR 383.135(a)). This practice exam follows the same 50-question AAMVA format used by every other state\'s CDL ' +
+      'knowledge test. Completing practice exams here does not register you for, or schedule, the official Indiana BMV CDL ' +
+      'knowledge test, skills test, or road test; official testing must be scheduled directly through the Indiana BMV, and ELDT ' +
+      'must be completed through a provider listed on the FMCSA Training Provider Registry. While we strive to align our content ' +
+      'with the current Indiana Commercial Driver\'s License Manual, it is provided "as-is" for self-study and does not ' +
+      'constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Indiana BMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) confirmed in the Indiana-specific BMV supplement; the 50-question/40-correct count follows the AAMVA format rather than an Indiana BMV-published item count',
+  },
+  ia_cdl: {
+    orgLine: 'the Iowa Department of Transportation (Iowa DOT)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Iowa CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Iowa CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The Iowa DOT CDL Testing page ' +
+      'publishes an explicit number-of-questions/allowed-to-miss table for every knowledge test -- the General Knowledge ' +
+      'test is 50 questions with 40 correct required (80%, 10 allowed wrong), consistent with the federally standardized ' +
+      'AAMVA format (49 CFR 383.135(a)). Completing practice exams here does not register you for, or schedule, the ' +
+      'official Iowa DOT CDL knowledge test, skills test, or road test; official testing must be scheduled directly ' +
+      'through Iowa DOT or a participating County Treasurer\'s office, and ELDT must be completed through a provider ' +
+      'listed on the FMCSA Training Provider Registry. While we strive to align our content with the current Iowa ' +
+      'Commercial Driver License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Iowa DOT CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same 80% threshold confirmed directly on the Iowa DOT CDL Testing page — the General Knowledge test is 50 questions with 40 correct required to pass (10 allowed wrong)',
+  },
+  ks_cdl: {
+    orgLine: 'the Kansas Department of Revenue, Division of Vehicles',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Kansas CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Kansas CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Neither the Kansas Commercial Driver\'s ' +
+      'License Manual nor ksrevenue.gov\'s CDL pages state the exact knowledge-test item count or a Kansas-specific passing score; ' +
+      'this practice exam follows the federally standardized 50-question/80%-correct AAMVA format (49 CFR 383.135(a)) used by ' +
+      'every other state\'s CDL knowledge test. Completing practice exams here does not register you for, or schedule, the ' +
+      'official Kansas CDL knowledge test, skills test, or road test; official testing must be scheduled directly through the ' +
+      'Kansas Department of Revenue Division of Vehicles, and ELDT must be completed through a provider listed on the FMCSA ' +
+      'Training Provider Registry. While we strive to align our content with the current Kansas Commercial Driver\'s License ' +
+      'Manual, it is provided "as-is" for self-study and does not constitute legal or driving-instruction advice or a guaranteed ' +
+      'exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Kansas CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federal 80% minimum passing score under 49 CFR 383.135(a); the 50-question/40-correct count follows the federally standardized AAMVA format since neither the Kansas manual nor ksrevenue.gov publishes an exact item count',
+  },
+  ky_cdl: {
+    orgLine: 'the Kentucky State Police (KSP), Driver Testing Branch, or the Kentucky Transportation Cabinet (KYTC) Division of Driver Licensing',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Kentucky CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Kentucky CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. The Kentucky CDL Manual confirms the ' +
+      'real exam mechanics directly in its Kentucky-specific front matter: the General Knowledge test is 50 questions, the ' +
+      'Class A Combination Vehicles test is 20 questions, Air Brakes is 25 questions, Doubles/Triples, Tankers, and ' +
+      'Passenger Transport are each 20 questions, Hazardous Materials is 30 questions, and School Bus is 20 questions, ' +
+      'with at least 80% correct required to pass every test. Completing practice exams here does not register you for, ' +
+      'or schedule, the official Kentucky CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Kentucky State Police, and ELDT must be completed through a provider listed on the ' +
+      'FMCSA Training Provider Registry. While we strive to align our content with the current Kentucky Commercial ' +
+      'Driver\'s License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Kentucky CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold confirmed directly in the Kentucky CDL Manual\'s Kentucky-specific front matter — every knowledge test (General Knowledge and each endorsement/vehicle test) requires at least 80% correct to pass, i.e. 40 of 50 correct on the 50-question General Knowledge test',
+  },
+  la_cdl: {
+    orgLine: 'the Louisiana Department of Public Safety & Corrections, Office of Motor Vehicles (OMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Louisiana CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal Entry-Level Driver ' +
+      'Training (ELDT) requirement or any Louisiana CDL/endorsement training requirement, and does not issue any official ' +
+      'course-completion certificate — our content is a supplementary study aid only. Neither the Louisiana Commercial Driver ' +
+      'License Manual, the Louisiana Administrative Code Title 55 Third-Party-Tester provisions, nor the official OMV CDL Driver ' +
+      'Education webpage states an exact knowledge-test question count or number-correct-to-pass; this practice exam follows the ' +
+      'federally standardized 50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other state\'s ' +
+      'CDL knowledge test. Completing practice exams here does not register you for, or schedule, the official Louisiana OMV CDL ' +
+      'knowledge test, skills test, or road test; official testing must be scheduled directly through Louisiana OMV, and ELDT ' +
+      'must be completed through a provider listed on the FMCSA Training Provider Registry. While we strive to align our content ' +
+      'with the current Louisiana Commercial Driver License Manual, it is provided "as-is" for self-study and does not ' +
+      'constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Louisiana OMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Louisiana manual, the Louisiana Administrative Code, nor the OMV website independently publishes an item count or number-correct-to-pass',
   },
 };
 function trackCompliance(examType) {
@@ -5931,6 +6218,69 @@ var RESOURCES = {
   az_cdl: [
     { title: 'Arizona Commercial Driver License Manual', type: 'pdf', url: 'https://apps.azdot.gov/files/mvd/mvd-forms-lib/40-7802.pdf',
       desc: 'The official CDL manual (Customer Service Guide for Commercial Drivers) published by the Arizona Department of Transportation Motor Vehicle Division — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ar_cdl: [
+    { title: 'Arkansas Commercial Driver License Manual', type: 'pdf', url: 'https://media.ark.org/dps/CDL-Manual_March-2025.pdf',
+      desc: 'The official Arkansas CDL manual (AAMVA 2022 Modernized CDL Testing System, Version: March 2025), published by the Arkansas Department of Public Safety / Arkansas State Police — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  co_cdl: [
+    { title: 'Colorado Commercial Driver License Manual', type: 'pdf', url: 'https://dmv.colorado.gov/sites/dmv/files/documents/2023_CDL_Manual_DR_2251.pdf',
+      desc: 'The official CDL manual (2023 CDL Testing System, DR 2251, June 2023) published by the Colorado Department of Revenue – Division of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ct_cdl: [
+    { title: 'Connecticut Commercial Driver License Manual', type: 'pdf', url: 'https://portal.ct.gov/dmv/-/media/dmv/cdl-driver-manual-with-mod-11-and-12-ver-11-20-2024.pdf',
+      desc: 'The official CDL manual (R-295 Rev. 12/2024) published by the Connecticut Department of Motor Vehicles -- the authoritative source the written knowledge test is based on. Linked from the CT DMV\'s Commercial Learner\'s Permit page, which also confirms real exam mechanics: question counts, passing scores, endorsement test lengths, fees, and appointment-only testing.',
+      topic: 'General Reference', free: true },
+  ],
+  de_cdl: [
+    { title: 'Delaware Commercial Driver\'s Manual', type: 'pdf', url: 'https://dmv.de.gov/forms/driver_serv_forms/pdfs/cdl_manual_modernized.pdf',
+      desc: 'The official CDL manual (2022 CDL Testing System, Version 4.0, AAMVA Modernized Testing System, Release Date: February 2025) published by the Delaware Department of Transportation / Division of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  hi_cdl: [
+    { title: 'Hawaii Commercial Driver License Manual', type: 'pdf', url: 'https://hidot.hawaii.gov/highways/files/2023/12/HI-CDL-Manual-FINAL-Version-7-17_HI-5-23.pdf',
+      desc: 'The official statewide CDL manual (2005 CDL Testing System / AAMVA, Hawaii: May 2023 update) used by all four County Commercial Driver Licensing Offices — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  id_cdl: [
+    { title: 'Idaho Commercial Driver License Manual', type: 'pdf', url: 'https://itd.idaho.gov/wp-content/uploads/2026/04/CDL-manual.pdf',
+      desc: 'The official CDL manual (2022 CDL Testing System, July 2026 Edition) published by the Idaho Transportation Department Division of Motor Vehicles — the authoritative source the written knowledge test is based on, including the Knowledge Test Information table confirming exact item counts and passing scores for every knowledge test.',
+      topic: 'General Reference', free: true },
+  ],
+  il_cdl: [
+    { title: 'Illinois Commercial Driver\'s License Guide', type: 'pdf', url: 'https://www.ilsos.gov/content/dam/publications/pdf_publications/dsd_cdl10.pdf',
+      desc: 'The official CDL guide (DSD CDL 10.30, July 2025 edition) published by the Illinois Secretary of State — the authoritative source the written knowledge test is based on, including General Knowledge, endorsement, Class D non-CDL, and Charter Bus (C) content.',
+      topic: 'General Reference', free: true },
+  ],
+  in_cdl: [
+    { title: 'Indiana Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.in.gov/bmv/files/cdl-manual.pdf',
+      desc: 'The official CDL manual (AAMVA "Modernized Testing System" base manual) published by the Indiana Bureau of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'Indiana-Specific Commercial Driver\'s License Applicant Information', type: 'pdf', url: 'https://www.in.gov/bmv/licenses-permits-ids/files/indiana-specific-cdl-manual.pdf',
+      desc: 'The official Indiana BMV supplement (form SP 283) covering Indiana-specific CDL administrative rules — endorsement/restriction codes, CLP and transfer timelines, and licensing procedures not covered in the base AAMVA manual.',
+      topic: 'General Reference', free: true },
+  ],
+  ia_cdl: [
+    { title: 'Iowa Commercial Driver License Manual', type: 'pdf', url: 'https://iowadot.gov/media/326/download',
+      desc: 'The official CDL manual published by the Iowa Department of Transportation — the authoritative source the written knowledge test is based on, including Iowa Supplemental Sections 11 (Vehicle Inspection Test) and 12 (Basic Control Skills Test).',
+      topic: 'General Reference', free: true },
+  ],
+  ks_cdl: [
+    { title: 'Kansas Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.ksrevenue.gov/pdf/cdlhandbook.pdf',
+      desc: 'The official CDL manual published by the Kansas Department of Revenue, Division of Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ky_cdl: [
+    { title: 'Kentucky Commercial Driver\'s License Manual', type: 'pdf', url: 'https://wp.kentuckystatepolice.ky.gov/wp-content/uploads/2025/05/2025-CDL-Manual-in-PDF-Format-V1.pdf',
+      desc: 'The official CDL manual (Modernized Testing System, AAMVA content) hosted by the Kentucky State Police, the agency that administers CDL knowledge and skills testing in Kentucky — the authoritative source the written knowledge test is based on. (The drive.ky.gov-hosted copy of the same manual returned an error at fetch time; both are official Kentucky Commonwealth (.ky.gov) sources.)',
+      topic: 'General Reference', free: true },
+  ],
+  la_cdl: [
+    { title: 'Louisiana Commercial Driver License Manual', type: 'pdf', url: 'https://dpsweb.dps.louisiana.gov/DPSForms.nsf/8bad5589175b8981862575f20048ee65/b49427def852192a862579a5004826d9/$FILE/68448863.pdf/CDL%20Driver%20Manual%20-July%202017%20r%200917.pdf',
+      desc: 'The official CDL manual (2005 CDL Testing System, Version: July 2017) published by the Louisiana Department of Public Safety & Corrections, Office of Motor Vehicles — the authoritative source the written knowledge test is based on.',
       topic: 'General Reference', free: true },
   ],
 };
