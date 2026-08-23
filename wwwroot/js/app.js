@@ -2396,6 +2396,83 @@ var HUB_EXAMS = [
     description: 'Practice questions covering the Louisiana Commercial Driver\'s License Manual (Louisiana Department of Public Safety & Corrections, Office of Motor Vehicles, 2005 CDL Testing System, Version: July 2017): CDL licensing (Class A/B/C license types, the manual\'s six knowledge-test endorsements, restrictions, and disqualification penalties), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. Neither the base manual, the Louisiana Administrative Code Title 55 Third-Party-Tester provisions, nor the official OMV CDL Driver Education webpage states an exact knowledge-test question count or number-correct-to-pass for any Louisiana CDL test; several third-party prep sites claim 50 questions/40 correct (80%), but this could not be confirmed on any official LA.gov or dps.louisiana.gov source. What is confirmed directly from official Louisiana sources is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests, so this practice exam follows that same 50-question/40-correct format used by every other CDL-track state.',
     breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '54%'], ['Vehicle Control, Air Brakes & Combination Vehicles', '22%'], ['Hazardous Materials', '17%'], ['School Bus', '7%']],
   },
+  {
+    examType: 'ma_cdl', shortName: 'Massachusetts CDL', stateCode: 'MA', examKind: 'Commercial Driver (CDL)',
+    title: 'Massachusetts CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ma_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Massachusetts Commercial Driver\'s License Manual (Massachusetts Registry of Motor Vehicles (RMV), AAMVA Modernized Testing System base content Version: July 2017, with a Massachusetts-specific front matter/Preface revised March 2025): CDL licensing, vehicle inspection, and basic control/on-road driving; driving safely, including a dedicated seeing-hazards-and-distracted-driving section covering the federal hand-held-phone and texting disqualification rules; transporting cargo and passengers safely; air brakes, combination vehicles, doubles/triples, and tank vehicles; hazardous materials; and school bus endorsement content. Massachusetts\'s manual is unusually thorough in disclosing real exam mechanics directly in its Preface -- the General Knowledge test is 50 questions in one hour, the Passenger Transport test is 20 questions in 20 minutes, Air Brakes is 25 questions in 25 minutes, Combination Vehicles is 20 questions in 20 minutes, Hazardous Materials is 30 questions in 30 minutes, and Tankers and Doubles/Triples are each 20 questions in 20 minutes, with at least 80% correct required to pass every test -- but it notably stops short of disclosing an item count or time limit for the School Bus test, so that figure is left unconfirmed here rather than guessed or borrowed from another state.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '30%'], ['Driving Safely (General Safe Driving Practices)', '24%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '21%'], ['Hazardous Materials', '16%'], ['School Bus', '9%']],
+  },
+  {
+    examType: 'md_cdl', shortName: 'Maryland CDL', stateCode: 'MD', examKind: 'Commercial Driver (CDL)',
+    title: 'Maryland CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/md_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by MDOT MVA)', passScore: '40/50 Correct (80% -- 80% Confirmed Directly in the Maryland CDL Manual\'s Front Matter; Item Count Follows AAMVA/Federal-Standard Format, Not Independently Published by MDOT MVA)',
+    description: 'Practice questions covering the Maryland Commercial Driver\'s License Manual (DL-151, 05/26), published by the Maryland Department of Transportation Motor Vehicle Administration (MDOT MVA): CDL licensing (Class A/B/C definitions, the manual\'s six knowledge-test endorsements T/P/N/H/S/X, age minimums, and disqualification penalties), vehicle inspection, basic control and on-road driving, general safe-driving practices, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials (including the TSA background-check requirement), and school bus endorsement content. The manual\'s own front matter directly confirms an 80% passing score is required on every knowledge test, but neither the manual nor the official MVA Knowledge Tests webpage discloses an exact question count for the CDL general knowledge test or any endorsement test -- MVA publishes item counts only for non-commercial license classes. Several third-party test-prep sites converge on 50 questions/40 correct, but since that figure is not confirmed on any official Maryland source, this practice exam follows the same federally standardized AAMVA format used by every other CDL-track state in this project.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '32%'], ['Driving Safely (General Safe Driving Practices)', '22%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '23%'], ['Hazardous Materials', '15%'], ['School Bus', '8%']],
+  },
+  {
+    examType: 'me_cdl', shortName: 'Maine CDL', stateCode: 'ME', examKind: 'Commercial Driver (CDL)',
+    title: 'Maine CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/me_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Maine BMV)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Item Count Not Independently Published by Maine BMV)',
+    description: 'Practice questions covering the Maine Commercial Driver License Manual (Maine Department of the Secretary of State, Bureau of Motor Vehicles, 2005 CDL Testing System base AAMVA content, Maine revision dated 7/24): CDL licensing (Class A/B/C license types, Maine\'s six knowledge-test endorsements -- N, H, X, T, P, and S -- plus disqualification penalties and the TSA hazmat background-check process), driving safely, transporting cargo and passengers safely, air brakes, combination vehicles, doubles/triples (Maine allows doubles but not triples) and tank vehicles, hazardous materials, school bus endorsement content, pre-trip vehicle inspection, and basic control/on-road driving. Neither the official Maine CDL manual nor the companion Maine Commercial Driver License Skills Test Addendum discloses an exact knowledge-test question count or number-correct-to-pass for the general knowledge test; several third-party test-prep sites claim 50 questions/40 correct (80%), but this could not be confirmed on any official maine.gov or digitalmaine.com source. What is confirmed directly from official Maine sources is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide, plus a separate, distinct 80%-of-items-checked requirement for the skills-test vehicle inspection component -- so this practice exam follows the same 50-question/40-correct knowledge-test format used by every other CDL-track state.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '27%'], ['Driving Safely (General Safe Driving Practices)', '25%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '21%'], ['Hazardous Materials', '20%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'mn_cdl', shortName: 'Minnesota CDL', stateCode: 'MN', examKind: 'Commercial Driver (CDL)',
+    title: 'Minnesota CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mn_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Minnesota DVS)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Minnesota DVS)',
+    description: 'Practice questions covering the Minnesota Commercial Driver\'s License Manual (Minnesota Department of Public Safety, Division of Driver and Vehicle Services, Modernized Testing System, AAMVA base content Version: July 2017, Minnesota-specific front matter Form Number PS30002-33, 01/2022): CDL licensing (Class A/B/C license types, Minnesota\'s six knowledge-test endorsements H/N/P/S/T/X, its unusually granular eleven-code restriction table, and state-specific exemptions), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, both the generic AAMVA school bus content and Minnesota\'s own unusually extensive Part B School Bus Driver\'s Handbook, vehicle inspection, and basic control/on-road driving. Neither the manual\'s Minnesota-specific front matter nor any AAMVA base-manual text states an exact knowledge-test item count or number-correct-to-pass for any Minnesota CDL test; the manual\'s only explicit "80%" figure applies to the separate federal Entry-Level Driver Training (ELDT) theory-training assessment, not the CDL knowledge test itself. What is confirmed directly from the official Minnesota manual is the federally standardized 80% minimum passing score (49 CFR 383.135(a)), so this practice exam follows the same 50-question/40-correct AAMVA/FMCSA format used by every other hedged CDL-track state in this project.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '25%'], ['Driving Safely, Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '37%'], ['Hazardous Materials', '20%'], ['School Bus (Generic AAMVA Content Plus Minnesota\'s Own Part B Handbook)', '18%']],
+  },
+  {
+    examType: 'mo_cdl', shortName: 'Missouri CDL', stateCode: 'MO', examKind: 'Commercial Driver (CDL)',
+    title: 'Missouri CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mo_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the Missouri Commercial Driver License Manual (Missouri Department of Revenue, in cooperation with the Missouri State Highway Patrol, Modernized/2005 CDL Testing System, base AAMVA content Version: July 2017, with Missouri-specific front matter and Section 11/12 modernized components revised March 2025, cover revised August 2025): CDL licensing, vehicle inspection, and basic control/on-road driving; transporting cargo and passengers safely; air brakes, combination vehicles, doubles/triples, and tank vehicles; hazardous materials; and school bus endorsement content. Missouri\'s manual is unusually well-documented among this project\'s CDL-track states: its Missouri-specific Section 14 front matter fully and unambiguously discloses every written-exam item count -- General Knowledge 50 questions, Air Brakes 25, Combination Vehicles 20, Hazardous Materials 30, Doubles/Triples 20, Passenger 20, Tank 20, and School Bus 20 -- with at least 80% correct required to pass every test.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '30%'], ['Driving Safely (General Safe Driving Practices)', '21%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '22%'], ['Hazardous Materials', '18%'], ['School Bus', '9%']],
+  },
+  {
+    examType: 'ms_cdl', shortName: 'Mississippi CDL', stateCode: 'MS', examKind: 'Commercial Driver (CDL)',
+    title: 'Mississippi CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ms_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Mississippi DPS)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Mississippi DPS)',
+    description: 'Practice questions covering the Mississippi Commercial Driver\'s License Manual (AAMVA \'Modernized Testing System\' base content -- interior section footers still read \'Version: July 2017\' while the cover page reflects the Mississippi Department of Public Safety\'s most recent March 2025 republication date), published by the Mississippi DPS Driver Service Bureau: CDL licensing (Class A/B/C definitions, the manual\'s six knowledge-test endorsements, restriction codes, and disqualification rules), driving safely (including a dedicated focus on seeing hazards and managing driver distraction), transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. The word \'Mississippi\' does not appear anywhere in this manual\'s text -- it is the generic unmodified AAMVA base manual with no Mississippi-specific preface, and neither the manual\'s Section 1.1.1 list of knowledge tests nor the DPS Driver Service Bureau\'s own CDL webpage discloses an item count, time limit, or passing-score percentage for any test. What is confirmed is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests; multiple independent third-party CDL prep sites converge on a 50-question/40-correct Mississippi General Knowledge format, so this practice exam follows that same widely-used format.',
+    breakdown: [['Driving Safely, Seeing Hazards/Distraction & Basic Vehicle Control', '34%'], ['CDL Licensing & Vehicle Inspection', '16%'], ['Air Brakes & Combination Vehicles', '16%'], ['Hazardous Materials', '11%'], ['School Bus', '10%'], ['Transporting Cargo & Passengers Safely', '8%'], ['Doubles/Triples & Tank Vehicles', '5%']],
+  },
+  {
+    examType: 'mt_cdl', shortName: 'Montana CDL', stateCode: 'MT', examKind: 'Commercial Driver (CDL)',
+    title: 'Montana CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/mt_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Montana MVD)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Montana MVD)',
+    description: 'Practice questions covering the Montana Commercial Driver License Manual (Montana Department of Justice, Motor Vehicle Division (MVD), base AAMVA \'Modernized Testing System\' content, Version: July 2017, with Montana-specific front matter revised June 2026): CDL licensing (Class A/B/C vehicle classifications, the manual\'s six knowledge-test endorsements, restrictions, and disqualification penalties), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. Neither the Montana-specific front matter (pages MT-1 through MT-8) nor the AAMVA base manual text states an exact knowledge-test question count or number-correct-to-pass for any Montana CDL test -- only the federally standardized 80% minimum passing score (49 CFR 383.135(a)) is confirmed. Third-party CDL test-prep aggregators converge on the same 50-question/40-correct format used by every other CDL-track state on this site, so this practice exam follows that convention.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '31%'], ['Driving Safely (General Safe Driving Practices)', '21%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '22%'], ['Hazardous Materials', '16%'], ['School Bus', '10%']],
+  },
+  {
+    examType: 'ne_cdl', shortName: 'Nebraska CDL', stateCode: 'NE', examKind: 'Commercial Driver (CDL)',
+    title: 'Nebraska CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/ne_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Nebraska DMV)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Nebraska DMV)',
+    description: 'Practice questions covering the Nebraska Commercial Driver\'s License Manual (Nebraska Department of Motor Vehicles, AAMVA 2005 CDL Testing System / Modernized Testing System content, base Version: September 9, 2022 for Sections 1-2, July 2017 for most other sections, with Vehicle Inspection and Basic Control Skills modernized to March 2025, cover page Version: March 2025 (March 2026)): CDL licensing (Class A/B/C license types, Nebraska\'s six endorsements and nine restriction codes, disqualification penalties, and the ELDT and CLP/CDL testing requirements laid out in the manual\'s Nebraska Specifics front matter), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. The manual -- including its 11-page Nebraska Specifics insert -- never states an exact knowledge-test question count or number-correct-to-pass anywhere in the fetched text; only the federally standardized 80% minimum passing score (49 CFR 383.135(a)) is confirmed, so this practice exam follows the same 50-question/40-correct format used by every other CDL-track state on this site.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '30%'], ['Driving Safely, Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '46%'], ['Hazardous Materials', '17%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'nh_cdl', shortName: 'New Hampshire CDL', stateCode: 'NH', examKind: 'Commercial Driver (CDL)',
+    title: 'New Hampshire CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/nh_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by New Hampshire DMV)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by New Hampshire DMV)',
+    description: 'Practice questions covering the New Hampshire Commercial Driver\'s License Manual (New Hampshire Division of Motor Vehicles, NH Department of Safety, AAMVA Modernized Testing System base content, cover Version: September 9, 2022) and its companion Commercial Driver\'s License Manual Supplement for Modernized Version (Version: September 9, 2022, Section 12M carrying an additional Update 2/9/2024 revision): CDL licensing (Class A/B/C license types, the manual\'s six knowledge-test endorsements, restrictions, and disqualification penalties), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. Neither the base manual, the supplement, nor the New Hampshire DMV\'s Commercial Driver Licenses and CDL Road Test webpages state an exact knowledge-test question count or number-correct-to-pass for any New Hampshire CDL test; several third-party CDL test-prep sites converge on a 50-question/40-correct (80%) General Knowledge test, but this is not confirmed by any official New Hampshire source. What is confirmed is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests, so this practice exam follows that same 50-question/40-correct format used by every other CDL-track state.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '28%'], ['Driving Safely (General Safe Driving Practices)', '25%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '21%'], ['Hazardous Materials', '18%'], ['School Bus', '8%']],
+  },
+  {
+    examType: 'nj_cdl', shortName: 'New Jersey CDL', stateCode: 'NJ', examKind: 'Commercial Driver (CDL)',
+    title: 'New Jersey CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/nj_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge)', passScore: '40/50 Correct (80%)',
+    description: 'Practice questions covering the New Jersey Commercial Driver\'s License Manual (New Jersey Motor Vehicle Commission, base AAMVA \'Modernized Testing System\' content, cover Version: March 2025, most sections Version: July 2017, Section 11 Vehicle Inspection modernized to Version: March 2025): CDL licensing, vehicle inspection, and basic control/on-road driving; transporting cargo and passengers safely; air brakes, combination vehicles, doubles/triples, and tank vehicles; hazardous materials (including a dedicated loading/unloading and Do Not Load table subsection); and school bus endorsement content. Unlike most other states built in this project, New Jersey\'s own official MVC website -- not just the manual -- directly confirms real exam mechanics: the official page nj.gov/mvc/drivertopics/cdltest.htm states the knowledge test is a 50-question general test and you must answer at least 80% of the questions correctly to pass, with additional separate tests for each endorsement. Per-endorsement knowledge-test item counts (air brakes, combination, doubles/triples, hazmat, passenger, school bus, tank) are not disclosed by the official source and remain unconfirmed.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '29%'], ['Driving Safely (General Safe Driving Practices)', '26%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '22%'], ['Hazardous Materials', '16%'], ['School Bus', '7%']],
+  },
+  {
+    examType: 'nv_cdl', shortName: 'Nevada CDL', stateCode: 'NV', examKind: 'Commercial Driver (CDL)',
+    title: 'Nevada CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', active: true, route: '/nv_cdl',
+    duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Not Independently Published by Nevada DMV)', passScore: '40/50 Correct (80% -- Federally Standardized Minimum per 49 CFR 383.135(a), Not Independently Published by Nevada DMV)',
+    description: 'Practice questions covering the Nevada Commercial Driver\'s License Manual (Nevada Department of Motor Vehicles, AAMVA-authored base content, Modernized/2005 CDL Testing System, Version: July 2017 for Sections 1-10 and 12-13, with Section 11 Vehicle Inspection Test revised to AAMVA\'s newer itemized checklist format dated September 9, 2022): CDL licensing (Class A/B/C license types, the manual\'s six knowledge-test endorsements, restrictions, and disqualification penalties), driving safely, transporting cargo and passengers safely, air brakes and combination vehicles, doubles/triples and tank vehicles, hazardous materials, school bus endorsement content, vehicle inspection, and basic control/on-road driving. The Nevada DMV manual does not state an exact knowledge-test question count or number-correct-to-pass for any Nevada CDL test; what is confirmed is the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests, so this practice exam follows that same 50-question/40-correct format used by every other CDL-track state.',
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '25%'], ['Driving Safely (General Safe Driving Practices)', '28%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '22%'], ['Hazardous Materials', '18%'], ['School Bus', '7%']],
+  },
 ];
 
 // Display name for each HUB_EXAMS stateCode -- 'US' covers genuinely national (non-state-specific)
@@ -4249,6 +4326,239 @@ de_cdl: {
       'constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Louisiana OMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
     passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Louisiana manual, the Louisiana Administrative Code, nor the OMV website independently publishes an item count or number-correct-to-pass',
+  },
+  ma_cdl: {
+    orgLine: 'the Massachusetts Registry of Motor Vehicles (RMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Massachusetts CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Massachusetts CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. The Massachusetts CDL Manual\'s Massachusetts-specific Preface ' +
+      'confirms real exam mechanics directly: the General Knowledge test is 50 questions in one hour, ' +
+      'the Passenger Transport test is 20 questions in 20 minutes, Air Brakes is 25 questions in 25 ' +
+      'minutes, Combination Vehicles is 20 questions in 20 minutes, Hazardous Materials is 30 questions ' +
+      'in 30 minutes, and Tankers and Doubles/Triples are each 20 questions in 20 minutes, with at ' +
+      'least 80% correct required to pass every test; the Preface does not disclose an item count or ' +
+      'time limit for the School Bus test, so that figure is not stated here. Completing practice exams ' +
+      'here does not register you for, or schedule, the official Massachusetts RMV CDL knowledge test, ' +
+      'skills test, or road test; official testing must be scheduled directly through the Massachusetts ' +
+      'RMV, and ELDT must be completed through a provider listed on the FMCSA Training Provider ' +
+      'Registry. While we strive to align our content with the current Massachusetts Commercial ' +
+      'Driver\'s License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Massachusetts RMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold confirmed directly in the Massachusetts CDL Manual\'s Massachusetts-specific Preface — every knowledge test requires at least 80% correct to pass, i.e. 40 of 50 correct on the 50-question General Knowledge test, which is also the federally standardized minimum under 49 CFR 383.135(a)',
+  },
+  md_cdl: {
+    orgLine: 'the Maryland Department of Transportation Motor Vehicle Administration (MDOT MVA)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Maryland CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Maryland CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate -- our content is a ' +
+      'supplementary study aid only. The Maryland CDL Manual\'s front matter directly confirms that an ' +
+      '80% passing score is required on every knowledge test, and that a failed knowledge test may be ' +
+      'retaken after a minimum seven-day wait; neither the manual nor the official MVA Knowledge Tests ' +
+      'webpage states an exact question count for the CDL general knowledge test or any endorsement ' +
+      'test, so this practice exam follows the federally standardized 50-question/40-correct (80%) ' +
+      'AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other CDL-track state. Completing practice ' +
+      'exams here does not register you for, or schedule, the official Maryland MVA CDL knowledge test, ' +
+      'skills test, or road test; official testing must be scheduled directly through MDOT MVA, and ' +
+      'ELDT must be completed through a provider listed on the FMCSA Training Provider Registry. While ' +
+      'we strive to align our content with the current Maryland Commercial Driver\'s License Manual, it ' +
+      'is provided "as-is" for self-study and does not constitute legal or driving-instruction advice ' +
+      'or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Maryland MVA CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the 80% minimum passing score confirmed directly in the Maryland CDL Manual\'s own front matter (also the federally standardized minimum under 49 CFR 383.135(a)); the 50-question/40-correct item count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the manual nor the official MVA Knowledge Tests webpage publishes an exact item count for any CDL knowledge test',
+  },
+  me_cdl: {
+    orgLine: 'the Maine Department of the Secretary of State, Bureau of Motor Vehicles (BMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Maine CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Maine CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the Maine Commercial Driver License Manual nor the ' +
+      'official Maine Commercial Driver License Skills Test Addendum states an exact knowledge-test ' +
+      'question count or number-correct-to-pass; this practice exam follows the federally standardized ' +
+      '50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other state\'s ' +
+      'CDL knowledge test. Completing practice exams here does not register you for, or schedule, the ' +
+      'official Maine Bureau of Motor Vehicles (BMV) CDL knowledge test, skills test, or road test; ' +
+      'official testing must be scheduled directly through the Maine BMV, and ELDT must be completed ' +
+      'through a provider listed on the FMCSA Training Provider Registry. While we strive to align our ' +
+      'content with the current Maine Commercial Driver License Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Maine BMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Maine Commercial Driver License Manual nor the Maine Commercial Driver License Skills Test Addendum independently publishes an item count or number-correct-to-pass for the knowledge test (the manual\'s confirmed 80%-of-items-checked figure applies to the skills-test vehicle inspection component, not the knowledge test)',
+  },
+  mn_cdl: {
+    orgLine: 'the Minnesota Department of Public Safety (DPS), Division of Driver and Vehicle Services (DVS)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Minnesota CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Minnesota CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the Minnesota Commercial Driver\'s License Manual\'s ' +
+      'Minnesota-specific front matter nor any AAMVA base-manual text states an exact knowledge-test ' +
+      'item count or number-correct-to-pass for any Minnesota CDL knowledge test; the manual\'s only ' +
+      'explicit "80%" figure applies to the separate federal Entry-Level Driver Training (ELDT) ' +
+      'theory-training assessment, not the CDL knowledge test itself. Several third-party test-prep ' +
+      'sites claim 50 questions/40 correct (80%) for Minnesota\'s general knowledge test, but this could ' +
+      'not be confirmed on any official mn.gov or dps.mn.gov source. What is confirmed directly from ' +
+      'the official Minnesota manual is the federally standardized 80% minimum passing score (49 CFR ' +
+      '383.135(a)) that applies to CDL knowledge tests nationwide, so this practice exam follows the ' +
+      'same 50-question/40-correct AAMVA/FMCSA format used by every other CDL-track state. Completing ' +
+      'practice exams here does not register you for, or schedule, the official Minnesota DVS CDL ' +
+      'knowledge test, skills test, or road test; official testing must be scheduled directly through ' +
+      'Minnesota DVS, and ELDT must be completed through a provider listed on the FMCSA Training ' +
+      'Provider Registry. While we strive to align our content with the current Minnesota Commercial ' +
+      'Driver\'s License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Minnesota DVS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since the Minnesota manual\'s only explicit 80% figure applies to the separate federal ELDT theory assessment, not the CDL knowledge test itself, and neither the manual nor the DVS website independently publishes a knowledge-test item count or number-correct-to-pass',
+  },
+  mo_cdl: {
+    orgLine: 'the Missouri Department of Revenue (DOR), in cooperation with the Missouri State Highway Patrol (which administers CDL knowledge and skills testing)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Missouri CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Missouri CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. The Missouri CDL Manual confirms the real exam mechanics directly ' +
+      'and unambiguously in its Missouri-specific Section 14 front matter: the General Knowledge test ' +
+      'is 50 questions, Air Brakes is 25 questions, Combination Vehicles is 20 questions, Hazardous ' +
+      'Materials is 30 questions, Doubles/Triples, Passenger, and Tank are each 20 questions, and ' +
+      'School Bus is 20 questions, with at least 80% correct required to pass every test. Completing ' +
+      'practice exams here does not register you for, or schedule, the official Missouri CDL knowledge ' +
+      'test, skills test, or road test; official testing must be scheduled directly through Missouri ' +
+      'State Highway Patrol Troop Headquarters, a Commercial Learner\'s Permit (CLP) must be held at ' +
+      'least 14 calendar days before the skills test, and ELDT must be completed and confirmed ' +
+      'electronically through a provider listed on the FMCSA Training Provider Registry before ' +
+      'hazmat/passenger/school-bus testing or a first-time CDL/classification upgrade. While we strive ' +
+      'to align our content with the current Missouri Commercial Driver License Manual, it is provided ' +
+      '"as-is" for self-study and does not constitute legal or driving-instruction advice or a ' +
+      'guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Missouri DOR/MSHP CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold confirmed directly and unambiguously in the Missouri CDL Manual\'s Missouri-specific Section 14 front matter — every knowledge test (General Knowledge and each endorsement/vehicle test) requires at least 80% correct to pass, i.e. 40 of 50 correct on the 50-question General Knowledge test (also the federally standardized minimum under 49 CFR 383.135(a))',
+  },
+  ms_cdl: {
+    orgLine: 'the Mississippi Department of Public Safety (DPS) Driver Service Bureau',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Mississippi CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Mississippi CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the Mississippi Commercial Driver\'s License Manual (which ' +
+      'contains no Mississippi-specific preface at all), nor the Mississippi DPS Driver Service ' +
+      'Bureau\'s own CDL webpage states an exact knowledge-test question count or ' +
+      'number-correct-to-pass; this practice exam follows the federally standardized ' +
+      '50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other state\'s ' +
+      'CDL knowledge test. Completing practice exams here does not register you for, or schedule, the ' +
+      'official Mississippi DPS CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Mississippi DPS Driver Service Bureau, and ELDT must be completed ' +
+      'through a provider listed on the FMCSA Training Provider Registry. While we strive to align our ' +
+      'content with the current Mississippi Commercial Driver\'s License Manual, it is provided "as-is" ' +
+      'for self-study and does not constitute legal or driving-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Mississippi DPS CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Mississippi manual (which carries no state-specific preface) nor the DPS Driver Service Bureau website independently publishes an item count or number-correct-to-pass',
+  },
+  mt_cdl: {
+    orgLine: 'the Montana Department of Justice, Motor Vehicle Division (MVD)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Montana CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Montana CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the Montana-specific front matter (pages MT-1 through ' +
+      'MT-8) nor the AAMVA base manual text of the Montana Commercial Driver License Manual states an ' +
+      'exact knowledge-test question count or number-correct-to-pass; this practice exam follows the ' +
+      'federally standardized 50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used ' +
+      'by every other state\'s CDL knowledge test. Completing practice exams here does not register you ' +
+      'for, or schedule, the official Montana MVD CDL knowledge test, skills test, or road test; ' +
+      'official testing must be scheduled directly through the Montana Department of Justice Motor ' +
+      'Vehicle Division, and ELDT must be completed through a provider listed on the FMCSA Training ' +
+      'Provider Registry. While we strive to align our content with the current Montana Commercial ' +
+      'Driver License Manual, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Montana MVD CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Montana-specific front matter nor the AAMVA base manual text of the Montana Commercial Driver License Manual independently publishes an item count or number-correct-to-pass',
+  },
+  ne_cdl: {
+    orgLine: 'the Nebraska Department of Motor Vehicles (DMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Nebraska CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Nebraska CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the Nebraska Commercial Driver\'s License Manual (including ' +
+      'its Nebraska Specifics front matter) nor the Nebraska DMV website states an exact knowledge-test ' +
+      'question count or number-correct-to-pass; this practice exam follows the federally standardized ' +
+      '50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other state\'s ' +
+      'CDL knowledge test. Completing practice exams here does not register you for, or schedule, the ' +
+      'official Nebraska DMV CDL knowledge test, skills test, or road test; official testing must be ' +
+      'scheduled directly through the Nebraska DMV, and ELDT must be completed through a provider ' +
+      'listed on the FMCSA Training Provider Registry. While we strive to align our content with the ' +
+      'current Nebraska Commercial Driver\'s License Manual, it is provided "as-is" for self-study and ' +
+      'does not constitute legal or driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Nebraska DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the Nebraska Commercial Driver\'s License Manual nor the Nebraska DMV website independently publishes an item count or number-correct-to-pass',
+  },
+  nh_cdl: {
+    orgLine: 'the New Hampshire Division of Motor Vehicles (DMV), a division of the NH Department of Safety',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any New Hampshire CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any New Hampshire CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. Neither the New Hampshire Commercial Driver\'s License Manual, its ' +
+      'companion Modernized Version Supplement, nor the New Hampshire DMV\'s Commercial Driver Licenses ' +
+      'and CDL Road Test webpages state an exact knowledge-test question count or ' +
+      'number-correct-to-pass; several third-party CDL test-prep sites converge on a ' +
+      '50-question/40-correct (80%) General Knowledge test, but this is not confirmed by any official ' +
+      'New Hampshire source, so this practice exam follows the federally standardized ' +
+      '50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used by every other state\'s ' +
+      'CDL knowledge test. Completing practice exams here does not register you for, or schedule, the ' +
+      'official New Hampshire DMV CDL knowledge test, skills test, or road test; official testing must ' +
+      'be scheduled directly through the New Hampshire DMV, and ELDT must be completed through a ' +
+      'provider listed on the FMCSA Training Provider Registry. While we strive to align our content ' +
+      'with the current New Hampshire Commercial Driver\'s License Manual and its Modernized Version ' +
+      'Supplement, it is provided "as-is" for self-study and does not constitute legal or ' +
+      'driving-instruction advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real New Hampshire DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to CDL knowledge tests nationwide; the 50-question/40-correct count follows the same AAMVA/FMCSA format used by every other CDL-track state, since neither the New Hampshire manual, its Modernized Version Supplement, nor the DMV website independently publishes an item count or number-correct-to-pass',
+  },
+  nj_cdl: {
+    orgLine: 'the New Jersey Motor Vehicle Commission (MVC)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any New Jersey CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any New Jersey CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. The New Jersey Motor Vehicle Commission\'s own official website ' +
+      'confirms the real exam mechanics directly: the knowledge test is a 50-question General Knowledge ' +
+      'test, and you must answer at least 80% of the questions correctly to pass, with additional ' +
+      'separate tests for each endorsement. Completing practice exams here does not register you for, ' +
+      'or schedule, the official New Jersey MVC CDL knowledge test, skills test, or road test; official ' +
+      'testing requires an Examination Test Receipt obtained in advance, and effective 2/7/22 ' +
+      'HAZMAT-endorsement applicants must complete Entry-Level Driver Training (ELDT) through a ' +
+      'provider listed on the FMCSA Training Provider Registry before taking the knowledge test. While ' +
+      'we strive to align our content with the current New Jersey Commercial Driver\'s License Manual, ' +
+      'it is provided "as-is" for self-study and does not constitute legal or driving-instruction ' +
+      'advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real New Jersey MVC CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the same threshold confirmed directly on the New Jersey MVC\'s own official website (nj.gov/mvc/drivertopics/cdltest.htm), which states the knowledge test is a 50-question general test requiring at least 80% correct to pass -- i.e. 40 of 50 correct -- a stronger confirmation than manual-only states since NJ MVC discloses this figure independently of the CDL manual itself',
+  },
+  nv_cdl: {
+    orgLine: 'the Nevada Department of Motor Vehicles (DMV)',
+    footerRequirement: "do not fulfill the FMCSA Entry-Level Driver Training (ELDT) requirement or any Nevada CDL/endorsement training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the federal ' +
+      'Entry-Level Driver Training (ELDT) requirement or any Nevada CDL/endorsement training ' +
+      'requirement, and does not issue any official course-completion certificate — our content is a ' +
+      'supplementary study aid only. The Nevada Commercial Driver\'s License Manual does not state an ' +
+      'exact knowledge-test question count or number-correct-to-pass; this practice exam follows the ' +
+      'federally standardized 50-question/40-correct (80%) AAMVA/FMCSA format (49 CFR 383.135(a)) used ' +
+      'by every other state\'s CDL knowledge test. Completing practice exams here does not register you ' +
+      'for, or schedule, the official Nevada DMV CDL knowledge test, skills test, or road test; ' +
+      'official testing must be scheduled directly through the Nevada DMV, and ELDT must be completed ' +
+      'through a provider listed on the FMCSA Training Provider Registry. While we strive to align our ' +
+      'content with the current Nevada Commercial Driver\'s License Manual, it is provided "as-is" for ' +
+      'self-study and does not constitute legal or driving-instruction advice or a guaranteed exam ' +
+      'outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Nevada DMV CDL knowledge, skills, or road test, or any required Entry-Level Driver Training (ELDT).',
+    passScoreNote: 'the federally standardized 80% minimum passing score (49 CFR 383.135(a)) that applies to every state\'s CDL knowledge tests, since the Nevada CDL Manual does not itself state a specific question count or numeric passing score for any Nevada knowledge test',
   },
 };
 function trackCompliance(examType) {
@@ -6281,6 +6591,61 @@ var RESOURCES = {
   la_cdl: [
     { title: 'Louisiana Commercial Driver License Manual', type: 'pdf', url: 'https://dpsweb.dps.louisiana.gov/DPSForms.nsf/8bad5589175b8981862575f20048ee65/b49427def852192a862579a5004826d9/$FILE/68448863.pdf/CDL%20Driver%20Manual%20-July%202017%20r%200917.pdf',
       desc: 'The official CDL manual (2005 CDL Testing System, Version: July 2017) published by the Louisiana Department of Public Safety & Corrections, Office of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ma_cdl: [
+    { title: 'Massachusetts Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.mass.gov/doc/cdl-manual-march-2025-version/download',
+      desc: 'The official CDL manual (AAMVA Modernized Testing System content, Version: July 2017, Massachusetts-specific front matter/Preface revised March 2025) published by the Massachusetts Registry of Motor Vehicles (RMV) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  md_cdl: [
+    { title: 'Maryland Commercial Driver\'s License Manual', type: 'pdf', url: 'https://mva.maryland.gov/Documents/DL-151.pdf',
+      desc: 'The official CDL manual (DL-151, 05/26) published by the Maryland Department of Transportation Motor Vehicle Administration (MDOT MVA) -- the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  me_cdl: [
+    { title: 'Maine Commercial Driver License Manual', type: 'pdf', url: 'https://www.maine.gov/sos/sites/maine.gov.sos/files/inline-files/CDL%20Manual%20Rev.%207-24.pdf',
+      desc: 'The official CDL manual (2005 CDL Testing System base AAMVA content, Maine revision dated 7/24) published by the Maine Department of the Secretary of State, Bureau of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mn_cdl: [
+    { title: 'Minnesota Commercial Driver\'s License Manual', type: 'pdf', url: 'https://assets.dps.mn.gov/files/dvs/Commercial-Drivers-License-Manual.pdf',
+      desc: 'The official CDL manual (Modernized Testing System, AAMVA base content Version: July 2017) published by the Minnesota Department of Public Safety, Division of Driver and Vehicle Services — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mo_cdl: [
+    { title: 'Missouri Commercial Driver License Manual', type: 'pdf', url: 'https://dor.mo.gov/forms/CDL%20Manual.pdf',
+      desc: 'The official CDL manual (Modernized/2005 CDL Testing System, base AAMVA content) published by the Missouri Department of Revenue in cooperation with the Missouri State Highway Patrol, the agency that administers CDL knowledge and skills testing in Missouri — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ms_cdl: [
+    { title: 'Mississippi Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.driverservicebureau.dps.ms.gov/sites/default/files/2026-06/CDL%20Drivers%20ManualMarch2025.pdf',
+      desc: 'The official CDL manual (AAMVA \'Modernized Testing System\' base content, cover dated Version: March 2025) published by the Mississippi Department of Public Safety, Driver Service Bureau — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  mt_cdl: [
+    { title: 'Montana Commercial Driver License Manual', type: 'pdf', url: 'https://mvdmt.gov/wp-content/uploads/2026/03/Montana-CDL-Manual-2026.pdf',
+      desc: 'The official CDL manual (Modernized Testing System, AAMVA content, Version: July 2017, with Montana-specific front matter revised June 2026) published by the Montana Department of Justice Motor Vehicle Division (MVD) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ne_cdl: [
+    { title: 'Nebraska Commercial Driver\'s License Manual', type: 'pdf', url: 'https://dmv.nebraska.gov/sites/default/files/doc/Nebraska%20MOD%20CDL%20Driver\'s%20Manual%20-%20March%202026.pdf',
+      desc: 'The official CDL manual (AAMVA Modernized Testing System content, cover page Version: March 2025 (March 2026)) published by the Nebraska Department of Motor Vehicles — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nh_cdl: [
+    { title: 'New Hampshire Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.dmv.nh.gov/sites/g/files/ehbemt416/files/inline-documents/nhcdm.pdf',
+      desc: 'The official CDL manual (AAMVA Modernized Testing System base content, cover Version: September 9, 2022) published by the New Hampshire Division of Motor Vehicles (DMV), NH Department of Safety — the authoritative source the written knowledge test is based on, including the companion Modernized Version Supplement\'s Section 11M (Vehicle Inspection Test) and Section 12M (Basic Control Skills Test).',
+      topic: 'General Reference', free: true },
+  ],
+  nj_cdl: [
+    { title: 'New Jersey Commercial Driver\'s License Manual', type: 'pdf', url: 'https://www.nj.gov/mvc/pdf/license/CDL_Manual.pdf',
+      desc: 'The official CDL manual (Modernized Testing System, AAMVA content, cover Version: March 2025) published by the New Jersey Motor Vehicle Commission (MVC) — the authoritative source the written knowledge test is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  nv_cdl: [
+    { title: 'Nevada Commercial Driver\'s License Manual', type: 'pdf', url: 'https://dmv.nv.gov/pdfforms/dlbookcomm.pdf',
+      desc: 'The official CDL manual (AAMVA-authored base content, Modernized/2005 CDL Testing System, Version: July 2017, with Section 11 Vehicle Inspection Test revised to AAMVA\'s itemized checklist format dated September 9, 2022) published by the Nevada Department of Motor Vehicles — the authoritative source the written knowledge test is based on.',
       topic: 'General Reference', free: true },
   ],
 };
