@@ -1697,6 +1697,13 @@ var HUB_EXAMS = [
     breakdown: [["Agency/Brokerage (Disclosure, Intermediary Practice & Broker-Sales Agent Relationships)", "27.5%"], ["Standards of Conduct (Ethics, Discipline & Trust Accounts)", "22.5%"], ["Contracts (Promulgated Forms, Statute of Frauds & Seller Disclosure)", "22.5%"], ["Special Topics (Community Property, Homestead & Landlord-Tenant)", "12.5%"], ["Commission Duties & Powers (Complaints, Hearings & Penalties)", "7.5%"], ["Licensing (Requirements, Education & Renewal)", "7.5%"]],
   },
   {
+    examType: "ny_real_estate", shortName: "New York Real Estate", stateCode: "NY", examKind: 'Real Estate',
+    title: "New York Real Estate Salesperson Exam", category: 'Real Estate Licensing', active: true, route: "/ny_real_estate",
+    duration: "90 Minutes", questions: "75 Multiple Choice (Estimated -- NY DOS Does Not Publish an Exact Item Count)", passScore: "70% (Estimated -- Real Exam Is Pass/Fail Only, No Numeric Score Published by NY DOS)",
+    description: "Practice questions covering New York Real Property Law Article 12-A (Sections 440-443-a), the Property Condition Disclosure Act (RPL Article 14, Sections 460-467), agricultural district and utility/gas-well disclosure requirements, and Human Rights Law/federal Fair Housing protections (Executive Law Article 15 Section 296(5), 42 USC 3604): license law and licensing requirements, agency and fiduciary duties, license law violations and disciplinary grounds, advertising and broker supervision, fair housing, real estate contracts, financing, valuation and math, land use, property condition and environmental disclosure, taxes and assessments, landlord-tenant law, property management, condominiums and cooperatives, and commercial/investment real estate. The New York Department of State confirms the real exam is multiple choice with a 90-minute time limit, based on the 77-hour salesperson qualifying-course syllabus, and reports a pass/fail result only, with no published item count or percentage score -- this practice exam uses a commonly-cited 75-question/70% format as a study convention, not an official DOS figure.",
+    breakdown: [["License Law, Violations & Advertising/Supervision", "20%"], ["Agency, Fiduciary Duties & Fair Housing", "16%"], ["Property, Land Use & Environmental Disclosure", "15%"], ["Contracts, Financing, Valuation & Math", "21%"], ["Property Types: Condos, Commercial, Management & Landlord-Tenant", "22%"], ["Taxes & Assessments", "6%"]],
+  },
+  {
     examType: "al_notary", shortName: "Alabama Notary", stateCode: "AL", examKind: 'Notary',
     title: "Alabama Notary Public Practice Questions", category: 'State Licensing', active: true, route: "/al_notary",
     duration: "Untimed", questions: "40 Multiple Choice (138-Question Practice Pool)", passScore: "Education-Only — No State Exam",
@@ -3576,6 +3583,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 180-classroom-hour pre-license education requirement for a Texas real estate sales agent license (six TREC-approved 30-hour qualifying courses: Principles of Real Estate I, Principles of Real Estate II, Law of Agency, Law of Contracts, Promulgated Contract Forms, and Real Estate Finance), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state law portion of the exam (grounded in the Real Estate License Act (TRELA), Texas Occupations Code Chapter 1101, and TREC's rules at 22 TAC Chapters 531, 533, 534, and 535), not the separate 80-item national/general portion, and not every topic on TREC's own published state law content outline — our question bank does not include a dedicated Special Topics section, which TREC's outline weights at 12.5% of the state law exam (community property, homestead protections and tax exemptions, the Deceptive Trade Practices Act, landlord-tenant issues, foreclosure and short sales, recording statutes, mechanic's and materialman's liens, the Veterans Land Board, homeowners associations, wills and estates, and equitable interest). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of TREC as a single combined national-plus-state sitting (candidates must pass both separately-scored portions to be licensed, and may retake only the portion they fail), and pre-license education must be completed through a TREC-approved qualifying education provider. While we strive to align our content with the current TRELA statute and TREC Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real TREC Sales Agent exam or the required 180-hour pre-license education.",
     passScoreNote: "the same threshold as the real state law portion — 28 of 40 correct (70%)",
+  },
+  ny_real_estate: {
+    orgLine: "the New York Department of State (DOS), Division of Licensing Services",
+    footerRequirement: "do not fulfill the 77-hour pre-license salesperson qualifying-course requirement or any other New York real estate salesperson training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 77-hour DOS-approved pre-license qualifying-course requirement for a New York real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in New York Real Property Law Article 12-A (Sections 440-443-a), the Property Condition Disclosure Act, agricultural district/utility disclosure statutes, and Human Rights Law/federal Fair Housing protections. The New York Department of State reports the real licensing exam as pass/fail only and does not publish an exact item count or passing percentage; the 75-question/70% format used here is a commonly-cited study convention, not an official DOS figure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is scheduled through DOS's eAccessNY system, and pre-license education must be completed through a DOS-approved qualifying course provider. While we strive to align our content with the current Real Property Law and DOS regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real New York DOS salesperson exam or the required 77-hour pre-license education.",
+    passScoreNote: "a practice-study convention only — New York DOS reports the real exam as pass/fail, with no published item count or numeric passing percentage",
   },
   al_notary: {
     orgLine: "the Probate Judge in the notary's Alabama county of residence, in coordination with the Alabama Probate Judges Association and Alabama Law Institute training program",
@@ -6192,6 +6206,14 @@ var RESOURCES = {
       topic: "General Reference", free: true },
     { title: "Texas Occupations Code Chapter 1101 (Real Estate License Act / TRELA)", type: "pdf", url: "https://statutes.capitol.texas.gov/Docs/OC/htm/OC.1101.htm",
       desc: "The Real Estate License Act (TRELA) — the statutory basis for TREC's rules at 22 TAC Chapters 531, 533, 534, and 535.",
+      topic: "General Reference", free: true },
+  ],
+  ny_real_estate: [
+    { title: "New York Real Property Law Article 12-A (Real Estate Brokers and Real Estate Salespersons)", type: "pdf", url: "https://www.nysenate.gov/legislation/laws/RPP/A12-A",
+      desc: "The official New York Real Property Law text published by the NY Senate — the statutory basis for licensing, discipline, and this practice content.",
+      topic: "General Reference", free: true },
+    { title: "NY DOS — Real Estate Salesperson Licensing", type: "pdf", url: "https://dos.ny.gov/real-estate-agent",
+      desc: "The New York Department of State's official real estate salesperson licensing page — the authoritative source for exam format, education requirements, and application procedures.",
       topic: "General Reference", free: true },
   ],
   al_notary: [
