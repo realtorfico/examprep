@@ -59,6 +59,16 @@ export default {
     }
     if (url.pathname === '/mcp') return env.API.fetch(request);
 
+    // California's real estate track was originally launched as /ca_dre (examType ca_dre),
+    // breaking this project's {state}_{category} naming convention -- renamed to /ca_real_estate
+    // 2026-08-24 to match every other state's real-estate track. Permanent (cacheable) redirect
+    // so any bookmarked/shared/indexed /ca_dre link keeps working indefinitely; the URL fragment
+    // (e.g. #/quiz) is preserved automatically by the browser since Location has none of its own.
+    if (url.pathname === '/ca_dre' || url.pathname.startsWith('/ca_dre/')) {
+      const target = new URL(url.pathname.replace('/ca_dre', '/ca_real_estate') + url.search, url);
+      return Response.redirect(target.toString(), 301);
+    }
+
     if (url.pathname === '/' && request.method === 'GET') {
       const cookieState = parseCookie(request.headers.get('Cookie'), 'pxq_state');
       let redirectTo = null;
