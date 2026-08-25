@@ -5049,6 +5049,7 @@ function drawCategorySampleQuestion() {
       '<div class="nav-controls"><a class="btn-primary" href="' + track.route + '#/sample">Try more free questions →</a></div>'
     : '';
   wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
+    '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="category-sample-listen">🔊 Read aloud</button></div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
@@ -9284,6 +9285,7 @@ function drawSampleQuestion() {
     '<div class="card">' +
     '<div class="question-topic">' + q.topic + '</div>' +
     '<div class="question-text">' + q.question + '</div>' +
+    '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="sample-listen">🔊 Read aloud</button></div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
     submitControl + explanation;
@@ -9808,15 +9810,22 @@ document.addEventListener('click', async function (e) {
     sampleState.selected = el.getAttribute('data-choice');
     drawSampleQuestion();
   } else if (act === 'sample-submit') {
+    stopSpeaking();
     sampleState.answered = sampleState.selected;
     drawSampleQuestion();
+  } else if (act === 'sample-listen') {
+    speak(questionReadText(sampleState.questions[sampleState.index]));
   } else if (act === 'category-sample-answer') {
     categoryPageState.sampleSelected = el.getAttribute('data-choice');
     drawCategorySampleQuestion();
   } else if (act === 'category-sample-submit') {
+    stopSpeaking();
     categoryPageState.sampleAnswered = categoryPageState.sampleSelected;
     drawCategorySampleQuestion();
+  } else if (act === 'category-sample-listen') {
+    speak(questionReadText(categoryPageState.sampleQuestion));
   } else if (act === 'sample-next') {
+    stopSpeaking();
     sampleState.index += 1;
     sampleState.selected = null;
     sampleState.answered = null;
