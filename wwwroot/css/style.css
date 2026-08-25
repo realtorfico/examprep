@@ -941,7 +941,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 @media (min-width: 800px) { .hub-readiness-card { margin-top: 0; } }
 .hub-readiness-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0; }
-.hub-readiness-top-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.85rem; }
+/* Same 2-col grid + gap as .hub-readiness-tiles below (not its own flex row) so this row's two
+   items land in the same columns as the State Tracks/States Covered tiles under the divider. */
+.hub-readiness-top-row { display: grid; grid-template-columns: repeat(2, 1fr); align-items: center; gap: 0.5rem; margin-top: 0.85rem; }
 .hub-readiness-radial-wrap { display: flex; justify-content: center; }
 .hub-readiness-tiles {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;
