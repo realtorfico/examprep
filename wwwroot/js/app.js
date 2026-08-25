@@ -8064,6 +8064,264 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Notary Exam Information', url: 'https://cpshr.us/services/california-notary-exam-2/notary-exam-information',
       desc: 'CPS HR Consulting, the vendor that administers the exam on behalf of the state — format, scheduling, and testing-day details.' },
   ],
+  ak_notary: [
+    { title: 'Lieutenant Governor\'s Notary Public Page', url: 'https://ltgov.alaska.gov/notaries-public/',
+      desc: 'The Alaska Office of the Lieutenant Governor\'s official notary public program page, which regulates notaries in Alaska (there is no proctored exam; only an application, bond, and oath).' },
+  ],
+  al_notary: [
+    { title: 'Secretary of State Notaries Public Page', url: 'https://www.sos.alabama.gov/administrative-services/notaries-public',
+      desc: 'The Alabama Secretary of State\'s official notary public page; notaries are actually appointed and commissioned by county probate judges, with no state exam but a mandatory pre-commission training program.' },
+  ],
+  ar_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.arkansas.gov/business-commercial-services-bcs/notary-e-notary',
+      desc: 'The Arkansas Secretary of State\'s official notary and eNotary program page, including application and filing portal information.' },
+    { title: 'Online Notary Exam', url: 'https://www.classmarker.com/online-test/start/?quiz=ey664f0d6f1e2c38',
+      desc: 'The official online notary exam (hosted via ClassMarker on behalf of the Secretary of State) that new and renewing Arkansas notaries must pass before completing their application.' },
+  ],
+  az_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://azsos.gov/business/notary-public/new-notary',
+      desc: 'The Arizona Secretary of State\'s official page for new notary public applicants and commissioning requirements.' },
+    { title: 'Notary Exam Registration', url: 'https://www.pearsonvue.com/us/en/az/notary.html',
+      desc: 'Pearson VUE, the vendor that administers Arizona\'s notary competency exam on behalf of the state — scheduling, testing options, and candidate ID registration.' },
+  ],
+  co_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.state.co.us/pubs/notary/home.html',
+      desc: 'The Colorado Secretary of State\'s official notary public program home page.' },
+    { title: 'Notary Exam Information', url: 'https://www.sos.state.co.us/pubs/notary/notaryTesting.html',
+      desc: 'The Secretary of State\'s official page describing Colorado\'s free, open-book online notary training and examination, which requires an 80% passing score.' },
+  ],
+  ct_notary: [
+    { title: 'Secretary of the State Site for Notary', url: 'https://portal.ct.gov/SOTS/Business-Services/Notary',
+      desc: 'The Connecticut Secretary of the State\'s official notary public page; notaries are appointed at the Secretary\'s discretion with no separate proctored exam.' },
+  ],
+  de_notary: [
+    { title: 'Delaware Notary Public Site', url: 'https://notary.delaware.gov/',
+      desc: 'The State of Delaware\'s official notary public site, run through the Secretary of State\'s office, for commission applications and renewals (no separate proctored exam is required).' },
+  ],
+  fl_notary: [
+    { title: 'Department of State Notary Page', url: 'https://dos.fl.gov/sunbiz/other-services/notaries/',
+      desc: 'The Florida Department of State\'s official notary services page, covering the free online Notary Education Program (no separate proctored exam is required).' },
+  ],
+  ga_notary: [
+    { title: 'GSCCCA Notary Information', url: 'https://www.gsccca.org/notary-and-apostilles/notaries/general-notary-information',
+      desc: 'The Georgia Superior Court Clerks\' Cooperative Authority\'s official notary public information page, which maintains the statewide notary database on behalf of county Clerks of Superior Court.' },
+    { title: 'Notary Training and Exam', url: 'https://elearn.gsccca.org/',
+      desc: 'GSCCCA\'s official online notary training course and exam, which applicants must pass with a score of 90% or above as of January 1, 2025.' },
+  ],
+  hi_notary: [
+    { title: 'Attorney General Notaries Public Page', url: 'https://ag.hawaii.gov/notaries-public/',
+      desc: 'The Hawaii Department of the Attorney General\'s official notary public program page, the agency that regulates and commissions notaries in Hawaii.' },
+    { title: 'Notary Exam Scheduler', url: 'https://notary.ehawaii.gov/notary/public/notary-scheduler.html',
+      desc: 'The official eHawaii.gov exam scheduling tool used to book and pay for the Attorney General\'s closed-book written notary exam, which requires an 80% passing score.' },
+  ],
+  ia_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.iowa.gov/about-notaries',
+      desc: 'The Iowa Secretary of State\'s official notary public program page covering commissioning, forms, and requirements.' },
+  ],
+  id_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.idaho.gov/notary-public-instructions/',
+      desc: 'The Idaho Secretary of State\'s official notary instructions page covering the application, bond, and stamp requirements; Idaho requires no proctored exam.' },
+  ],
+  il_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.ilsos.gov/departments/index/notary.html',
+      desc: 'The Illinois Secretary of State\'s official notary services landing page.' },
+    { title: 'Notary Commission Application', url: 'https://www.ilsos.gov/departments/index/notary/online-notary.html',
+      desc: 'Illinois\'s official online application portal, required for new notary commissions since August 2024 (no separate proctored exam).' },
+    { title: 'Illinois Notary Resources', url: 'https://www.nationalnotary.org/illinois/notary-resources',
+      desc: 'National Notary Association\'s Illinois-specific guide, useful as a secondary source when the state\'s own site is slow to reach.' },
+  ],
+  in_notary: [
+    { title: 'Notary Certification (INBiz / Secretary of State)', url: 'https://inbiz.in.gov/certification/notary',
+      desc: 'Indiana\'s official state business portal, operated under the Secretary of State, for the notary application, required education course, and exam.' },
+  ],
+  ks_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.ks.gov/general-services/notary.html',
+      desc: 'The Kansas Secretary of State\'s official notary public page; no exam is required for standard (non-remote) notary commissions.' },
+  ],
+  ky_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://web.sos.ky.gov/notaries/NotaryPublic.aspx',
+      desc: 'The Kentucky Secretary of State\'s official notary public page covering eligibility and the application process; no exam is required.' },
+  ],
+  la_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.la.gov/notary/application-process',
+      desc: 'The Louisiana Secretary of State\'s official notary application process page.' },
+    { title: 'Notary Exam Information', url: 'https://www.lsu.edu/testing/notaryinfo.php',
+      desc: 'LSU\'s Office of Testing & Evaluation Services, which administers the Louisiana State Notary Exam on behalf of the Secretary of State.' },
+  ],
+  ma_notary: [
+    { title: 'Notary Public Information', url: 'https://www.sec.state.ma.us/divisions/commissions/notary-information.htm',
+      desc: 'The Office of the Secretary of the Commonwealth\'s official notary public page; Massachusetts requires no formal exam, only an application and oath.' },
+  ],
+  md_notary: [
+    { title: 'Notary Division', url: 'https://sos.maryland.gov/Notary/Pages/default.aspx',
+      desc: 'The Maryland Secretary of State\'s official notary program page, including the list of SOS-authorized course-of-study and exam providers under COMAR 01.02.08.16.' },
+  ],
+  me_notary: [
+    { title: 'Notary Public Resources', url: 'https://www.maine.gov/sos/cec/notary/notaries.html',
+      desc: 'The Maine Secretary of State\'s official notary public program landing page.' },
+    { title: 'Notary Public Application', url: 'https://www.maine.gov/sos/sites/maine.gov.sos/files/content/assets/Notary-20Public-20Application.pdf',
+      desc: 'Maine\'s official application form, which contains a built-in 15-question open-book test that new applicants must answer correctly.' },
+  ],
+  mi_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.michigan.gov/sos/notary-services',
+      desc: 'The Michigan Department of State\'s official notary public program page, commissioning about 1,300 notaries per month.' },
+    { title: 'Notary Application', url: 'https://www.michigan.gov/sos/all-services/notary-application',
+      desc: 'Official online notary application process; Michigan requires a training video but has no proctored exam.' },
+  ],
+  mn_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.mn.gov/notary',
+      desc: 'The Minnesota Secretary of State\'s official notary and apostille program page.' },
+    { title: 'Become a Notary', url: 'https://www.sos.mn.gov/notary-apostille/become-a-notary/',
+      desc: 'Official step-by-step guide to applying for a Minnesota notary commission; no proctored exam is required.' },
+  ],
+  mo_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.mo.gov/business/commissions/',
+      desc: 'The Missouri Secretary of State\'s official notaries and commissions page.' },
+    { title: 'Registering as a Notary Public in Missouri', url: 'https://www.sos.mo.gov/CMSImages/Business/Notary/SOSRegisteringNotaryPublicGuide.pdf',
+      desc: 'Official step-by-step guide to the state\'s online registration system, including the required examination (80% passing score) shown as a live 30-question exam UI.' },
+    { title: 'Written Notary Training Course (Comm. 59)', url: 'https://www.sos.mo.gov/CMSImages/Business/Notary/WrittenNotaryTrainingCourse_Comm59.pdf',
+      desc: 'Official paper-based alternative exam form for applicants who cannot complete the online notary exam.' },
+  ],
+  ms_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.ms.gov/business-services/notaries-apostilles',
+      desc: 'The Mississippi Secretary of State\'s official notary public and apostille program page, administered by the Business Services Division.' },
+    { title: 'Notary FAQs', url: 'https://www.sos.ms.gov/regulation-enforcement/notaries-apostilles/notaries-faqs',
+      desc: 'Official FAQ covering Mississippi notary eligibility, the $25 application fee, and the $5,000 surety bond and oath requirement — no proctored exam is required.' },
+  ],
+  mt_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sosmt.gov/notary/',
+      desc: 'The Montana Secretary of State\'s official Certification & Notary Services program page.' },
+    { title: 'Montana Notary Exam', url: 'https://sosmt.gov/notary/montana-notary-exam/',
+      desc: 'Official page hosting the required Montana Notary Exam, which applicants must pass within six months before applying, with up to three attempts allowed.' },
+    { title: 'Applying for a Commission', url: 'https://sosmt.gov/notary/applying-for-a-commission-new-and-renewal/',
+      desc: 'Official guide to the required four-hour education course, exam, and application steps for a new or renewed Montana notary commission.' },
+  ],
+  nc_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sosnc.gov/divisions/notary',
+      desc: 'The North Carolina Secretary of State\'s Notary Division page, which issues commissions and develops notary training and testing materials.' },
+    { title: 'Become a Notary', url: 'https://sosnc.gov/divisions/notary/become_a_notary',
+      desc: 'Official guide directing applicants to the required six-hour community-college pre-commission education course, which concludes with an 80%-passing exam.' },
+    { title: 'Notary Initial Exam Registration', url: 'https://www.sosnc.gov/online_services/Notary/Notary_Test_Register',
+      desc: 'Official online registration portal for the North Carolina notary initial exam, a 50-question test with a 30-minute time limit.' },
+  ],
+  nd_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.nd.gov/notary-apostille/become-notary-public',
+      desc: 'The North Dakota Secretary of State\'s official guide to becoming a notary public; North Dakota requires an application and $7,500 bond but has no proctored exam.' },
+  ],
+  ne_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.nebraska.gov/business-services/notary-public',
+      desc: 'The Nebraska Secretary of State\'s official notary public program page covering general, in-person electronic, and online notaries.' },
+    { title: 'Steps to Obtain an Initial Notary Commission', url: 'https://sos.nebraska.gov/sites/default/files/doc/business-services/Notary/StepstoObtainanInitialNotaryCommission.pdf',
+      desc: 'Official Secretary of State PDF outlining the notary exam process, requiring an 85% passing score within three attempts, valid for 90 days.' },
+  ],
+  nh_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.nh.gov/notary-public',
+      desc: 'The New Hampshire Secretary of State\'s official notary public page; New Hampshire requires an application, bond, and endorsements but has no exam.' },
+  ],
+  nj_notary: [
+    { title: 'Division of Revenue Notary Public Program', url: 'https://www.nj.gov/treasury/revenue/notary.shtml',
+      desc: 'The New Jersey Division of Revenue and Enterprise Services (Dept. of Treasury) official notary public program and search page, the state\'s actual notary-regulating authority.' },
+    { title: 'Notary Education and Testing Requirements', url: 'https://nj.gov/treasury/revenue/notary-education-testing.shtml',
+      desc: 'Official Treasury page describing the required six-hour education course and State Treasurer-prescribed exam for initial non-attorney notary applicants.' },
+    { title: 'Notary Public Exam Portal', url: 'https://www.njportal.com/DOR/NotaryExam/',
+      desc: 'The Division of Revenue\'s official online portal for notary exam study materials, testing, results, and post-exam commission registration.' },
+  ],
+  nm_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.nm.gov/notary-and-apostille/',
+      desc: 'The New Mexico Secretary of State\'s official notary and apostille program page.' },
+    { title: 'Become a Notary (Exam Requirement)', url: 'https://www.sos.nm.gov/notary-and-apostille/notary-commissions/become-a-notary/',
+      desc: 'Official step-by-step process, which requires completing an online notary education course and passing its accompanying exam before commissioning.' },
+  ],
+  nv_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.nvsos.gov/licensing/notary',
+      desc: 'The Nevada Secretary of State\'s official notary public program page, with the step-by-step commissioning process.' },
+  ],
+  ny_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://dos.ny.gov/notary-public1',
+      desc: 'The New York Department of State\'s official notary public page, including the mandatory written exam schedule and requirements.' },
+  ],
+  oh_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.ohiosos.gov/notary',
+      desc: 'The Ohio Secretary of State\'s official notary public program page; Ohio requires a class and test through one of ~15 SOS-authorized education/testing providers rather than a single uniform state exam.' },
+  ],
+  ok_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.ok.gov/notary/default.aspx',
+      desc: 'The Oklahoma Secretary of State\'s official notary public program page; Oklahoma has no exam or education requirement, only a bond and application.' },
+    { title: 'Notary General Information', url: 'https://www.sos.ok.gov/notary/info/generalInformation.aspx',
+      desc: 'Official page covering commissioning, bonding, and remote online notarization requirements in Oklahoma.' },
+  ],
+  or_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.oregon.gov/business/pages/notary.aspx',
+      desc: 'The Oregon Secretary of State\'s official notary public program page.' },
+    { title: 'Notary Qualifications', url: 'https://sos.oregon.gov/business/Pages/notary-qualification.aspx',
+      desc: 'Official qualifications page describing Oregon\'s open-book notary exam, taken online with unlimited retakes under ORS 194.325.' },
+  ],
+  pa_notary: [
+    { title: 'Examination Requirement', url: 'https://www.pa.gov/agencies/dos/programs/notaries/examination-requirement',
+      desc: 'The Pennsylvania Department of State\'s official page describing the mandatory notary exam requirement.' },
+    { title: 'Notary Exam Registration', url: 'https://www.pearsonvue.com/us/en/pa/notaries.html',
+      desc: 'Pearson VUE, the vendor that administers Pennsylvania\'s computer-based notary exam on behalf of the state — scheduling, format, and testing-day details.' },
+  ],
+  ri_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.ri.gov/Divisions/NotaryPublic',
+      desc: 'The Rhode Island Secretary of State\'s official notary public program page.' },
+    { title: 'Notary Knowledge Assessment', url: 'https://www.sos.ri.gov/Divisions/NotaryPublic/EducationalResources',
+      desc: 'Official educational resources page linking to the self-graded, ClassMarker-hosted Notary Knowledge Assessment requiring an 80% passing score.' },
+  ],
+  sc_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.sc.gov/services-and-filings/notaries',
+      desc: 'The South Carolina Secretary of State\'s official notary program page; South Carolina requires no exam for a standard notary commission, only an application and registered-voter status.' },
+  ],
+  sd_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sdsos.gov/general-services/notary-public/how-become-notary.aspx',
+      desc: 'The South Dakota Secretary of State\'s official notary public page; South Dakota requires no exam, only a completed application and oath.' },
+  ],
+  tn_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.tn.gov/businesses/guides/how-to-become-a-notary',
+      desc: 'The Tennessee Secretary of State\'s official guide to becoming a notary public; Tennessee has no separate proctored exam — commissions are issued through the county clerk and certified by the Secretary of State.' },
+  ],
+  tx_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://www.sos.state.tx.us/statdoc/notary-public.shtml',
+      desc: 'The Texas Secretary of State\'s official notary public program page covering traditional, online, and state-employee notary commissions.' },
+    { title: 'Notary Education & Exam Information', url: 'https://www.sos.state.tx.us/statdoc/edinfo.shtml',
+      desc: 'Official information on the mandatory SB693 notary education course and online exam, required through the SOS Notary Portal as of January 1, 2026.' },
+  ],
+  ut_notary: [
+    { title: 'Notary Program — Office of the Lieutenant Governor', url: 'https://notary.utah.gov/',
+      desc: 'Utah has no Secretary of State; notary commissioning is handled by the Office of the Lieutenant Governor, whose site hosts the application process and notary lookup.' },
+    { title: 'Utah Notary Public Study Guide and Handbook', url: 'https://notary.utah.gov/wp-content/uploads/UtahNotaryPublicStudyGuideandHandbook-5-16-2022.pdf',
+      desc: 'The official Lieutenant Governor\'s office study guide covering notary qualifications, the required test, and notarial procedures.' },
+  ],
+  va_notary: [
+    { title: 'Secretary of the Commonwealth Site for Notary', url: 'https://www.commonwealth.virginia.gov/official-documents/notary-commissions/',
+      desc: 'The Office of the Secretary of the Commonwealth\'s official notary commissions page; Virginia is a self-certifying state with no required class or exam.' },
+  ],
+  vt_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.vermont.gov/notaries-public',
+      desc: 'The Vermont Secretary of State\'s Office of Professional Regulation notaries public program page, covering applications, renewals, and rules.' },
+    { title: 'Notary Public State Jurisprudence Exam', url: 'https://outside.vermont.gov/dept/sos/office_professional_regulation/exams/notary_public_state_jurisprudence_exam.pdf',
+      desc: 'The official jurisprudence exam that first-time applicants must pass, testing knowledge of Vermont notary statutes, rules, and ethics.' },
+  ],
+  wa_notary: [
+    { title: 'Department of Licensing Site for Notary', url: 'https://dol.wa.gov/professional-licenses/notaries-public',
+      desc: 'Washington notaries are regulated by the Department of Licensing, not the Secretary of State; no exam is required to obtain a commission.' },
+  ],
+  wi_notary: [
+    { title: 'Department of Financial Institutions Site for Notary', url: 'https://dfi.wi.gov/Pages/ConsumerServices/NotaryPublic/GeneralInformation.aspx',
+      desc: 'Wisconsin notaries are regulated by the Department of Financial Institutions (DFI), not the Secretary of State; this page covers commission types and eligibility.' },
+    { title: 'Notary Tutorial and Exam', url: 'https://apps.dfi.wi.gov/apps/notarytutorialexam/Introduction.aspx',
+      desc: 'The DFI\'s official online tutorial and required exam, which four-year applicants must pass with a score of 90% or higher.' },
+  ],
+  wv_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.wv.gov/licensing/notary-public/applying-notary-public-commission',
+      desc: 'The West Virginia Secretary of State\'s official page for applying for a notary public commission; no exam is required, only review of the notary handbook.' },
+  ],
+  wy_notary: [
+    { title: 'Secretary of State Site for Notary', url: 'https://sos.wyo.gov/Services/NotariesDutiesPrinciples.aspx',
+      desc: 'The Wyoming Secretary of State\'s official notary resource page with laws, rules, approved education providers, and application forms.' },
+    { title: 'Notary Public Commission Application', url: 'https://sos.wyo.gov/forms/notariespublic/wynotaryapp.pdf',
+      desc: 'The official commission application, which embeds Wyoming\'s required true/false notary test per W.S. §32-3-121(a) rather than a separate proctored exam.' },
+  ],
 };
 
 function renderAdditionalInfo() {
