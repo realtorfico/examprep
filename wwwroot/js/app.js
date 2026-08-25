@@ -154,7 +154,10 @@ function renderSiteHeader() {
   var loggedIn = !!getToken();
   var logo = '<span class="site-logo">' +
     '<span class="site-logo-icon">' + LOGO_SVG + '</span>' +
-    '<span class="site-logo-text"><a href="' + siteHomeHref() + '" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
+    // Always the true site root, not a context-aware "current category" href -- a logo is a
+    // universal "go home" convention, unlike tracksHomeHref() (used for "browse tracks"-style
+    // CTAs elsewhere), which staying category-aware is genuinely useful for.
+    '<span class="site-logo-text"><a href="/" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
     '<span class="site-logo-tagline">Pass Exam - Or Your Money Back</span></span>' +
     '</span>';
 
@@ -224,16 +227,13 @@ function renderSiteHeader() {
   fillPromoRibbon();
 }
 
-// "Go home" / "browse tracks" links land on the current track's CATEGORY page (not a per-state
-// hub -- that no longer exists under category-first routing) when there is a current track
+// "Browse tracks"-style CTAs land on the current track's CATEGORY page (not a per-state hub --
+// that no longer exists under category-first routing) when there is a current track
 // (currentTrackOrNull() -- the logged-in account's track, the page just viewed, or the last one
-// viewed this browser), else on the site root. Every "go back home"/"browse tracks" link should
-// route through these instead of a literal "/" or "/#tracks", so a visitor browsing one category
-// doesn't get bounced to the unscoped all-categories page just by clicking "home."
-function siteHomeHref() {
-  var t = currentTrackOrNull();
-  return t ? '/' + kindSlug(t.examKind) : '/';
-}
+// viewed this browser), else on the site root. Every "browse tracks" link should route through
+// this instead of a literal "/#tracks", so a visitor browsing one category doesn't get bounced to
+// the unscoped all-categories page just by clicking it. NOT used for the site logo, which is
+// always a plain "/" -- see renderSiteHeader().
 function tracksHomeHref() {
   var t = currentTrackOrNull();
   return t ? '/' + kindSlug(t.examKind) + '#tracks' : '/#tracks';
@@ -5042,7 +5042,9 @@ function categoryStatsHtml(activeCount, stateCount) {
     '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
     '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
       return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
-    }).join('') + '</div></div>';
+    }).join('') +
+    '<div class="outcome-tile" id="category-question-count-tile"></div>' +
+    '</div></div>';
 }
 
 // Rendered separately from categoryStatsHtml() and only after loadSiteConfig() resolves (not at
@@ -5052,6 +5054,21 @@ function categoryStatsHtml(activeCount, stateCount) {
 function fillCategoryStatsRadial() {
   var wrap = document.getElementById('category-stats-radial-wrap');
   if (wrap) wrap.innerHTML = radialProgressSvg(refundFailurePercent, { size: 108, strokeWidth: 10, label: 'Refund If You Fail', color: 'var(--highlight)' });
+}
+
+// Real per-category question-bank size, summed from the public /questions/counts endpoint (a
+// per-exam_type breakdown) -- never a fabricated/estimated figure. Best-effort: the tile just
+// stays empty (not a fake number) if the fetch fails.
+async function fillCategoryQuestionCount(tracks) {
+  var tile = document.getElementById('category-question-count-tile');
+  if (!tile || !tracks.length) return;
+  try {
+    var res = await apiFetch('/questions/counts');
+    var countByExamType = {};
+    (res.counts || []).forEach(function (row) { countByExamType[row.exam_type] = row.count; });
+    var total = tracks.reduce(function (sum, t) { return sum + (countByExamType[t.examType] || 0); }, 0);
+    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions</div>';
+  } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
 async function renderCategoryPage(kind) {
@@ -5104,6 +5121,7 @@ async function renderCategoryPage(kind) {
 
   fillHubPricing(tracks);
   if (repTrack) loadCategorySampleQuestion();
+  fillCategoryQuestionCount(tracks);
   loadSiteConfig().then(function () {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
     fillCategoryStatsRadial();
