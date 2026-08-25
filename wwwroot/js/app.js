@@ -5117,6 +5117,11 @@ async function renderCategoryPage(kind) {
     '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
     '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
+    // Reassurance early, ahead of asking the visitor to engage with the sample question below --
+    // not a replacement for the full guaranteeCtaBandHtml() band, which stays at the bottom of the
+    // page as the closing note. .js-refund-pct is patched by the loadSiteConfig() sweep already
+    // running at the end of this function, same as every other refund-percent mention on the site.
+    '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' +
     '</div>' +
     (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
     '<div class="hub-hero-cta">' +
