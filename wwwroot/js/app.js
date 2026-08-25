@@ -7134,7 +7134,7 @@ var RESOURCES_PROMO_BANNER =
   '<div class="resources-promo-cta">' +
   '<a class="btn-primary btn-sm" href="#/buy">Unlock everything →</a>' +
   '<a class="btn-secondary btn-sm" href="#/refer">Refer & earn free access →</a>' +
-  '<a class="btn-secondary btn-sm" href="#/sample">Try 5 sample questions →</a>' +
+  '<a class="btn-secondary btn-sm" href="#/sample">Try 10 sample questions →</a>' +
   '</div></div>';
 
 // Resources are listed as one sortable table (not a card grid) — Type/Name/Topic/Length/Status,
@@ -9137,7 +9137,7 @@ function renderReferVerify(token) {
       '<h1>You\'re confirmed!</h1>' +
       '<p class="muted">' + msg + '</p>' +
       '<div class="sample-done-cta">' +
-      '<a class="btn-primary hub-cta" href="#/sample">Try 5 free sample questions →</a>' +
+      '<a class="btn-primary hub-cta" href="#/sample">Try 10 free sample questions →</a>' +
       '<a class="btn-secondary hub-cta" href="#/refer">Refer your own friends & earn free access →</a>' +
       '</div></div></div>';
   }).catch(function () {
@@ -9203,7 +9203,7 @@ async function renderSample() {
   var track = currentTrackOrNull();
   if (!track) { location.hash = ''; location.href = tracksHomeHref(); return; }
   appEl.innerHTML = '<h1>Try a Free Sample: ' + escapeHtml(track.shortName || track.title) + '</h1>' +
-    '<p class="muted">5 questions, no access code needed.</p><p class="muted">Loading…</p>';
+    '<p class="muted">10 questions, no access code needed.</p><p class="muted">Loading…</p>';
   if (!sampleState.questions || sampleState.examType !== track.examType) {
     try {
       var res = await apiFetch('/sample?examType=' + encodeURIComponent(track.examType));
