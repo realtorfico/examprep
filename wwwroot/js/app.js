@@ -7918,12 +7918,21 @@ function drawTrackLandingSampleQuestion() {
 function renderTrackLanding() {
   var exam = trackByExamType(state.examType);
   if (!exam) { renderHub(); return; }
+  // Lives right in the specs card (facts about THIS exam), not the purchase card further down --
+  // it's a trust/verification link a skeptical, comparison-shopping visitor wants BEFORE deciding
+  // to buy, not a purchase action, so a small inline link here reads better than a full-width
+  // button competing with the real "Get Instant Access"/"Try a free sample" CTAs (its old spot).
+  var infoLinks = ADDITIONAL_INFO_LINKS[exam.examType] || [];
+  var officialLinkHtml = infoLinks.length
+    ? '<p class="muted track-landing-official-inline">Verify with the official source: ' +
+      '<a class="exam-track-view-link" href="' + infoLinks[0].url + '" target="_blank" rel="noopener noreferrer">Official exam info ↗</a></p>'
+    : '';
   var specsHtml = '<div class="exam-specs">' +
     '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
-    '</div>';
+    '</div>' + officialLinkHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
@@ -7932,10 +7941,6 @@ function renderTrackLanding() {
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
         '</div>';
     }).join('') + '</div>';
-  var infoLinks = ADDITIONAL_INFO_LINKS[exam.examType] || [];
-  var officialLinkHtml = infoLinks.length
-    ? '<a class="btn-secondary hub-cta" href="' + infoLinks[0].url + '" target="_blank" rel="noopener noreferrer">Official exam info ↗</a>'
-    : '';
   var compliance = trackCompliance(exam.examType);
 
   appEl.innerHTML =
@@ -7964,7 +7969,6 @@ function renderTrackLanding() {
     '<a class="btn-secondary hub-cta" href="#/sample">Try a free sample →</a>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="#/redeem">Redeem it →</a></p>' +
-    (officialLinkHtml ? '<div class="track-landing-official">' + officialLinkHtml + '</div>' : '') +
     '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
     '</div>' +
     '</div>' +

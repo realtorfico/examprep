@@ -978,7 +978,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    detail -- capped to 65ch inside a container that can run up to 1400px wide, it visually reads as
    using barely half the page. Let it use the full .track-landing width instead. */
 .track-landing-description { max-width: none; }
-.track-landing-official { margin-top: 0.75rem; }
+.track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }
 .track-landing-preview-section h2 { margin-bottom: 0.3rem; }
