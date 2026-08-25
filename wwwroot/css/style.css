@@ -349,7 +349,7 @@ a { color: var(--accent); }
 
 .card {
   background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.1rem;
+  border-radius: 12px; padding: 1.35rem;
   box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent-deep) 12%, transparent), 0 16px 28px -20px color-mix(in srgb, var(--accent-deep) 35%, transparent);
 }
 .page-intro-text { max-width: 65ch; line-height: 1.6; }
@@ -895,7 +895,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Left-aligned two-column hero on desktop (copy | readiness card), matching v0's page.tsx --
    stacks to one left-aligned column on mobile rather than centering (v0 never centers this hero
    at any breakpoint). */
-.hub-hero { padding: 1.5rem 0 1rem; display: grid; gap: 1.75rem; }
+.hub-hero { padding: 2rem 0 1.25rem; display: grid; gap: 2rem; }
 @media (min-width: 800px) {
   .hub-hero { grid-template-columns: 1.15fr 0.85fr; align-items: center; padding: 2rem 0; }
 }
@@ -975,7 +975,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-state-filter-pill button:last-child { border-right: none; }
 .hub-state-filter-pill button:hover { color: var(--accent); }
 .hub-state-filter-pill button.active { background: var(--accent); color: var(--accent-foreground); }
-.exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
 }
@@ -1039,8 +1039,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 
 /* Home page: trust strip, how it works, guarantee band (ported from v0's page.tsx) */
 .trust-strip {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem 2rem;
-  padding: 1.25rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 1.75rem 2.25rem;
+  padding: 1.6rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
 }
 .trust-strip-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-weight: 600; }
 .trust-strip-icon { font-size: 1.1rem; }
@@ -1048,7 +1048,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Tinted panel (not flat white) so this section reads as its own block while scrolling down an
    otherwise all-white page -- breaks up the monotony without a full-bleed background hack. */
 .how-it-works-section {
-  max-width: min(92vw, 1400px); margin: 1rem auto; padding: 1.75rem clamp(1rem, 4vw, 2.5rem);
+  max-width: min(92vw, 1400px); margin: 1.5rem auto; padding: 2.25rem clamp(1.25rem, 4vw, 3rem);
   background: var(--surface-2); border-radius: var(--radius-2xl);
 }
 .how-it-works-heading { text-align: left; margin-top: 0.4rem; }
@@ -1128,7 +1128,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
    next to these) -- pure marketing content, so it gets the redesign's other container-width tier
    instead (~1400px cap), matching the plan's "don't force one width everywhere" decision. */
-.comparison-section { padding: 1.5rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
+.comparison-section { padding: 2rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
 .comparison-heading { text-align: center; font-size: 1.5rem; }
 .comparison-subheading { text-align: center; max-width: 34rem; margin: 0.5rem auto 1.25rem; }
 .comparison-table-scroll {
@@ -1184,7 +1184,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    readable if someone's curious what's coming. */
 .exam-track-card:not(.is-active) { opacity: 0.6; filter: grayscale(0.5); }
 .exam-track-card:not(.is-active):hover { opacity: 0.85; filter: grayscale(0.15); }
-.exam-track-body { padding: 0.75rem 0.85rem; flex: 1; }
+.exam-track-body { padding: 1rem 1.15rem; flex: 1; }
 .exam-track-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
 .exam-track-title-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
 .exam-track-title-row h3 { font-size: 0.95rem; margin: 0; flex: 1; min-width: 0; }
@@ -1326,7 +1326,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .pct-99 { width: 99%; }
 .pct-100 { width: 100%; }
 .exam-track-footer {
-  padding: 0.6rem 0.85rem; border-top: 1px solid var(--border);
+  padding: 0.8rem 1.15rem; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 0.5rem;
 }
 /* News/announcement banner -- reused on the hub (home page) and inside the notary app's
