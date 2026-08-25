@@ -5040,8 +5040,10 @@ function categoryStatsHtml(activeCount, stateCount) {
   ];
   return '<div class="hub-readiness-card">' +
     '<p class="hub-readiness-label">Real Coverage, Not Marketing Copy</p>' +
+    '<div class="hub-readiness-top-row">' +
     '<div class="outcome-tile hub-readiness-question-count" id="category-question-count-tile"></div>' +
     '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
+    '</div>' +
     '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
       return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
     }).join('') +
