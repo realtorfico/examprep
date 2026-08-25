@@ -4938,13 +4938,14 @@ function categoryStateSelectHtml(tracks, selectedState) {
     '<select class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
 }
 
-// Direct shortcut to the visitor's selected track's own details page (buy button, full pricing,
-// full breakdown) -- sits right under the state picker so reaching it doesn't require scrolling
-// past stats/tiles down to the single track card. Kept in its own wrap (like the tracks/breakdown
-// wraps) so pick-category-state can refresh it without a full page re-render.
+// Second hero CTA button: a direct link to the visitor's selected track's own details page
+// (buy button, full pricing, full breakdown) instead of just scrolling to the single track card
+// further down. Falls back to the old scroll-to-tracks behavior on the rare category with zero
+// active tracks, where there's no track route to link to. Kept in its own wrap (like the
+// tracks/breakdown wraps) so pick-category-state can refresh it without a full page re-render.
 function categoryHeroTrackLinkHtml(track) {
-  if (!track) return '';
-  return '<a class="category-hero-track-link" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
+  if (!track) return '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>';
+  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
 }
 
 function categoryFeatureTilesHtml(tiles) {
@@ -5100,10 +5101,9 @@ async function renderCategoryPage(kind) {
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
     '</div>' +
     (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
-    '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
-    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>' +
+    '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
     '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size) + '</div>' +
