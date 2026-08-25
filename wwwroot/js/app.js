@@ -5165,8 +5165,7 @@ function renderHub() {
     howItWorksHtml() +
     tracksHeaderHtml +
     categoryCardsHtml() +
-    comparisonTableHtml() +
-    guaranteeCtaBandHtml();
+    comparisonTableHtml();
 
   // "#tracks" links (tracksHomeHref(), the header state picker after a switch, etc.) are all real
   // navigations to a fresh page load -- the browser's own fragment auto-scroll fires (if at all)
@@ -5195,12 +5194,10 @@ function renderHub() {
     wrap.innerHTML = promoBannersHtml(active.slice(1), true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
   fillReadinessCard();
-  // The guarantee band renders synchronously with whatever refundFailurePercent already holds
-  // (the pre-fetch default until some earlier page has loaded real config) -- patches itself once
-  // the real value is in, rather than a second fetch just for this.
-  loadSiteConfig().then(function () {
-    document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
-  });
+  // No guarantee band here (moved to category/track pages only, closer to an actual purchase
+  // decision -- the homepage's job is routing to a category, not closing a sale, and most
+  // category-page visitors arrive there directly via search without ever seeing this page first).
+  loadSiteConfig();
 }
 
 // ---- Home page: trust strip, how it works, guarantee band (ported from v0's page.tsx) ----
@@ -5240,8 +5237,11 @@ function howItWorksHtml() {
     '</section>';
 }
 
-// refundFailurePercent shows its pre-fetch default (50) at first paint here, then gets patched by
-// the .js-refund-pct sweep in renderHub() once real config loads -- see the comment there.
+// Only called from renderCategoryPage() (not the homepage, not individual track pages -- shown
+// here since that's the page closest to an actual purchase decision most category-page visitors
+// will see). refundFailurePercent shows its pre-fetch default (50) at first paint, then gets
+// patched by a .js-refund-pct sweep once real config loads -- see renderCategoryPage()'s own
+// loadSiteConfig().then() callback.
 function guaranteeCtaBandHtml() {
   return '<section class="guarantee-band">' +
     '<div class="guarantee-band-copy">' +
