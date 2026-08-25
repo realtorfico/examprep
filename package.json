@@ -3,7 +3,8 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "check-info-links": "node scripts/check-info-links-coverage.js"
   },
   "devDependencies": {
     "jsdom": "^25.0.1"

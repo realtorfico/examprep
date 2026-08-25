@@ -8058,7 +8058,16 @@ function trackLandingPreviewHtml(exam) {
 }
 
 // ---- Additional information (official external links, per exam type) -----
-
+// A separate table from HUB_EXAMS, keyed the same way (examType) but not auto-derived from it --
+// nothing enforces that every active HUB_EXAMS entry has a matching entry here. That's exactly how
+// this went stale: only ca_notary was ever filled in (2026-08-13ish), and every batch of new
+// tracks added since (real estate, driver, motorcycle, CDL) skipped it entirely, leaving the
+// "Official exam info" link on renderTrackLanding() silently empty for ~211 of 212 active tracks
+// until a dedicated research pass filled in notary/real_estate/cdl on 2026-08-25 (git log for
+// this file around that date). When adding a new state/category, research and add its
+// ADDITIONAL_INFO_LINKS entry (or entries) in the SAME pass
+// as the HUB_EXAMS entry -- real, verified official source URLs only, never fabricated (a missing
+// entry just means the link doesn't render, which is safe; a wrong URL is not).
 var ADDITIONAL_INFO_LINKS = {
   ca_notary: [
     { title: 'Secretary of State Site for Notary', url: 'https://www.sos.ca.gov/notary',
