@@ -618,6 +618,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    itself carries no margin (it's also used solo all over the site), so any page stacking more
    than one must wrap them in this rather than rely on accidental button/anchor spacing. */
 .buy-cta-group { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.1rem; }
+/* .hub-cta itself carries no padding/font-size (every other usage scopes its own, e.g.
+   .locked-preview-overlay .hub-cta below) -- this group never got one, so "Get Instant Access"
+   and "Try a free sample" were rendering with 0 padding and body-text weight, not reading as
+   buttons at all despite being the page's primary purchase CTA. */
+.buy-cta-group .hub-cta { padding: 0.85rem 1.5rem; font-size: 1.05rem; font-weight: 700; }
 /* Gold accent treatment (reuses the same highlight language as .exam-disclaimer-callout/
    .news-flash-banner) -- the guarantee is a trust/reassurance callout, a natural fit for the
    "CTAs, checkmarks, highlights" role gold plays throughout the redesign. */
