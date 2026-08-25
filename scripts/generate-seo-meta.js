@@ -1,0 +1,170 @@
+// Generates the per-route SEO metadata (title + truncated description) that _worker.js injects
+// into the SPA shell's <title>/<meta name="description"> for every active track page, plus writes
+// wwwroot/sitemap.xml. Single source of truth is HUB_EXAMS in wwwroot/js/app.js -- this script
+// mechanically derives both outputs from it rather than hand-duplicating title/description text a
+// second time (which would just be one more thing to drift out of sync, like the quote-style bug
+// normalize-hub-exams-quotes.js exists to fix).
+//
+// Run after adding/changing any HUB_EXAMS entry (new track, retitled description, flipped
+// active:), before deploying:
+//   node scripts/generate-seo-meta.js
+// It rewrites the SEO_META block inside _worker.js (between the SEO_META_START/END markers) and
+// regenerates wwwroot/sitemap.xml in place. Idempotent.
+const fs = require('fs');
+const path = require('path');
+const appJsPath = path.join(__dirname, '..', 'wwwroot', 'js', 'app.js');
+const workerPath = path.join(__dirname, '..', 'wwwroot', '_worker.js');
+const sitemapPath = path.join(__dirname, '..', 'wwwroot', 'sitemap.xml');
+const SITE_ORIGIN = 'https://passexamhq.com';
+
+const CATEGORY_META = {
+  'notary': {
+    label: 'Notary',
+    title: 'Notary Public Exam Prep — Practice Tests for Every State | PassExamHQ',
+    description: "Practice questions for your state's notary public exam, built from official handbooks. Instant access, no subscription.",
+  },
+  'driver': {
+    label: 'Driver',
+    title: "Driver's License Knowledge Test Practice — All 50 States | PassExamHQ",
+    description: 'Practice questions for your state DMV written permit test, based on the current official driver handbook. Instant access.',
+  },
+  'cdl': {
+    label: 'CDL',
+    title: 'CDL Practice Test — Commercial Driver\'s License Exam Prep | PassExamHQ',
+    description: 'Practice questions covering general knowledge, air brakes, combination vehicles, and endorsements for your state CDL exam.',
+  },
+  'motorcycle': {
+    label: 'Motorcycle',
+    title: 'Motorcycle Permit Practice Test — Knowledge Exam Prep | PassExamHQ',
+    description: 'Practice questions for your state motorcycle knowledge test, covering safe riding, hazards, and licensing requirements.',
+  },
+  'boating': {
+    label: 'Boating',
+    title: 'Boating Safety Exam Practice Test | PassExamHQ',
+    description: 'Practice questions for your state boating safety certification exam, built from official course material.',
+  },
+  'real-estate-salesperson': {
+    label: 'Real Estate Salesperson',
+    title: 'Real Estate Salesperson Exam Prep — Practice Questions by State | PassExamHQ',
+    description: 'Practice questions for your state real estate salesperson licensing exam, covering state law and licensing requirements.',
+  },
+  'real-estate-broker': {
+    label: 'Real Estate Broker',
+    title: 'Real Estate Managing Broker Exam Prep | PassExamHQ',
+    description: 'Practice questions for your state managing broker upgrade exam, covering supervisory duties and brokerage law.',
+  },
+  'mlo': {
+    label: 'Mortgage Loan Origination',
+    title: 'NMLS SAFE MLO Exam Prep | PassExamHQ',
+    description: 'Practice questions for the NMLS SAFE national Mortgage Loan Originator exam.',
+  },
+};
+
+function truncate(s, max) {
+  if (!s || s.length <= max) return s || '';
+  const cut = s.slice(0, max - 1);
+  return cut.slice(0, cut.lastIndexOf(' ')) + '…';
+}
+function escapeForJs(s) {
+  return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+function escapeXml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ---- Extract active HUB_EXAMS entries (route/title/description), string/comment-aware ----
+function findMatchingBracket(s, openIdx) {
+  let depth = 0, inLineComment = false, inSingle = false, inDouble = false;
+  for (let i = openIdx; i < s.length; i++) {
+    const ch = s[i], prev = s[i - 1];
+    if (inLineComment) { if (ch === '\n') inLineComment = false; continue; }
+    if (inSingle) { if (ch === "'" && prev !== '\\') inSingle = false; continue; }
+    if (inDouble) { if (ch === '"' && prev !== '\\') inDouble = false; continue; }
+    if (ch === '/' && s[i + 1] === '/') { inLineComment = true; continue; }
+    if (ch === "'") { inSingle = true; continue; }
+    if (ch === '"') { inDouble = true; continue; }
+    if (ch === '[' || ch === '{') depth++;
+    else if (ch === ']' || ch === '}') { depth--; if (depth === 0) return i; }
+  }
+  throw new Error('no matching bracket found');
+}
+const appSrc = fs.readFileSync(appJsPath, 'utf8');
+const startMarker = 'var HUB_EXAMS = [';
+const startIdx = appSrc.indexOf(startMarker);
+const arrayStart = startIdx + startMarker.length - 1;
+const arrayEnd = findMatchingBracket(appSrc, arrayStart);
+const arrayInner = appSrc.slice(arrayStart + 1, arrayEnd);
+const objects = [];
+{
+  let inLineComment = false, inSingle = false, inDouble = false, depth = 0, objStart = -1;
+  for (let i = 0; i < arrayInner.length; i++) {
+    const ch = arrayInner[i], prev = arrayInner[i - 1];
+    if (inLineComment) { if (ch === '\n') inLineComment = false; continue; }
+    if (inSingle) { if (ch === "'" && prev !== '\\') inSingle = false; continue; }
+    if (inDouble) { if (ch === '"' && prev !== '\\') inDouble = false; continue; }
+    if (ch === '/' && arrayInner[i + 1] === '/') { inLineComment = true; continue; }
+    if (ch === "'") { inSingle = true; continue; }
+    if (ch === '"') { inDouble = true; continue; }
+    if (ch === '{') { if (depth === 0) objStart = i; depth++; }
+    else if (ch === '}') { depth--; if (depth === 0) objects.push(arrayInner.slice(objStart, i + 1)); }
+  }
+}
+function field(obj, name) {
+  const m = obj.match(new RegExp(name + ":\\s*(['\"])((?:\\\\.|(?!\\1).)*)\\1"));
+  if (!m) return null;
+  // m[2] is the raw source text between the quotes, backslash-escapes still literal (e.g.
+  // "Driver\'s" as the 4 characters D-r-i-v-e-r-\-'-s) -- decode before returning so callers get
+  // the true string value, not source syntax. escapeForJs()/escapeXml() re-escape for wherever
+  // this value ends up next; skipping this step double-escapes (see 2026-08-24 SEO-meta bug).
+  return m[2].replace(/\\(.)/g, (_, c) => c);
+}
+const tracks = [];
+objects.forEach((obj) => {
+  const route = field(obj, 'route');
+  const title = field(obj, 'title');
+  const description = field(obj, 'description');
+  const activeMatch = obj.match(/active:\s*(true|false)/);
+  if (!route || route === '#' || !activeMatch || activeMatch[1] !== 'true') return;
+  tracks.push({ route, title, description });
+});
+// route is '/{kind-slug}/{state}' -- kind-slug is everything up to the last '/'.
+const kindSlugsWithActiveTracks = new Set(tracks.map((t) => t.route.slice(1, t.route.lastIndexOf('/'))));
+
+// ---- Write SEO_META block into _worker.js ----
+const seoMetaEntries = tracks.map((t) =>
+  `  '${t.route}': { title: '${escapeForJs(t.title)} | PassExamHQ', description: '${escapeForJs(truncate(t.description, 155))}' },`
+).join('\n');
+const categoryMetaEntries = Object.entries(CATEGORY_META).map(([slug, m]) =>
+  `  '/${slug}': { title: '${escapeForJs(m.title)}', description: '${escapeForJs(m.description)}' },`
+).join('\n');
+
+const seoMetaBlock =
+`const SEO_META = {
+${categoryMetaEntries}
+${seoMetaEntries}
+};`;
+
+let workerSrc = fs.readFileSync(workerPath, 'utf8');
+const START = '// SEO_META_START';
+const END = '// SEO_META_END';
+const startPos = workerSrc.indexOf(START);
+const endPos = workerSrc.indexOf(END);
+if (startPos === -1 || endPos === -1) throw new Error('SEO_META_START/END markers not found in _worker.js');
+workerSrc = workerSrc.slice(0, startPos) + START + '\n' + seoMetaBlock + '\n' + workerSrc.slice(endPos);
+fs.writeFileSync(workerPath, workerSrc, 'utf8');
+console.log('SEO_META entries written:', tracks.length + Object.keys(CATEGORY_META).length);
+
+// ---- Write sitemap.xml ----
+// Category pages with zero active tracks (e.g. mlo today) are excluded -- a near-empty page isn't
+// worth inviting crawlers to, and would just read as thin content.
+const urls = [SITE_ORIGIN + '/']
+  .concat(Object.keys(CATEGORY_META).filter((slug) => kindSlugsWithActiveTracks.has(slug)).map((slug) => SITE_ORIGIN + '/' + slug))
+  .concat(tracks.map((t) => SITE_ORIGIN + t.route));
+const sitemapXml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((u) => '  <url><loc>' + escapeXml(u) + '</loc></url>').join('\n')}
+</urlset>
+`;
+fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
+console.log('sitemap.xml URLs written:', urls.length);
