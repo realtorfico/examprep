@@ -896,23 +896,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   font-size: 0.78rem; font-weight: 600; color: var(--correct); background: color-mix(in srgb, var(--correct) 12%, transparent);
   padding: 0.3rem 0.7rem; border-radius: 999px;
 }
-#hub-hero-question-stat-wrap:empty { display: none; }
-/* Centered value-over-label, unlike the rest of this hero column (headline/badges/CTAs stay
-   left-aligned at every breakpoint by design -- see .hub-hero above). Wrapped in its own
-   bordered/tinted box so the centering reads as a deliberate callout, not a stray centered line
-   breaking the column's alignment. width: fit-content + margin auto centers the box itself within
-   the (left-aligned) column, independent of the rest of the column's content. */
-.hub-hero-question-stat {
-  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.3rem;
-  width: fit-content; margin: 1.75rem auto; padding: 0.9rem 1.75rem;
-  border: 1px solid var(--border); border-radius: var(--radius-xl);
-  /* Subtle top-down micro-gradient instead of a flat tint -- doc audit's "glassmorphic cards with
-     micro-gradients" ask for the hero's stat callouts. */
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.hub-hero-question-stat-value { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.1rem, 1.7rem + 1.4vw, 2.75rem); font-weight: 700; color: var(--accent); line-height: 1; }
-.hub-hero-question-stat-label { font-size: 0.8rem; color: var(--muted); line-height: 1.3; }
 .hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.75rem; margin-top: 1.25rem; }
 /* Category page's 2nd hero CTA is wrapped in a plain div so pick-category-state can swap it --
    without display:contents that div (not styled as a button itself) becomes the flex item instead
@@ -928,13 +911,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    separate "Community Readiness" reading (accuracy/mock-exams-passed averages) alongside a
    near-duplicate "Real Results" numbers section further down the page -- both radial rings showed
    the same s.passRate value under different labels. Merged into this one card; see the standalone
-   .outcome-tile rules below, now reused here instead of a now-removed full-width outcomes section. */
+   .outcome-tile rules below, now reused here instead of a now-removed full-width outcomes section.
+   Total-questions count used to live in its own standalone .hub-hero-question-stat callout in the
+   hero copy column -- moved into .hub-readiness-top-row (2026-08-25) to match the category pages'
+   stats card, which pairs it with the pass/refund-rate radial above the tiles divider instead. */
 #hub-readiness-wrap:empty { display: none; }
 .hub-readiness-card {
   margin-top: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--highlight);
   border-radius: var(--radius-xl);
-  /* Faint top-down accent wash over the base card color, same micro-gradient language as
-     .hub-hero-question-stat above, rather than a flat --card fill. */
+  /* Faint top-down accent wash over the base card color. */
   background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--card)), var(--card) 65%);
   padding: 1.25rem 1.5rem;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 34px -20px rgba(15, 23, 42, 0.45);
@@ -951,8 +936,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 /* Narrower than the tiles' original full-width home (see .outcome-tile-value below) -- this card
    is a hero-column sidebar, not a 1400px-wide section, so the numbers need to shrink to fit
-   comfortably. Down to 2 tiles (Live Tracks, Mock Exams) since Practice Questions moved out to its
-   own standalone hero stat -- see .hub-hero-question-stat above. */
+   comfortably. Down to 2 tiles (Live Tracks, Mock Exams) -- Practice Questions is up in
+   .hub-readiness-top-row instead, at the base (larger) .outcome-tile-value size. */
 .hub-readiness-tiles .outcome-tile-value { font-size: 1.35rem; }
 .hub-readiness-tiles .outcome-tile-label { font-size: 0.62rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--highlight); padding-bottom: 0.5rem; margin-top: 0.5rem; }

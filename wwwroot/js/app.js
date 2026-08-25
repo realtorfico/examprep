@@ -5172,7 +5172,6 @@ function renderHub() {
     '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
     '</div>' +
-    '<div id="hub-hero-question-stat-wrap"></div>' +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse by Category</button>' +
     '</div>' +
@@ -5331,37 +5330,35 @@ function comparisonTableHtml() {
 // to feature.
 function fillReadinessCard() {
   var wrap = document.getElementById('hub-readiness-wrap');
-  var heroStatWrap = document.getElementById('hub-hero-question-stat-wrap');
-  if (!wrap && !heroStatWrap) return;
+  if (!wrap) return;
   loadPublicStats().then(function (s) {
     if (s.passRate == null && s.totalQuestions == null && s.tracksLive == null) return; // nothing real to show
-    // Pulled out of the tiles row and given its own hero-column treatment (2026-08-16) -- with the
-    // bank now in the tens of thousands, it's a stronger standalone proof point than a same-sized
-    // tile next to Live Tracks/Mock Exams (much smaller numbers that made it look no bigger than
-    // them). Sits right before the CTA buttons in .hub-hero-copy, not inside the readiness card.
-    if (heroStatWrap && s.totalQuestions != null) {
-      heroStatWrap.innerHTML = '<div class="hub-hero-question-stat">' +
-        '<span class="hub-hero-question-stat-value">' + Number(s.totalQuestions).toLocaleString() + '+</span>' +
-        '<span class="hub-hero-question-stat-label">Practice Questions<br>Across All Tracks</span>' +
-        '</div>';
-    }
-    if (!wrap) return;
     var radial = radialProgressSvg(s.passRate != null ? s.passRate : 0, {
       size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
     });
+    // Question count paired with the radial in its own top row, same layout as the category
+    // pages' stats card (categoryStatsHtml) -- left blank (not a fabricated "0+") if the count
+    // didn't come back, same best-effort posture as that card's own question-count tile.
+    var questionCountHtml = s.totalQuestions != null
+      ? '<div class="outcome-tile-value">' + Number(s.totalQuestions).toLocaleString() + '+</div>' +
+        '<div class="outcome-tile-label">Practice Questions<br>Across All Tracks</div>'
+      : '';
     var tiles = [
       { value: s.tracksLive, label: 'Live Tracks' },
       { value: s.examsCompleted, label: 'Mock Exams' },
     ];
     wrap.innerHTML = '<div class="hub-readiness-card">' +
       '<p class="hub-readiness-label">Real Results, Not Marketing Copy</p>' +
+      '<div class="hub-readiness-top-row">' +
+      '<div class="outcome-tile hub-readiness-question-count">' + questionCountHtml + '</div>' +
       '<div class="hub-readiness-radial-wrap">' + radial + '</div>' +
+      '</div>' +
       '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
         return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() +
           '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
       }).join('') + '</div>' +
       '</div>';
-  }).catch(function () { /* best-effort -- card/stat just don't appear */ });
+  }).catch(function () { /* best-effort -- card just doesn't appear */ });
 }
 
 function renderRedeem(error) {
