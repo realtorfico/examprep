@@ -4982,13 +4982,20 @@ function categoryBreakdownHtml(track) {
     '</section>';
 }
 
+// Split out so pick-category-state can refresh it in step with the question itself -- it used to
+// be baked into categorySampleWidgetHtml()'s one-time render, so picking a new state changed the
+// sample question underneath it but left this subhead stuck on whichever state loaded the page.
+function categorySampleSubheadHtml(track) {
+  return escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' + escapeHtml(track.examKind) + ' — no access code needed.';
+}
+
 function categorySampleWidgetHtml() {
   var track = categoryPageState.repTrack;
   if (!track) return '';
   return '<section class="category-sample" id="category-sample">' +
     '<p class="section-eyebrow">Try before you buy</p>' +
     '<h2 class="comparison-heading">Interactive Sample Question</h2>' +
-    '<p class="muted">' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' + escapeHtml(track.examKind) + ' — no access code needed.</p>' +
+    '<p class="muted" id="category-sample-subhead">' + categorySampleSubheadHtml(track) + '</p>' +
     '<div class="card" id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
     '</section>';
 }
@@ -9694,6 +9701,8 @@ document.addEventListener('change', function (e) {
     if (tracksWrap) tracksWrap.innerHTML = categoryCurrentTrackHtml();
     var breakdownWrap = document.getElementById('category-breakdown-wrap');
     if (breakdownWrap) breakdownWrap.innerHTML = categoryBreakdownHtml(newRepTrack);
+    var sampleSubhead = document.getElementById('category-sample-subhead');
+    if (sampleSubhead) sampleSubhead.innerHTML = categorySampleSubheadHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');
     if (sampleWrap) { sampleWrap.innerHTML = '<p class="muted">Loading…</p>'; loadCategorySampleQuestion(); }
   }
