@@ -4923,21 +4923,19 @@ function giftTracksGridHtml() {
 // state-specific rather than averaged/invented across states that don't actually share one
 // breakdown.
 
-var CATEGORY_TRACKS_COLLAPSED_COUNT = 12;
-var categoryPageState = { kind: null, tracks: [], repTrack: null, tracksExpanded: false };
+var categoryPageState = { kind: null, tracks: [], repTrack: null };
 
-function categoryTracksGridHtml() {
-  var tracks = categoryPageState.tracks;
-  var cardsArr = hubTrackCards(tracks);
-  var truncated = !categoryPageState.tracksExpanded && cardsArr.length > CATEGORY_TRACKS_COLLAPSED_COUNT;
-  var visible = truncated ? cardsArr.slice(0, CATEGORY_TRACKS_COLLAPSED_COUNT) : cardsArr;
-  var toggleHtml = cardsArr.length > CATEGORY_TRACKS_COLLAPSED_COUNT
-    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-category-tracks">' +
-      (truncated ? 'Show all ' + cardsArr.length + ' states ▾' : 'Show fewer ▴') + '</button></div>'
-    : '';
-  var emptyHtml = !cardsArr.length ? '<p class="muted">No states are live for this category yet — check back soon.</p>' : '';
-  fillHubPricing(truncated ? tracks.slice(0, CATEGORY_TRACKS_COLLAPSED_COUNT) : tracks);
-  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
+// Shows the ONE track matching the visitor's currently-selected state (repTrack) -- not a
+// browsable list of every state. The state picker in the hero (categoryStateSelectHtml) is how a
+// visitor sees a different state's track; this section just reflects whichever one is selected.
+// Reuses hubTrackCards's own card markup (a 1-element array) rather than a bespoke layout, so it
+// looks identical to every other track card on the site.
+function categoryCurrentTrackHtml() {
+  var track = categoryPageState.repTrack;
+  if (!track) return '<p class="muted">No states are live for this category yet — check back soon.</p>';
+  var cardHtml = hubTrackCards([track])[0];
+  fillHubPricing([track]);
+  return '<div class="exam-track-grid category-single-track-grid">' + cardHtml + '</div>';
 }
 
 function categoryActiveTracks(kind) {
@@ -5119,15 +5117,15 @@ async function renderCategoryPage(kind) {
     (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
-    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse State Tracks</button>' +
+    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>' +
     '</div>' +
     '</div>' +
     '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size) + '</div>' +
     '</div>' +
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
-    '<div class="hub-section-header" id="tracks"><h2>' + escapeHtml(kind) + ' Licensing Tracks</h2><span class="badge">' + tracks.length + ' Active</span></div>' +
-    '<div id="category-tracks-grid-wrap">' + categoryTracksGridHtml() + '</div>' +
+    '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
+    '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
     categorySampleWidgetHtml() +
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
     categoryTestimonialsHtml(content && content.testimonials) +
@@ -9712,6 +9710,8 @@ document.addEventListener('change', function (e) {
     var newRepTrack = categoryPageState.tracks.filter(function (t) { return t.stateCode === pickedState; })[0];
     if (!newRepTrack) return; // shouldn't happen -- the select only lists states that offer this category
     categoryPageState.repTrack = newRepTrack;
+    var tracksWrap = document.getElementById('category-tracks-grid-wrap');
+    if (tracksWrap) tracksWrap.innerHTML = categoryCurrentTrackHtml();
     var breakdownWrap = document.getElementById('category-breakdown-wrap');
     if (breakdownWrap) breakdownWrap.innerHTML = categoryBreakdownHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');
@@ -9827,10 +9827,6 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
-  } else if (act === 'toggle-category-tracks') {
-    categoryPageState.tracksExpanded = !categoryPageState.tracksExpanded;
-    var categoryTracksWrap = document.getElementById('category-tracks-grid-wrap');
-    if (categoryTracksWrap) categoryTracksWrap.innerHTML = categoryTracksGridHtml();
   } else if (act === 'toggle-gift-tracks') {
     giftTracksExpanded = !giftTracksExpanded;
     var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
