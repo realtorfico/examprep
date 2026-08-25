@@ -381,8 +381,8 @@ function renderSiteFooter() {
   // (which in practice always meant California, since it's first in HUB_EXAMS) just because the
   // scoped state itself has fewer than 3 active tracks. A 1- or 2-track state legitimately shows
   // only 1 or 2 links here; cross-state browsing isn't a real user need for a licensing-exam
-  // product (same reasoning as renderHubScopedContextBar's "no all-states link" decision). Falls
-  // back to the first 3 active tracks overall only when genuinely unscoped (hubScopedState null).
+  // product. Falls back to the first 3 active tracks overall only when genuinely unscoped
+  // (hubScopedState null -- e.g. on a category landing page, which shows every state anyway).
   // This is just the synchronous starting order (HUB_EXAMS array order) -- loadFooterExamLinksPricing()
   // (called below, after the innerHTML assignment) swaps it for real price-descending order once
   // pricing resolves, since price isn't known client-side until fetched.
@@ -2614,13 +2614,18 @@ function knownStateCode(code) {
   return HUB_EXAMS.some(function (e) { return e.stateCode === upper; }) ? upper : null;
 }
 
-// Written by app.js whenever the visitor lands on (or picks) a specific state, or explicitly
-// chooses "browse all states" (value 'ALL'); read server-side by _worker.js to decide whether "/"
-// should redirect to "/<state>" on a visitor's next arrival. Not read back by app.js itself --
-// the resolved state for the CURRENT load always comes from the URL path (see route()), so this
-// is purely a signal for next time, same spirit as a "remember my region" preference.
+// Written by app.js whenever the visitor lands on (or picks) a specific state; read server-side
+// by _worker.js to carry the visitor's state forward through an old-URL redirect (see its own
+// comment) or, for a first-time "/" visit with no cookie yet, geolocation-derived. Also read back
+// client-side now (getStateCookie(), below) by the category landing page to pre-select the
+// visitor's state in its hero picker -- app.js didn't read this back at all before category-first
+// routing removed the old per-state hub pages that used to make the URL itself the source of truth.
 function setStateCookie(value) {
   document.cookie = 'pxq_state=' + encodeURIComponent(value) + '; path=/; max-age=31536000; SameSite=Lax';
+}
+function getStateCookie() {
+  var match = document.cookie.match(/(?:^|;\s*)pxq_state=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : '';
 }
 
 // Given a hub route string ('/notary', etc.), returns the matching ACTIVE track's HUB_EXAMS entry,
@@ -4799,130 +4804,10 @@ function currentTrackOrNull() {
   return (current && current.active) ? current : null;
 }
 
-var HUB_TRACKS_COLLAPSED_COUNT = 6;
-var hubTracksExpanded = false;
-var hubStateFilter = ''; // '' = All states; otherwise a STATE_LABELS key (e.g. 'CA') -- only used
-                          // by the legacy all-states pill UI (hubScopedState === null), see below.
-var hubKindFilter = ''; // '' = All exam kinds; otherwise a HUB_EXAMS examKind value (e.g. 'Driver')
-// null = the flat, de-emphasized "browse all states" catalog (old behavior: state+kind pills,
-// hubStateFilter drives the state side of it). A stateCode = the default single-state hub
-// (reached via "/<state>" -- see route()): no state pills at all, kind pills scoped to just that
-// state's tracks, "browse all states" is a single link out instead of one filter among many.
-// Cross-state purchase intent is ~nil for a licensing-exam product, so this is the default; the
-// all-states view is the escape hatch, not the other way around.
+// hubScopedState is still meaningful (which state a currently-viewed track belongs to -- see
+// route(), renderSiteFooter(), the header state picker) even though category-first routing
+// removed the per-state hub page that originally made it a URL-derived filter.
 var hubScopedState = null;
-
-// A track matches the current filter pair if it satisfies whichever of state/kind is active --
-// the two filters combine (AND), not just one at a time.
-function hubExamMatchesFilters(e, stateFilter, kindFilter) {
-  return (!stateFilter || e.stateCode === stateFilter) && (!kindFilter || e.examKind === kindFilter);
-}
-
-// One pill per distinct stateCode present in HUB_EXAMS, plus "All" -- same pattern as the quiz
-// difficulty picker (renderQuizDifficultyPicker). A single-state catalog (today: CA + National)
-// still renders fine, just with 2-3 pills; this is prep for once TX/FL/NY tracks exist, not
-// something that needs a minimum track count to make sense. Counts respect the current kind
-// filter too, so a pill never claims more tracks than would actually show once clicked.
-function renderHubStateFilterPills() {
-  var codes = [];
-  HUB_EXAMS.forEach(function (e) { if (codes.indexOf(e.stateCode) === -1) codes.push(e.stateCode); });
-  codes.sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
-  var allCount = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, '', hubKindFilter); }).length;
-  var options = [['', 'All States (' + allCount + ')']].concat(codes.map(function (c) {
-    var count = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, c, hubKindFilter); }).length;
-    return [c, (STATE_LABELS[c] || c) + ' (' + count + ')'];
-  }));
-  if (options.length <= 2) return ''; // nothing to filter yet (e.g. only one state so far)
-  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by state">' +
-    options.map(function (o) {
-      var active = hubStateFilter === o[0];
-      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-state" data-state="' + o[0] + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
-    }).join('') + '</div>';
-}
-
-// Same pattern as renderHubStateFilterPills, filtering by examKind (Driver, Commercial Driver
-// (CDL), Motorcycle, Notary, etc.) instead of state -- counts respect the current state filter too.
-function renderHubKindFilterPills() {
-  var kinds = [];
-  HUB_EXAMS.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
-  kinds.sort(function (a, b) { return a.localeCompare(b); });
-  var allCount = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, ''); }).length;
-  var options = [['', 'All Types (' + allCount + ')']].concat(kinds.map(function (k) {
-    var count = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, hubStateFilter, k); }).length;
-    return [k, k + ' (' + count + ')'];
-  }));
-  if (options.length <= 2) return ''; // nothing to filter yet
-  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
-    options.map(function (o) {
-      var active = hubKindFilter === o[0];
-      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-kind" data-kind="' + o[0] + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
-    }).join('') + '</div>';
-}
-
-// ---- Default single-state hub (hubScopedState set) -------------------------
-// No state pills here at all (the state is fixed by the URL) -- just a "you're looking at X"
-// line and the de-emphasized way out, plus kind pills scoped to only what that state actually
-// has. A full page navigation (real <a href>, not pushState) on both, matching how every other
-// pathname change in this app already works (e.g. clicking a track card) -- introducing an
-// in-place SPA transition just for this would be a second navigation model for no real benefit.
-function renderHubScopedContextBar() {
-  var name = STATE_LABELS[hubScopedState] || hubScopedState;
-  // No "browse all states" link -- cross-state browsing isn't a real user need for a
-  // licensing-exam product (per-decision), so there's deliberately no path back to the flat
-  // all-states catalog from here. Switching states is still always possible via the header picker
-  // (tucked into the ☰ menu below the nav-links/CTA breakpoint, see .top-controls in style.css).
-  return '<div class="hub-scoped-context-bar">' +
-    '<span>Showing licensing tracks for <strong class="state-name-emphasis">' + escapeHtml(name) + '</strong></span>' +
-    '</div>' +
-    // Same "wrong state? here's the fix" hint the track landing page already gives -- the hub's
-    // own state-scoped view had no equivalent, even though landing here (e.g. via a stale link, a
-    // shared bookmark, or an inaccurate geolocation guess) is exactly when a visitor most needs it.
-    '<p class="muted hub-scoped-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(name) +
-    '</strong>? Use the state picker to switch — on mobile, open the ☰ menu first.</p>';
-}
-function renderHubKindFilterPillsScoped() {
-  var tracksInState = HUB_EXAMS.filter(function (e) { return e.stateCode === hubScopedState; });
-  var kinds = [];
-  tracksInState.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
-  kinds.sort(function (a, b) { return a.localeCompare(b); });
-  var options = [['', 'All Types (' + tracksInState.length + ')']].concat(kinds.map(function (k) {
-    var count = tracksInState.filter(function (e) { return e.examKind === k; }).length;
-    return [k, k + ' (' + count + ')'];
-  }));
-  if (options.length <= 2) return ''; // this state only has one exam kind so far -- nothing to filter
-  // Same pill markup/interaction as the original all-states kind pills (renderHubKindFilterPills)
-  // -- in-place JS toggle, no page reload -- just without the state pill row next to it, since the
-  // state's fixed by the header picker instead. history.pushState (see the click handler) still
-  // keeps the URL in sync with the current kind so it stays bookmarkable/shareable.
-  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
-    options.map(function (o) {
-      var active = hubKindFilter === o[0];
-      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-hub-kind-scoped" data-kind="' + o[0] + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
-    }).join('') + '</div>';
-}
-
-function hubTracksGridHtml() {
-  var effectiveStateFilter = hubScopedState || hubStateFilter;
-  var filtered = HUB_EXAMS.filter(function (e) { return hubExamMatchesFilters(e, effectiveStateFilter, hubKindFilter); });
-  var cardsArr = hubTrackCards(filtered);
-  var truncated = !hubTracksExpanded && cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT;
-  var visible = truncated ? cardsArr.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : cardsArr;
-  var toggleHtml = cardsArr.length > HUB_TRACKS_COLLAPSED_COUNT
-    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-hub-tracks">' +
-      (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
-    : '';
-  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this filter.</p>' : '';
-  // Kicked off here (not awaited) so every caller that re-renders this grid (initial hub render,
-  // the state/kind filter handlers, the show-all toggle) gets pricing filled in for free, without
-  // each one needing to remember to call it separately. Safe regardless of caller: this function
-  // returns its HTML string (and gets assigned to innerHTML) synchronously, before any of these
-  // fetches can resolve.
-  fillHubPricing(truncated ? filtered.slice(0, HUB_TRACKS_COLLAPSED_COUNT) : filtered);
-  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
-}
 
 // Smaller catalog card (Round 2 redesign decision): category/name/state/price/CTA only -- full
 // stats, breakdown, and buy details now live on the track's own page instead of duplicating them
@@ -4971,12 +4856,10 @@ function fillHubPricing(tracks) {
 }
 
 // ---- #/gift landing page's own track grid ----------------------------------
-// Deliberately separate state/pill/grid functions from the hub's above, rather than sharing
-// hubStateFilter/hubKindFilter/hubTracksExpanded -- filtering on the hub shouldn't silently carry
-// over and make the gift page look like it's "missing tracks" (or vice versa) when the two are
-// visited independently. Reuses hubExamMatchesFilters/hubTrackCards/fillHubPricing though, since
-// the matching/card/pricing logic itself is identical, just gift-scoped to active tracks only
-// (nothing to gift that isn't purchasable) and a different collapsed-count/CTA.
+// Deliberately its own self-contained kind-filter/grid state (not shared with anything else) --
+// reuses hubTrackCards/fillHubPricing since the card/pricing logic itself is identical, just
+// gift-scoped to active tracks only (nothing to gift that isn't purchasable) and a different
+// collapsed-count/CTA.
 var GIFT_TRACKS_COLLAPSED_COUNT = 6;
 var giftTracksExpanded = false;
 var giftKindFilter = '';
@@ -5028,22 +4911,234 @@ function giftTracksGridHtml() {
   return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
 }
 
+// ---- Category landing page (category-first restructure, phase 4) ----------
+// One page per category (e.g. /notary), aggregating every state that offers it -- replaces the
+// interim reuse of the unscoped hub view. Sections: hero (headline/subhead from admin-managed
+// category_content, state picker), stats strip (real computed track/state counts + sitewide pass
+// rate -- no per-category pass rate exists server-side, so this never fabricates one), feature
+// tiles + testimonials (admin-managed, omitted entirely if not yet configured), state tracks grid
+// (reuses hubTrackCards/fillHubPricing, same cards the old hub used), an interactive sample
+// question, and a curriculum breakdown -- both sourced from one representative track (the
+// visitor's own state if it offers this category, else the first active one), clearly labeled as
+// state-specific rather than averaged/invented across states that don't actually share one
+// breakdown.
+
+var categoryPageState = { kind: null, tracks: [], repTrack: null };
+
+function categoryActiveTracks(kind) {
+  return HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; });
+}
+
+// Prefers the visitor's own state (cookie) if it offers this category, else the first active
+// track (HUB_EXAMS order, same "first active" fallback the footer's sample-tracks logic uses).
+function pickRepresentativeTrack(tracks) {
+  var cookieState = getStateCookie();
+  if (cookieState) {
+    var match = tracks.filter(function (t) { return t.stateCode === cookieState; })[0];
+    if (match) return match;
+  }
+  return tracks[0] || null;
+}
+
+function categoryStateSelectHtml(tracks, selectedState) {
+  var options = ['<option value="">Choose your state…</option>'].concat(
+    tracks.slice().sort(function (a, b) { return (STATE_LABELS[a.stateCode] || a.stateCode).localeCompare(STATE_LABELS[b.stateCode] || b.stateCode); })
+      .map(function (t) {
+        return '<option value="' + t.stateCode + '"' + (t.stateCode === selectedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</option>';
+      })
+  );
+  return '<label class="category-state-select-label">Select your state' +
+    '<select class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
+}
+
+function categoryFeatureTilesHtml(tiles) {
+  if (!tiles || !tiles.length) return '';
+  return '<section class="category-feature-tiles">' + tiles.map(function (t) {
+    return '<div class="card category-feature-tile"><div class="category-feature-tile-icon">' + escapeHtml(t.icon || '') + '</div>' +
+      '<h3>' + escapeHtml(t.title || '') + '</h3><p class="muted">' + escapeHtml(t.body || '') + '</p></div>';
+  }).join('') + '</section>';
+}
+
+function categoryTestimonialsHtml(testimonials) {
+  if (!testimonials || !testimonials.length) return '';
+  return '<section class="category-testimonials">' +
+    '<p class="section-eyebrow">What test-takers say</p><h2 class="comparison-heading">Passed on the first try</h2>' +
+    '<div class="category-testimonial-grid">' + testimonials.map(function (t) {
+      return '<div class="card category-testimonial-card"><p>“' + escapeHtml(t.quote || '') + '”</p><p class="muted category-testimonial-author">' + escapeHtml(t.author || '') + '</p></div>';
+    }).join('') + '</div></section>';
+}
+
+function categoryBreakdownHtml(track) {
+  if (!track || !track.breakdown || !track.breakdown.length) return '';
+  return '<section class="category-breakdown">' +
+    '<p class="section-eyebrow">Curriculum coverage</p>' +
+    '<h2 class="comparison-heading">What\'s Inside the Question Bank</h2>' +
+    '<p class="muted">Shown for ' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' — exact topics and weighting vary by state.</p>' +
+    '<div class="breakdown-list">' + track.breakdown.map(function (b) {
+      var pct = parseInt(b[1], 10) || 0;
+      return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
+        '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
+    }).join('') + '</div></section>';
+}
+
+function categorySampleWidgetHtml() {
+  var track = categoryPageState.repTrack;
+  if (!track) return '';
+  return '<section class="category-sample" id="category-sample">' +
+    '<p class="section-eyebrow">Try before you buy</p>' +
+    '<h2 class="comparison-heading">Interactive Sample Question</h2>' +
+    '<p class="muted">' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' + escapeHtml(track.examKind) + ' — no access code needed.</p>' +
+    '<div class="card" id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
+    '</section>';
+}
+
+async function loadCategorySampleQuestion() {
+  var track = categoryPageState.repTrack;
+  var wrap = document.getElementById('category-sample-question-wrap');
+  if (!track || !wrap) return;
+  try {
+    var res = await apiFetch('/sample?examType=' + encodeURIComponent(track.examType));
+    var q = (res.questions || [])[0];
+    if (!q) { wrap.innerHTML = '<p class="muted">No sample available for this track yet.</p>'; return; }
+    categoryPageState.sampleQuestion = q;
+    categoryPageState.sampleAnswered = null;
+    drawCategorySampleQuestion();
+  } catch (e) {
+    wrap.innerHTML = '<p class="muted">Could not load a sample question. Try again shortly.</p>';
+  }
+}
+
+function drawCategorySampleQuestion() {
+  var wrap = document.getElementById('category-sample-question-wrap');
+  var q = categoryPageState.sampleQuestion;
+  var track = categoryPageState.repTrack;
+  if (!wrap || !q) return;
+  var answered = categoryPageState.sampleAnswered;
+  var prefixes = ['A', 'B', 'C', 'D'];
+  var choiceHtml = prefixes.map(function (k) {
+    var cls = 'option-btn';
+    if (answered) {
+      if (k === q.correctChoice) cls += ' correct';
+      else if (k === answered) cls += ' wrong';
+    }
+    return optionButtonHtml(k, q.choices[k], cls, 'data-act="category-sample-answer" data-choice="' + k + '"' + (answered ? ' disabled' : ''));
+  }).join('');
+  var explanation = answered
+    ? '<div class="explanation-box"><strong class="' + (answered === q.correctChoice ? 'result-correct' : 'result-incorrect') + '">' +
+      (answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
+      '<div class="nav-controls"><a class="btn-primary" href="' + track.route + '#/sample">Try more free questions →</a></div>'
+    : '';
+  wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
+    '<div class="options-grid">' + choiceHtml + '</div>' + explanation;
+}
+
+function categoryStatsHtml(activeCount, stateCount) {
+  var tiles = [
+    { value: activeCount, label: 'State Tracks' },
+    { value: stateCount, label: 'States Covered' },
+  ];
+  return '<div class="hub-readiness-card">' +
+    '<p class="hub-readiness-label">Real Coverage, Not Marketing Copy</p>' +
+    '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
+    '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
+      return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
+    }).join('') + '</div></div>';
+}
+
+// Rendered separately from categoryStatsHtml() and only after loadSiteConfig() resolves (not at
+// first paint) -- refundFailurePercent defaults to a placeholder 50 until then, and unlike the
+// .js-refund-pct text spans elsewhere, an SVG arc's shape can't be live-patched after the fact, so
+// painting it early risks silently freezing on a stale default for the rest of the pageview.
+function fillCategoryStatsRadial() {
+  var wrap = document.getElementById('category-stats-radial-wrap');
+  if (wrap) wrap.innerHTML = radialProgressSvg(refundFailurePercent, { size: 108, strokeWidth: 10, label: 'Refund If You Fail', color: 'var(--highlight)' });
+}
+
+async function renderCategoryPage(kind) {
+  var slug = kindSlug(kind);
+  var tracks = categoryActiveTracks(kind);
+  var repTrack = pickRepresentativeTrack(tracks);
+  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleAnswered: null };
+
+  appEl.innerHTML = '<p>Loading…</p>';
+  var content = null;
+  try {
+    var res = await apiFetch('/category-content?slug=' + encodeURIComponent(slug));
+    content = (res.categories || [])[0] || null;
+  } catch (e) { /* best-effort -- page still works with fallback copy */ }
+
+  var headline = (content && content.hero_headline) || (kind + ' Exam Prep');
+  var subhead = (content && content.hero_subhead) ||
+    ('Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.');
+  var selectedState = repTrack ? repTrack.stateCode : '';
+
+  appEl.innerHTML =
+    renderNewsBanner() +
+    '<div class="hub-hero">' +
+    '<div class="hub-hero-copy">' +
+    '<span class="section-eyebrow">' + escapeHtml(kind) + '</span>' +
+    '<h1>' + escapeHtml(headline) + '</h1>' +
+    '<p>' + escapeHtml(subhead) + '</p>' +
+    '<div class="hub-trust-badges">' +
+    '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
+    '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
+    '<span class="hub-trust-badge">✓ Instant Access</span>' +
+    '</div>' +
+    (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    '<div class="hub-hero-cta">' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
+    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse State Tracks</button>' +
+    '</div>' +
+    '</div>' +
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size) + '</div>' +
+    '</div>' +
+    trustStripHtml() +
+    categoryFeatureTilesHtml(content && content.featureTiles) +
+    '<div class="hub-section-header" id="tracks"><h2>' + escapeHtml(kind) + ' Licensing Tracks</h2><span class="badge">' + tracks.length + ' Active</span></div>' +
+    '<div class="exam-track-grid">' + hubTrackCards(tracks).join('') + '</div>' +
+    (tracks.length ? '' : '<p class="muted">No states are live for this category yet — check back soon.</p>') +
+    categorySampleWidgetHtml() +
+    '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
+    categoryTestimonialsHtml(content && content.testimonials) +
+    guaranteeCtaBandHtml();
+
+  fillHubPricing(tracks);
+  if (repTrack) loadCategorySampleQuestion();
+  loadSiteConfig().then(function () {
+    document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
+    fillCategoryStatsRadial();
+  });
+}
+
+var CATEGORY_ICONS = {
+  'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
+  'Boating': '⛵', 'Real Estate Salesperson': '🏠', 'Real Estate Broker': '🏢',
+  'Mortgage Loan Origination': '💰',
+};
+
+// One card per category with at least one active track, each linking straight to that category's
+// landing page -- browsing by category, not by a flat list of every state x category track, is
+// the whole point of the category-first restructure (2026-08-24), so the homepage leads with this
+// instead of the old full state x category grid.
+function categoryCardsHtml() {
+  var kinds = [];
+  HUB_EXAMS.forEach(function (e) { if (e.active && kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  kinds.sort(function (a, b) { return a.localeCompare(b); });
+  var cards = kinds.map(function (kind) {
+    var stateCount = new Set(HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; }).map(function (t) { return t.stateCode; })).size;
+    return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
+      '<div class="exam-track-body">' +
+      '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
+      '<h3>' + escapeHtml(kind) + '</h3>' +
+      '<p class="muted">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</p>' +
+      '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
+      '</a>';
+  });
+  return '<div class="exam-track-grid category-card-grid">' + cards.join('') + '</div>';
+}
+
 function renderHub() {
-  var activeCount = HUB_EXAMS.filter(function (e) { return e.active; }).length;
-  var upcomingCount = HUB_EXAMS.length - activeCount;
-  // Scoped mode (hubScopedState set, the default -- see route()) drops the state-pill row
-  // entirely (the state's fixed by the URL) and swaps it for the "you're looking at X" bar plus
-  // kind pills scoped to only that state's tracks. Unscoped mode is the de-emphasized "browse all
-  // states" escape hatch, unchanged from before: both filter pill rows, hubStateFilter-driven.
-  var tracksHeaderHtml = hubScopedState
-    ? '<div class="hub-section-header" id="tracks"><h2>' + escapeHtml(STATE_LABELS[hubScopedState] || hubScopedState) + ' Licensing Tracks</h2>' +
-      '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
-      '<div id="hub-scoped-context-wrap">' + renderHubScopedContextBar() + '</div>' +
-      '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPillsScoped() + '</div>'
-    : '<div class="hub-section-header" id="tracks"><h2>Licensing Tracks</h2>' +
-      '<span class="badge">' + activeCount + ' Active • ' + upcomingCount + ' Upcoming</span></div>' +
-      '<div id="hub-state-filter-wrap">' + renderHubStateFilterPills() + '</div>' +
-      '<div id="hub-kind-filter-wrap">' + renderHubKindFilterPills() + '</div>';
+  var tracksHeaderHtml = '<div class="hub-section-header" id="tracks"><h2>Browse by Category</h2></div>';
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -5060,11 +5155,8 @@ function renderHub() {
     '</div>' +
     '<div id="hub-hero-question-stat-wrap"></div>' +
     '<div class="hub-hero-cta">' +
-    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Try Free Sample</button>' +
-    '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse All Tracks</button>' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse by Category</button>' +
     '</div>' +
-    // "No code yet? Buy instant access or refer friends" dropped as redundant -- the "Try Free
-    // Sample"/"Browse All Tracks" CTAs right above already cover that path.
     '<p class="muted hub-hero-subtext">Already have a code? <a href="#/redeem">Enter it here</a></p>' +
     '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
@@ -5072,7 +5164,7 @@ function renderHub() {
     trustStripHtml() +
     howItWorksHtml() +
     tracksHeaderHtml +
-    '<div id="hub-tracks-grid-wrap">' + hubTracksGridHtml() + '</div>' +
+    categoryCardsHtml() +
     comparisonTableHtml() +
     guaranteeCtaBandHtml();
 
@@ -9333,10 +9425,7 @@ function route() {
     renderHub();
     return;
   }
-  // Category landing page: bare /{category-slug} (e.g. /notary, /real-estate-salesperson,
-  // /cdl). TEMPORARY implementation -- reuses the existing unscoped hub view (kind-filtered) as
-  // a real, useful page until the dedicated category-page template (hero/stats/testimonials/
-  // curriculum breakdown/etc -- see the category-first restructure plan's phase 4) replaces it.
+  // Category landing page: bare /{category-slug} (e.g. /notary, /real-estate-salesperson, /cdl).
   // Always forces hubScopedState back to null even if a prior track view left it set, since a
   // category page's whole point is "every state for this category," not one state.
   var categoryPathMatch = location.pathname.match(/^\/([a-z-]+)\/?$/);
@@ -9344,9 +9433,7 @@ function route() {
   if (matchedKind) {
     hubScopedState = null;
     updateHeaderStatePicker();
-    hubKindFilter = matchedKind;
-    hubTracksExpanded = false;
-    renderHub();
+    renderCategoryPage(matchedKind);
     return;
   }
   var track = activeTrackForPath(location.pathname);
@@ -9355,8 +9442,8 @@ function route() {
     rememberLastViewedTrack(track.examType);
     // Track pages carry a "/{category-slug}/{state}" path, not a bare state prefix, so the
     // category-page branch above never fires for them -- on a fresh/hard load (real <a href> nav
-    // between pages is the norm here, not pushState; see renderHubScopedContextBar's comment)
-    // hubScopedState would otherwise stay whatever it initialized to (null), which is exactly the
+    // between pages is the norm here, not pushState) hubScopedState would otherwise stay
+    // whatever it initialized to (null), which is exactly the
     // "chosen state disappears" bug. Every track belongs to exactly one state, so just sync directly
     // from the track itself instead of depending on the pathname or cookie to carry it.
     if (track.stateCode && hubScopedState !== track.stateCode) {
@@ -9583,11 +9670,21 @@ document.addEventListener('change', function (e) {
     // already behaves (e.g. clicking a track card), rather than introducing a second navigation
     // model just for this one control. There's no more per-state hub to land on under category-
     // first routing, so this goes to the current track's category page (or the site root if
-    // there isn't one) instead -- same destination tracksHomeHref() resolves to. TEMPORARY: the
-    // chosen state isn't pre-applied as a filter on arrival yet (that lands with the real
-    // category-page template, phase 4) -- for now the visitor picks their state again via the
-    // pills on that page, same one extra click as a fresh visitor gets today.
+    // there isn't one) instead -- same destination tracksHomeHref() resolves to. The chosen state
+    // still lands pre-selected there via the cookie just set above (renderCategoryPage()'s
+    // pickRepresentativeTrack() reads it), no query param needed.
     location.href = tracksHomeHref();
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-category-state') {
+    var pickedState = e.target.value;
+    if (!pickedState) return;
+    setStateCookie(pickedState);
+    var newRepTrack = categoryPageState.tracks.filter(function (t) { return t.stateCode === pickedState; })[0];
+    if (!newRepTrack) return; // shouldn't happen -- the select only lists states that offer this category
+    categoryPageState.repTrack = newRepTrack;
+    var breakdownWrap = document.getElementById('category-breakdown-wrap');
+    if (breakdownWrap) breakdownWrap.innerHTML = categoryBreakdownHtml(newRepTrack);
+    var sampleWrap = document.getElementById('category-sample-question-wrap');
+    if (sampleWrap) { sampleWrap.innerHTML = '<p class="muted">Loading…</p>'; loadCategorySampleQuestion(); }
   }
 });
 
@@ -9650,6 +9747,9 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'sample-answer') {
     sampleState.answered = el.getAttribute('data-choice');
     drawSampleQuestion();
+  } else if (act === 'category-sample-answer') {
+    categoryPageState.sampleAnswered = el.getAttribute('data-choice');
+    drawCategorySampleQuestion();
   } else if (act === 'sample-next') {
     sampleState.index += 1;
     sampleState.answered = null;
@@ -9696,47 +9796,6 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
-  } else if (act === 'toggle-hub-tracks') {
-    hubTracksExpanded = !hubTracksExpanded;
-    var hubTracksWrap = document.getElementById('hub-tracks-grid-wrap');
-    if (hubTracksWrap) hubTracksWrap.innerHTML = hubTracksGridHtml();
-  } else if (act === 'filter-hub-state') {
-    var newStateFilter = el.getAttribute('data-state');
-    if (newStateFilter === hubStateFilter) return;
-    hubStateFilter = newStateFilter;
-    hubTracksExpanded = false; // fresh filter, start collapsed again rather than carry over stale expand state
-    var filterWrap = document.getElementById('hub-state-filter-wrap');
-    if (filterWrap) filterWrap.innerHTML = renderHubStateFilterPills();
-    var kindFilterWrap = document.getElementById('hub-kind-filter-wrap');
-    if (kindFilterWrap) kindFilterWrap.innerHTML = renderHubKindFilterPills(); // its counts depend on the state filter too
-    var filteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
-    if (filteredTracksWrap) filteredTracksWrap.innerHTML = hubTracksGridHtml();
-  } else if (act === 'filter-hub-kind') {
-    var newKindFilter = el.getAttribute('data-kind');
-    if (newKindFilter === hubKindFilter) return;
-    hubKindFilter = newKindFilter;
-    hubTracksExpanded = false;
-    var kindWrap = document.getElementById('hub-kind-filter-wrap');
-    if (kindWrap) kindWrap.innerHTML = renderHubKindFilterPills();
-    var stateFilterWrap = document.getElementById('hub-state-filter-wrap');
-    if (stateFilterWrap) stateFilterWrap.innerHTML = renderHubStateFilterPills(); // its counts depend on the kind filter too
-    var kindFilteredTracksWrap = document.getElementById('hub-tracks-grid-wrap');
-    if (kindFilteredTracksWrap) kindFilteredTracksWrap.innerHTML = hubTracksGridHtml();
-  } else if (act === 'filter-hub-kind-scoped') {
-    var newScopedKind = el.getAttribute('data-kind');
-    if (newScopedKind === hubKindFilter) return;
-    hubKindFilter = newScopedKind;
-    hubTracksExpanded = false;
-    // pushState, not a real navigation -- this is an in-place filter toggle (same feel as the
-    // original pills), but the URL still needs to reflect it so the kind-scoped page stays
-    // bookmarkable/shareable (route() re-derives hubScopedState/hubKindFilter from the pathname
-    // on any later load, back/forward nav, or refresh, so this doesn't drift out of sync).
-    var newScopedPath = '/' + hubScopedState.toLowerCase() + (newScopedKind ? '/' + kindSlug(newScopedKind) : '');
-    history.pushState(null, '', newScopedPath);
-    var scopedKindWrap = document.getElementById('hub-kind-filter-wrap');
-    if (scopedKindWrap) scopedKindWrap.innerHTML = renderHubKindFilterPillsScoped();
-    var scopedGridWrap = document.getElementById('hub-tracks-grid-wrap');
-    if (scopedGridWrap) scopedGridWrap.innerHTML = hubTracksGridHtml();
   } else if (act === 'toggle-gift-tracks') {
     giftTracksExpanded = !giftTracksExpanded;
     var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
@@ -9799,6 +9858,9 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'scroll-to-tracks') {
     var tracksEl = document.getElementById('tracks');
     if (tracksEl) tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (act === 'scroll-to-category-sample') {
+    var sampleEl = document.getElementById('category-sample');
+    if (sampleEl) sampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else if (act === 'toggle-theme') {
     var nextTheme = el.getAttribute('data-next');
     var local = loadLocalPrefs();

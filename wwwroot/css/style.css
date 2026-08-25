@@ -1078,6 +1078,30 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .guarantee-band-card h3 { font-size: 0.98rem; margin: 0 0 0.4rem; }
 .guarantee-band-card p { font-size: 0.82rem; opacity: 0.85; line-height: 1.5; margin: 0; }
 
+/* Category landing pages + homepage category grid (category-first restructure, phase 4) */
+.category-nav-card-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.category-card-grid .exam-track-body { text-align: center; align-items: center; }
+.category-state-select-label { display: block; font-size: 0.85rem; font-weight: 600; margin: 1rem 0; }
+.category-state-select-label select {
+  display: block; margin-top: 0.4rem; width: 100%; max-width: 22rem; padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); color: var(--fg); font-size: 0.9rem;
+}
+.category-feature-tiles {
+  display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: min(92vw, 1400px); margin: 1.5rem auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+}
+@media (min-width: 700px) { .category-feature-tiles { grid-template-columns: repeat(3, 1fr); } }
+.category-feature-tile { text-align: center; }
+.category-feature-tile-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+.category-feature-tile h3 { font-size: 1rem; margin: 0 0 0.35rem; }
+.category-breakdown, .category-sample, .category-testimonials {
+  max-width: min(92vw, 1400px); margin: 2rem auto; padding: 0 clamp(1rem, 4vw, 2.5rem);
+}
+.category-testimonial-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; }
+@media (min-width: 700px) { .category-testimonial-grid { grid-template-columns: repeat(2, 1fr); } }
+.category-testimonial-card p:first-child { font-style: italic; line-height: 1.6; }
+.category-testimonial-author { margin-top: 0.5rem; font-weight: 600; }
+
 /* Home page: comparison table (new section, Round 2 redesign decision) */
 /* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
    next to these) -- pure marketing content, so it gets the redesign's other container-width tier
