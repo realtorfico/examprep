@@ -1199,6 +1199,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .breakdown-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.72rem; }
 .breakdown-row { display: flex; flex-direction: column; gap: 0.25rem; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
+/* Track landing page's own "Key Breakdown" -- scoped to .buy-value-col rather than the shared
+   .breakdown-* base rules above, which the category page's own (already-prominent, big-heading)
+   curriculum section also uses. The base sizes were inherited unchanged from the old, much smaller
+   hub-grid cards (see the comment above .exam-specs) and read as fine print in this page's full
+   column width -- sized up here to read as a real content section instead. */
+.buy-value-col .breakdown-label {
+  font-size: 1.05rem; font-weight: 700; text-transform: none; letter-spacing: normal;
+  color: var(--fg); margin-bottom: 0.65rem;
+}
+.buy-value-col .breakdown-list { font-size: 0.85rem; gap: 0.7rem; }
+.buy-value-col .breakdown-row-top span:first-child { font-weight: 600; }
+.buy-value-col .breakdown-bar { height: 4px; }
 .breakdown-bar { height: 2px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 12%, var(--surface-2)); overflow: hidden; }
 .breakdown-bar-fill { height: 100%; background: var(--highlight); border-radius: 999px; }
 /* CSP blocks inline style="width:X%" -- full 1-100 range instead of a hand-picked subset.
