@@ -5086,6 +5086,13 @@ async function renderCategoryPage(kind) {
   var tracks = categoryActiveTracks(kind);
   var repTrack = pickRepresentativeTrack(tracks);
   categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleAnswered: null, tracksExpanded: false };
+  // hubScopedState drives the footer's "top state tracks" links (and the #/gift page) -- previously
+  // forced null here unconditionally (see route()'s old comment), which meant the footer kept
+  // showing its unscoped fallback (first-3-active-overall, in practice always California) no matter
+  // what state the visitor had picked or was viewing on the category page itself. Sync it to the
+  // page's own current track instead, same as a real track page already does.
+  hubScopedState = repTrack ? repTrack.stateCode : null;
+  renderSiteFooter();
 
   appEl.innerHTML = '<p>Loading…</p>';
   var content = null;
@@ -9448,12 +9455,11 @@ function route() {
     return;
   }
   // Category landing page: bare /{category-slug} (e.g. /notary, /real-estate-salesperson, /cdl).
-  // Always forces hubScopedState back to null even if a prior track view left it set, since a
-  // category page's whole point is "every state for this category," not one state.
+  // renderCategoryPage() itself now resolves hubScopedState (to the page's own current track's
+  // state), not this branch -- see its own comment.
   var categoryPathMatch = location.pathname.match(/^\/([a-z-]+)\/?$/);
   var matchedKind = categoryPathMatch ? kindFromSlug(categoryPathMatch[1]) : '';
   if (matchedKind) {
-    hubScopedState = null;
     renderCategoryPage(matchedKind);
     return;
   }
@@ -9695,6 +9701,8 @@ document.addEventListener('change', function (e) {
     var newRepTrack = categoryPageState.tracks.filter(function (t) { return t.stateCode === pickedState; })[0];
     if (!newRepTrack) return; // shouldn't happen -- the select only lists states that offer this category
     categoryPageState.repTrack = newRepTrack;
+    hubScopedState = newRepTrack.stateCode;
+    renderSiteFooter();
     var heroLinkWrap = document.getElementById('category-hero-track-link-wrap');
     if (heroLinkWrap) heroLinkWrap.innerHTML = categoryHeroTrackLinkHtml(newRepTrack);
     var tracksWrap = document.getElementById('category-tracks-grid-wrap');
