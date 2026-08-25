@@ -257,7 +257,6 @@ a { color: var(--accent); }
    .control-group's .header-util-cluster (font/theme) and profile controls -- CTAs stay their own
    branded buttons, not folded into the neutral utility pill. */
 .site-nav { display: none; gap: 1.5rem; align-items: center; }
-.site-nav .header-state-picker { max-width: 8rem; }
 .site-nav a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.15s; }
 .site-nav a:hover { color: var(--fg); }
 .site-nav-cta { display: none; gap: 0.5rem; }
@@ -275,7 +274,6 @@ a { color: var(--accent); }
 .site-mobile-drawer nav { display: flex; flex-direction: column; gap: 0.35rem; }
 .site-mobile-drawer nav a { color: var(--fg); text-decoration: none; font-size: 0.95rem; font-weight: 600; padding: 0.5rem 0.1rem; }
 .site-mobile-drawer-cta { display: flex; flex-direction: column; gap: 0.6rem; }
-.site-mobile-drawer-picker .header-state-picker { width: 100%; }
 /* 900px, not 800px -- gives real headroom above the header's actual minimum content width instead
    of a dead zone where nav/CTAs try to show inline but don't quite fit, which is what produced the
    "wraps badly on a narrowed desktop window" report even well above phone widths. */
@@ -814,15 +812,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .redeem-sample-hint { text-align: center; font-size: 0.85rem; margin-top: 0.85rem; }
 .buy-redeem-hint { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; }
 .buy-redeem-hint a { font-weight: 700; }
-
-/* Header state picker -- always visible next to the theme/font controls (see renderSiteHeader),
-   sized/bordered like the other pill controls next to it rather than a bare native <select>. */
-.header-state-picker {
-  border: 1.5px solid var(--border); border-radius: 999px; background: transparent; color: var(--fg);
-  padding: 0.4rem 1.6rem 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;
-  max-width: 8rem; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
-}
-.header-state-picker:hover { color: var(--accent); border-color: var(--accent); }
 
 /* Default scoped-state hub's "you're looking at X" bar, replacing the state-pill row entirely --
    see the hubScopedState comment near renderHub(). */

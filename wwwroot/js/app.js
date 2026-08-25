@@ -198,7 +198,7 @@ function renderSiteHeader() {
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
     logo +
-    '<nav class="site-nav" aria-label="Primary">' + renderHeaderStatePicker('desktop') + navLinksHtml + '</nav>' +
+    '<nav class="site-nav" aria-label="Primary">' + navLinksHtml + '</nav>' +
     '<div class="control-group">' +
     // Utility controls (font/theme) merged into one segmented pill cluster -- doc audit's "Unified
     // Controls" ask -- rather than two separately-bordered pills sitting loose in the row. Branded
@@ -217,7 +217,6 @@ function renderSiteHeader() {
     (loggedIn ? renderProfileMenu() : '') +
     '</div>' +
     '<div class="site-mobile-drawer" id="site-mobile-drawer">' +
-    '<div class="site-mobile-drawer-picker">' + renderHeaderStatePicker('mobile') + '</div>' +
     '<nav aria-label="Mobile">' + navLinksHtml + '</nav>' +
     '<div class="site-mobile-drawer-cta">' + navCtaHtml + '</div>' +
     '</div>' +
@@ -237,32 +236,6 @@ function renderSiteHeader() {
 function tracksHomeHref() {
   var t = currentTrackOrNull();
   return t ? '/' + kindSlug(t.examKind) + '#tracks' : '/#tracks';
-}
-
-// Always visible (not just on the hub) so switching states is available from anywhere on the
-// site, same as the theme/font controls next to it. renderSiteHeader() only runs a handful of
-// times per session (see its own comment), so its initial selected value here can be stale by
-// the time route() resolves the real state on boot -- updateHeaderStatePicker() (called at the
-// end of every route()) is what keeps it actually in sync going forward.
-// idSuffix keeps ids unique -- the picker now renders twice (inline in .site-nav at wide widths,
-// again inside .site-mobile-drawer below the breakpoint), and duplicate ids are invalid HTML. The
-// pick-header-state change handler reads e.target.value directly so it works from either instance;
-// updateHeaderStatePicker() below syncs both by class instead of a single id lookup.
-function renderHeaderStatePicker(idSuffix) {
-  var codes = Object.keys(STATE_LABELS).filter(function (c) { return c !== 'US'; });
-  codes.sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
-  // No "All States" option -- cross-state browsing isn't a real user need for a licensing-exam
-  // product (per-decision), so the picker only ever points at one real state's own tracks.
-  var options = codes.map(function (c) {
-    return '<option value="' + c + '"' + (c === hubScopedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[c]) + '</option>';
-  }).join('');
-  var id = 'header-state-picker' + (idSuffix ? '-' + idSuffix : '');
-  return '<select class="header-state-picker" id="' + id + '" data-act="pick-header-state" aria-label="Choose your state">' + options + '</select>';
-}
-function updateHeaderStatePicker() {
-  document.querySelectorAll('.header-state-picker').forEach(function (picker) {
-    picker.value = hubScopedState || '';
-  });
 }
 
 function closeHeaderMenuIfOpen() {
@@ -4805,8 +4778,9 @@ function currentTrackOrNull() {
 }
 
 // hubScopedState is still meaningful (which state a currently-viewed track belongs to -- see
-// route(), renderSiteFooter(), the header state picker) even though category-first routing
-// removed the per-state hub page that originally made it a URL-derived filter.
+// route(), renderSiteFooter()) even though category-first routing removed the per-state hub page
+// that originally made it a URL-derived filter, and removed the header's own state picker (the
+// category landing page's own picker replaced it -- see categoryStateSelectHtml()).
 var hubScopedState = null;
 
 // Smaller catalog card (Round 2 redesign decision): category/name/state/price/CTA only -- full
@@ -5196,7 +5170,7 @@ function renderHub() {
     categoryCardsHtml() +
     comparisonTableHtml();
 
-  // "#tracks" links (tracksHomeHref(), the header state picker after a switch, etc.) are all real
+  // "#tracks" links (tracksHomeHref(), category state picker changes, etc.) are all real
   // navigations to a fresh page load -- the browser's own fragment auto-scroll fires (if at all)
   // before #app has any content, since this is a client-rendered page, so it can't be relied on.
   // #tracks itself is set synchronously just above, so it's safe to scroll to right here. Instant,
@@ -9433,7 +9407,6 @@ function route() {
   if (location.pathname === '/' || location.pathname === '') {
     hubScopedState = null;
   }
-  updateHeaderStatePicker();
 
   var hashView = (location.hash || '').replace('#/', '');
   if (hashView === 'terms') { renderTerms(); return; }
@@ -9461,7 +9434,6 @@ function route() {
   var matchedKind = categoryPathMatch ? kindFromSlug(categoryPathMatch[1]) : '';
   if (matchedKind) {
     hubScopedState = null;
-    updateHeaderStatePicker();
     renderCategoryPage(matchedKind);
     return;
   }
@@ -9478,7 +9450,6 @@ function route() {
     if (track.stateCode && hubScopedState !== track.stateCode) {
       hubScopedState = track.stateCode;
       setStateCookie(track.stateCode);
-      updateHeaderStatePicker();
     }
     renderTrackApp();
   }
@@ -9691,18 +9662,6 @@ document.addEventListener('change', function (e) {
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-exam-age-category') {
     examAgeCategoryOverride = e.target.value;
     renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
-  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-header-state') {
-    var chosenState = e.target.value;
-    setStateCookie(chosenState);
-    // Real navigation, not pushState -- picking a state is a big enough context switch (whole
-    // page re-renders) that a full reload matches how every other pathname change in this app
-    // already behaves (e.g. clicking a track card), rather than introducing a second navigation
-    // model just for this one control. There's no more per-state hub to land on under category-
-    // first routing, so this goes to the current track's category page (or the site root if
-    // there isn't one) instead -- same destination tracksHomeHref() resolves to. The chosen state
-    // still lands pre-selected there via the cookie just set above (renderCategoryPage()'s
-    // pickRepresentativeTrack() reads it), no query param needed.
-    location.href = tracksHomeHref();
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-category-state') {
     var pickedState = e.target.value;
     if (!pickedState) return;
