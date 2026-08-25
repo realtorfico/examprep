@@ -27,36 +27,40 @@
      steps, chroma near-zero/gray). Round 2 below: --accent pushed close to the original indigo's
      own L/C (0.585/0.233) instead of splitting the difference, and the bg->card->surface-2 ramp
      widened its lightness steps and added real chroma at each level (was a near-gray ramp). */
-  --bg: oklch(0.14 0.025 262);
-  --card: oklch(0.21 0.035 262);
-  --surface-2: oklch(0.29 0.05 262);
-  --accent: oklch(0.6 0.22 262);
-  --accent-hover: oklch(0.67 0.2 262);
+  --bg: oklch(0.16 0.024 262);
+  --card: oklch(0.215 0.038 262);
+  --surface-2: oklch(0.27 0.05 262);
+  --accent: oklch(0.64 0.19 262);
+  --accent-hover: oklch(0.7 0.17 262);
   /* Text placed ON TOP of an --accent background. Dark mode's navy is deliberately lighter (for
      contrast against the dark page bg), so white text on it would fail contrast -- needs dark
      text instead. Light mode's navy is dark, so white text is correct there. Mirrors v0's
      primary/primary-foreground pairing. */
-  --accent-foreground: oklch(0.15 0.03 262);
+  --accent-foreground: oklch(0.14 0.03 262);
   /* For large solid-fill "trust" surfaces (guarantee band, comparison table's highlighted column,
      active track card border) that are meant to read as a deliberately dark, authoritative navy
      block in BOTH themes -- not just wherever --accent itself happens to land. In light mode
      --accent already IS this deep navy, but in dark mode --accent is deliberately much lighter
      (see comment above, needed for dark-on-accent button text), which made these same surfaces
      come out as a bright, almost neon blue instead of the calm navy the light-mode version has. */
-  --accent-deep: oklch(0.32 0.07 262);
+  --accent-deep: oklch(0.32 0.1 262);
   --accent-deep-foreground: oklch(0.98 0.01 250);
-  --fg: oklch(0.95 0.012 250);
-  --muted: oklch(0.72 0.025 258);
+  --fg: oklch(0.96 0.01 250);
+  --muted: oklch(0.74 0.022 258);
   --correct: oklch(0.68 0.14 155);
   --incorrect: oklch(0.65 0.19 27);
   --voice-accent: #7c3aed;
-  --highlight: oklch(0.8 0.16 75);
-  --border: oklch(0.98 0.01 250 / 24%);
+  --highlight: oklch(0.82 0.15 74);
+  /* Dark text for content placed ON TOP of a --highlight (gold) fill -- gold reads too light for
+     white text at any reasonable weight, in either theme. */
+  --highlight-foreground: oklch(0.18 0.03 70);
+  --border: oklch(0.98 0.012 250 / 16%);
   --font-scale: 1;
-  /* Radius scale -- one base, everything else derived. New components (Stage 2+) should reference
-     these instead of hardcoding a border-radius; existing hardcoded values get migrated as each
-     component is touched in later stages, not mass-replaced here. */
-  --radius: 0.5rem;
+  /* Site-wide visual refresh (2026-08-24): richer/less washed-out navy and gold chroma, warmer
+     neutrals that pair with gold instead of fighting it, deeper elevation (see .card/.exam-track-
+     card box-shadow below), and a larger base radius for a more contemporary feel. Approved from a
+     side-by-side before/after preview before rolling out -- see project memory if revisiting. */
+  --radius: 0.75rem;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -66,31 +70,32 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 :root[data-theme="light"] {
-  --bg: oklch(0.985 0.005 250);
+  --bg: oklch(0.985 0.008 80);
   --card: oklch(1 0 0);
-  --surface-2: oklch(0.95 0.01 255);
-  --accent: oklch(0.32 0.07 262);
-  --accent-hover: oklch(0.26 0.07 262);
-  --accent-foreground: oklch(0.98 0.01 250);
+  --surface-2: oklch(0.955 0.014 80);
+  --accent: oklch(0.3 0.1 262);
+  --accent-hover: oklch(0.24 0.1 262);
+  --accent-foreground: oklch(0.99 0.008 90);
   /* Light mode's --accent is already the deep navy these surfaces want, so just alias it rather
      than duplicating the value -- keeps light mode's guarantee band etc. pixel-identical to before. */
   --accent-deep: var(--accent);
   --accent-deep-foreground: var(--accent-foreground);
-  --fg: oklch(0.24 0.04 260);
-  --muted: oklch(0.52 0.03 260);
+  --fg: oklch(0.22 0.045 260);
+  --muted: oklch(0.5 0.02 265);
   --correct: oklch(0.55 0.13 155);
   --incorrect: oklch(0.55 0.2 27);
   --voice-accent: #7c3aed;
-  --highlight: oklch(0.78 0.13 78);
-  --border: oklch(0.9 0.01 255);
+  --highlight: oklch(0.74 0.17 73);
+  --highlight-foreground: oklch(0.2 0.03 70);
+  --border: oklch(0.88 0.016 75);
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: oklch(0.985 0.005 250); --card: oklch(1 0 0); --surface-2: oklch(0.95 0.01 255);
-    --accent: oklch(0.32 0.07 262); --accent-hover: oklch(0.26 0.07 262); --accent-foreground: oklch(0.98 0.01 250);
+    --bg: oklch(0.985 0.008 80); --card: oklch(1 0 0); --surface-2: oklch(0.955 0.014 80);
+    --accent: oklch(0.3 0.1 262); --accent-hover: oklch(0.24 0.1 262); --accent-foreground: oklch(0.99 0.008 90);
     --accent-deep: var(--accent); --accent-deep-foreground: var(--accent-foreground);
-    --fg: oklch(0.24 0.04 260); --muted: oklch(0.52 0.03 260); --correct: oklch(0.55 0.13 155); --incorrect: oklch(0.55 0.2 27);
-    --voice-accent: #7c3aed; --highlight: oklch(0.78 0.13 78); --border: oklch(0.9 0.01 255);
+    --fg: oklch(0.22 0.045 260); --muted: oklch(0.5 0.02 265); --correct: oklch(0.55 0.13 155); --incorrect: oklch(0.55 0.2 27);
+    --voice-accent: #7c3aed; --highlight: oklch(0.74 0.17 73); --highlight-foreground: oklch(0.2 0.03 70); --border: oklch(0.88 0.016 75);
   }
 }
 
@@ -345,6 +350,7 @@ a { color: var(--accent); }
 .card {
   background: var(--surface-2); border: 1px solid var(--border);
   border-radius: 12px; padding: 1.1rem;
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent-deep) 12%, transparent), 0 16px 28px -20px color-mix(in srgb, var(--accent-deep) 35%, transparent);
 }
 .page-intro-text { max-width: 65ch; line-height: 1.6; }
 .profile-card { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.7rem; }
@@ -369,20 +375,33 @@ a { color: var(--accent); }
 .question-progress-note { font-size: 0.8rem; margin-top: 0.6rem; }
 
 button {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
   cursor: pointer; border: none; border-radius: 10px; padding: 0.6rem 0.9rem;
-  font-weight: 600; font-size: 0.9rem; transition: filter 0.15s;
+  font-weight: 600; font-size: 0.9rem; transition: filter 0.15s, transform 0.15s ease, box-shadow 0.15s ease;
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   font-family: inherit;
 }
 /* border-radius lives here (not just on the button{} base rule above) because .btn-primary/
    .btn-secondary are also used on plain <a> tags all over the site (hub-cta, promo-banner-cta,
    etc.) -- button{} only matches real <button> elements, so an anchor styled as a button would
-   otherwise get every button visual EXCEPT its rounded corners. */
-.btn-primary, .btn-secondary { border-radius: 10px; }
-.btn-primary { background: var(--accent); color: var(--accent-foreground); box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent); }
-.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px -4px color-mix(in srgb, var(--accent) 60%, transparent); }
+   otherwise get every button visual EXCEPT its rounded corners. Pill-shaped (999px, not a fixed
+   px radius) as of the 2026-08-24 visual refresh -- deliberately independent of --radius (which
+   governs cards/panels), not derived from it.
+   .btn-gold is a third, higher-intent variant (redeem/buy-style CTAs) alongside primary/secondary
+   -- gold used deliberately as an accent rather than just a badge tint. */
+.btn-primary, .btn-secondary, .btn-gold { border-radius: 999px; }
+.btn-primary {
+  background: linear-gradient(155deg, var(--accent), var(--accent-hover)); color: var(--accent-foreground);
+  box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--accent) 55%, transparent); }
 .btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
-.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); transform: translateY(-1px); }
+.btn-gold {
+  background: var(--highlight); color: var(--highlight-foreground);
+  box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--highlight) 50%, transparent);
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--highlight) 60%, transparent); }
 /* Rest of the variant/size matrix (ported from v0's button.tsx cva config) -- .btn-primary/
    .btn-secondary above already cover "default"/"outline", so just the remaining ones. */
 .btn-ghost { background: transparent; color: var(--fg); border-radius: var(--radius-lg); }
@@ -1143,13 +1162,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
   background: var(--surface-2); transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s, filter 0.15s;
   text-decoration: none; color: inherit;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent-deep) 12%, transparent), 0 18px 30px -20px color-mix(in srgb, var(--accent-deep) 38%, transparent);
 }
 .exam-track-card.is-active {
   position: relative;
   border-color: var(--accent-deep); border-width: 2px;
   background: color-mix(in srgb, var(--accent-deep) 7%, var(--surface-2));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent), 0 12px 22px -18px rgba(15, 23, 42, 0.4);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent), 0 18px 30px -20px color-mix(in srgb, var(--accent-deep) 38%, transparent);
 }
 /* Navy-to-gold accent bar on the one card you can actually buy -- gives the active track a
    premium, "this is the one" edge (doc audit's "Card Accents" ask) using the brand's own
@@ -1159,7 +1178,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--highlight));
 }
-.exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35), 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent); }
+.exam-track-card.is-active:hover { transform: translateY(-3px); box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--accent-deep) 45%, transparent), 0 0 0 2px color-mix(in srgb, var(--accent-deep) 20%, transparent); }
 /* Upcoming (not yet active) tracks read as clearly secondary to the one you can actually use --
    dimmed and desaturated at rest, easing back toward full color on hover so the content is still
    readable if someone's curious what's coming. */
