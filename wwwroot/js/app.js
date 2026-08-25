@@ -4938,6 +4938,15 @@ function categoryStateSelectHtml(tracks, selectedState) {
     '<select class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
 }
 
+// Direct shortcut to the visitor's selected track's own details page (buy button, full pricing,
+// full breakdown) -- sits right under the state picker so reaching it doesn't require scrolling
+// past stats/tiles down to the single track card. Kept in its own wrap (like the tracks/breakdown
+// wraps) so pick-category-state can refresh it without a full page re-render.
+function categoryHeroTrackLinkHtml(track) {
+  if (!track) return '';
+  return '<a class="category-hero-track-link" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
+}
+
 function categoryFeatureTilesHtml(tiles) {
   if (!tiles || !tiles.length) return '';
   return '<section class="category-feature-tiles">' + tiles.map(function (t) {
@@ -4965,7 +4974,9 @@ function categoryBreakdownHtml(track) {
       var pct = parseInt(b[1], 10) || 0;
       return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
-    }).join('') + '</div></section>';
+    }).join('') + '</div>' +
+    '<div class="category-breakdown-cta"><a class="btn-secondary" href="' + track.route + '">See full ' + escapeHtml(track.shortName || '') + ' track details →</a></div>' +
+    '</section>';
 }
 
 function categorySampleWidgetHtml() {
@@ -5089,6 +5100,7 @@ async function renderCategoryPage(kind) {
     '<span class="hub-trust-badge">✓ Instant Access</span>' +
     '</div>' +
     (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>' +
@@ -9669,6 +9681,8 @@ document.addEventListener('change', function (e) {
     var newRepTrack = categoryPageState.tracks.filter(function (t) { return t.stateCode === pickedState; })[0];
     if (!newRepTrack) return; // shouldn't happen -- the select only lists states that offer this category
     categoryPageState.repTrack = newRepTrack;
+    var heroLinkWrap = document.getElementById('category-hero-track-link-wrap');
+    if (heroLinkWrap) heroLinkWrap.innerHTML = categoryHeroTrackLinkHtml(newRepTrack);
     var tracksWrap = document.getElementById('category-tracks-grid-wrap');
     if (tracksWrap) tracksWrap.innerHTML = categoryCurrentTrackHtml();
     var breakdownWrap = document.getElementById('category-breakdown-wrap');
