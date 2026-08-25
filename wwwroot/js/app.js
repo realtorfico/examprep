@@ -5037,9 +5037,11 @@ function drawCategorySampleQuestion() {
   }).join('');
   // Select-then-submit, not instant-reveal-on-click -- see drawSampleQuestion()'s own comment
   // (this is the same first-touch, anonymous-visitor reasoning, just for the category page's
-  // inline widget instead of the standalone #/sample page).
-  var submitControl = (!answered && selected)
-    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="category-sample-submit">Submit Answer</button></div>'
+  // inline widget instead of the standalone #/sample page). The button itself is always visible
+  // once a question's up (disabled until a choice is selected) rather than only appearing after
+  // selecting -- a button that doesn't exist yet gives no signal there's a submit step at all.
+  var submitControl = !answered
+    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="category-sample-submit"' + (selected ? '' : ' disabled') + '>Submit Answer</button></div>'
     : '';
   var explanation = answered
     ? '<div class="explanation-box"><strong class="' + (answered === q.correctChoice ? 'result-correct' : 'result-incorrect') + '">' +
@@ -9261,9 +9263,11 @@ function drawSampleQuestion() {
   // own instant-reveal-on-click convention, so a visible submit step here avoids the "did that
   // just submit?" confusion an immediate reveal could cause right at the front door. The main
   // practice quiz (post-purchase, already-familiar users) deliberately keeps instant reveal --
-  // this is scoped to the free sample only.
-  var submitControl = (!sampleState.answered && sampleState.selected)
-    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="sample-submit">Submit Answer</button></div>'
+  // this is scoped to the free sample only. The button itself is always visible once a question's
+  // up (disabled until a choice is selected) rather than only appearing after selecting -- a
+  // button that doesn't exist yet gives no signal there's a submit step at all.
+  var submitControl = !sampleState.answered
+    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="sample-submit"' + (sampleState.selected ? '' : ' disabled') + '>Submit Answer</button></div>'
     : '';
 
   var explanation = sampleState.answered
