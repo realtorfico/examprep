@@ -4923,7 +4923,22 @@ function giftTracksGridHtml() {
 // state-specific rather than averaged/invented across states that don't actually share one
 // breakdown.
 
-var categoryPageState = { kind: null, tracks: [], repTrack: null };
+var CATEGORY_TRACKS_COLLAPSED_COUNT = 12;
+var categoryPageState = { kind: null, tracks: [], repTrack: null, tracksExpanded: false };
+
+function categoryTracksGridHtml() {
+  var tracks = categoryPageState.tracks;
+  var cardsArr = hubTrackCards(tracks);
+  var truncated = !categoryPageState.tracksExpanded && cardsArr.length > CATEGORY_TRACKS_COLLAPSED_COUNT;
+  var visible = truncated ? cardsArr.slice(0, CATEGORY_TRACKS_COLLAPSED_COUNT) : cardsArr;
+  var toggleHtml = cardsArr.length > CATEGORY_TRACKS_COLLAPSED_COUNT
+    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-category-tracks">' +
+      (truncated ? 'Show all ' + cardsArr.length + ' states ▾' : 'Show fewer ▴') + '</button></div>'
+    : '';
+  var emptyHtml = !cardsArr.length ? '<p class="muted">No states are live for this category yet — check back soon.</p>' : '';
+  fillHubPricing(truncated ? tracks.slice(0, CATEGORY_TRACKS_COLLAPSED_COUNT) : tracks);
+  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
+}
 
 function categoryActiveTracks(kind) {
   return HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; });
@@ -5067,7 +5082,7 @@ async function fillCategoryQuestionCount(tracks) {
     var countByExamType = {};
     (res.counts || []).forEach(function (row) { countByExamType[row.exam_type] = row.count; });
     var total = tracks.reduce(function (sum, t) { return sum + (countByExamType[t.examType] || 0); }, 0);
-    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions</div>';
+    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across all states)</div>';
   } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
@@ -5075,7 +5090,7 @@ async function renderCategoryPage(kind) {
   var slug = kindSlug(kind);
   var tracks = categoryActiveTracks(kind);
   var repTrack = pickRepresentativeTrack(tracks);
-  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleAnswered: null };
+  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleAnswered: null, tracksExpanded: false };
 
   appEl.innerHTML = '<p>Loading…</p>';
   var content = null;
@@ -5112,14 +5127,12 @@ async function renderCategoryPage(kind) {
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
     '<div class="hub-section-header" id="tracks"><h2>' + escapeHtml(kind) + ' Licensing Tracks</h2><span class="badge">' + tracks.length + ' Active</span></div>' +
-    '<div class="exam-track-grid">' + hubTrackCards(tracks).join('') + '</div>' +
-    (tracks.length ? '' : '<p class="muted">No states are live for this category yet — check back soon.</p>') +
+    '<div id="category-tracks-grid-wrap">' + categoryTracksGridHtml() + '</div>' +
     categorySampleWidgetHtml() +
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
     categoryTestimonialsHtml(content && content.testimonials) +
     guaranteeCtaBandHtml();
 
-  fillHubPricing(tracks);
   if (repTrack) loadCategorySampleQuestion();
   fillCategoryQuestionCount(tracks);
   loadSiteConfig().then(function () {
@@ -9814,6 +9827,10 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
+  } else if (act === 'toggle-category-tracks') {
+    categoryPageState.tracksExpanded = !categoryPageState.tracksExpanded;
+    var categoryTracksWrap = document.getElementById('category-tracks-grid-wrap');
+    if (categoryTracksWrap) categoryTracksWrap.innerHTML = categoryTracksGridHtml();
   } else if (act === 'toggle-gift-tracks') {
     giftTracksExpanded = !giftTracksExpanded;
     var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
