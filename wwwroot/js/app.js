@@ -7842,6 +7842,72 @@ async function renderProgress() {
     '<div id="progress-reset-wrap">' + progressResetSectionHtml() + '</div>';
 }
 
+// A REAL, answerable sample question on the track landing page itself -- distinct from
+// trackLandingPreviewHtml()'s locked Quiz/Exam/Progress teaser further down this page, which is
+// explicitly illustrative UI chrome, not a real question. Visitors clicking "View full track
+// details" from a category page (see categoryHeroTrackLinkHtml/categoryBreakdownHtml) land here
+// wanting to evaluate THIS track specifically; previously the only real sample question lived one
+// more click away on the standalone #/sample page. Same select-then-submit + read-aloud pattern as
+// categoryPageState.sampleQuestion (drawCategorySampleQuestion) -- a third near-identical copy
+// rather than a shared abstraction, matching this codebase's existing precedent of one dedicated
+// copy per surface (the standalone #/sample page's sampleState is the second) instead of unifying
+// three call sites with meaningfully different surrounding state shapes.
+var trackLandingSample = { question: null, selected: null, answered: null };
+
+function trackLandingSampleWidgetHtml() {
+  return '<section class="category-sample" id="track-landing-sample">' +
+    '<p class="section-eyebrow">Try before you buy</p>' +
+    '<h2 class="comparison-heading">Interactive Sample Question</h2>' +
+    '<div class="card" id="track-landing-sample-wrap"><p class="muted">Loading…</p></div>' +
+    '</section>';
+}
+
+async function loadTrackLandingSampleQuestion(exam) {
+  var wrap = document.getElementById('track-landing-sample-wrap');
+  if (!wrap) return;
+  try {
+    var res = await apiFetch('/sample?examType=' + encodeURIComponent(exam.examType));
+    var q = (res.questions || [])[0];
+    if (!q) { wrap.innerHTML = '<p class="muted">No sample available for this track yet.</p>'; return; }
+    trackLandingSample.question = q;
+    trackLandingSample.selected = null;
+    trackLandingSample.answered = null;
+    drawTrackLandingSampleQuestion();
+  } catch (e) {
+    wrap.innerHTML = '<p class="muted">Could not load a sample question. Try again shortly.</p>';
+  }
+}
+
+function drawTrackLandingSampleQuestion() {
+  var wrap = document.getElementById('track-landing-sample-wrap');
+  var q = trackLandingSample.question;
+  if (!wrap || !q) return;
+  var answered = trackLandingSample.answered;
+  var selected = trackLandingSample.selected;
+  var prefixes = ['A', 'B', 'C', 'D'];
+  var choiceHtml = prefixes.map(function (k) {
+    var cls = 'option-btn';
+    if (answered) {
+      if (k === q.correctChoice) cls += ' correct';
+      else if (k === answered) cls += ' wrong';
+    } else if (k === selected) {
+      cls += ' selected';
+    }
+    return optionButtonHtml(k, q.choices[k], cls, 'data-act="track-landing-sample-answer" data-choice="' + k + '"' + (answered ? ' disabled' : ''));
+  }).join('');
+  var submitControl = !answered
+    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="track-landing-sample-submit"' + (selected ? '' : ' disabled') + '>Submit Answer</button></div>'
+    : '';
+  var explanation = answered
+    ? '<div class="explanation-box"><strong class="' + (answered === q.correctChoice ? 'result-correct' : 'result-incorrect') + '">' +
+      (answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
+      '<div class="nav-controls"><a class="btn-primary" href="#/sample">Try more free questions →</a></div>'
+    : '';
+  wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
+    '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="track-landing-sample-listen">🔊 Read aloud</button></div>' +
+    '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
+}
+
 // ---- Track landing/sales page (logged-out visitors) -----------------------
 // Consolidated single sales page (Round 2 redesign decision) -- replaces the previous four
 // per-tab locked-preview mockups (one each for Quiz/Exam/Toughest45/Progress, each showing a
@@ -7902,11 +7968,14 @@ function renderTrackLanding() {
     '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
     '</div>' +
     '</div>' +
+    trackLandingSampleWidgetHtml() +
     '<section class="track-landing-preview-section">' +
     '<h2>Preview the study hub</h2>' +
     '<p class="muted">Here\'s what Quiz, Exam, and Progress look like inside this track — unlock to start.</p>' +
     trackLandingPreviewHtml(exam) +
     '</section>' +
+    '<div id="track-landing-testimonials-wrap"></div>' +
+    guaranteeCtaBandHtml() +
     '<div id="buy-other-tracks-wrap" class="track-landing-crosssell"></div>' +
     '</div>';
 
@@ -7921,6 +7990,15 @@ function renderTrackLanding() {
     if (el) el.textContent = '';
   });
   loadOtherTracksPricing();
+  loadTrackLandingSampleQuestion(exam);
+  // Same testimonials the exam's own category landing page shows (category_content is keyed by
+  // category slug, not per-track) -- real, relevant social proof for THIS exam kind, not a fake
+  // per-track set that would need authoring 190+ times over.
+  apiFetch('/category-content?slug=' + encodeURIComponent(kindSlug(exam.examKind))).then(function (res) {
+    var content = (res.categories || [])[0] || null;
+    var wrap = document.getElementById('track-landing-testimonials-wrap');
+    if (wrap) wrap.innerHTML = categoryTestimonialsHtml(content && content.testimonials);
+  }).catch(function () { /* best-effort -- section just stays empty */ });
   // Same "home" promos the hub shows -- this page IS the funnel entry point for this specific
   // track, so a discount visible on the unscoped hub should be visible here too.
   Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
@@ -9824,6 +9902,15 @@ document.addEventListener('click', async function (e) {
     drawCategorySampleQuestion();
   } else if (act === 'category-sample-listen') {
     speak(questionReadText(categoryPageState.sampleQuestion));
+  } else if (act === 'track-landing-sample-answer') {
+    trackLandingSample.selected = el.getAttribute('data-choice');
+    drawTrackLandingSampleQuestion();
+  } else if (act === 'track-landing-sample-submit') {
+    stopSpeaking();
+    trackLandingSample.answered = trackLandingSample.selected;
+    drawTrackLandingSampleQuestion();
+  } else if (act === 'track-landing-sample-listen') {
+    speak(questionReadText(trackLandingSample.question));
   } else if (act === 'sample-next') {
     stopSpeaking();
     sampleState.index += 1;
