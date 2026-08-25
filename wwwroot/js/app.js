@@ -2587,12 +2587,14 @@ function knownStateCode(code) {
   return HUB_EXAMS.some(function (e) { return e.stateCode === upper; }) ? upper : null;
 }
 
-// Written by app.js whenever the visitor lands on (or picks) a specific state; read server-side
-// by _worker.js to carry the visitor's state forward through an old-URL redirect (see its own
-// comment) or, for a first-time "/" visit with no cookie yet, geolocation-derived. Also read back
-// client-side now (getStateCookie(), below) by the category landing page to pre-select the
-// visitor's state in its hero picker -- app.js didn't read this back at all before category-first
-// routing removed the old per-state hub pages that used to make the URL itself the source of truth.
+// Written by app.js only when the visitor explicitly picks a state (category page's
+// pick-category-state); read server-side by _worker.js to carry the visitor's state forward
+// through an old-URL redirect (see its own comment) or, for a first-time "/" visit with no cookie
+// yet, geolocation-derived. Also read back client-side now (getStateCookie(), below) by the
+// category landing page to pre-select the visitor's state in its hero picker -- app.js didn't read
+// this back at all before category-first routing removed the old per-state hub pages that used to
+// make the URL itself the source of truth. Deliberately NOT written on every track-page visit --
+// see the comment at its one remaining call site (pick-category-state) for why.
 function setStateCookie(value) {
   document.cookie = 'pxq_state=' + encodeURIComponent(value) + '; path=/; max-age=31536000; SameSite=Lax';
 }
@@ -5038,11 +5040,11 @@ function categoryStatsHtml(activeCount, stateCount) {
   ];
   return '<div class="hub-readiness-card">' +
     '<p class="hub-readiness-label">Real Coverage, Not Marketing Copy</p>' +
+    '<div class="outcome-tile hub-readiness-question-count" id="category-question-count-tile"></div>' +
     '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
     '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
       return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
     }).join('') +
-    '<div class="outcome-tile" id="category-question-count-tile"></div>' +
     '</div></div>';
 }
 
@@ -9459,9 +9461,15 @@ function route() {
     // whatever it initialized to (null), which is exactly the
     // "chosen state disappears" bug. Every track belongs to exactly one state, so just sync directly
     // from the track itself instead of depending on the pathname or cookie to carry it.
+    // Deliberately NOT setStateCookie() here -- that used to fire on every track-page visit, which
+    // meant simply clicking into any state's track page (a testimonial, a search-engine landing, a
+    // "View full track details" link, curiosity) silently overwrote the visitor's real pxq_state
+    // preference, making category pages appear to "randomly" default to whatever state was last
+    // browsed instead of the visitor's own state or an explicit pick-category-state choice. The
+    // cookie is now only ever written by an explicit choice (pick-category-state) or first-visit
+    // geolocation (_worker.js) -- see getStateCookie()'s header comment.
     if (track.stateCode && hubScopedState !== track.stateCode) {
       hubScopedState = track.stateCode;
-      setStateCookie(track.stateCode);
     }
     renderTrackApp();
   }
