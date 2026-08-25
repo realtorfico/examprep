@@ -47,7 +47,7 @@ var examAgeCategoryOverride = '';
 var examNavExpanded = false; // collapsed by default -- 45 nav boxes eat too much vertical space on mobile
 var examSubmitConfirmPending = false; // in-page (non-native) "N unanswered, submit anyway?" confirmation
 var examDiscardConfirmPending = false; // in-page confirmation for "discard this attempt and start over?"
-var sampleState = { questions: null, index: 0, answered: null, examType: null };
+var sampleState = { questions: null, index: 0, selected: null, answered: null, examType: null };
 var recognition = null;
 var isRecording = false;
 
@@ -5009,6 +5009,7 @@ async function loadCategorySampleQuestion() {
     var q = (res.questions || [])[0];
     if (!q) { wrap.innerHTML = '<p class="muted">No sample available for this track yet.</p>'; return; }
     categoryPageState.sampleQuestion = q;
+    categoryPageState.sampleSelected = null;
     categoryPageState.sampleAnswered = null;
     drawCategorySampleQuestion();
   } catch (e) {
@@ -5022,22 +5023,31 @@ function drawCategorySampleQuestion() {
   var track = categoryPageState.repTrack;
   if (!wrap || !q) return;
   var answered = categoryPageState.sampleAnswered;
+  var selected = categoryPageState.sampleSelected;
   var prefixes = ['A', 'B', 'C', 'D'];
   var choiceHtml = prefixes.map(function (k) {
     var cls = 'option-btn';
     if (answered) {
       if (k === q.correctChoice) cls += ' correct';
       else if (k === answered) cls += ' wrong';
+    } else if (k === selected) {
+      cls += ' selected';
     }
     return optionButtonHtml(k, q.choices[k], cls, 'data-act="category-sample-answer" data-choice="' + k + '"' + (answered ? ' disabled' : ''));
   }).join('');
+  // Select-then-submit, not instant-reveal-on-click -- see drawSampleQuestion()'s own comment
+  // (this is the same first-touch, anonymous-visitor reasoning, just for the category page's
+  // inline widget instead of the standalone #/sample page).
+  var submitControl = (!answered && selected)
+    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="category-sample-submit">Submit Answer</button></div>'
+    : '';
   var explanation = answered
     ? '<div class="explanation-box"><strong class="' + (answered === q.correctChoice ? 'result-correct' : 'result-incorrect') + '">' +
       (answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
       '<div class="nav-controls"><a class="btn-primary" href="' + track.route + '#/sample">Try more free questions →</a></div>'
     : '';
   wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
-    '<div class="options-grid">' + choiceHtml + '</div>' + explanation;
+    '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
 function categoryStatsHtml(activeCount, stateCount) {
@@ -5085,7 +5095,7 @@ async function renderCategoryPage(kind) {
   var slug = kindSlug(kind);
   var tracks = categoryActiveTracks(kind);
   var repTrack = pickRepresentativeTrack(tracks);
-  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleAnswered: null, tracksExpanded: false };
+  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false };
   // hubScopedState drives the footer's "top state tracks" links (and the #/gift page) -- previously
   // forced null here unconditionally (see route()'s old comment), which meant the footer kept
   // showing its unscoped fallback (first-3-active-overall, in practice always California) no matter
@@ -9210,6 +9220,7 @@ async function renderSample() {
       sampleState.questions = res.questions;
       sampleState.examType = track.examType;
       sampleState.index = 0;
+      sampleState.selected = null;
       sampleState.answered = null;
     } catch (e) {
       appEl.innerHTML = '<p>Could not load the sample. Try again shortly.</p>';
@@ -9238,10 +9249,22 @@ function drawSampleQuestion() {
     if (sampleState.answered) {
       if (k === q.correctChoice) cls += ' correct';
       else if (k === sampleState.answered) cls += ' wrong';
+    } else if (k === sampleState.selected) {
+      cls += ' selected';
     }
     return optionButtonHtml(k, q.choices[k], cls,
       'data-act="sample-answer" data-choice="' + k + '"' + (sampleState.answered ? ' disabled' : ''));
   }).join('');
+
+  // Clicking a choice only selects it (highlights, doesn't grade) -- a first-time, anonymous
+  // visitor's very first interaction with the site has no prior exposure to the practice quiz's
+  // own instant-reveal-on-click convention, so a visible submit step here avoids the "did that
+  // just submit?" confusion an immediate reveal could cause right at the front door. The main
+  // practice quiz (post-purchase, already-familiar users) deliberately keeps instant reveal --
+  // this is scoped to the free sample only.
+  var submitControl = (!sampleState.answered && sampleState.selected)
+    ? '<div class="nav-controls"><button class="btn-primary" type="button" data-act="sample-submit">Submit Answer</button></div>'
+    : '';
 
   var explanation = sampleState.answered
     ? '<div class="explanation-box">' +
@@ -9259,7 +9282,7 @@ function drawSampleQuestion() {
     '<div class="question-text">' + q.question + '</div>' +
     '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' +
-    explanation;
+    submitControl + explanation;
 }
 
 // ---- Speech recognition (voice answer picker) ------------------------------
@@ -9778,13 +9801,20 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'sample-answer') {
-    sampleState.answered = el.getAttribute('data-choice');
+    sampleState.selected = el.getAttribute('data-choice');
+    drawSampleQuestion();
+  } else if (act === 'sample-submit') {
+    sampleState.answered = sampleState.selected;
     drawSampleQuestion();
   } else if (act === 'category-sample-answer') {
-    categoryPageState.sampleAnswered = el.getAttribute('data-choice');
+    categoryPageState.sampleSelected = el.getAttribute('data-choice');
+    drawCategorySampleQuestion();
+  } else if (act === 'category-sample-submit') {
+    categoryPageState.sampleAnswered = categoryPageState.sampleSelected;
     drawCategorySampleQuestion();
   } else if (act === 'sample-next') {
     sampleState.index += 1;
+    sampleState.selected = null;
     sampleState.answered = null;
     drawSampleQuestion();
   } else if (act === 'mic-toggle') {
