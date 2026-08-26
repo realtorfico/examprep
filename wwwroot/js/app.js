@@ -7945,7 +7945,8 @@ function renderTrackLanding() {
 
   appEl.innerHTML =
     '<div class="track-landing">' +
-    '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
+    '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
+    '<a href="/' + kindSlug(exam.examKind) + '">' + escapeHtml(exam.examKind) + '</a> / ' +
     '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
     '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? Use the state picker to switch — on mobile, open the ☰ menu first.</p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
@@ -9425,7 +9426,8 @@ function drawBuyForm(pricing, giftIntent) {
   var trackTitle = (track || {}).title || 'PassExamHQ';
   buyPromoCode = null;
   buyPromoDiscountCents = 0;
-  var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="' + tracksHomeHref() + '">Exams</a> / ' +
+  var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
+    (track ? '<a href="/' + kindSlug(track.examKind) + '">' + escapeHtml(track.examKind) + '</a> / ' : '') +
     (track ? '<a href="' + track.route + '">' + escapeHtml(track.stateCode ? (STATE_LABELS[track.stateCode] || track.stateCode) : trackTitle) + '</a> / ' : '') +
     '<span class="breadcrumb-current">Get Instant Access</span></nav>';
   appEl.innerHTML =
