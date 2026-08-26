@@ -177,8 +177,13 @@ function renderSiteHeader() {
   var navLinksHtml =
     '<a href="' + referHref + '">Refer &amp; earn</a>' +
     '<a href="#/gift">Gift a track 🎁</a>';
+  // "Browse exams" is a global "see the whole catalog" CTA, so it always targets the homepage's
+  // category grid -- unlike referHref above (deliberately track-scoped), it must NOT use
+  // tracksHomeHref(), which resolves to the CURRENT category's own page whenever a track is
+  // active (true on every track/quiz/exam/buy page), making this button just re-link back to
+  // wherever the visitor already was instead of the actual catalog.
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
-    '<a class="btn-primary btn-sm" href="' + tracksHomeHref() + '">Browse exams</a>';
+    '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
   // Prominent, always-visible "which track am I logged into" indicator -- accountExamType
   // specifically (the account's real track), NOT currentTrack above (whichever track's PAGE is
   // being viewed, which could differ, e.g. a driver-track account browsing the notary track's
