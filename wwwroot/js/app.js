@@ -7953,7 +7953,13 @@ function renderTrackLanding() {
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     '<a href="/' + kindSlug(exam.examKind) + '">' + escapeHtml(exam.examKind) + '</a> / ' +
     '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
-    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? Use the state picker to switch — on mobile, open the ☰ menu first.</p>' +
+    // Points at the category page's own state picker (categoryStateSelectHtml) rather than
+    // describing a mechanism to use in place -- this used to reference a header state picker that
+    // was removed entirely during the category-first restructure (2026-08-25), leaving both the
+    // "state picker" and "on mobile, open the ☰ menu first" halves of the old copy dead: there was
+    // nothing left on this page, or in the header, for either sentence to actually point to.
+    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? ' +
+    '<a href="/' + kindSlug(exam.examKind) + '">Pick your state on the ' + escapeHtml(exam.examKind) + ' page →</a></p>' +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +
