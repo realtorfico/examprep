@@ -955,21 +955,32 @@ function renderGuarantee() {
       '<div class="guarantee-page">' +
       '<section class="guarantee-hero">' +
       '<div class="guarantee-hero-copy">' +
-      '<span class="badge guarantee-hero-badge">🛡️ Pass Guarantee</span>' +
+      '<span class="badge guarantee-hero-badge">🛡️ Two guarantees, in plain language</span>' +
       '<h1>Pass, or get ' + refundFailurePercent + '% back.</h1>' +
       '<p class="page-intro-text">We only sell prep we\'d stake our reputation on. Practice to the threshold, sit your ' +
       'official exam, and if you still don\'t pass, you get ' + refundFailurePercent + '% of your purchase back. Changed ' +
       'your mind early instead? A 7-day, no-questions-asked refund covers that too.</p>' +
       '<div class="guarantee-hero-cta">' +
-      '<a class="btn-primary hub-hero-btn" href="/">Browse guaranteed tracks</a>' +
+      '<a class="btn-primary hub-hero-btn" href="/#tracks">Browse guaranteed tracks</a>' +
       '<a class="btn-secondary hub-hero-btn" href="#/refund">I need to file a claim</a>' +
       '</div>' +
       '</div>' +
+      // Two stat cards, not one -- this page's whole job is explaining "the guarantee(s)," but its
+      // own hero used to badge itself singular ("Pass Guarantee") and fold the 7-day refund into
+      // one sentence, undersold relative to how guaranteeCtaBandHtml() frames both guarantees with
+      // equal weight everywhere else on the site. Give the 7-day guarantee its own card here too.
+      '<div class="guarantee-hero-stats">' +
       '<div class="guarantee-stat-card">' +
       '<div class="guarantee-stat-icon">🛡️</div>' +
       '<div class="guarantee-stat-value">' + refundFailurePercent + '%</div>' +
       '<p class="muted">money back if you meet the practice requirement and still don\'t pass</p>' +
       passRateNote +
+      '</div>' +
+      '<div class="guarantee-stat-card">' +
+      '<div class="guarantee-stat-icon">📅</div>' +
+      '<div class="guarantee-stat-value">7 Days</div>' +
+      '<p class="muted">no-questions-asked refund if you change your mind early — no conditions to meet</p>' +
+      '</div>' +
       '</div>' +
       '</section>' +
       '<section class="guarantee-eligibility">' +
@@ -4857,7 +4868,13 @@ function giftActiveTracks() {
 function renderGiftScopedContextBar() {
   if (!hubScopedState) return '';
   var name = STATE_LABELS[hubScopedState] || hubScopedState;
-  return '<div class="hub-scoped-context-bar"><span>Showing gift options for <strong>' + escapeHtml(name) + '</strong></span></div>';
+  // A visitor scoped to one state (from wherever they arrived at /gift) used to have no way to
+  // see other states' tracks without leaving the page entirely -- this clears the scope in place,
+  // same as the other gift-page filters (kind pills, track-count toggle) already do. Reuses
+  // .hub-scoped-all-link, an existing "see all" style defined in style.css for exactly this kind
+  // of context-bar link but never actually wired up anywhere until now.
+  return '<div class="hub-scoped-context-bar"><span>Showing gift options for <strong>' + escapeHtml(name) + '</strong></span>' +
+    '<a href="#" class="hub-scoped-all-link" data-act="clear-gift-scope">See all states →</a></div>';
 }
 
 function renderGiftKindFilterPills() {
@@ -9873,9 +9890,14 @@ function renderGift() {
     '<p>Buy full access to any track for someone else. They get their own code by email (or you get a ' +
     'shareable one) — no account needed from you, and they redeem it whenever they\'re ready.</p>' +
     '</section>' +
+    trustStripHtml() +
     '<div id="gift-scoped-context-wrap">' + renderGiftScopedContextBar() + '</div>' +
     '<div id="gift-kind-filter-wrap">' + renderGiftKindFilterPills() + '</div>' +
-    '<div id="gift-tracks-grid-wrap">' + giftTracksGridHtml() + '</div>';
+    '<div id="gift-tracks-grid-wrap">' + giftTracksGridHtml() + '</div>' +
+    // Reassurance content this page didn't have before -- previously the guarantee only appeared
+    // post-purchase (renderGiftPurchaseSuccess) or in the buy-gift checkout itself, i.e. after the
+    // decision to spend money was already made, not before it.
+    guaranteeCtaBandHtml();
 }
 
 // ---- Refund requests (7-day unconditional + pass-or-N%-back) --------------
@@ -10055,8 +10077,11 @@ async function renderReferForm() {
     '<p>Add a friend below — they get a personal invite, and you earn ' + rules.referralVerifiedPoints +
     ' points once they confirm, plus ' + rules.referralConvertedPoints + ' more if they go on to buy a course.</p>' +
     '</section>' +
+    trustStripHtml() +
     '<div class="narrow-page">' +
-    '<h1>Refer friends, earn free access</h1>' +
+    // Leftover duplicate <h1> removed here -- this was the loading-state placeholder's own
+    // heading (still used verbatim at this function's initial appEl.innerHTML above), never
+    // demoted once the .refer-hero section (with its own <h1>) was added above it.
     '<div id="refer-promotions-wrap" class="promotions-wrap"></div>' +
     '<p class="muted page-intro-text">Earn <strong>' + rules.referralVerifiedPoints + ' points</strong> when a friend confirms their email, ' +
     'plus <strong>' + rules.referralConvertedPoints + ' more</strong> if they go on to buy a course. Reach ' +
@@ -10085,13 +10110,27 @@ async function renderReferForm() {
     '<button class="btn-primary" type="submit">Send referrals</button>' +
     '</form>' +
     '</div>' +
-    referHowItWorksHtml(rules);
+    referHowItWorksHtml(rules) +
+    '<div id="refer-testimonials-wrap"></div>' +
+    // Reassurance content this page didn't have before -- a referrer is vouching for the product
+    // to a friend, so the same guarantee band shown on category/track pages belongs here too.
+    guaranteeCtaBandHtml();
   renderTurnstileWidget();
   Promise.all([apiFetch('/promotions?placement=refer'), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var wrap = document.getElementById('refer-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
   }).catch(function () { /* best-effort */ });
+  // Same testimonials the referred track's own category page shows (category_content is keyed by
+  // category slug, not per-track) -- real social proof for what the referrer is vouching for.
+  var referTrack = trackByExamType(referExamType);
+  if (referTrack) {
+    apiFetch('/category-content?slug=' + encodeURIComponent(kindSlug(referTrack.examKind))).then(function (res) {
+      var content = (res.categories || [])[0] || null;
+      var wrap = document.getElementById('refer-testimonials-wrap');
+      if (wrap) wrap.innerHTML = categoryTestimonialsHtml(content && content.testimonials);
+    }).catch(function () { /* best-effort -- section just stays empty */ });
+  }
 }
 
 function renderReferVerify(token) {
@@ -10439,7 +10478,18 @@ function route() {
   // terms/guarantee/etc. above, so no chrome linking to them has to guess/default a track.
   if (hashView === 'redeem') { renderRedeem(); return; }
   if (hashView === 'refund') { renderRefundRequest(); return; }
-  if (hashView === 'gift') { renderGift(); return; }
+  if (hashView === 'gift') {
+    // Resolve hubScopedState from the pathname BEFORE dispatching, same as the track-resolution
+    // branch further below does -- this hash-route returns before ever reaching that branch, so a
+    // fresh/hard load landing directly on e.g. "/notary/ca#/gift" (bookmark, shared link, browser
+    // refresh) used to skip the sync entirely: hubScopedState stayed at its boot-time null, and
+    // giftActiveTracks() silently showed every state's tracks instead of the one the URL clearly
+    // indicates, with no "Showing gift options for X" bar to explain the mismatch either.
+    var giftPathTrack = activeTrackForPath(location.pathname);
+    if (giftPathTrack) hubScopedState = giftPathTrack.stateCode;
+    renderGift();
+    return;
+  }
   if (location.pathname === '/' || location.pathname === '') {
     renderHub();
     return;
@@ -10850,6 +10900,16 @@ document.addEventListener('click', async function (e) {
     if (giftKindWrap) giftKindWrap.innerHTML = renderGiftKindFilterPills();
     var giftKindFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
     if (giftKindFilteredTracksWrap) giftKindFilteredTracksWrap.innerHTML = giftTracksGridHtml();
+  } else if (act === 'clear-gift-scope') {
+    hubScopedState = null;
+    giftKindFilter = '';
+    giftTracksExpanded = false;
+    var giftScopeWrap = document.getElementById('gift-scoped-context-wrap');
+    if (giftScopeWrap) giftScopeWrap.innerHTML = renderGiftScopedContextBar();
+    var clearedKindWrap = document.getElementById('gift-kind-filter-wrap');
+    if (clearedKindWrap) clearedKindWrap.innerHTML = renderGiftKindFilterPills();
+    var clearedTracksWrap = document.getElementById('gift-tracks-grid-wrap');
+    if (clearedTracksWrap) clearedTracksWrap.innerHTML = giftTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {
