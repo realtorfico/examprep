@@ -822,18 +822,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-redeem-hint { font-size: 1rem; font-weight: 600; margin-top: 1.25rem; }
 .buy-redeem-hint a { font-weight: 700; }
 
-/* Default scoped-state hub's "you're looking at X" bar, replacing the state-pill row entirely --
-   see the hubScopedState comment near renderHub(). */
-.hub-scoped-context-bar {
-  display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between;
-  font-size: 0.85rem; color: var(--muted); padding: 0.3rem 0;
-}
-.hub-scoped-all-link { color: var(--muted); text-decoration: underline; }
-.hub-scoped-all-link:hover { color: var(--accent); }
-/* The one thing worth noticing in "Showing licensing tracks for X" / "Not studying for X?" --
-   plain <strong> just bolds it inline with the rest of the muted sentence; this pulls it out in
-   the accent color too, at the hub (.hub-scoped-context-bar) and the track landing page
-   (.track-landing-state-hint) alike. */
+/* The one thing worth noticing in "Not studying for X?" -- plain <strong> just bolds it inline
+   with the rest of the muted sentence; this pulls it out in the accent color too, on the track
+   landing page (.track-landing-state-hint). */
 .state-name-emphasis { color: var(--accent); font-weight: 800; }
 .hub-scoped-state-hint { font-size: 0.85rem; margin: 0.3rem 0 0; }
 
@@ -950,27 +941,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-readiness-tiles .outcome-tile-value { font-size: 1.35rem; }
 .hub-readiness-tiles .outcome-tile-label { font-size: 0.62rem; }
 .hub-section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--highlight); padding-bottom: 0.5rem; margin-top: 0.5rem; }
-/* Filters the tracks grid below by state/type. Horizontally scrollable pill bar -- on a narrow
-   screen a pill like Texas/New York can be scrolled out of view, but the counts themselves are
-   always correct (cross-aware against the other active filter), so this is a look, not a bug.
-   No margin here -- #app is a flex column with its own gap:1rem between every child, so an
-   additional margin on top of that just double-spaces this row from its neighbors. */
-.hub-state-filter-pill {
-  display: flex; max-width: 100%; overflow-x: auto; border: 1.5px solid var(--border); border-radius: 999px;
-  width: fit-content;
-}
-.hub-state-filter-pill button {
-  border: none; border-radius: 0; background: transparent; color: var(--muted); white-space: nowrap;
-  padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; border-right: 1px solid var(--border);
-}
-.hub-state-filter-pill button:last-child { border-right: none; }
-.hub-state-filter-pill button:hover { color: var(--accent); }
-.hub-state-filter-pill button.active { background: var(--accent); color: var(--accent-foreground); }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
 }
-.hub-tracks-toggle-wrap { text-align: center; margin-top: 1rem; }
 
 /* Track landing/sales page (renderTrackLanding, Round 2 redesign decision) -- same marketing-
    content width tier as the home page's comparison/outcomes sections, since it's a sales page,
@@ -1100,6 +1074,17 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); color: var(--fg); font-size: 0.9rem;
 }
 .category-breakdown-cta { text-align: center; margin-top: 1.5rem; }
+/* #/gift page's category+state picker -- the whole page collapses to picking these two, so it
+   gets its own prominent two-field row (stacked on mobile) rather than reusing the single-field
+   .category-state-select-label layout. */
+.gift-picker { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+@media (min-width: 600px) { .gift-picker { flex-direction: row; } }
+.gift-picker-field { display: block; flex: 1; font-size: 0.85rem; font-weight: 600; }
+.gift-picker-field select {
+  display: block; margin-top: 0.4rem; width: 100%; padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card); color: var(--fg); font-size: 0.9rem;
+}
+.gift-picker-field select:disabled { opacity: 0.5; cursor: not-allowed; }
 .category-feature-tiles {
   display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: min(92vw, 1400px); margin: 1.5rem auto;
   padding: 0 clamp(1rem, 4vw, 2.5rem);

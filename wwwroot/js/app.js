@@ -4847,66 +4847,66 @@ function fillHubPricing(tracks) {
   });
 }
 
-// ---- #/gift landing page's own track grid ----------------------------------
-// Deliberately its own self-contained kind-filter/grid state (not shared with anything else) --
-// reuses hubTrackCards/fillHubPricing since the card/pricing logic itself is identical, just
-// gift-scoped to active tracks only (nothing to gift that isn't purchasable) and a different
-// collapsed-count/CTA.
-var GIFT_TRACKS_COLLAPSED_COUNT = 6;
-var giftTracksExpanded = false;
-var giftKindFilter = '';
+// ---- #/gift landing page: category + state picker --------------------------
+// Deliberately shows nothing until both are picked, rather than a browsable grid (scoped or not)
+// -- gifting is a "I already know who this is for and what they need" action, not a browse-and-
+// discover one, so a category+state picker gets to checkout in two choices instead of scrolling a
+// grid of up to 211 cards. This also sidesteps the whole hubScopedState-based auto-scoping this
+// page used to do (state picked here is a one-off "who am I gifting to," unrelated to whichever
+// state the visitor themselves last viewed -- auto-scoping to that was confusing more often than
+// it helped, e.g. landing here from your OWN state's page while gifting to someone in a different
+// one). Deliberately its own self-contained picker state (not shared with anything else) --
+// reuses hubTrackCards/fillHubPricing for the single resulting track's card since the card/pricing
+// logic itself is identical, just gift-scoped (only active tracks, gift-mode CTA/link).
+var giftPickedKind = '';
+var giftPickedState = '';
 
-// Scoped to hubScopedState (the same site-wide "current state" the hub uses, kept in sync by
-// route() -- see its own comment) rather than a separate gift-page-local state filter: which
-// state you're in is a global header-level concept now, not something to re-pick per page.
-// Falls back to every active track only in the same rare "we don't know your state" case the hub
-// itself falls back for (hubScopedState null) -- not a normal, reachable path.
-function giftActiveTracks() {
-  return HUB_EXAMS.filter(function (e) { return e.active && (!hubScopedState || e.stateCode === hubScopedState); });
-}
-
-function renderGiftScopedContextBar() {
-  if (!hubScopedState) return '';
-  var name = STATE_LABELS[hubScopedState] || hubScopedState;
-  // A visitor scoped to one state (from wherever they arrived at /gift) used to have no way to
-  // see other states' tracks without leaving the page entirely -- this clears the scope in place,
-  // same as the other gift-page filters (kind pills, track-count toggle) already do. Reuses
-  // .hub-scoped-all-link, an existing "see all" style defined in style.css for exactly this kind
-  // of context-bar link but never actually wired up anywhere until now.
-  return '<div class="hub-scoped-context-bar"><span>Showing gift options for <strong>' + escapeHtml(name) + '</strong></span>' +
-    '<a href="#" class="hub-scoped-all-link" data-act="clear-gift-scope">See all states →</a></div>';
-}
-
-function renderGiftKindFilterPills() {
-  var activeTracks = giftActiveTracks();
+function giftCategoryOptions() {
   var kinds = [];
-  activeTracks.forEach(function (e) { if (kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
-  kinds.sort(function (a, b) { return a.localeCompare(b); });
-  var options = [['', 'All Types (' + activeTracks.length + ')']].concat(kinds.map(function (k) {
-    var count = activeTracks.filter(function (e) { return e.examKind === k; }).length;
-    return [k, k + ' (' + count + ')'];
-  }));
-  if (options.length <= 2) return '';
-  return '<div class="hub-state-filter-pill" role="group" aria-label="Filter by exam type">' +
-    options.map(function (o) {
-      var active = giftKindFilter === o[0];
-      return '<button type="button" class="' + (active ? 'active' : '') + '" data-act="filter-gift-kind" data-kind="' + o[0] + '"' +
-        (active ? ' aria-current="true"' : '') + '>' + o[1] + '</button>';
-    }).join('') + '</div>';
+  HUB_EXAMS.forEach(function (e) { if (e.active && kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  return kinds.sort(function (a, b) { return a.localeCompare(b); });
 }
 
-function giftTracksGridHtml() {
-  var filtered = giftActiveTracks().filter(function (e) { return !giftKindFilter || e.examKind === giftKindFilter; });
-  var cardsArr = hubTrackCards(filtered, 'gift');
-  var truncated = !giftTracksExpanded && cardsArr.length > GIFT_TRACKS_COLLAPSED_COUNT;
-  var visible = truncated ? cardsArr.slice(0, GIFT_TRACKS_COLLAPSED_COUNT) : cardsArr;
-  var toggleHtml = cardsArr.length > GIFT_TRACKS_COLLAPSED_COUNT
-    ? '<div class="hub-tracks-toggle-wrap"><button class="btn-secondary btn-sm" type="button" data-act="toggle-gift-tracks">' +
-      (truncated ? 'Show all ' + cardsArr.length + ' tracks ▾' : 'Show fewer ▴') + '</button></div>'
-    : '';
-  var emptyHtml = !cardsArr.length ? '<p class="muted">No tracks yet for this filter.</p>' : '';
-  fillHubPricing(truncated ? filtered.slice(0, GIFT_TRACKS_COLLAPSED_COUNT) : filtered);
-  return '<div class="exam-track-grid">' + visible.join('') + '</div>' + emptyHtml + toggleHtml;
+// Only states that actually offer the picked category -- picking a category first and then
+// narrowing the state dropdown to just its real options (rather than all 50 states regardless of
+// category) makes an invalid combination impossible to select in the first place.
+function giftTracksForKind(kind) {
+  return HUB_EXAMS.filter(function (e) { return e.active && e.examKind === kind; })
+    .sort(function (a, b) { return (STATE_LABELS[a.stateCode] || a.stateCode).localeCompare(STATE_LABELS[b.stateCode] || b.stateCode); });
+}
+
+function giftPickerHtml() {
+  var kindOptions = ['<option value="">Choose a category…</option>'].concat(
+    giftCategoryOptions().map(function (k) {
+      return '<option value="' + escapeHtml(k) + '"' + (k === giftPickedKind ? ' selected' : '') + '>' + escapeHtml(k) + '</option>';
+    })
+  );
+  var stateTracks = giftPickedKind ? giftTracksForKind(giftPickedKind) : [];
+  var stateOptions = ['<option value="">Choose a state…</option>'].concat(
+    stateTracks.map(function (t) {
+      return '<option value="' + t.stateCode + '"' + (t.stateCode === giftPickedState ? ' selected' : '') + '>' +
+        escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</option>';
+    })
+  );
+  return '<div class="card gift-picker">' +
+    '<label class="gift-picker-field">Category' +
+    '<select data-act="pick-gift-kind">' + kindOptions.join('') + '</select>' +
+    '</label>' +
+    '<label class="gift-picker-field">State' +
+    '<select data-act="pick-gift-state"' + (giftPickedKind ? '' : ' disabled') + '>' + stateOptions.join('') + '</select>' +
+    '</label>' +
+    '</div>';
+}
+
+function giftResultHtml() {
+  if (!giftPickedKind || !giftPickedState) return '';
+  var track = HUB_EXAMS.filter(function (e) {
+    return e.active && e.examKind === giftPickedKind && e.stateCode === giftPickedState;
+  })[0];
+  if (!track) return '<p class="muted">No gift-able track found for that combination yet.</p>';
+  var cardHtml = hubTrackCards([track], 'gift')[0];
+  fillHubPricing([track]);
+  return '<div class="exam-track-grid category-single-track-grid">' + cardHtml + '</div>';
 }
 
 // ---- Category landing page (category-first restructure, phase 4) ----------
@@ -9877,12 +9877,13 @@ function renderGiftPurchaseSuccess(code, recipientEmail) {
 
 // Global, track-agnostic entry point (same reasoning as #/redeem, #/refund) -- picking a track
 // here just deep-links into that track's own buy page in gift mode (#/buy-gift), reusing the
-// normal checkout flow wholesale rather than duplicating it. Track grid mirrors the hub's own
-// (state/kind filter pills, collapse-to-N, live pricing) -- see giftTracksGridHtml et al. above --
-// rather than an unfiltered wall of all 27+ active tracks.
+// normal checkout flow wholesale rather than duplicating it. Category+state picker (see
+// giftPickerHtml/giftResultHtml above) shows nothing until both are chosen, rather than a
+// browsable grid of all active tracks -- a deliberate 2026-08-25 redesign, see that comment block
+// for why.
 function renderGift() {
-  giftTracksExpanded = false;
-  giftKindFilter = '';
+  giftPickedKind = '';
+  giftPickedState = '';
   appEl.innerHTML =
     '<section class="refer-hero">' +
     '<span class="badge refer-hero-badge">Gift a Track</span>' +
@@ -9891,9 +9892,8 @@ function renderGift() {
     'shareable one) — no account needed from you, and they redeem it whenever they\'re ready.</p>' +
     '</section>' +
     trustStripHtml() +
-    '<div id="gift-scoped-context-wrap">' + renderGiftScopedContextBar() + '</div>' +
-    '<div id="gift-kind-filter-wrap">' + renderGiftKindFilterPills() + '</div>' +
-    '<div id="gift-tracks-grid-wrap">' + giftTracksGridHtml() + '</div>' +
+    '<div id="gift-picker-wrap">' + giftPickerHtml() + '</div>' +
+    '<div id="gift-result-wrap">' + giftResultHtml() + '</div>' +
     // Reassurance content this page didn't have before -- previously the guarantee only appeared
     // post-purchase (renderGiftPurchaseSuccess) or in the buy-gift checkout itself, i.e. after the
     // decision to spend money was already made, not before it.
@@ -10478,18 +10478,7 @@ function route() {
   // terms/guarantee/etc. above, so no chrome linking to them has to guess/default a track.
   if (hashView === 'redeem') { renderRedeem(); return; }
   if (hashView === 'refund') { renderRefundRequest(); return; }
-  if (hashView === 'gift') {
-    // Resolve hubScopedState from the pathname BEFORE dispatching, same as the track-resolution
-    // branch further below does -- this hash-route returns before ever reaching that branch, so a
-    // fresh/hard load landing directly on e.g. "/notary/ca#/gift" (bookmark, shared link, browser
-    // refresh) used to skip the sync entirely: hubScopedState stayed at its boot-time null, and
-    // giftActiveTracks() silently showed every state's tracks instead of the one the URL clearly
-    // indicates, with no "Showing gift options for X" bar to explain the mismatch either.
-    var giftPathTrack = activeTrackForPath(location.pathname);
-    if (giftPathTrack) hubScopedState = giftPathTrack.stateCode;
-    renderGift();
-    return;
-  }
+  if (hashView === 'gift') { renderGift(); return; }
   if (location.pathname === '/' || location.pathname === '') {
     renderHub();
     return;
@@ -10753,6 +10742,17 @@ document.addEventListener('change', function (e) {
     if (sampleSubhead) sampleSubhead.innerHTML = categorySampleSubheadHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');
     if (sampleWrap) { sampleWrap.innerHTML = '<p class="muted">Loading…</p>'; loadCategorySampleQuestion(); }
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-gift-kind') {
+    giftPickedKind = e.target.value;
+    giftPickedState = ''; // the old state pick may not be valid for the new category
+    var giftPickerWrap = document.getElementById('gift-picker-wrap');
+    if (giftPickerWrap) giftPickerWrap.innerHTML = giftPickerHtml();
+    var giftResultWrapKind = document.getElementById('gift-result-wrap');
+    if (giftResultWrapKind) giftResultWrapKind.innerHTML = giftResultHtml();
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-gift-state') {
+    giftPickedState = e.target.value;
+    var giftResultWrapState = document.getElementById('gift-result-wrap');
+    if (giftResultWrapState) giftResultWrapState.innerHTML = giftResultHtml();
   }
 });
 
@@ -10887,29 +10887,6 @@ document.addEventListener('click', async function (e) {
     progressTopicsExpanded = !progressTopicsExpanded;
     var toggleWrap = document.getElementById('progress-topics-wrap');
     if (toggleWrap) toggleWrap.innerHTML = progressTopicsTableHtml();
-  } else if (act === 'toggle-gift-tracks') {
-    giftTracksExpanded = !giftTracksExpanded;
-    var giftTracksWrap = document.getElementById('gift-tracks-grid-wrap');
-    if (giftTracksWrap) giftTracksWrap.innerHTML = giftTracksGridHtml();
-  } else if (act === 'filter-gift-kind') {
-    var newGiftKindFilter = el.getAttribute('data-kind');
-    if (newGiftKindFilter === giftKindFilter) return;
-    giftKindFilter = newGiftKindFilter;
-    giftTracksExpanded = false;
-    var giftKindWrap = document.getElementById('gift-kind-filter-wrap');
-    if (giftKindWrap) giftKindWrap.innerHTML = renderGiftKindFilterPills();
-    var giftKindFilteredTracksWrap = document.getElementById('gift-tracks-grid-wrap');
-    if (giftKindFilteredTracksWrap) giftKindFilteredTracksWrap.innerHTML = giftTracksGridHtml();
-  } else if (act === 'clear-gift-scope') {
-    hubScopedState = null;
-    giftKindFilter = '';
-    giftTracksExpanded = false;
-    var giftScopeWrap = document.getElementById('gift-scoped-context-wrap');
-    if (giftScopeWrap) giftScopeWrap.innerHTML = renderGiftScopedContextBar();
-    var clearedKindWrap = document.getElementById('gift-kind-filter-wrap');
-    if (clearedKindWrap) clearedKindWrap.innerHTML = renderGiftKindFilterPills();
-    var clearedTracksWrap = document.getElementById('gift-tracks-grid-wrap');
-    if (clearedTracksWrap) clearedTracksWrap.innerHTML = giftTracksGridHtml();
   } else if (act === 'toggle-exam-attempt') {
     var attemptId = el.getAttribute('data-attempt-id');
     var rerenderAttemptWrap = function () {
