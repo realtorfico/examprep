@@ -1932,6 +1932,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['License Law, Violations & Advertising/Supervision', '20%'], ['Agency, Fiduciary Duties & Fair Housing', '16%'], ['Property, Land Use & Environmental Disclosure', '15%'], ['Contracts, Financing, Valuation & Math', '21%'], ['Property Types: Condos, Commercial, Management & Landlord-Tenant', '22%'], ['Taxes & Assessments', '6%']],
   },
   {
+    examType: 'ny_re_broker',
+    title: 'New York Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ny',
+    duration: '2 Hours 30 Minutes', questions: '100 Multiple Choice (Estimated -- NY DOS Does Not Publish an Exact Item Count)', passScore: '70% (Estimated -- Real Exam Is Pass/Fail Only, No Numeric Score Published by NY DOS)',
+    description: 'Practice questions covering New York Real Property Law Article 12-A at broker level and 19 NYCRR Part 175 (Department of State real estate rules): broker supervision of salespersons and associate brokers, broker office management and branch offices/recordkeeping, escrow and trust fund management, commission and broker-salesperson compensation relationships, license law and DOS discipline/investigations/continuing education, plus the same agency law, fair housing, contracts, finance, valuation, property management, and disclosure content the salesperson exam covers. The New York Department of State administers the broker exam directly (no PSI/Pearson VUE), confirms a 150-minute time limit based on the 152-hour broker education syllabus (45-hour salesperson course + 75-hour broker course + 32-hour supplemental curriculum), and reports a pass/fail result only, with no published item count or percentage score -- this practice exam uses a commonly-cited 100-question/70% format as a study convention, not an official DOS figure.',
+    breakdown: [['Broker Supervision, Office Management & Escrow/Trust Funds', '21%'], ['License Law, Discipline, CE & General Business Law', '17%'], ['Finance, Valuation & Real Estate Math', '16%'], ['Property Management, Construction/Zoning & Taxes', '13%'], ['Agency Law, Disclosure & Fair Housing', '12%'], ['Commission/Compensation & Contracts', '12%'], ['Closing, Property Condition Disclosure Act & Environmental', '9%']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -4090,6 +4097,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 77-hour DOS-approved pre-license qualifying-course requirement for a New York real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in New York Real Property Law Article 12-A (Sections 440-443-a), the Property Condition Disclosure Act, agricultural district/utility disclosure statutes, and Human Rights Law/federal Fair Housing protections. The New York Department of State reports the real licensing exam as pass/fail only and does not publish an exact item count or passing percentage; the 75-question/70% format used here is a commonly-cited study convention, not an official DOS figure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is scheduled through DOS's eAccessNY system, and pre-license education must be completed through a DOS-approved qualifying course provider. While we strive to align our content with the current Real Property Law and DOS regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real New York DOS salesperson exam or the required 77-hour pre-license education.",
     passScoreNote: "a practice-study convention only — New York DOS reports the real exam as pass/fail, with no published item count or numeric passing percentage",
+  },
+  ny_re_broker: {
+    orgLine: "the New York Department of State (DOS), Division of Licensing Services",
+    footerRequirement: "do not fulfill the broker license prerequisite -- 2 years of experience as a licensed salesperson (or 3 years of general qualifying real estate experience) plus 152 hours of DOS-approved education (45-hour salesperson course + 75-hour broker course + 32-hour supplemental curriculum) -- required before sitting for the exam",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the prerequisites for a New York real estate broker license -- 2 years of experience as a licensed salesperson, or 3 years of general qualifying real estate experience (or a combination, evaluated on DOS's own experience-point scale), plus 152 hours of DOS-approved education -- and does not issue any official course-completion certificate. Our content is grounded in New York Real Property Law Article 12-A at broker level and 19 NYCRR Part 175 (Department of State real estate rules covering escrow, net-listing bans, branch offices, broker supervision, recordkeeping, and advertising). Confirmed directly from dos.ny.gov: unlike most states, New York DOS administers the broker exam directly (no PSI/Pearson VUE or similar vendor), with a confirmed 150-minute time limit, a $15 exam fee, and a $185 initial license fee; a passing result is valid for 2 years. DOS reports the real exam as pass/fail only and does not publish an exact item count or passing percentage; the 100-question/70% format used here is a commonly-cited study convention, not an official DOS figure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is scheduled through DOS's eAccessNY system, and broker education must be completed through a DOS-approved provider. While we strive to align our content with the current Real Property Law and DOS regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real New York DOS broker exam or the required experience/education prerequisites.",
+    passScoreNote: "a practice-study convention only — New York DOS reports the real broker exam as pass/fail, with no published item count or numeric passing percentage",
   },
   al_notary: {
     orgLine: "the Probate Judge in the notary's Alabama county of residence, in coordination with the Alabama Probate Judges Association and Alabama Law Institute training program",
@@ -7063,6 +7077,14 @@ var RESOURCES = {
       desc: "The New York Department of State's official real estate salesperson licensing page — the authoritative source for exam format, education requirements, and application procedures.",
       topic: "General Reference", free: true },
   ],
+  ny_re_broker: [
+    { title: "New York Real Property Law Article 12-A (Real Estate Brokers and Real Estate Salespersons)", type: "pdf", url: "https://www.nysenate.gov/legislation/laws/RPP/A12-A",
+      desc: "The official New York Real Property Law text published by the NY Senate — the statutory basis for broker licensing, discipline, and this practice content.",
+      topic: "General Reference", free: true },
+    { title: "NY DOS — Real Estate Broker Licensing", type: "pdf", url: "https://dos.ny.gov/real-estate-broker",
+      desc: "The New York Department of State's official real estate broker licensing page — the authoritative source for exam format, experience/education requirements, and application procedures.",
+      topic: "General Reference", free: true },
+  ],
   al_notary: [
     { title: "Alabama Probate Judges Association — Notary Public Training", type: "pdf", url: "https://alpja.org/?page_id=2845",
       desc: "The official Alabama Probate Judges Association page on the mandatory notary training course jointly developed with the Alabama Law Institute — the authoritative source this content is based on.",
@@ -9256,6 +9278,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The New York Department of State\'s official page covering real estate salesperson license requirements, education, and the state exam.' },
     { title: 'Exam Registration (eAccessNY)', url: 'https://dos.ny.gov/licensing/eaccessny.html',
       desc: 'The Department of State\'s eAccessNY portal, used to schedule the state-administered salesperson licensing exam and manage applications.' },
+  ],
+  ny_re_broker: [
+    { title: 'Real Estate Broker Licensing Site', url: 'https://dos.ny.gov/real-estate-broker',
+      desc: 'The New York Department of State\'s official page covering real estate broker license requirements, experience/education prerequisites, and the state exam.' },
+    { title: 'Exam Registration (eAccessNY)', url: 'https://dos.ny.gov/licensing/eaccessny.html',
+      desc: 'The Department of State\'s eAccessNY portal, used to schedule the state-administered broker licensing exam and manage applications.' },
   ],
   oh_re_salesperson: [
     { title: 'Division of Real Estate Site', url: 'https://com.ohio.gov/divisions-and-programs/real-estate-and-professional-licensing/salespersons-and-brokers/guides-and-resources/salesperson-and-broker-candidate-information-bulletin',
