@@ -26,6 +26,7 @@
   <url><loc>https://passexamhq.com/cdl/pa</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/pa</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/ca</loc></url>
+  <url><loc>https://passexamhq.com/real-estate-broker/ca</loc></url>
   <url><loc>https://passexamhq.com/driver/oh</loc></url>
   <url><loc>https://passexamhq.com/cdl/oh</loc></url>
   <url><loc>https://passexamhq.com/motorcycle/oh</loc></url>
@@ -39,7 +40,6 @@
   <url><loc>https://passexamhq.com/cdl/nc</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/nc</loc></url>
   <url><loc>https://passexamhq.com/notary/nc</loc></url>
-  <url><loc>https://passexamhq.com/boating/nc</loc></url>
   <url><loc>https://passexamhq.com/driver/va</loc></url>
   <url><loc>https://passexamhq.com/cdl/va</loc></url>
   <url><loc>https://passexamhq.com/motorcycle/va</loc></url>
@@ -49,10 +49,41 @@
   <url><loc>https://passexamhq.com/cdl/mi</loc></url>
   <url><loc>https://passexamhq.com/motorcycle/mi</loc></url>
   <url><loc>https://passexamhq.com/boating/mi</loc></url>
+  <url><loc>https://passexamhq.com/boating/ca</loc></url>
+  <url><loc>https://passexamhq.com/boating/tx</loc></url>
+  <url><loc>https://passexamhq.com/boating/fl</loc></url>
+  <url><loc>https://passexamhq.com/boating/ny</loc></url>
+  <url><loc>https://passexamhq.com/boating/pa</loc></url>
+  <url><loc>https://passexamhq.com/boating/il</loc></url>
+  <url><loc>https://passexamhq.com/boating/ga</loc></url>
+  <url><loc>https://passexamhq.com/boating/nj</loc></url>
+  <url><loc>https://passexamhq.com/boating/wa</loc></url>
+  <url><loc>https://passexamhq.com/boating/az</loc></url>
+  <url><loc>https://passexamhq.com/boating/ma</loc></url>
+  <url><loc>https://passexamhq.com/boating/tn</loc></url>
+  <url><loc>https://passexamhq.com/boating/mo</loc></url>
+  <url><loc>https://passexamhq.com/boating/md</loc></url>
+  <url><loc>https://passexamhq.com/boating/sc</loc></url>
+  <url><loc>https://passexamhq.com/boating/mn</loc></url>
+  <url><loc>https://passexamhq.com/boating/wi</loc></url>
+  <url><loc>https://passexamhq.com/boating/al</loc></url>
+  <url><loc>https://passexamhq.com/boating/la</loc></url>
+  <url><loc>https://passexamhq.com/boating/nv</loc></url>
+  <url><loc>https://passexamhq.com/boating/ct</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/mi</loc></url>
   <url><loc>https://passexamhq.com/driver/wa</loc></url>
   <url><loc>https://passexamhq.com/cdl/wa</loc></url>
   <url><loc>https://passexamhq.com/motorcycle/wa</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/al</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/ar</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/ct</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/mn</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/ms</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/nc</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/ny</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/pa</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/tx</loc></url>
+  <url><loc>https://passexamhq.com/motorcycle/ut</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/wa</loc></url>
   <url><loc>https://passexamhq.com/real-estate-broker/wa</loc></url>
   <url><loc>https://passexamhq.com/real-estate-salesperson/ak</loc></url>

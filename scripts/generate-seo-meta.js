@@ -1,12 +1,20 @@
 // Generates the per-route SEO metadata (title + truncated description) that _worker.js injects
 // into the SPA shell's <title>/<meta name="description"> for every active track page, plus writes
-// wwwroot/sitemap.xml. Single source of truth is HUB_EXAMS in wwwroot/js/app.js -- this script
-// mechanically derives both outputs from it rather than hand-duplicating title/description text a
-// second time (which would just be one more thing to drift out of sync, like the quote-style bug
-// normalize-hub-exams-quotes.js exists to fix).
+// wwwroot/sitemap.xml. Title/description/route come from HUB_EXAMS_CONTENT in wwwroot/js/app.js
+// (content-only since the 2026-08-30 track_registry migration); `active` status is no longer a
+// field on those objects at all (it lives in D1 now, the whole point of that migration) -- fetched
+// live from the public /track-registry endpoint instead. This script mechanically derives both
+// outputs rather than hand-duplicating title/description text a second time (which would just be
+// one more thing to drift out of sync, like the quote-style bug normalize-hub-exams-quotes.js
+// exists to fix).
 //
-// Run after adding/changing any HUB_EXAMS entry (new track, retitled description, flipped
-// active:), before deploying:
+// IMPORTANT: requires network access (fetches live /track-registry) and requires that endpoint's
+// data to already be current for any track this run is meant to include -- if you just added a
+// brand-new track_registry row, make sure it's actually deployed/live before running this, or the
+// new route will be silently excluded from SEO_META/sitemap.xml this pass (rerun once it's live).
+//
+// Run after adding/changing any HUB_EXAMS_CONTENT entry (new track, retitled description) or
+// flipping a track's active status in admin, before deploying:
 //   node scripts/generate-seo-meta.js
 // It rewrites the SEO_META block inside _worker.js (between the SEO_META_START/END markers) and
 // regenerates wwwroot/sitemap.xml in place. Idempotent.
@@ -16,6 +24,7 @@ const appJsPath = path.join(__dirname, '..', 'wwwroot', 'js', 'app.js');
 const workerPath = path.join(__dirname, '..', 'wwwroot', '_worker.js');
 const sitemapPath = path.join(__dirname, '..', 'wwwroot', 'sitemap.xml');
 const SITE_ORIGIN = 'https://passexamhq.com';
+const TRACK_REGISTRY_URL = SITE_ORIGIN + '/api/track-registry';
 
 const CATEGORY_META = {
   'notary': {
@@ -89,8 +98,9 @@ function findMatchingBracket(s, openIdx) {
   throw new Error('no matching bracket found');
 }
 const appSrc = fs.readFileSync(appJsPath, 'utf8');
-const startMarker = 'var HUB_EXAMS = [';
+const startMarker = 'var HUB_EXAMS_CONTENT = [';
 const startIdx = appSrc.indexOf(startMarker);
+if (startIdx === -1) throw new Error("could not find 'var HUB_EXAMS_CONTENT = [' in app.js -- did the content array get renamed again?");
 const arrayStart = startIdx + startMarker.length - 1;
 const arrayEnd = findMatchingBracket(appSrc, arrayStart);
 const arrayInner = appSrc.slice(arrayStart + 1, arrayEnd);
@@ -118,53 +128,71 @@ function field(obj, name) {
   // this value ends up next; skipping this step double-escapes (see 2026-08-24 SEO-meta bug).
   return m[2].replace(/\\(.)/g, (_, c) => c);
 }
-const tracks = [];
+const allTracks = [];
 objects.forEach((obj) => {
+  const examType = field(obj, 'examType');
   const route = field(obj, 'route');
   const title = field(obj, 'title');
   const description = field(obj, 'description');
-  const activeMatch = obj.match(/active:\s*(true|false)/);
-  if (!route || route === '#' || !activeMatch || activeMatch[1] !== 'true') return;
-  tracks.push({ route, title, description });
+  if (!examType || !route || route === '#') return;
+  allTracks.push({ examType, route, title, description });
 });
-// route is '/{kind-slug}/{state}' -- kind-slug is everything up to the last '/'.
-const kindSlugsWithActiveTracks = new Set(tracks.map((t) => t.route.slice(1, t.route.lastIndexOf('/'))));
 
-// ---- Write SEO_META block into _worker.js ----
-const seoMetaEntries = tracks.map((t) =>
-  `  '${t.route}': { title: '${escapeForJs(t.title)} | PassExamHQ', description: '${escapeForJs(truncate(t.description, 155))}' },`
-).join('\n');
-const categoryMetaEntries = Object.entries(CATEGORY_META).map(([slug, m]) =>
-  `  '/${slug}': { title: '${escapeForJs(m.title)}', description: '${escapeForJs(m.description)}' },`
-).join('\n');
+(async () => {
+  // active status is no longer a field on HUB_EXAMS_CONTENT objects at all -- it lives in D1 (see
+  // reference_track_registry_architecture) -- fetch the live, currently-deployed value instead of
+  // a source-code literal, same principle as everything else this migration touched.
+  const res = await fetch(TRACK_REGISTRY_URL);
+  if (!res.ok) throw new Error(`fetching ${TRACK_REGISTRY_URL} failed: HTTP ${res.status}`);
+  const registryData = await res.json();
+  const activeByExamType = {};
+  (registryData.tracks || []).forEach((t) => { activeByExamType[t.examType] = t.active; });
 
-const seoMetaBlock =
+  const tracks = allTracks.filter((t) => activeByExamType[t.examType] === true);
+  const missingFromRegistry = allTracks.filter((t) => !(t.examType in activeByExamType));
+  if (missingFromRegistry.length) {
+    console.log('NOTE:', missingFromRegistry.length, 'HUB_EXAMS_CONTENT entries have no matching track_registry row yet (excluded from SEO_META/sitemap this run):', missingFromRegistry.map((t) => t.examType).join(', '));
+  }
+
+  // route is '/{kind-slug}/{state}' -- kind-slug is everything up to the last '/'.
+  const kindSlugsWithActiveTracks = new Set(tracks.map((t) => t.route.slice(1, t.route.lastIndexOf('/'))));
+
+  // ---- Write SEO_META block into _worker.js ----
+  const seoMetaEntries = tracks.map((t) =>
+    `  '${t.route}': { title: '${escapeForJs(t.title)} | PassExamHQ', description: '${escapeForJs(truncate(t.description, 155))}' },`
+  ).join('\n');
+  const categoryMetaEntries = Object.entries(CATEGORY_META).map(([slug, m]) =>
+    `  '/${slug}': { title: '${escapeForJs(m.title)}', description: '${escapeForJs(m.description)}' },`
+  ).join('\n');
+
+  const seoMetaBlock =
 `const SEO_META = {
 ${categoryMetaEntries}
 ${seoMetaEntries}
 };`;
 
-let workerSrc = fs.readFileSync(workerPath, 'utf8');
-const START = '// SEO_META_START';
-const END = '// SEO_META_END';
-const startPos = workerSrc.indexOf(START);
-const endPos = workerSrc.indexOf(END);
-if (startPos === -1 || endPos === -1) throw new Error('SEO_META_START/END markers not found in _worker.js');
-workerSrc = workerSrc.slice(0, startPos) + START + '\n' + seoMetaBlock + '\n' + workerSrc.slice(endPos);
-fs.writeFileSync(workerPath, workerSrc, 'utf8');
-console.log('SEO_META entries written:', tracks.length + Object.keys(CATEGORY_META).length);
+  let workerSrc = fs.readFileSync(workerPath, 'utf8');
+  const START = '// SEO_META_START';
+  const END = '// SEO_META_END';
+  const startPos = workerSrc.indexOf(START);
+  const endPos = workerSrc.indexOf(END);
+  if (startPos === -1 || endPos === -1) throw new Error('SEO_META_START/END markers not found in _worker.js');
+  workerSrc = workerSrc.slice(0, startPos) + START + '\n' + seoMetaBlock + '\n' + workerSrc.slice(endPos);
+  fs.writeFileSync(workerPath, workerSrc, 'utf8');
+  console.log('SEO_META entries written:', tracks.length + Object.keys(CATEGORY_META).length);
 
-// ---- Write sitemap.xml ----
-// Category pages with zero active tracks (e.g. mlo today) are excluded -- a near-empty page isn't
-// worth inviting crawlers to, and would just read as thin content.
-const urls = [SITE_ORIGIN + '/']
-  .concat(Object.keys(CATEGORY_META).filter((slug) => kindSlugsWithActiveTracks.has(slug)).map((slug) => SITE_ORIGIN + '/' + slug))
-  .concat(tracks.map((t) => SITE_ORIGIN + t.route));
-const sitemapXml =
+  // ---- Write sitemap.xml ----
+  // Category pages with zero active tracks (e.g. mlo today) are excluded -- a near-empty page isn't
+  // worth inviting crawlers to, and would just read as thin content.
+  const urls = [SITE_ORIGIN + '/']
+    .concat(Object.keys(CATEGORY_META).filter((slug) => kindSlugsWithActiveTracks.has(slug)).map((slug) => SITE_ORIGIN + '/' + slug))
+    .concat(tracks.map((t) => SITE_ORIGIN + t.route));
+  const sitemapXml =
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => '  <url><loc>' + escapeXml(u) + '</loc></url>').join('\n')}
 </urlset>
 `;
-fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
-console.log('sitemap.xml URLs written:', urls.length);
+  fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
+  console.log('sitemap.xml URLs written:', urls.length);
+})();
