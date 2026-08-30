@@ -9771,6 +9771,30 @@ var ADDITIONAL_INFO_LINKS = {
     { title: "Connecticut Boater's Guide (DEEP)", url: 'https://portal.ct.gov/DEEP/Boating/Connecticut-Boaters-Guide',
       desc: "DEEP's official guide portal, covering required equipment by federal length class, the engine cut-off switch law, and Thames River security zones." },
   ],
+  oh_boating: [
+    { title: 'Ohio Boat Operators Guide', url: 'https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/watercraft/OhioBoatOperatorsGuide.pdf',
+      desc: 'The official guide published by ODNR\'s Division of Parks & Watercraft, covering navigation rules, required equipment and Ohio operating laws.' },
+    { title: 'Mandatory Boater Education Law (ODNR)', url: 'https://ohiodnr.gov/rules-and-regulations/rules-and-regulations-by-division/state-parks-and-watercraft/boating-rules/mandatory-boater-education',
+      desc: "ODNR's official page on the mandatory boater education law -- confirms the January 1, 1982 birth-date threshold, the 10hp trigger, and the lifetime validity of the Boater Education Card." },
+  ],
+  nc_boating: [
+    { title: 'North Carolina Wildlife Resources Commission', url: 'https://www.ncwildlife.org',
+      desc: 'The North Carolina Wildlife Resources Commission\'s official site -- the authoritative source the Vessel Operator\'s Guide is based on.' },
+    { title: 'Laws & Safety (NC Wildlife)', url: 'https://www.ncwildlife.gov/boating/laws-safety',
+      desc: "NCWRC's official boating laws and safety page -- confirms the January 1, 1988 birth-date threshold, the 10hp trigger, and PWC-specific age rules under G.S. 75A-16.2." },
+  ],
+  va_boating: [
+    { title: "Virginia DWR Boater's Guide", url: 'https://dwr.virginia.gov/boating/boaters-guide/',
+      desc: 'The official guide published by the Virginia Department of Wildlife Resources -- the authoritative source this practice content is grounded in.' },
+    { title: 'Virginia Boating Safety Education Requirement (DWR)', url: 'https://dwr.virginia.gov/boating/education/boating-safety-education-requirement/',
+      desc: "DWR's official page on the education requirement -- confirms the 2007-enacted law, its phased 2009-2016 implementation, and the 10hp/PWC scope." },
+  ],
+  mi_boating: [
+    { title: 'Michigan Department of Natural Resources', url: 'https://www.michigan.gov/dnr',
+      desc: 'The Michigan Department of Natural Resources\' official site -- the authoritative source Michigan Boating Laws and Responsibilities is based on.' },
+    { title: 'Boating Safety Certificate (Michigan DNR)', url: 'https://www.michigan.gov/dnr/things-to-do/boating/safety-certificate',
+      desc: "Michigan DNR's official certificate page -- confirms the July 1, 1996 birth-date threshold, the separate PWC age/certificate rule, and approved course providers (Boat-Ed, BoaterExam, USCG Auxiliary, America's Boating Club)." },
+  ],
 };
 
 function renderAdditionalInfo() {
