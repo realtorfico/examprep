@@ -9795,6 +9795,246 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Boating Safety Certificate (Michigan DNR)', url: 'https://www.michigan.gov/dnr/things-to-do/boating/safety-certificate',
       desc: "Michigan DNR's official certificate page -- confirms the July 1, 1996 birth-date threshold, the separate PWC age/certificate rule, and approved course providers (Boat-Ed, BoaterExam, USCG Auxiliary, America's Boating Club)." },
   ],
+  ca_driver: [
+    { title: 'Official California Driver Handbook', url: 'https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/',
+      desc: 'The official handbook published by the California DMV (DL 600) — the authoritative source the written knowledge test is based on.' },
+  ],
+  tx_driver: [
+    { title: 'Official Texas Driver Handbook', url: 'https://www.dps.texas.gov/internetforms/forms/dl-7.pdf',
+      desc: 'The official handbook published by the Texas Department of Public Safety (DL-7) — the authoritative source the written knowledge test is based on.' },
+  ],
+  fl_driver: [
+    { title: 'Official Florida Driver License Handbook', url: 'https://www.flhsmv.gov/pdf/handbooks/englishdriverhandbook.pdf',
+      desc: 'The official handbook published by the Florida Department of Highway Safety and Motor Vehicles — the authoritative source the Class E Knowledge Exam is based on.' },
+  ],
+  ny_driver: [
+    { title: "Official New York State Driver's Manual", url: 'https://dmv.ny.gov/brochure/mv21.pdf',
+      desc: 'The official manual published by the New York DMV (MV-21) — the authoritative source the written knowledge test is based on.' },
+  ],
+  il_driver: [
+    { title: 'Illinois Rules of the Road', url: 'https://www.ilsos.gov/content/dam/publications/pdf_publications/dsd_a112.pdf',
+      desc: 'The official manual published by the Illinois Secretary of State — the authoritative source the written knowledge test is based on.' },
+  ],
+  pa_driver: [
+    { title: "Pennsylvania Driver's Manual", url: 'https://www.pa.gov/content/dam/copapwp-pagov/en/penndot/documents/public/dvspubsforms/bdl/bdl-manuals/pa-drivers-manual-non-commercial/english/pub%2095.pdf',
+      desc: 'The official manual published by PennDOT (PUB 95) — the authoritative source the written knowledge test is based on.' },
+  ],
+  oh_driver: [
+    { title: 'Ohio Digest of Motor Vehicle Laws (Driver Manual)', url: 'https://publicsafety.ohio.gov/links/hsy7607.pdf',
+      desc: 'The official manual published by the Ohio Department of Public Safety (HSY 7607) — the authoritative source the BMV written knowledge test is based on.' },
+  ],
+  ga_driver: [
+    { title: "Georgia Driver's Manual", url: 'https://dds.georgia.gov/dds-forms-and-manuals/manuals',
+      desc: 'The official manual published by the Georgia Department of Driver Services — the authoritative source the written knowledge test is based on.' },
+  ],
+  nc_driver: [
+    { title: 'North Carolina DMV', url: 'https://www.ncdot.gov/dmv/Pages/default.aspx',
+      desc: "The North Carolina Division of Motor Vehicles' official site — the authoritative source the driver's handbook and written knowledge test are based on." },
+  ],
+  va_driver: [
+    { title: "Virginia Driver's Manual", url: 'https://www.dmv.virginia.gov/sites/default/files/documents/dmv39b.pdf',
+      desc: 'The official manual published by the Virginia DMV — the authoritative source the written knowledge test is based on.' },
+  ],
+  mi_driver: [
+    { title: 'Michigan Department of State', url: 'https://www.michigan.gov/sos',
+      desc: "The Michigan Department of State's official site — the authoritative source the Driver's Manual and knowledge test are based on." },
+  ],
+  wa_driver: [
+    { title: 'Washington Driver Guide', url: 'https://dol.wa.gov/driver-licenses-and-permits/driver-training-and-testing/driver-guides',
+      desc: 'The official manual published by the Washington State Department of Licensing — the authoritative source the written knowledge test is based on.' },
+  ],
+  al_driver: [
+    { title: 'Alabama Driver Manual (ALEA)', url: 'https://www.alea.gov/sites/default/files/ALEA%20DL%20Manual.pdf',
+      desc: 'The official manual published by the Alabama Law Enforcement Agency (ALEA) Driver License Division -- the authoritative source this practice content is grounded in.' },
+  ],
+  ak_driver: [
+    { title: 'Alaska Driver Manual (DMV)', url: 'https://dmv.alaska.gov/media/t5ef5vi2/dlman.pdf',
+      desc: 'The official manual published by the Alaska Department of Administration, Division of Motor Vehicles -- the authoritative source the written knowledge test is based on.' },
+    { title: 'Alaska DMV Sample Knowledge Test Page', url: 'https://online.dmv.alaska.gov/practiceknowledgetest/',
+      desc: "The Alaska DMV's own page confirming the General Knowledge Test's exact mechanics: 20 questions, 16 correct to pass (80%), and a 25-minute time limit." },
+  ],
+  az_driver: [
+    { title: 'Arizona Driver License Manual and Customer Service Guide', url: 'https://apps.azdot.gov/files/mvd/mvd-forms-lib/99-0117.pdf',
+      desc: 'The official manual published by the Arizona Department of Transportation Motor Vehicle Division — the authoritative source the written knowledge test is based on.' },
+  ],
+  ar_driver: [
+    { title: 'Arkansas Driver License Study Guide', url: 'https://media.ark.org/dps/Arkansas-DL-Manual-English-1.pdf',
+      desc: 'The official study guide published by the Arkansas State Police / Department of Finance and Administration — the authoritative source the written knowledge test is based on.' },
+    { title: 'Arkansas DPS — Driver Examination', url: 'https://dps.arkansas.gov/driver-services/driver-examination/',
+      desc: "The Arkansas Department of Public Safety's official driver-examination page — the authoritative source for scheduling the real knowledge test and locating an examination office." },
+  ],
+  co_driver: [
+    { title: 'Colorado Driver Handbook (DR 2337)', url: 'https://dmv.colorado.gov/sites/dmv/files/documents/DR_2337_Jan2025.pdf',
+      desc: 'The official Driver Handbook published by the Colorado Division of Motor Vehicles — the authoritative source the Driving Knowledge Test is based on.' },
+    { title: 'Colorado DMV — Driving Knowledge Tests (@Home Online Testing)', url: 'https://dmv.colorado.gov/home-driving-knowledge-tests',
+      desc: "The Colorado DMV's official FAQ page confirming the 60-minute time limit for the Driving Knowledge Test and explaining @Home online testing options." },
+  ],
+  ct_driver: [
+    { title: "Connecticut Driver's Manual", url: 'https://portal.ct.gov/dmv/-/media/dmv/dmv-pdfs/drivers-manual-english.pdf',
+      desc: 'The official manual published by the Connecticut Department of Motor Vehicles (DMV) -- the authoritative source the written knowledge test is based on.' },
+  ],
+  de_driver: [
+    { title: 'Delaware Driver Manual', url: 'https://dmv.de.gov/forms/driver_serv_forms/pdfs/dr_frm_manual.pdf',
+      desc: 'The official manual published by the Delaware Division of Motor Vehicles — the authoritative source the written knowledge test is based on.' },
+  ],
+  hi_driver: [
+    { title: "Hawaii Driver's Manual (2023 Edition)", url: 'https://hidot.hawaii.gov/highways/files/2024/11/2023-Hawaii-Drivers-Manual_5.375x8.375_Final-r3-Digital-071924web.pdf',
+      desc: 'The official statewide manual published by the Hawaii Department of Transportation, Highways Division -- shared by all four County Driver Licensing offices and the authoritative source the written knowledge test is based on.' },
+  ],
+  id_driver: [
+    { title: "Idaho Driver's Handbook", url: 'https://itd.idaho.gov/wp-content/uploads/2026/04/driver_manual.pdf',
+      desc: "The official Driver's Handbook published by the Idaho Transportation Department (ITD) — the authoritative source the Class D knowledge test is based on." },
+  ],
+  in_driver: [
+    { title: "Indiana Driver's Manual", url: 'https://www.in.gov/bmv/licenses-permits-ids/files/drivers-manual.pdf',
+      desc: 'The official manual published by the Indiana Bureau of Motor Vehicles — the authoritative source the written knowledge exam is based on.' },
+  ],
+  ia_driver: [
+    { title: "Iowa Driver's License Manual", url: 'https://iowadot.gov/media/7308/download',
+      desc: 'The official manual published by the Iowa Department of Transportation — the authoritative source the written knowledge test is based on.' },
+  ],
+  ks_driver: [
+    { title: "Kansas Driving Handbook (Non-Commercial Driver's Manual)", url: 'https://www.ksrevenue.gov/pdf/dlhb.pdf',
+      desc: 'The official handbook published by the Kansas Department of Revenue, Division of Vehicles — the authoritative source the 25-question knowledge test is based on.' },
+  ],
+  ky_driver: [
+    { title: 'Kentucky Driver Manual', url: 'https://wp.kentuckystatepolice.ky.gov/wp-content/uploads/2023/11/Kentucky-Driver-Manual-10-11-2023.pdf',
+      desc: "The official driver's manual published by the Kentucky State Police (rev. 10-11-2023) -- the authoritative source the written knowledge test is based on, including its confirmed 80% passing-score requirement." },
+    { title: 'Kentucky State Police -- Driver Testing', url: 'https://kentuckystatepolice.ky.gov/driver-testing/',
+      desc: "KSP's official Driver Testing page and Testing FAQs -- checked directly and confirms no published total item count or time limit for the written knowledge test." },
+  ],
+  la_driver: [
+    { title: "Louisiana Class D & E Driver's Guide", url: 'https://public.powerdms.com/LADPSC/documents/347039',
+      desc: "The official driver's guide published by the Louisiana Office of Motor Vehicles (DPSMV2052) -- the authoritative source the written knowledge test is based on." },
+    { title: "Louisiana OMV -- Personal Driver's Licenses & Permits", url: 'https://expresslane.la.gov/omv/drivers/personal-driver-s-licenses/permits/',
+      desc: "The Louisiana OMV's official Learner's Permit page, confirming the 40-question, 80%-passing knowledge test format used on this track." },
+  ],
+  me_driver: [
+    { title: "Maine Driver's License Manual", url: 'https://www.maine.gov/sos/sites/maine.gov.sos/files/inline-files/Maine%20Driver%20License%20Manual_1.pdf',
+      desc: 'The official manual published by the Maine Secretary of State / Bureau of Motor Vehicles — the authoritative source the written knowledge test is based on.' },
+  ],
+  md_driver: [
+    { title: "Maryland MVA Driver's Manual (DL-002)", url: 'https://mva.maryland.gov/media/148',
+      desc: 'The official manual published by the Maryland Motor Vehicle Administration (MVA) — the authoritative source the written knowledge test is based on.' },
+  ],
+  ma_driver: [
+    { title: "Massachusetts RMV Driver's Manual", url: 'https://www.mass.gov/doc/drivers-manual/download',
+      desc: "The official manual published by the Massachusetts Registry of Motor Vehicles (RMV) — the authoritative source the learner's permit exam is based on." },
+  ],
+  mn_driver: [
+    { title: "Minnesota Driver's Manual (Class D)", url: 'https://assets.dps.mn.gov/files/dvs/dvs-class-d-drivers-manual-english.pdf',
+      desc: "The official Class D Driver's Manual published by the Minnesota Department of Public Safety, Driver and Vehicle Services (DVS) division — the authoritative source the written knowledge test and this practice bank are based on." },
+  ],
+  ms_driver: [
+    { title: "Mississippi Driver's License Manual (Driver Service Bureau)", url: "https://driverservicebureau.dps.ms.gov/sites/default/files/2025-02/1.15.2025%20Revised%20MDPS%20Driver's%20Manual.pdf",
+      desc: "The official manual published by the Mississippi Department of Public Safety's Driver Service Bureau -- the authoritative source the Computerized Exam is based on." },
+  ],
+  mo_driver: [
+    { title: 'Missouri Driver Guide', url: 'https://dor.mo.gov/forms/Driver%20Guide.pdf',
+      desc: 'The official guide published by the Missouri Department of Revenue (DOR), Driver License Bureau (revised August 2025) -- the authoritative source the written knowledge test is based on, including its confirmed 25-question, 20-correct (80%) passing requirement and the Chapter 15 (Commercial Vehicles) exclusion from the Class F test.' },
+    { title: 'Missouri Department of Revenue — Driver License', url: 'https://dor.mo.gov/driver-license/',
+      desc: "The Missouri DOR's official driver license division page, linking to the current Driver Guide and licensing/GDL information." },
+  ],
+  mt_driver: [
+    { title: 'Montana Driver Manual (Form 25-0100M)', url: 'https://mvdmt.gov/wp-content/uploads/2026/05/25-0100M-Montana-Driver-Manual-English-05.26.pdf',
+      desc: 'The official manual published by the Montana Department of Justice, Motor Vehicle Division (MVD) -- the authoritative source the written knowledge test is based on.' },
+    { title: 'Montana MVD — New Driver License', url: 'https://mvdmt.gov/new-driver-license/',
+      desc: "The Montana MVD's official new-driver-license page (mvdmt.gov, the state's current MVD domain following its move from dojmt.gov) -- the authoritative source for licensing procedures, required documents, and testing information." },
+  ],
+  ne_driver: [
+    { title: "Nebraska Class O Driver's Manual (Nebraska DMV)", url: 'https://dmv.nebraska.gov/sites/default/files/doc/Class%20O%20Drivers%20Manual-English%201-2025.pdf',
+      desc: 'The official manual published by the Nebraska Department of Motor Vehicles — the authoritative source the written knowledge test is based on.' },
+  ],
+  nv_driver: [
+    { title: "Nevada Driver's Handbook (DMV 700)", url: 'https://dmv.nv.gov/pdfforms/dlbook.pdf',
+      desc: 'The official handbook published by the Nevada DMV -- the authoritative source the written knowledge test is based on.' },
+    { title: 'Nevada DMV -- Knowledge (Written) Test', url: 'https://dmv.nv.gov/dltesting.htm',
+      desc: "The Nevada DMV's official Testing page -- confirms the 25-question format, the 80% passing score, and the early-stop rule (test ends at 20 correct or 6 incorrect answers, whichever comes first)." },
+  ],
+  nh_driver: [
+    { title: 'New Hampshire DMV -- Driver Licensing', url: 'https://www.dmv.nh.gov',
+      desc: "The New Hampshire Division of Motor Vehicles' official site -- the authoritative source the Automated Knowledge Test is based on. Note: the DMV retired its own state-authored Driver Manual from dmv.nh.gov circa 2023-2024 and now links out to a third-party provider instead." },
+    { title: 'New Hampshire Driver Manual (DSMV 360, Rev. 07/19) -- Wayback Machine Archive', url: 'https://web.archive.org/web/*/https://www.nh.gov/safety/divisions/dmv/forms/documents/nhdm.pdf',
+      desc: 'The last full edition of the state-authored Driver Manual New Hampshire DMV published on its own domain, preserved via the Internet Archive Wayback Machine after dmv.nh.gov retired the document and its canonical URL began redirecting to the DMV homepage -- the authoritative source this practice content is grounded in.' },
+  ],
+  nj_driver: [
+    { title: 'New Jersey MVC Driver Manual (2025 edition)', url: 'https://www.nj.gov/mvc/pdf/license/drivermanual.pdf',
+      desc: 'The official manual published by the New Jersey Motor Vehicle Commission -- the authoritative source the written knowledge test, including its 50-question, 80%-to-pass format, is based on.' },
+    { title: 'New Jersey MVC Manuals', url: 'https://www.nj.gov/mvc/about/manuals.htm',
+      desc: "The MVC's official manuals page -- links directly to the current Driver Manual and other official study materials." },
+  ],
+  nm_driver: [
+    { title: 'New Mexico Driver Manual (MVD)', url: 'https://realfile.tax.newmexico.gov/English%20Drivers%20Manualver11.19.19.pdf',
+      desc: 'The official manual published by the New Mexico Motor Vehicle Division (MVD) -- the authoritative source the written knowledge test is based on.' },
+    { title: 'MVD Chapter 11 -- Road and Written Test Requirements', url: 'https://mvd.newmexico.gov/chapter-11-road-and-written-test-requirements/',
+      desc: "The MVD's own Driver Procedures Manual chapter confirming the written test's 70% passing-score requirement for Class D and M licenses." },
+  ],
+  nd_driver: [
+    { title: 'North Dakota Noncommercial Driver License Manual (Class D)', url: 'https://www.dot.nd.gov/sites/www/files/documents/Drivers%20-%20documents/noncommercial-manual.pdf',
+      desc: 'The official 2025-2027 manual published by the North Dakota Department of Transportation -- the authoritative source the written knowledge test is based on.' },
+    { title: 'North Dakota DOT -- Driver License Division', url: 'https://www.dot.nd.gov/driver/noncommercial-driver-license-manual',
+      desc: "NDDOT's official landing page for the Noncommercial Driver License Manual, and the source that links to nd.knowtodrive.com for online knowledge testing." },
+  ],
+  ok_driver: [
+    { title: 'Oklahoma Driver Manual', url: 'https://oklahoma.gov/content/dam/service-oklahoma/Documents/OklahomaDriverManual.pdf',
+      desc: 'The official manual published by Service Oklahoma -- the authoritative source the written knowledge test is based on.' },
+    { title: 'Service Oklahoma -- Written Test', url: 'https://oklahoma.gov/service/popular-services/written-test.html',
+      desc: "Service Oklahoma's official written-test FAQ page -- confirms the 20-question format, 15-correct (75%) passing score, 60-minute online time limit, and in-person retest policy." },
+  ],
+  or_driver: [
+    { title: 'Oregon DMV Online Driver Manual', url: 'https://www.oregon.gov/odot/DMV/Pages/Online_Manual/Table_of_Contents.aspx',
+      desc: 'The official multi-page online driver manual published by Oregon DMV (Sections 1-7, Testing, and Other Important Information) -- the authoritative source the Class C Knowledge Test is based on.' },
+  ],
+  ri_driver: [
+    { title: "Rhode Island Driver's Manual", url: 'https://dmv.ri.gov/media/966/download',
+      desc: 'The official manual published by the Rhode Island DMV (April 2024 edition) -- the authoritative source the computerized knowledge exam is based on, confirming the 40-question, 90-minute exam format.' },
+    { title: 'Rhode Island DMV -- Operator Manuals', url: 'https://dmv.ri.gov/licenses-permits-ids/permits-tests/operator-manuals',
+      desc: "The Rhode Island DMV's official Operator Manuals landing page, which hosts the direct PDF link this practice content is grounded in." },
+  ],
+  sc_driver: [
+    { title: "South Carolina Driver's License Manual (SCDMV)", url: "https://scdmvonline.com/sites/scdmv/files/2026-04/Driver's%20Manual.pdf",
+      desc: 'The official manual published by the South Carolina Department of Motor Vehicles (SCDMV) -- the authoritative source this practice content is grounded in.' },
+  ],
+  sd_driver: [
+    { title: "South Dakota Driver's Manual (SD Dept. of Public Safety, rev. 12/2023, via Wayback Machine)", url: 'https://web.archive.org/web/20250317000000/https://dps.sd.gov/application/files/9717/0863/8492/sd-driver-manual-rev-12-2023.pdf',
+      desc: "The official South Dakota driver's manual, archived via the Wayback Machine after dps.sd.gov migrated its driver-licensing pages to a new JavaScript-only portal that no longer hosts a directly linkable copy of the PDF -- the authoritative source this practice bank is based on." },
+    { title: 'South Dakota Department of Public Safety', url: 'https://www.sd.gov/dps',
+      desc: "SD DPS's current driver-licensing portal (dps.sd.gov now redirects here). As of this writing it is a JavaScript-rendered ServiceNow portal that does not host a directly linkable copy of the driver's manual, which is why the archived manual above is used as this bank's primary source." },
+  ],
+  tn_driver: [
+    { title: 'Tennessee Comprehensive Driver License Manual', url: 'https://www.tn.gov/content/dam/tn/safety/documents/DL_Manual.pdf',
+      desc: 'The official manual published by the Tennessee Department of Safety and Homeland Security -- the authoritative source the written knowledge test is based on, including the legally mandated 25/25/25/25 four-area test structure.' },
+    { title: 'Tennessee DOSHS -- Class D New Drivers', url: 'https://www.tn.gov/safety/driver-services/classd/new-drivers.html',
+      desc: "The Tennessee Department of Safety and Homeland Security's official new-drivers page -- covers licensing steps, required documents, and testing information for Class D applicants." },
+  ],
+  ut_driver: [
+    { title: 'Utah Driver Handbook', url: 'https://dld.utah.gov/wp-content/uploads/Driver-Handbook-REV-3.2026.pdf',
+      desc: 'The official manual published by the Utah Driver License Division (DLD) -- the authoritative source the written knowledge test is based on.' },
+    { title: 'Utah DLD — Written Knowledge Test', url: 'https://dld.utah.gov/written-knowledge-test/',
+      desc: "The Utah Driver License Division's official written-knowledge-test page -- the authoritative source for the real test's two-tier item count (50 closed-book new / 25 open-book renewal), passing score, and format." },
+  ],
+  vt_driver: [
+    { title: "Vermont Driver's Manual (VN-007)", url: 'https://dmv.vermont.gov/sites/dmv/files/documents/VN-007-Drivers_Manual.pdf',
+      desc: 'The official manual published by the Vermont Agency of Transportation, Department of Motor Vehicles -- the authoritative source the online knowledge test is based on.' },
+    { title: 'Vermont DMV -- Driver Education', url: 'https://dmv.vermont.gov/driver-education',
+      desc: "The Vermont DMV's official driver-education landing page, linking to the current Driver's Manual and the online mydmv.vermont.gov knowledge test." },
+  ],
+  wv_driver: [
+    { title: "West Virginia Driver's Licensing Handbook (Rev. 07/2022)", url: 'https://webapps.transportation.wv.gov/TWS/WVDOTDocumentStorageMigration/PDF/Transportation/DMV/DMVFormSearch/Drivers_Licensing_Handbook_web.pdf',
+      desc: "The official handbook published by the West Virginia Division of Motor Vehicles -- the authoritative source this practice exam's questions are grounded in, including the confirmed 25-question, 19-correct (76%) knowledge-exam format on p.24." },
+    { title: 'West Virginia Division of Motor Vehicles (DMV)', url: 'https://dmv.wv.gov',
+      desc: "The West Virginia DMV's official site, including the Driver's Licensing Handbooks page and knowledge-test scheduling information." },
+  ],
+  wi_driver: [
+    { title: "Wisconsin Motorists' Handbook", url: 'https://wisconsindot.gov/Documents/dmv/shared/bds126-motorists-handbook.pdf',
+      desc: 'The official manual published by the Wisconsin Department of Transportation (WisDOT) / Division of Motor Vehicles (DMV) -- the authoritative source the Knowledge Test and Highway Signs Test are based on.' },
+  ],
+  wy_driver: [
+    { title: 'Wyoming Rules of the Road Driver License Manual (2021 Edition)', url: 'https://www.dot.state.wy.us/files/live/sites/wydot/files/shared/Driver_Services/Help%20Documents%20and%20Manuals/2021_DriverManual_web_ClassC_w%20cover.pdf',
+      desc: 'The official Class C driver license manual published by the Wyoming Department of Transportation (WYDOT), Driver Services Program -- the authoritative source this practice content is grounded in.' },
+    { title: 'WYDOT -- Driver License Testing Requirements', url: 'https://www.dot.state.wy.us/home/driver_license_records/driver-license/testing.html',
+      desc: "WYDOT's official Testing Requirements page -- confirms the written knowledge test covers traffic-control devices, safe driving practices and traffic laws, but does not publish an item count, passing score, or time limit." },
+  ],
 };
 
 function renderAdditionalInfo() {
