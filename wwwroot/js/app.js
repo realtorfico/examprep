@@ -1939,6 +1939,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Broker Supervision, Office Management & Escrow/Trust Funds', '21%'], ['License Law, Discipline, CE & General Business Law', '17%'], ['Finance, Valuation & Real Estate Math', '16%'], ['Property Management, Construction/Zoning & Taxes', '13%'], ['Agency Law, Disclosure & Fair Housing', '12%'], ['Commission/Compensation & Contracts', '12%'], ['Closing, Property Condition Disclosure Act & Environmental', '9%']],
   },
   {
+    examType: 'pa_re_broker',
+    title: 'Pennsylvania Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/pa',
+    duration: '3 Hours 30 Minutes (2 Portions: National 150 Min + State 60 Min)', questions: '120 Multiple Choice (80 National + 40 Pennsylvania State-Specific)', passScore: '75% on Each Portion (60/80 National, 30/40 State)',
+    description: 'Practice questions covering Pennsylvania\'s Real Estate Licensing and Registration Act (RELRA, 63 P.S. Sections 455.101-455.902) and 49 Pa. Code Chapter 35 (State Real Estate Commission regulations) at broker level: broker licensure requirements and application, broker office management and branch offices/recordkeeping, broker supervision of salespersons and associate brokers, escrow and trust fund management (RELRA Section 608.5), commission and broker-salesperson compensation relationships, license law and Real Estate Commission discipline/Recovery Fund, plus the agency law, fair housing, contracts, finance, valuation, and disclosure content the salesperson exam covers at a deeper broker level. The exam is administered by Pearson VUE on behalf of the PA Real Estate Commission (Pearson VUE has been the vendor since April 1, 2023, succeeding PSI Exams), confirmed directly from Pearson VUE\'s official candidate handbook: 80 scored national items (150 minutes, 75% passing) and 40 scored Pennsylvania-specific items (60 minutes, 75% passing), each portion graded independently. Broker licensure requires 3+ years as a licensed salesperson and 240 hours (16 credits) of Commission-approved education, confirmed via RELRA Section 511 and 49 Pa. Code Section 35.271.',
+    breakdown: [['Agency Law, Fair Housing & Contracts', '18%'], ['Commission, Compensation, License Law & Business Ethics', '16%'], ['Finance, Valuation & Real Estate Math', '16%'], ['Property Management, Land Use & Taxes', '14%'], ['Broker Licensure, Office Management & Recordkeeping', '13%'], ['Broker Supervision & Escrow/Trust Fund Management', '12%'], ['Closing, Seller Disclosure & Environmental Issues', '11%']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -3119,8 +3126,9 @@ var TRACK_COMPLIANCE = {
   },
   pa_re_salesperson: {
     orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
-    footerRequirement: "do not fulfill the 240-hour pre-license education requirement or any Pennsylvania real estate salesperson training requirement",
-    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 240-hour (16-credit) ' +
+    footerRequirement: "do not fulfill the 75-hour pre-license education requirement or any Pennsylvania real estate salesperson training requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the 75-hour ' +
+      '(30-hour Fundamentals of Real Estate Practice + 45-hour Real Estate Fundamentals) ' +
       'real estate pre-license education requirement, and does not issue any official course-completion certificate — our content is ' +
       'a supplementary study aid only, and covers only the state-specific portion of the exam, not the separate national/general ' +
       'portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official ' +
@@ -3128,7 +3136,7 @@ var TRACK_COMPLIANCE = {
       'through a Commission-approved provider. While we strive to align our content with 49 Pa. Code Chapter 35 (State Real Estate ' +
       'Commission regulations), it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam ' +
       'outcome.</p>',
-    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 240-hour pre-license education.',
+    examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Commission exam or the required 75-hour pre-license education.',
     passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
   },
   ca_re_salesperson: {
@@ -4104,6 +4112,24 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the prerequisites for a New York real estate broker license -- 2 years of experience as a licensed salesperson, or 3 years of general qualifying real estate experience (or a combination, evaluated on DOS's own experience-point scale), plus 152 hours of DOS-approved education -- and does not issue any official course-completion certificate. Our content is grounded in New York Real Property Law Article 12-A at broker level and 19 NYCRR Part 175 (Department of State real estate rules covering escrow, net-listing bans, branch offices, broker supervision, recordkeeping, and advertising). Confirmed directly from dos.ny.gov: unlike most states, New York DOS administers the broker exam directly (no PSI/Pearson VUE or similar vendor), with a confirmed 150-minute time limit, a $15 exam fee, and a $185 initial license fee; a passing result is valid for 2 years. DOS reports the real exam as pass/fail only and does not publish an exact item count or passing percentage; the 100-question/70% format used here is a commonly-cited study convention, not an official DOS figure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is scheduled through DOS's eAccessNY system, and broker education must be completed through a DOS-approved provider. While we strive to align our content with the current Real Property Law and DOS regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real New York DOS broker exam or the required experience/education prerequisites.",
     passScoreNote: "a practice-study convention only — New York DOS reports the real broker exam as pass/fail, with no published item count or numeric passing percentage",
+  },
+  pa_re_broker: {
+    orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
+    footerRequirement: "do not fulfill the 3-years'-experience-as-a-licensed-salesperson prerequisite or the 240-hour (16-credit) broker pre-license education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Pennsylvania real estate broker ' +
+      'prerequisites — at least 3 years of licensed-salesperson experience (or Commission-deemed equivalent) plus 240 hours (16 credits) of ' +
+      'Commission-approved broker education (a mandatory 2-credit real estate law course, a mandatory 2-credit office management course, at ' +
+      'least 6 of the remaining 12 credits from enumerated subjects, and 6 free elective real estate credits) — and does not issue any ' +
+      'official course-completion certificate. Our content is grounded in RELRA (63 P.S. Sections 455.101-455.902) and 49 Pa. Code Chapter 35 ' +
+      '(State Real Estate Commission regulations), including the broker-specific escrow/trust-fund provision at RELRA Section 608.5. Pearson ' +
+      'VUE administers the broker exam on behalf of the Real Estate Commission (Pearson VUE has been the vendor since April 1, 2023, ' +
+      'succeeding PSI Exams) as two separately-scored portions — 80 national items (150 minutes) and 40 Pennsylvania-specific items (60 ' +
+      'minutes) — each requiring 75% to pass independently. Completing practice exams here also does not register you for, or schedule, ' +
+      'the official licensing exam; official testing is scheduled through Pearson VUE, and broker education must be completed through a ' +
+      'Commission-approved provider. While we strive to align our content with current RELRA and Commission regulations, it is provided ' +
+      '"as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real Pearson VUE-administered Real Estate Commission broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold required by the real exam — 75% on each of the two portions (60/80 national, 30/40 state-specific)',
   },
   al_notary: {
     orgLine: "the Probate Judge in the notary's Alabama county of residence, in coordination with the Alabama Probate Judges Association and Alabama Law Institute training program",
@@ -6328,6 +6354,17 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Pearson VUE Candidate Handbook', type: 'pdf', url: 'https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/093900.pdf',
       desc: 'The official exam scheduling and content-outline reference from Pearson VUE, the Real Estate Commission\'s contracted exam vendor.',
+      topic: 'General Reference', free: true },
+  ],
+  pa_re_broker: [
+    { title: 'RELRA — Real Estate Licensing and Registration Act (63 P.S. Sections 455.101-455.902)', type: 'pdf', url: 'https://www.legis.state.pa.us/cfdocs/legis/LI/uconsCheck.cfm?txtType=HTM&yr=1980&sessInd=0&smthLwInd=0&act=9',
+      desc: 'The full official statutory text of Pennsylvania\'s real estate licensing law, published by the PA General Assembly — the statutory basis for broker licensure, escrow duties, and discipline.',
+      topic: 'General Reference', free: true },
+    { title: '49 Pa. Code Chapter 35 (State Real Estate Commission)', type: 'pdf', url: 'https://www.pacodeandbulletin.gov/secure/pacode/data/049/chapter35/049_0035.pdf',
+      desc: 'The official Real Estate Commission regulations published by the Pennsylvania Code and Bulletin, including broker education credit breakdowns and office-supervision standards.',
+      topic: 'General Reference', free: true },
+    { title: 'Pearson VUE Candidate Handbook', type: 'pdf', url: 'https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/093900.pdf',
+      desc: 'The official exam scheduling and content-outline reference from Pearson VUE, the Real Estate Commission\'s contracted broker exam vendor since April 2023.',
       topic: 'General Reference', free: true },
   ],
   ca_re_salesperson: [
@@ -9308,6 +9345,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Pennsylvania Department of State\'s official Real Estate Commission page covering salesperson licensure and exams.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/pa/realestate.html',
       desc: 'Pearson VUE\'s official Pennsylvania real estate licensure exam page, with the candidate handbook and exam scheduling.' },
+  ],
+  pa_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/real-estate-commission',
+      desc: 'The Pennsylvania Department of State\'s official Real Estate Commission page covering broker licensure requirements and exams.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/pa/realestate.html',
+      desc: 'Pearson VUE\'s official Pennsylvania real estate licensure exam page, with the broker candidate handbook and exam scheduling (Pearson VUE has administered PA real estate exams since April 2023).' },
   ],
   ri_re_salesperson: [
     { title: 'Real Estate Licensing Site', url: 'https://dbr.ri.gov/real-estate-and-commercial-licensing/real-estate',
