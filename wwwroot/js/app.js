@@ -1364,6 +1364,153 @@ var HUB_EXAMS = [
     breakdown: [['Required Safety Equipment', '23%'], ['Boating Basics & Navigation Rules', '22%'], ['Operating Laws, Alcohol, Accidents & Environmental Protection', '22%'], ['Registration, Titling & Legal Operator Requirements', '18%'], ['PWC-Specific Rules, Operation & Skiing', '15%']],
   },
   {
+    examType: 'ca_boating', shortName: 'California Boating', stateCode: 'CA', examKind: 'Boating',
+    title: 'California Boater Card Knowledge Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/ca',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering California\'s Boater Card education requirement (California State Parks Division of Boating and Waterways, DBW): boat types and classification, required safety equipment (PFDs, fire extinguishers, ventilation and signaling devices), navigation rules and right-of-way, aids to navigation, California Boater Card and registration requirements, operating rules and reckless-operation law, boating under the influence, personal watercraft rules, trailering and launching, on-water emergencies and cold-water safety, weather, water sports and towing, California\'s invasive-species and environmental rules, and accident reporting -- modeled on the common format used by DBW-approved boater safety course providers.',
+    breakdown: [['Required Safety Equipment (PFDs, Fire, Ventilation & Signaling)', '16%'], ['Navigation Rules, Right-of-Way & Aids to Navigation', '14%'], ['California Boater Card, Registration & Boat Types', '15%'], ['Operating Rules, BUI & PWC Rules', '19%'], ['Trailering, Water Sports & Towing', '12%'], ['Emergencies, Weather, Invasive Species & Accident Reporting', '24%']],
+  },
+  {
+    examType: 'tx_boating', shortName: 'Texas Boating', stateCode: 'TX', examKind: 'Boating',
+    title: 'Texas Boater Education Knowledge Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/tx',
+    duration: 'Untimed', questions: '75 Multiple Choice', passScore: '60/75 Correct (80%)',
+    description: 'Practice questions covering Texas\'s boater education requirement (Texas Parks & Wildlife Department, TPWD) and the Texas Boating Laws and Responsibilities handbook: boat types and classification, required safety equipment, navigation rules and right-of-way, aids to navigation, navigation lights and anchoring, operating rules, speed zones and boating while intoxicated (BWI), Texas-specific boating laws, trailering and launching, on-water emergencies, weather and water conditions, water sports and towing, invasive species (Clean, Drain, Dry), accident reporting and duty to assist, and general safe boating practices -- modeled on the common format used by TPWD-approved boater education course providers.',
+    breakdown: [['Boat Types & Required Safety Equipment', '25%'], ['Navigation Rules, Aids to Navigation & Lights/Anchoring', '21%'], ['Operating Rules, BWI & Texas-Specific Boating Laws', '16%'], ['On-Water Emergencies, Weather & Water Sports/Towing', '17%'], ['Trailering, Invasive Species & Accident Reporting/General Practices', '21%']],
+  },
+  {
+    examType: 'fl_boating', shortName: 'Florida Boating', stateCode: 'FL', examKind: 'Boating',
+    title: 'Florida Boating Safety Education Knowledge Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/fl',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering Florida\'s Boating Safety Education ID Card requirement (Florida Fish and Wildlife Conservation Commission, FWC) and the Florida Boater\'s Guide: boat types and classification, PFDs and life jackets, required safety equipment, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, the Florida Boating Safety ID Card and education mandate, registration and titling, personal watercraft rules, boating under the influence, manatee protection zones, trailering and launching, on-water emergencies, Florida-specific weather and storms, water sports and towing, and accident reporting and FWC officer authority -- modeled on the common format used by FWC-approved boater safety course providers.',
+    breakdown: [['Required Safety Equipment (PFDs & Equipment)', '13%'], ['Navigation Rules, Right-of-Way & Aids to Navigation', '13%'], ['Boat Types, Registration/Titling & FL Boating Safety ID Card/Education Mandate', '18%'], ['Operating Rules, PWC & BUI', '18%'], ['Manatee Protection Zones', '6%'], ['Trailering, Water Sports, Emergencies, Weather & Accident Reporting', '32%']],
+  },
+  {
+    examType: 'ny_boating', shortName: 'New York Boating', stateCode: 'NY', examKind: 'Boating',
+    title: "New York Boater Safety Certificate Exam (Brianna's Law)", category: 'Boating & Watercraft Safety', active: true, route: '/boating/ny',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering New York\'s Brianna\'s Law boater safety certificate requirement (New York State Office of Parks, Recreation and Historic Preservation, OPRHP) and the New York State Boater\'s Guide: boat types and classification, PFDs and life jackets, required safety equipment, navigation rules and right-of-way, aids to navigation, lights, sound signals and anchoring, operating rules and reckless operation, Brianna\'s Law and boater education requirements, registration, titling and hull identification numbers, personal watercraft rules, boating while intoxicated/ability-impaired (BWI/BWAI) and alcohol, trailering and launching, on-water emergencies and cold-water safety, weather, water sports and towing, invasive species and environmental rules, and accident reporting -- modeled on the common format used by OPRHP-approved boater safety course providers.',
+    breakdown: [['Required Safety Equipment (PFDs & Equipment)', '13%'], ['Navigation Rules, Aids to Navigation & Lights/Sound Signals/Anchoring', '19%'], ["Boat Types, Registration/Titling & Brianna's Law/Boater Education", '25%'], ['Personal Watercraft Rules & BWI/BWAI/Alcohol', '12%'], ['Trailering, Emergencies/Cold-Water Safety, Weather & Water Sports/Towing', '22%'], ['Invasive Species/Environment & Accident Reporting', '9%']],
+  },
+  {
+    examType: 'pa_boating', shortName: 'Pennsylvania Boating', stateCode: 'PA', examKind: 'Boating',
+    title: 'Pennsylvania Boating Safety Education Certificate Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/pa',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Pennsylvania Boating Safety Education Certificate requirement (Pennsylvania Fish and Boat Commission, PFBC) and the Pennsylvania Boating Handbook: boat types and classification, required equipment (PFDs, fire extinguishers and signaling devices), navigation rules and right-of-way, aids to navigation, operating rules, speed and boating under the influence, the PA Boating Safety Certificate and registration process, personal watercraft rules, trailering and launching, boating emergencies, weather and boating, water sports and towing, and accident reporting and legal duties -- modeled on the common format used by PFBC-approved boater safety course providers.',
+    breakdown: [['Required Safety Equipment (PFDs & Equipment)', '17%'], ['Navigation Rules, Right-of-Way & Aids to Navigation', '17%'], ['Boat Types & PA Boating Safety Certificate/Registration', '16%'], ['Operating Rules, BUI & PWC Rules', '16%'], ['Trailering, Weather, Water Sports & Boating Emergencies', '29%'], ['Accident Reporting & Legal Duties', '5%']],
+  },
+  {
+    examType: 'il_boating', shortName: 'Illinois Boating', stateCode: 'IL', examKind: 'Boating',
+    title: 'Illinois Boating Safety Certificate Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/il',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Handbook of Illinois Boating Laws and Responsibilities (Illinois Department of Natural Resources): vessel basics, required equipment and navigation lights, navigation rules and aids to navigation, operating rules and PWC-specific rules, the Boating Safety Certificate and registration/titling process, alcohol/BUI and accident-reporting enforcement, and trailering, weather, water sports and cold-water emergencies -- modeled on the common format used by IDNR-directed NASBLA-approved course providers.',
+    breakdown: [['Vessel Basics, PFDs & Required Equipment', '25%'], ['Navigation Rules & Aids to Navigation', '12%'], ['Operating Rules & PWC-Specific Rules', '12%'], ['Boating Safety Certificate & Registration', '12%'], ['Alcohol, BUI & Accident Enforcement', '11%'], ['Trailering, Weather & Water Sports', '16%'], ['Emergencies, Diving, Sewage & Environment', '12%']],
+  },
+  {
+    examType: 'ga_boating', shortName: 'Georgia Boating', stateCode: 'GA', examKind: 'Boating',
+    title: 'Georgia Boating Education Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/ga',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Handbook of Georgia Boating Laws and Responsibilities (Georgia Department of Natural Resources): vessel basics, required equipment and navigation lights, navigation rules and aids to navigation, operating rules and PWC-specific rules, boating education certification and age requirements, registration and titling, BUI and accident-reporting enforcement, and trailering, weather, water sports, cold-water emergencies and waste discharge -- for the DNR-directed NASBLA-approved boating education course final exam.',
+    breakdown: [['Vessel Basics, PFDs & Required Equipment', '24%'], ['Navigation Rules & Aids to Navigation', '13%'], ['Operating Rules & PWC-Specific Rules', '13%'], ['Boating Education Certificate & Registration', '12%'], ['BUI, Alcohol & Accident Enforcement', '10%'], ['Trailering, Weather & Water Sports', '16%'], ['Emergencies & Waste Discharge/Environment', '12%']],
+  },
+  {
+    examType: 'nj_boating', shortName: 'New Jersey Boating', stateCode: 'NJ', examKind: 'Boating',
+    title: 'New Jersey Boat Safety Certificate Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/nj',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the New Jersey Boat Safety Certificate program (NJ State Police Marine Services Bureau): vessel basics, required equipment and navigation lights, navigation rules and aids to navigation, operating rules and PWC-specific rules, the NJ Boat Safety Certificate and registration/titling process (handled by the NJ Motor Vehicle Commission), BUI and accident-reporting enforcement, and trailering, weather/coastal conditions, water sports and cold-water emergencies -- for the NASBLA-approved online course\'s final exam, one half of New Jersey\'s unique two-step certificate process.',
+    breakdown: [['Vessel Basics, PFDs & Required Equipment', '26%'], ['Navigation Rules & Aids to Navigation', '14%'], ['Operating Rules & PWC-Specific Rules', '11%'], ['NJ Boat Safety Certificate & Registration', '14%'], ['BUI & Accident Enforcement', '10%'], ['Trailering, Weather & Water Sports', '14%'], ['Emergencies & NJ Waters/Environment', '11%']],
+  },
+  {
+    examType: 'wa_boating', shortName: 'Washington Boating', stateCode: 'WA', examKind: 'Boating',
+    title: 'Washington Boater Education Card Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/wa',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Washington Boating Program handbook (Washington State Parks): vessel basics, required equipment and nighttime navigation, navigation rules and aids to navigation, operating rules, wake and PWC-specific rules, the Boater Education Card and age requirements, registration and titling, BUI and accident-reporting enforcement, and trailering, weather/coastal hazards, water sports, cold-water emergencies and aquatic invasive species -- for the State Parks-approved course\'s own final exam.',
+    breakdown: [['Vessel Basics, PFDs & Required Equipment', '24%'], ['Navigation Rules & Aids to Navigation', '12%'], ['Operating Rules & PWC-Specific Rules', '13%'], ['Boater Education Card & Registration', '12%'], ['BUI & Accident Enforcement', '9%'], ['Trailering, Weather/Coastal Bars & Water Sports', '16%'], ['Emergencies & Aquatic Invasive Species', '14%']],
+  },
+  {
+    examType: 'az_boating', shortName: 'Arizona Boating', stateCode: 'AZ', examKind: 'Boating',
+    title: 'Arizona Boating Safety Course Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/az',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering The Boater\'s Guide of Arizona (Arizona Game and Fish Department): vessel basics, required equipment and navigation lights, navigation rules and aids to navigation, operating rules and PWC-specific rules, Arizona boater education and registration, BUI and accident-reporting enforcement, interstate waters on Lake Mead, Lake Powell and the Colorado River, and trailering, weather, water sports and emergencies. Note: Arizona has no mandatory boater-education law -- see full disclosure on the track page.',
+    breakdown: [['Vessel Basics, PFDs & Required Equipment', '24%'], ['Navigation Rules & Aids to Navigation', '11%'], ['Operating Rules & PWC-Specific Rules', '12%'], ['Arizona Boater Education & Registration', '11%'], ['BUI, Alcohol & Accident Enforcement', '12%'], ['Interstate Waters (Lake Mead, Lake Powell & Colorado River)', '7%'], ['Trailering, Weather, Water Sports & Emergencies', '23%']],
+  },
+  {
+    examType: 'ma_boating', shortName: 'Massachusetts Boating', stateCode: 'MA', examKind: 'Boating',
+    title: 'Massachusetts Boater Safety Certificate Course Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/ma',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Massachusetts Environmental Police (MEP) boater education program: boat types and classification, PFDs and life jackets, required safety equipment, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, boating under the influence, the new Massachusetts Boater Education Law (Hanson-Milone Boater Safety Act) and its phased birth-date deadlines, registration and PWC rules, trailering and launching, cold-water emergencies, New England weather hazards, water sports/towing, and accident reporting -- modeled on the 80%-to-pass format independently confirmed by both MEP-approved course vendors.',
+    breakdown: [['Boat Types, PFDs & Required Equipment', '28%'], ['Navigation Rules, Lights & Aids to Navigation', '16%'], ['Operating Rules, Speed Zones & BUI/Alcohol', '12%'], ['MA Boater Education Law & Registration/PWC Rules', '16%'], ['Trailering, Emergencies & Cold Water', '12%'], ['Weather, Water Sports/Towing & Accident Reporting', '16%']],
+  },
+  {
+    examType: 'tn_boating', shortName: 'Tennessee Boating', stateCode: 'TN', examKind: 'Boating',
+    title: 'Tennessee Boating Safety Education Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/tn',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Tennessee Wildlife Resources Agency (TWRA) boating safety program: boat types and classification, PFDs and life jackets, required safety equipment, navigation lights and sound signals, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, alcohol and BUI, the TN Boater Education Mandate, registration and titling, personal watercraft (PWC) rules, paddlecraft and non-motorized vessels, trailering and launching, cold-water emergencies, weather, water sports/towing, TVA reservoirs and dam safety, and accident reporting/enforcement -- modeled on the 80%-to-pass format independently confirmed for TWRA-approved courses.',
+    breakdown: [['Boat Types, PFDs & Required Equipment', '19%'], ['Navigation Lights, Nav Rules & Aids to Navigation', '18%'], ['Operating Rules/Speed & Alcohol/BUI', '10%'], ['TN Boater Education Mandate & Registration/Titling', '12%'], ['PWC Rules & Paddlecraft/Non-Motorized Vessels', '10%'], ['Trailering, Emergencies & Weather', '15%'], ['Water Sports/Towing, TVA Reservoirs & Accident Reporting', '16%']],
+  },
+  {
+    examType: 'mo_boating', shortName: 'Missouri Boating', stateCode: 'MO', examKind: 'Boating',
+    title: 'Missouri Boating Safety Identification Card Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/mo',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Missouri State Highway Patrol (MSHP) Water Patrol Division boating safety program and Missouri Revised Statutes Chapters 306 and 577: boat types and classification, PFDs and life jackets, required safety equipment, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, boating while intoxicated (BUI), the Missouri Boater Education Law, registration/titling and PWC rules, trailering and launching, cold-water emergencies, weather and environmental hazards, water sports/towing, and accident reporting/Water Patrol authority.',
+    breakdown: [['Boat Types, PFDs & Required Equipment', '22%'], ['Navigation Rules, Aids to Navigation & Operating Rules/Speed', '24%'], ['BUI/Alcohol & MO Boater Education Law', '15%'], ['Registration/Titling/PWC Rules & Trailering', '13%'], ['Emergencies/Cold Water & Weather/Environmental Hazards', '13%'], ['Water Sports/Towing & Accident Reporting/Water Patrol Authority', '13%']],
+  },
+  {
+    examType: 'md_boating', shortName: 'Maryland Boating', stateCode: 'MD', examKind: 'Boating',
+    title: 'Maryland Boating Safety Certificate Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/md',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Maryland Department of Natural Resources (DNR) Natural Resources Police boating safety program: vessel types and classification, personal flotation devices, required safety equipment, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, boating under the influence, the Maryland Boater Education Law, registration/titling and PWC rules, trailering and launching, cold-water emergencies, Chesapeake Bay weather conditions, water sports/towing, Chesapeake Bay-specific boating, and accident reporting/enforcement.',
+    breakdown: [['Vessel Types, PFDs & Required Equipment', '24%'], ['Navigation Rules & Aids to Navigation', '16%'], ['Operating Rules/Speed & Boating Under the Influence', '13%'], ['MD Boater Education Law & Registration/Titling/PWC Rules', '15%'], ['Trailering, Emergencies & Chesapeake Bay Conditions', '17%'], ['Water Sports/Towing, Chesapeake Bay Boating & Accident Reporting', '15%']],
+  },
+  {
+    examType: 'sc_boating', shortName: 'South Carolina Boating', stateCode: 'SC', examKind: 'Boating',
+    title: 'South Carolina Boater Education Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/sc',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the South Carolina Department of Natural Resources (SCDNR) boating safety program and S.C. Code of Laws Title 50, Chapter 21: boat types and classification, PFDs and life jackets, required safety equipment, navigation rules and right-of-way, aids to navigation, operating rules and speed zones, reckless operation and BUI, the South Carolina Boater Education Law, registration and PWC rules, trailering and launching, cold-water emergencies, weather, water sports/towing, and accident reporting/SCDNR enforcement.',
+    breakdown: [['Boat Types, PFDs & Required Equipment', '21%'], ['Navigation Rules & Aids to Navigation', '14%'], ['Operating Rules/Speed & Reckless Operation/BUI', '15%'], ['SC Boater Education Law & Registration/PWC Rules', '14%'], ['Trailering & Emergencies/Cold Water', '14%'], ['Weather, Water Sports/Towing & Accident Reporting/SCDNR Enforcement', '22%']],
+  },
+  {
+    examType: 'mn_boating', shortName: 'Minnesota Boating', stateCode: 'MN', examKind: 'Boating',
+    title: 'Minnesota Boater Education Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/mn',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Minnesota DNR-approved boater education curriculum grounded in Minn. Stat. 86B (registration, titling, PWC rules, boating-while-impaired law), Sec. 86B.313 personal watercraft rules, Sophia\'s Law carbon monoxide detector requirements, and Minnesota\'s aquatic invasive species drain-plug law -- for the state\'s phased-in watercraft operator\'s permit mandate, which applies on a rolling birth-date schedule through 2028.',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '14%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '23%'], ['Operating Rules, Speed Zones & BUI/Alcohol', '14%'], ['Minnesota Boater Education Law, Registration & PWC Rules', '16%'], ['Trailering, Emergencies, Cold Water & Weather', '20%'], ['Water Sports, Towing & Accident Reporting', '13%']],
+  },
+  {
+    examType: 'wi_boating', shortName: 'Wisconsin Boating', stateCode: 'WI', examKind: 'Boating',
+    title: 'Wisconsin Boater Safety Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/wi',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering the Wisconsin DNR boater-safety curriculum required under Wis. Stat. ch. 30 for operators born on or after January 1, 1989: required equipment, PFD and life-jacket rules, navigation rules and aids to navigation, personal watercraft rules (minimum age 12, no supervision exception), accident reporting under Wis. Admin. Code NR 5, and Wisconsin\'s extensive inland-lake boating culture.',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '14%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '24%'], ['Operating Rules, Speed/No-Wake Zones & Alcohol/BUI', '13%'], ['Wisconsin Boater Education Law, Registration & PWC Rules', '17%'], ['Trailering, Emergencies, Cold Water & Weather', '19%'], ['Water Sports, Towing & Accident Reporting', '13%']],
+  },
+  {
+    examType: 'al_boating', shortName: 'Alabama Boating', stateCode: 'AL', examKind: 'Boating',
+    title: 'Alabama Boating Safety Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/al',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering Alabama\'s vessel "V" license requirements administered by ALEA Marine Patrol: PFD Performance Level and Type I-V labeling, personal watercraft rules (minimum age 14), a 0.08% BUI standard with implied-consent-style suspension penalties, 24-hour accident reporting, and Alabama\'s distinct Northern (Tennessee River/Lake Guntersville), Central (Alabama River/Lake Martin) and Southern (Mobile Bay/Gulf of Mexico) marine patrol districts, including Gulf hurricane-season and hydroelectric-dam hazards.',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '17%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '25%'], ['Operating Rules, Speed Zones & BUI', '8%'], ['Alabama Boater Education Law, Registration & Marine Patrol Authority', '19%'], ['Trailering, Emergencies, Cold Water & Gulf Coast Weather', '19%'], ['Water Sports, Towing & Accident Reporting', '12%']],
+  },
+  {
+    examType: 'la_boating', shortName: 'Louisiana Boating', stateCode: 'LA', examKind: 'Boating',
+    title: 'Louisiana Boater Education Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/la',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering LDWF\'s boater education requirements for anyone born after January 1, 1984 operating a motorboat over 10hp or a PWC: required safety equipment scaled by vessel class, PWC-specific restrictions, BUI parity with Louisiana\'s 0.08% highway DUI standard, vessel registration/titling, accident reporting procedures, and Louisiana\'s distinctive bayou, wetland and Mississippi River hazard content grounded in LDWF\'s own published guidance.',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '13%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '19%'], ['Operating Rules, Speed/No-Wake Zones & Reckless Operation/BUI', '12%'], ['Louisiana Boater Education Law, Registration/Titling & PWC/LDWF Enforcement', '19%'], ['Bayou, Wetland & Mississippi River Hazards', '7%'], ['Trailering, Emergencies, Cold Water & Hurricane Weather', '18%'], ['Water Sports, Towing & Accident Reporting', '12%']],
+  },
+  {
+    examType: 'nv_boating', shortName: 'Nevada Boating', stateCode: 'NV', examKind: 'Boating',
+    title: 'Nevada Boater Safety Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/nv',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering NRS Chapter 488\'s safe-boating course requirement for persons born on or after January 1, 1983 operating a power-driven vessel over 15hp on Nevada\'s interstate boundary waters (Lake Tahoe, Lake Mead, Lake Mohave and the Colorado River): registration and titling, aquatic invasive species rules targeting quagga mussels, the 0.08 BUI standard, PWC rules (minimum age 14), and Nevada\'s split desert-heat/alpine-cold-water boating geography.',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '15%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '22%'], ['Operating Rules, Speed Zones & Reckless Operation/BUI', '14%'], ['Nevada Boater Education Law, Registration & PWC Rules', '14%'], ['Trailering, Emergencies, Cold Water & Weather Awareness', '21%'], ['Water Sports, Towing & Accident Reporting/Enforcement', '14%']],
+  },
+  {
+    examType: 'ct_boating', shortName: 'Connecticut Boating', stateCode: 'CT', examKind: 'Boating',
+    title: 'Connecticut Boater Safety Certification Exam', category: 'Boating & Watercraft Safety', active: true, route: '/boating/ct',
+    duration: 'Untimed', questions: '60 Multiple Choice', passScore: '48/60 Correct (80%)',
+    description: 'Practice questions covering Connecticut\'s Safe Boating Certificate requirements administered by DEEP: required equipment by federal length class, the post-2020 engine cut-off switch mandate, PFD wear rules, BUI/DUI reciprocal-suspension law, Public Act 16-187 flyboard rules, Thames River federal security zones, and Connecticut\'s Long Island Sound coastal boating culture including its tidal-current "gates."',
+    breakdown: [['Boat Types, Classification & PFDs/Life Jackets', '15%'], ['Required Equipment, Navigation Rules & Aids to Navigation', '21%'], ['Operating Rules, Speed Zones & Reckless Operation/BUI', '15%'], ['Connecticut Boater Education Law, Registration & PWC Rules', '14%'], ['Trailering, Emergencies, Cold Water & Long Island Sound Weather', '21%'], ['Water Sports, Towing & Accident Reporting/Enforcement', '14%']],
+  },
+  {
     examType: 'mi_real_estate', shortName: 'Michigan Real Estate', stateCode: 'MI', examKind: 'Real Estate Salesperson',
     title: 'Michigan Real Estate Salesperson Exam Prep (Michigan-Specific Content)', category: 'Real Estate Licensing', active: true, route: '/real-estate-salesperson/mi',
     duration: '45 Minutes', questions: '40 Multiple Choice (Michigan-Specific Content)', passScore: '28/40 Correct (70%)',
@@ -3282,6 +3429,153 @@ var TRACK_COMPLIANCE = {
       'does not register you for, or schedule, any provider\'s official course or exam.</p>',
     examIntroDisclaimer: 'register you for, or count toward, any Michigan boater safety course provider\'s official course or exam, or issue a Boater Safety Certificate.',
     passScoreNote: 'the common format used across several DNR-approved course providers — 48 of 60 correct (80%) — not one single official exam',
+  },
+  ca_boating: {
+    orgLine: 'the California State Parks Division of Boating and Waterways (DBW)',
+    footerRequirement: "do not fulfill California's boater safety education requirement or issue a California Boater Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy California\'s boater safety education requirement, and does not issue any official course-completion certificate or California Boater Card. Effective January 1, 2025, the requirement became universal: every operator of a motorized vessel in California, regardless of age, must complete a DBW-approved boating safety course and obtain a California Boater Card ($10, valid for life) before operating on the water. <strong>DBW does not itself administer a single official exam</strong> -- it approves multiple independent, NASBLA-standard course providers (Boat-Ed, ACE Boater, and others), plus its own 136-page online home-study eCoursebook ("California Course for Safe Boating"), each ending in its own final test; the 60-question, 80%-to-pass format used here models the common format found across DBW-approved providers, not one single fixed official exam. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam, or issue a California Boater Card.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any DBW-approved course provider\'s official course or exam, or issue a California Boater Card.',
+    passScoreNote: 'the common format converged on by DBW-approved third-party course providers -- 48 of 60 correct (80%) -- not one single official DBW-administered exam',
+  },
+  tx_boating: {
+    orgLine: 'the Texas Parks & Wildlife Department (TPWD)',
+    footerRequirement: "do not fulfill Texas's boater education requirement (required for anyone born on or after September 1, 1993, operating a motorized vessel over 15hp, a windblown vessel over 14ft, or any personal watercraft) or issue a TPWD boater education certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Texas\'s boater education requirement, and does not issue any official course-completion certificate. Anyone born on or after September 1, 1993 must complete boater education before operating a motorized vessel over 15 horsepower, a windblown vessel over 14 feet, or any personal watercraft. <strong>TPWD does not itself administer a single official exam</strong> -- it approves multiple independent, NASBLA-standard course providers (Boat-Ed, BOATERexam, BOATsmart!, and others), each ending in its own final test; item counts genuinely vary by vendor, from 50 up to 75 questions (a TPWD-affiliated classroom course uses 60: 50 national plus 10 Texas-specific), while passing scores converge consistently around 80%. The 75-question, 80%-to-pass format used here models the most commonly-cited national-vendor format (Boat-Ed/BOATERexam), not one single fixed TPWD figure. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any TPWD-approved course provider\'s official course or exam, or issue a boater education certificate.',
+    passScoreNote: 'modeled on the most commonly-cited national-vendor format -- 60 of 75 correct (80%) -- though vendor item counts genuinely vary from 50 to 75 depending on provider, and TPWD itself does not administer or publish one single official exam',
+  },
+  fl_boating: {
+    orgLine: 'the Florida Fish and Wildlife Conservation Commission (FWC)',
+    footerRequirement: "do not fulfill Florida's boating safety education requirement (required for anyone born on or after January 1, 1988, operating a vessel with an engine of 10 horsepower or more) or issue a Florida Boating Safety Education ID Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Florida\'s boating safety education requirement, and does not issue any official course-completion certificate or Boating Safety Education ID Card. Anyone born on or after January 1, 1988 must complete an FWC-approved boating safety course before operating a vessel with an engine of 10 horsepower or more; the resulting ID Card is valid for life. <strong>FWC does not itself administer a single official exam</strong> -- it approves multiple independent, NASBLA-standard course providers (Boat-Ed, BOATERexam, BOATsmart!, and others), each ending in its own final test; the 60-question, 80%-to-pass format used here models the tight convergence found across FWC-approved providers, not one single fixed official exam. Content is grounded in the Florida Boater\'s Guide, including Florida-specific manatee protection zones and boating-under-the-influence law. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam, or issue a Boating Safety Education ID Card.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any FWC-approved course provider\'s official course or exam, or issue a Florida Boating Safety Education ID Card.',
+    passScoreNote: 'the tightly-convergent format used across FWC-approved third-party course providers -- 48 of 60 correct (80%) -- not one single official FWC-administered exam',
+  },
+  ny_boating: {
+    orgLine: 'the New York State Office of Parks, Recreation and Historic Preservation (OPRHP)',
+    footerRequirement: "do not fulfill New York's boating safety certificate requirement under Brianna's Law (as of January 1, 2025, mandatory for every motorized-vessel and PWC operator regardless of age) or issue a New York Boating Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy New York\'s boater safety certificate requirement under Brianna\'s Law, and does not issue any official course-completion certificate. Since the law\'s phase-in completed on January 1, 2025, <strong>every operator of a motorized vessel or personal watercraft in New York must hold a Boating Safety Certificate, regardless of age</strong> (up from the prior birth-year-cohort rule) -- the certificate is valid for life, but the physical card must be carried on board, and course-takers must be at least 10 years old. <strong>OPRHP does not itself administer a single official exam</strong> -- it approves multiple independent, NASBLA-standard course providers (Boat-Ed, BOATERexam, BOATsmart!, and others), each ending in its own final test; item counts genuinely vary 50-60 questions by vendor, and passing scores converge mostly in the 75-80% range (with one third-party source citing a lower threshold). The 60-question, 80%-to-pass format used here reflects the upper end of that convergent range, not one single fixed OPRHP figure. Content is grounded in the New York State Boater\'s Guide, including New York-specific dual BWI/BWAI blood-alcohol tiers, Erie Canal buoy-color reversal, the Adirondack invasive-species certification, and No Discharge Zones. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam, or issue a Boating Safety Certificate.</p>',
+    examIntroDisclaimer: "register you for, or count toward, any OPRHP-approved course provider's official course or exam, or issue a New York Boating Safety Certificate.",
+    passScoreNote: "a well-corroborated figure at the upper end of a genuine vendor range, not one OPRHP-confirmed number -- item counts vary 50-60 questions by provider and passing scores converge mostly in the 75-80% range (one third-party source cites lower); this practice exam uses 48 of 60 correct (80%)",
+  },
+  pa_boating: {
+    orgLine: 'the Pennsylvania Fish and Boat Commission (PFBC)',
+    footerRequirement: "do not fulfill Pennsylvania's boating safety education requirement (required for anyone born on or after January 1, 1982, operating a motorboat over 25hp, and for all personal watercraft operators regardless of age) or issue a PA Boating Safety Education Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Pennsylvania\'s boating safety education requirement, and does not issue any official course-completion certificate. Boaters born on or after January 1, 1982 who operate a motorboat over 25 horsepower, and all personal watercraft operators regardless of age, must earn a Boating Safety Education Certificate -- a durable, punch-holed plastic card valid for life. <strong>PFBC does not itself administer a single official exam</strong> -- it approves multiple independent, NASBLA-standard course providers (Boat-Ed, BOATERexam, Aceboater, BOATsmart!, and others), each ending in its own final test; PA-approved vendors converge tightly on a 60-question, 80%-to-pass (48/60) format, which this practice exam matches. Content is grounded in the Pennsylvania Boating Handbook. The exact dollar threshold for mandatory accident reporting is not independently confirmed here (source pages were unreadable at build time), so this content covers universal reporting duties without asserting an unverified figure. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam, or issue a Boating Safety Education Certificate.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any PFBC-approved course provider\'s official course or exam, or issue a PA Boating Safety Education Certificate.',
+    passScoreNote: 'the tightly-convergent format used across PFBC-approved third-party course providers -- 48 of 60 correct (80%) -- not one single official PFBC-administered exam',
+  },
+  il_boating: {
+    orgLine: 'the Illinois Department of Natural Resources (IDNR), or any of its NASBLA-approved boating safety course providers',
+    footerRequirement: "do not fulfill Illinois's boater education requirement (required for anyone born on or after January 1, 1998 operating a vessel powered by more than 10hp) or issue an Illinois Boating Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Illinois\'s boater education requirement under the Boat Registration and Safety Act (625 ILCS 45) -- a NASBLA-approved course, required for anyone born on or after January 1, 1998 who operates a vessel powered by a motor of more than 10 horsepower -- and does not issue any official course-completion certificate or Boating Safety Certificate. <strong>Illinois has no single official IDNR-administered boating exam</strong> -- IDNR\'s own handbook directs boaters to Boat-Ed (boat-ed.com/illinois), whose embedded final exam is the de facto test, alongside a separate DNR classroom-course option; Boat-Ed confirms an 80% passing score with unlimited retake attempts, but the exact per-vendor question count is not publicly published (industry-wide NASBLA course finals commonly run 50-60 questions), so the 60-question, 80%-to-pass format used here is a well-corroborated stand-in, not one single official exam. Content is grounded in the Handbook of Illinois Boating Laws and Responsibilities. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Illinois boater education provider\'s official course or exam, or issue an Illinois Boating Safety Certificate.',
+    passScoreNote: 'a well-corroborated stand-in, not an IDNR-confirmed figure -- Boat-Ed (the provider IDNR\'s own handbook directs boaters to) confirms an 80% passing score, but the exact question count is not publicly published anywhere; 60 questions matches the industry-wide range (50-60) commonly reported for NASBLA course finals',
+  },
+  ga_boating: {
+    orgLine: 'the Georgia Department of Natural Resources (DNR), or any of its NASBLA-approved boating education course providers',
+    footerRequirement: "do not fulfill Georgia's boating education requirement (required for anyone born on or after January 1, 1998 operating any motorized vessel, with no minimum-horsepower carve-out) or issue a Georgia boating education certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Georgia\'s boating education requirement under the Georgia Boat Safety Act -- a DNR-approved course, required for anyone born on or after January 1, 1998 before legally operating ANY motorized vessel on Georgia state waters, with no minimum-horsepower carve-out unlike some other states -- and does not issue any official course-completion certificate. <strong>Georgia has no single official DNR-administered boating exam</strong> -- in practice the requirement means completing a NASBLA-approved third-party course; DNR\'s own handbook and website direct boaters to Boat-Ed (boat-ed.com/georgia), which confirms an 80% passing score with unlimited retake attempts, converging with BoatUS Foundation\'s Georgia course, which advertises a 60-question final exam. Content is grounded in the Handbook of Georgia Boating Laws and Responsibilities. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Georgia boating education provider\'s official course or exam, or issue a boating education certificate.',
+    passScoreNote: 'the common format found across converging providers -- 48 of 60 correct (80%) -- Boat-Ed (the provider DNR\'s own handbook directs boaters to) confirms 80% passing, and BoatUS Foundation\'s Georgia course independently confirms 60 final-exam questions, so this is a genuine cross-vendor convergence, not one single official DNR exam',
+  },
+  nj_boating: {
+    orgLine: 'the New Jersey State Police (NJSP) Marine Services Bureau',
+    footerRequirement: "do not fulfill New Jersey's two-step Boat Safety Certificate process (a NASBLA-approved course PLUS a separate mandatory in-person, proctored exam at an approved NJSP test site) or issue a New Jersey Boat Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy New Jersey\'s Boat Safety Certificate requirement, and does not issue any official course-completion certificate. <strong>New Jersey is unusual in two ways.</strong> First, unlike most states in this rollout, the requirement is NOT birth-date-gated -- it applies to anyone operating a power vessel or PWC on NJ waters, regardless of age. Second, New Jersey requires a genuine two-step process: a NASBLA-approved course (online, e.g. boat-ed.com/newjersey, AceBoater, BOATERexam, Recademics, or an in-person classroom option) PLUS a separate mandatory in-person, proctored exam at an approved NJSP test site before the permanent certificate is issued. This practice exam is grounded in and models the online course\'s own final exam -- confirmed live at 80% passing with unlimited attempts (course unit quizzes separately require 70%) -- NOT the separate in-person NJSP exam, whose own question count and passing score are not publicly published by NJSP. PWC operation is flatly barred under 16 even with a certificate; 13-15 year-olds are limited to electric-motor or under-10hp 12ft+ vessels. Registration and titling are handled by the NJ Motor Vehicle Commission (MVC), not a wildlife or natural-resources agency. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, the online course, its proctored final, or the separate in-person NJSP exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the NASBLA-approved online course\'s proctored final exam, or the separate mandatory in-person NJSP exam required to receive a New Jersey Boat Safety Certificate.',
+    passScoreNote: 'the confirmed online-course final-exam threshold -- 48 of 60 correct (80%), live-confirmed on NJSP\'s own FAQ and boat-ed.com/newjersey -- NOT the separate in-person NJSP exam, whose format NJSP does not publicly publish',
+  },
+  wa_boating: {
+    orgLine: 'the Washington State Parks and Recreation Commission, Boating Program',
+    footerRequirement: "do not fulfill Washington's boater education requirement (required for anyone 12+ born on or after January 1, 1955 operating a motorboat of 15+ horsepower, or age 14+ for a PWC) or issue a Washington Boater Education Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Washington\'s boater education requirement -- a State Parks-approved course (classroom, online, or home-study), required for anyone 12 years or older born on or after January 1, 1955 who operates a motorboat of 15 or more horsepower (age 14+ to operate a PWC; it is illegal to rent or lease a PWC to anyone under 16) -- and does not issue any official course-completion certificate or Boater Education Card. <strong>Washington has no single official state-administered boating exam</strong> -- in practice, the NASBLA-approved course vendor\'s own quiz is the de facto test; Boat-Ed\'s official Washington course confirms live an 80% passing score on its final exam (70% on unit quizzes) with unlimited retake attempts, converging with BoatUS Foundation\'s Washington course, which separately advertises 60 final-exam questions. After passing, boaters apply for the $10 card (never expires); an equivalency exam option also exists for experienced boaters. Content is grounded in the Washington Boating Program handbook. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam, or issue a Boater Education Card.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Washington State Parks-approved provider\'s official course or exam, or issue a Boater Education Card.',
+    passScoreNote: 'the common format found across converging providers -- 48 of 60 correct (80%) -- Boat-Ed confirms 80% passing on its final exam, and BoatUS Foundation\'s Washington course independently confirms 60 final-exam questions, so this is a genuine cross-vendor convergence, not one single official state exam',
+  },
+  az_boating: {
+    orgLine: 'the Arizona Game and Fish Department (AZGFD)',
+    footerRequirement: 'do not fulfill any boater-education requirement -- because Arizona currently has NO mandatory boater-education law -- or register you for any AZGFD-approved vendor\'s optional course or exam',
+    termsParagraph2: '<p class="muted"><strong>Unlike every other state track in this rollout, Arizona currently has NO mandatory boater-education law.</strong> Arizona Revised Statutes Title 5, Chapter 3 (Boating and Water Sports) contains no boater-education requirement, and AZGFD-approved vendor pages (Boat-Ed and iLearnToBoat Arizona) both state outright that boating education "is not required in Arizona" -- it is optional and recommended, not mandated by age or any other criterion. Using this site\'s practice questions or mock exams is therefore purely optional self-study; it does not fulfill any requirement, because there is none to fulfill, and it does not issue any official certificate. Where AZGFD-approved vendors DO converge is on course mechanics for boaters who choose to take one voluntarily: Boat-Ed and iLearnToBoat both confirm an 80% passing score on the final certification exam with unlimited retake attempts, though the exact final-exam question count is not consistently published by either vendor, so the 60-question format used here is a reasonable, but unconfirmed, stand-in. One real and important nuance: on Lake Mead/Lake Mohave (shared with Nevada) and Lake Powell (shared with Utah), the National Park Service states an Arizona boater "is responsible for complying with the laws of both states" -- so an Arizona boater on those waters can still be bound by Nevada\'s birth-date-gated education mandate (motor over 15hp, born on/after 1/1/1983) and 14-year PWC age minimum, or Utah\'s certification requirement for 12-17-year-old PWC operators. Content is grounded in The Boater\'s Guide of Arizona and Arizona Revised Statutes Title 5, Chapter 3. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any AZGFD-approved vendor\'s optional boating safety course or exam -- Arizona has no mandatory boater-education requirement to register for.',
+    passScoreNote: 'an unconfirmed but reasonable stand-in for boaters who voluntarily take an AZGFD-approved course -- Boat-Ed and iLearnToBoat both confirm 80% passing on the final exam, but Arizona has no mandatory boater-education law at all, and neither vendor publishes an exact question count',
+  },
+  ma_boating: {
+    orgLine: 'the Massachusetts Environmental Police (MEP), or any MEP-approved boater education course provider (e.g. Boat-Ed/Kalkomey, iLearnToBoat)',
+    footerRequirement: "do not fulfill Massachusetts's new mandatory boater education law (the Hanson-Milone Boater Safety Act) -- which requires boaters born after January 1, 1989 to certify by April 1, 2026 (no penalties until September 1, 2026) and boaters born on or before that date to certify by April 1, 2028 -- or issue a Massachusetts Boater Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Massachusetts\'s new boater education law, the Hanson-Milone Boater Safety Act, and does not issue any official course-completion certificate. <strong>Massachusetts has no single official state-administered boating exam</strong> -- the mandate is satisfied by passing the exam embedded in an MEP-approved course, and both MEP-approved vendors (Boat-Ed/Kalkomey and iLearnToBoat) independently confirm an 80% minimum passing score on unit quizzes and the final exam, with unlimited retake attempts; the exact final-exam question count is not consistently published by either MEP-approved vendor, so the 60-question format used here is a self-study convention, not one official exam. This is a genuinely new, currently phasing-in law: boaters born after January 1, 1989 must certify by April 1, 2026 (though no penalties apply until September 1, 2026), and boaters born on or before that date have until April 1, 2028; minimum operating ages are 12 for a motorboat and 16 for a PWC. A narrower pre-existing requirement already applied to boaters under 16 and PWC operators under 18. Content is also grounded in Massachusetts General Laws Chapter 90B, which governs vessel registration, reckless/negligent operation, and marine operating-under-the-influence (OUI). Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any MEP-approved provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any MEP-approved boater education provider\'s official course or exam, or issue a Massachusetts Boater Safety Certificate.',
+    passScoreNote: 'the common format independently confirmed by both MEP-approved course vendors (Boat-Ed and iLearnToBoat) -- 48 of 60 correct (80%), with unlimited retake attempts -- not one single official exam; the exact final-exam question count is not consistently published',
+  },
+  tn_boating: {
+    orgLine: 'the Tennessee Wildlife Resources Agency (TWRA), or a TWRA-approved boating safety course provider',
+    footerRequirement: "do not fulfill Tennessee's boater education mandate (required for residents born after January 1, 1989 operating a vessel over 8.5hp) or issue a TWRA Boating Safety Education Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Tennessee\'s boater education mandate, and does not issue any official TWRA Boating Safety Education Certificate. Unlike most states in this project, Tennessee is more centralized than the typical many-independent-vendors model: TWRA directly delegates and administers its own proctored online exam, reachable after purchasing a roughly $13 Type 600 Boating Safety Exam Permit -- BoatUS Foundation\'s own free Tennessee course explicitly states it does NOT satisfy this requirement, steering residents back to the TWRA-approved pathway or a separately-marketed, independently TWRA-approved paid course (Boat-Ed\'s Tennessee Boating Safety Course, which independently reports an 80% final-exam passing score with unlimited retake attempts and a separate 70% unit-quiz threshold). The exact question count on TWRA\'s own delegated exam is not published on TWRA\'s site, so the 60-question format used here is a self-study convention, not TWRA\'s official exam. Tennessee residents born after January 1, 1989 operating a vessel with more than 8.5 horsepower must hold this certificate (an adult-supervision exemption applies), and non-resident visitors may satisfy the requirement with any NASBLA-approved certificate. Content is also grounded in Tennessee\'s extensive TVA reservoir system (Norris, Cherokee, Percy Priest, Center Hill, Tims Ford, Douglas, Watauga, Kentucky Lake, Chickamauga, and others), including below-dam hazards and TWRA\'s explicit warnings against teak surfing and close-following due to fatal carbon-monoxide exposure risk. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, the official TWRA exam or any TWRA-approved course.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real TWRA-administered boating safety exam, the Type 600 Boating Safety Exam Permit, or any TWRA-approved course.',
+    passScoreNote: 'a self-study convention, not a TWRA-published figure -- TWRA does not publish an item count for its own delegated exam, but the independently TWRA-approved Boat-Ed course confirms an 80% final-exam passing threshold with unlimited retakes, so this practice exam uses 48 of 60 correct (80%)',
+  },
+  mo_boating: {
+    orgLine: 'the Missouri State Highway Patrol (MSHP), Water Patrol Division',
+    footerRequirement: "do not fulfill Missouri's boater education mandate under RSMo 306.127 (required for operators born after January 1, 1984) or issue a Missouri Boating Safety Identification Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Missouri\'s boater education mandate under RSMo 306.127, and does not issue any official Missouri Boating Safety Identification Card. <strong>Missouri has no single official state-administered boating exam</strong> -- in practice, a NASBLA-approved course vendor\'s own embedded quiz is the de facto test, confirmed independently by Boat-Ed\'s official Missouri course (requiring at least 70% on unit quizzes and 80% on the final exam, unlimited retakes) and by the BoatUS Foundation\'s Missouri page, which explicitly states its own free course is NOT approved by the Missouri State Water Patrol to satisfy the mandatory education requirement. RSMo 306.127 requires operators born after January 1, 1984 to hold this card (required since January 1, 2005, extending to those born on or after January 1, 2006 starting January 1, 2027); a boater may also qualify by passing a Water Patrol Division equivalency exam or holding a qualifying U.S. Coast Guard license. The exact final-exam question count is not consistently published by Missouri\'s approved vendors, so the 60-question format used here is a self-study convention, not one official exam. Content is also grounded in real Missouri statute detail: minimum operating ages of 14 (RSMo 306.122, 306.142), a 30 mph nighttime speed cap and 100-foot no-wake zones (RSMo 306.125), the $500 accident-reporting threshold (RSMo 306.140), and the 0.08% BUI standard (RSMo 577.014), applied to Missouri\'s major recreational reservoirs including Lake of the Ozarks and Table Rock Lake. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Missouri-approved boater education provider\'s official course or exam, or issue a Missouri Boating Safety Identification Card.',
+    passScoreNote: 'the common format confirmed by Missouri\'s approved vendor (Boat-Ed) -- 48 of 60 correct (80%), with unlimited retake attempts -- not one single official state exam; the exact final-exam question count is not consistently published',
+  },
+  md_boating: {
+    orgLine: 'the Maryland Department of Natural Resources (DNR), Natural Resources Police (NRP)',
+    footerRequirement: "do not fulfill Maryland's mandatory boater education law (required for anyone born on or after July 1, 1972 operating a numbered or documented motorized vessel) or issue a Maryland Certificate of Boating Safety Education",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Maryland\'s mandatory boater education law, and does not issue any official Certificate of Boating Safety Education. <strong>Maryland has no single official state-administered boating exam</strong> -- boaters satisfy the requirement by completing a Maryland DNR-approved, NASBLA-aligned course (e.g. Boat-Ed/Kalkomey), whose own embedded final exam serves as the qualifying test; Boat-Ed\'s Maryland course independently confirms an 80% minimum passing score with unlimited retake attempts and a typical 3-4 hour completion time, so the 60-question format used here is a self-study convention, not one official exam. Anyone born on or after July 1, 1972 must carry this certificate while operating a numbered or documented motorized vessel; a stricter, absolute rule applies to personal watercraft -- no one under 16 may ever operate a PWC, even with a certificate -- while an under-16 operator of a larger motorized vessel (11 ft+) without a certificate may operate only under supervision of a certified adult at least 18. Exemptions include out-of-state visitors (60 days or less), foreign vessel operators (90 days or less), and private-property-only operation. Content is also grounded in the Maryland Natural Resources Article, including vessel numbering and titling (Sec. 8-712, 8-716), water-skiing/towing rules (Sec. 8-725), and boating-under-the-influence provisions (Sec. 8-738, 8-738.1), plus Chesapeake Bay-specific content (commercial shipping traffic, crab-pot/trotline hazards, and tidal vs. non-tidal waters). Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Maryland DNR-approved provider\'s official course or exam, or issue a Certificate of Boating Safety Education.',
+    passScoreNote: 'the common format confirmed by Maryland\'s approved vendor (Boat-Ed) -- 48 of 60 correct (80%), with unlimited retake attempts -- not one single official state exam',
+  },
+  sc_boating: {
+    orgLine: 'the South Carolina Department of Natural Resources (SCDNR)',
+    footerRequirement: "do not fulfill South Carolina's boater education requirement under S.C. Code Ann. Section 50-21-95 (required for anyone born on or after July 1, 2007 operating a motorboat of 10hp or more, a PWC, or specialty propcraft) or issue an SCDNR boater education completion card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy South Carolina\'s boater education requirement under S.C. Code Ann. Section 50-21-95, and does not issue any official completion card. <strong>South Carolina has no single official state-administered boating exam</strong> -- in practice, a NASBLA-, U.S. Coast Guard Auxiliary-, or U.S. Power Squadrons-approved course vendor\'s own embedded exam is the de facto test; SCDNR\'s own official page and Boat-Ed\'s official South Carolina course both independently confirm the July 1, 2007 birth-date threshold, and Boat-Ed additionally confirms at least 70% on unit quizzes and at least 80% on the final certification exam with unlimited retake attempts. The exact final-exam question count is not consistently published by South Carolina\'s approved vendors, so the 60-question format used here is a self-study convention, not one official exam. Individuals born on or after July 1, 2007 must pass an approved course before operating a motorboat of 10hp or more, a personal watercraft, or a specialty propcraft. Content is also grounded in the South Carolina Code of Laws, including reckless operation (Section 50-21-111), a materially-and-appreciably-impaired BUI standard with a three-tier BAC inference framework at 0.05%/0.08% (Sections 50-21-112, 50-21-114(B)), PWC rules including the sunset-to-sunrise operating ban and engine cutoff lanyard requirement (Section 50-21-870), lake-specific idle-speed zones on Lake Murray and Lakes Greenwood/Hartwell/Jocassee/Keowee/Marion (Section 50-21-870(B)(6)), and the 48-hour accident-reporting deadline (Sections 50-21-10(21), 50-21-130(C)), applied to South Carolina\'s major recreational lakes and its hurricane-exposed Atlantic coastline. Our content is a supplementary study aid only, provided "as-is" for self-study, and does not constitute legal advice or a guaranteed exam outcome -- completing practice exams here does not register you for, or schedule, any provider\'s official course or exam.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any SCDNR-approved provider\'s official course or exam, or issue a boater education completion card.',
+    passScoreNote: 'the common format confirmed by South Carolina\'s approved vendor (Boat-Ed) -- 48 of 60 correct (80%), with unlimited retake attempts -- not one single official state exam; the exact final-exam question count is not consistently published',
+  },
+  mn_boating: {
+    orgLine: 'the Minnesota Department of Natural Resources (DNR) or any of Minnesota\'s DNR-approved boater education course providers',
+    footerRequirement: "do not fulfill Minnesota's boater education law (Minn. Stat. 86B.302) or issue a Minnesota Watercraft Operator's Permit",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Minnesota\'s boater education law, and does not issue any official course-completion certificate or Watercraft Operator\'s Permit -- our content is a supplementary study aid only. Minnesota\'s requirement is a genuinely phased-in mandate confirmed directly against Minn. Stat. 86B.302/86B.304 and the DNR\'s own boater-education-law page: a permit is required on a rolling birth-date schedule -- born after June 30, 2004 (required since July 1, 2025), born after June 30, 2000 (July 1, 2026), born after June 30, 1996 (July 1, 2027), and born after June 30, 1987 (July 1, 2028) -- with anyone born before July 1, 1987 generally exempt unless renting a vessel or serving as a required accompanying operator. Motors rated 25hp or less are excluded from the permit requirement entirely, and a child under 12 may never operate a PWC regardless of supervision or certification. <strong>Minnesota has no single official state-administered boating exam</strong> -- most students complete the requirement through a DNR-approved third-party provider\'s own embedded course and exam (e.g. Boat-ed.com); neither the DNR nor its approved vendors uniformly publish a final-exam question count or passing percentage, so the 60-question, 80%-to-pass format used here is a self-study convention consistent with this project\'s general approach for hedged states, not a confirmed Minnesota figure. Completing practice exams here also does not register you for, or schedule, any provider\'s official course or exam. While we strive to align our content with current Minnesota Statutes Chapter 86B, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Minnesota DNR-approved provider\'s official course or exam, or issue a Watercraft Operator\'s Permit.',
+    passScoreNote: 'a self-study convention, not a DNR-confirmed figure -- neither the DNR nor its approved course vendors uniformly publish a final-exam question count or passing percentage for Minnesota\'s phased-in permit requirement',
+  },
+  wi_boating: {
+    orgLine: 'the Wisconsin Department of Natural Resources (DNR) or any of Wisconsin\'s DNR-approved boater safety course providers',
+    footerRequirement: "do not fulfill Wisconsin's boating safety certificate requirement (Wis. Stat. ch. 30, required for operators born on or after January 1, 1989) or issue a Wisconsin Boating Safety Certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Wisconsin\'s boating safety certificate requirement -- required under Wis. Stat. ch. 30 for anyone born on or after January 1, 1989 to operate a motorboat or personal watercraft -- and does not issue any official course-completion certificate. <strong>Wisconsin has no single official state-administered boating exam</strong> -- the DNR authorizes independent course providers whose own embedded final exam serves as the qualifying test; two independently confirmed approved vendors (Boat-Ed and iLearnToBoat) both converge on an 80%-or-higher final-exam passing threshold with unlimited retakes, but neither vendor consistently publishes an exact question count, so the 60-question, 80%-to-pass format used here models that convergent passing threshold rather than one official fixed exam. Personal watercraft operators must be at least 12 with no supervision exception, stricter than the tiered supervised/certified structure for younger motorboat operators. Completing practice exams here also does not register you for, or schedule, any provider\'s official course or exam. While we strive to align our content with current Wis. Stat. ch. 30 and DNR guidance, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any Wisconsin DNR-approved provider\'s official course or exam, or issue a Boating Safety Certificate.',
+    passScoreNote: 'the passing threshold independently confirmed across two DNR-approved vendors (Boat-Ed and iLearnToBoat), both requiring 80% or higher on the final exam -- the exact question count is not consistently published, so 60 questions is a self-study convention, not a confirmed figure',
+  },
+  al_boating: {
+    orgLine: 'the Alabama Law Enforcement Agency (ALEA), Marine Patrol Division',
+    footerRequirement: "do not fulfill Alabama's vessel \"V\" license requirement (mandatory for operators born after April 28, 1954, per the Boating Safety Reform Act) or issue an Alabama vessel license",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Alabama\'s vessel "V" license requirement, and does not issue any official license, course-completion certificate, or exam-exemption. Unlike most states in this project\'s boating rollout, <strong>Alabama does not rely purely on third-party vendor courses</strong> -- ALEA\'s own Driver License Division administers a genuine state-run written/oral exam at its statewide offices ($5 application + $36.25 issuance fee) as one path to licensure, while also accepting completion of an approved course (ALEA\'s free in-person "Boating Basics" course, USCG Auxiliary, U.S. Power Squadron, or an approved online vendor such as Boat-Ed) as an exam-exempt alternative. No one under 12 may operate a motorized vessel at all; 12-13 year-olds need a Vessel Learner License plus supervision by someone 21+ with a valid license; independent operation is allowed at 14 once certified. A birth-date exemption excuses anyone who was 40 or older on April 28, 1994 (generally born on or before that date) from the written exam requirement. Boat-Ed\'s own Alabama course page directly confirms an 80%-or-higher final-exam passing threshold (after 70%-or-higher unit quizzes) with unlimited retakes; the exact question count is not published, so the 60-question format used here is a self-study convention. Completing practice exams here also does not register you for, or schedule, the official ALEA licensing exam or any approved course. While we strive to align our content with ALEA\'s own published boating rules and regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real ALEA vessel license exam, an approved boating safety course, or issue an Alabama vessel license.',
+    passScoreNote: 'the final-exam passing threshold directly confirmed on Boat-Ed\'s Alabama course page -- 80% or higher (after 70%-or-higher unit quizzes) -- the exact question count is not published by ALEA or its approved vendors, so 60 questions is a self-study convention',
+  },
+  la_boating: {
+    orgLine: 'the Louisiana Department of Wildlife and Fisheries (LDWF)',
+    footerRequirement: "do not fulfill Louisiana's boater education requirement (mandatory for operators born after January 1, 1984, operating a motorboat over 10hp or a PWC) or issue a Louisiana Boater Card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Louisiana\'s boater education requirement, and does not issue any official Boater Card or course-completion certificate. LDWF\'s own page confirms the January 1, 1984 birth-date cutoff and 10hp/PWC scope directly, with exemptions for those accompanied by a person 18+ who has completed the course and for USCG-licensed captains. Louisiana offers real parallel pathways with different confirmed thresholds: LDWF\'s own free in-person course requires a 70%-or-higher score on its own test, while the approved Boat-Ed online course requires 70%-or-higher on unit quizzes and 80%-or-higher on its final exam; BoatUS.org\'s approved online course independently confirms a 60-question final exam (though it does not publish its own passing percentage). This practice exam is built to the 60-question, 80%-to-pass format matching Boat-Ed\'s final-exam threshold and BoatUS\'s confirmed question count -- the most convergent figures found, not a single official LDWF-wide number, since LDWF\'s in-person course uses a different 70% threshold. Completing practice exams here also does not register you for, or schedule, any provider\'s official course or exam. While we strive to align our content with LDWF\'s own published boater education and boating regulations pages, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any LDWF-approved provider\'s official course or exam, or issue a Louisiana Boater Card.',
+    passScoreNote: 'built to the most convergent confirmed figures found -- BoatUS.org\'s confirmed 60-question final exam and Boat-Ed\'s confirmed 80%-or-higher final-exam threshold -- not a single official LDWF-wide number, since LDWF\'s own in-person course uses a different, separately confirmed 70% threshold',
+  },
+  nv_boating: {
+    orgLine: 'the Nevada Department of Wildlife (NDOW)',
+    footerRequirement: "do not fulfill Nevada's safe-boating course requirement under NRS 488.730 (for operators born on or after January 1, 1983, on Nevada's interstate boundary waters) or issue a Nevada boating safety card",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Nevada\'s safe-boating course requirement under NRS 488.730, and does not issue any official course-completion certificate. This requirement has a real, precise geographic scope worth understanding: NRS 488.730 applies to persons born on or after January 1, 1983 operating a power-driven vessel over 15hp specifically on Nevada\'s "interstate waters" -- waters forming the boundary with an adjoining state, per NRS 488.035(10) -- which in practice means Lake Tahoe (shared with California) and Lake Mead/Lake Mohave and the Colorado River (shared with Arizona). It is not framed as a blanket every-water-body-in-Nevada mandate, though these interstate waters cover the large majority of Nevada\'s actual recreational boating. <strong>Nevada has no single official state-administered boating exam</strong> -- NDOW certifies third-party providers (Boat-Ed, etc.) whose own embedded exam serves as the qualifying test; Boat-Ed\'s Nevada course confirms an 80%-or-higher threshold on both unit quizzes and the final exam with unlimited retakes, but the exact question count is not consistently published across NDOW-approved vendors, so the 60-question format used here is a self-study convention. Completing practice exams here also does not register you for, or schedule, any provider\'s official course or exam. While we strive to align our content with current NRS Chapter 488, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any NDOW-approved provider\'s official course or exam, or issue a Nevada boating safety card.',
+    passScoreNote: 'the passing threshold directly confirmed on Boat-Ed\'s Nevada course page -- 80% or higher on both unit quizzes and the final exam -- the exact question count is not consistently published across NDOW-approved vendors, so 60 questions is a self-study convention',
+  },
+  ct_boating: {
+    orgLine: 'the Connecticut Department of Energy and Environmental Protection (DEEP), Boating Division',
+    footerRequirement: "do not fulfill Connecticut's boating certificate requirement (a Safe Boating Certificate or Certificate of Personal Watercraft Operation, required of any vessel owner required to register in CT or any CT resident/property owner who operates one) or issue a Connecticut boating certificate",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy Connecticut\'s boating certificate requirement, and does not issue any official Safe Boating Certificate, Certificate of Personal Watercraft Operation, or course-completion credit. <strong>Connecticut\'s mandate works differently from most states in this project</strong> -- it is not keyed to a birth-date cutoff; it applies to any owner of a vessel required to be registered/numbered in Connecticut, and to operators who are CT residents or own real property in the state, layered with separate age-tiered restrictions for younger operators. This was independently confirmed against DEEP\'s own certificate pages and 2026 Connecticut Boater\'s Guide, cross-checked against BoatUS Foundation\'s own Connecticut page, which states outright that its course is "NOT Approved by Connecticut" for this purpose. Most boaters satisfy the requirement through one of nine small DEEP-approved local/nonprofit providers (America\'s Boating Club, USCG Auxiliary, and CT-specific providers) rather than large national vendors -- Boat-Ed and BOATERexam currently cannot issue a CT card at all. Because Connecticut\'s approved-course landscape is this fragmented, there is no single cross-vendor convergence on a final-exam question count or passing score the way other states have; the one concretely confirmed official figure is DEEP\'s own optional Equivalency Examination, an alternative path for experienced boaters only (not the standard course path): 80%-or-higher passing, a $75 fee, one attempt only. The 60-question, 80%-to-pass format used here is a self-study convention consistent with DEEP\'s own confirmed Equivalency Exam passing threshold, not a claim that every DEEP-approved provider uses this exact format. Completing practice exams here also does not register you for, or schedule, any provider\'s official course, DEEP\'s Equivalency Exam, or issue a certificate. While we strive to align our content with DEEP\'s own 2026 Connecticut Boater\'s Guide, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, any DEEP-approved provider\'s official course, DEEP\'s own Equivalency Examination, or issue a Connecticut boating certificate.',
+    passScoreNote: 'a self-study convention matching the one concretely confirmed official figure -- DEEP\'s own optional Equivalency Examination requires 80% or higher to pass ($75 fee, one attempt) -- Connecticut\'s fragmented 9-provider landscape has no published cross-vendor convergence on a standard course-final question count or score',
   },
   mi_real_estate: {
     orgLine: 'the Michigan Department of Licensing and Regulatory Affairs (LARA)',
@@ -5252,7 +5546,8 @@ async function fillCategoryQuestionCount(tracks) {
     var countByExamType = {};
     (res.counts || []).forEach(function (row) { countByExamType[row.exam_type] = row.count; });
     var total = tracks.reduce(function (sum, t) { return sum + (countByExamType[t.examType] || 0); }, 0);
-    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across all states)</div>';
+    var stateCount = new Set(tracks.map(function (t) { return t.stateCode; })).size;
+    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across ' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + ')</div>';
   } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
@@ -5533,9 +5828,10 @@ function fillReadinessCard() {
     // Question count paired with the radial in its own top row, same layout as the category
     // pages' stats card (categoryStatsHtml) -- left blank (not a fabricated "0+") if the count
     // didn't come back, same best-effort posture as that card's own question-count tile.
+    var siteStateCount = new Set(HUB_EXAMS.filter(function (e) { return e.active; }).map(function (e) { return e.stateCode; })).size;
     var questionCountHtml = s.totalQuestions != null
       ? '<div class="outcome-tile-value">' + Number(s.totalQuestions).toLocaleString() + '+</div>' +
-        '<div class="outcome-tile-label">Practice Questions<br>Across All Tracks</div>'
+        '<div class="outcome-tile-label">Practice Questions<br>Across ' + siteStateCount + ' States</div>'
       : '';
     var tiles = [
       { value: s.tracksLive, label: 'Live Tracks' },
@@ -6085,6 +6381,111 @@ var RESOURCES = {
   mi_boating: [
     { title: 'Michigan Department of Natural Resources', type: 'pdf', url: 'https://www.michigan.gov/dnr',
       desc: 'The Michigan Department of Natural Resources\' official site — the authoritative source Michigan Boating Laws and Responsibilities is based on.',
+      topic: 'General Reference', free: true },
+  ],
+  ca_boating: [
+    { title: 'California Boater Card Program (DBW)', type: 'web', url: 'https://dbw.parks.ca.gov/?page_id=28711',
+      desc: "The California State Parks Division of Boating and Waterways' official Boater Card program page -- the authoritative source this practice content is grounded in. DBW publishes no single standalone PDF manual; it approves third-party NASBLA-standard courses, including its own 136-page online eCoursebook.",
+      topic: 'General Reference', free: true },
+  ],
+  tx_boating: [
+    { title: 'Texas Boating Laws and Responsibilities Handbook', type: 'pdf', url: 'https://assets.kalkomey.com/boater/pdfs/handbook/texas-handbook-entire.pdf',
+      desc: 'The Texas boater education handbook produced in partnership with the Texas Parks & Wildlife Department (TPWD) -- the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  fl_boating: [
+    { title: 'Florida Boating Safety Education (FWC)', type: 'web', url: 'https://myfwc.com/boating/safety-education/',
+      desc: "The Florida Fish and Wildlife Conservation Commission's official boater safety education hub -- the authoritative source this practice content, including the Florida Boater's Guide handbook, is grounded in.",
+      topic: 'General Reference', free: true },
+  ],
+  ny_boating: [
+    { title: "New York State Boater's Guide", type: 'pdf', url: 'https://parks.ny.gov/documents/recreation/boating/2018NYSBoatersGuide.pdf',
+      desc: 'The official handbook of registration, operation and safety information published by the New York State Office of Parks, Recreation and Historic Preservation (OPRHP) -- the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  pa_boating: [
+    { title: 'Pennsylvania Boating Handbook (PFBC)', type: 'pdf', url: 'https://www.pa.gov/content/dam/copapwp-pagov/en/fishandboat/documents/boating/regulations/boatinghandbook.pdf',
+      desc: "The official handbook published by the Pennsylvania Fish and Boat Commission (PFBC) -- the text used for the Commission's Basic Boating and Boating and Water Safety Awareness courses, and the authoritative source this practice content is grounded in.",
+      topic: 'General Reference', free: true },
+  ],
+  il_boating: [
+    { title: 'Handbook of Illinois Boating Laws and Responsibilities', type: 'pdf', url: 'https://dnr.illinois.gov/content/dam/soi/en/web/dnr/boating/documents/boatdigest.pdf',
+      desc: 'The official handbook published by the Illinois Department of Natural Resources -- the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_boating: [
+    { title: 'Handbook of Georgia Boating Laws and Responsibilities', type: 'web', url: 'https://gadnrle.org/boating-rules-regulations',
+      desc: 'The Georgia DNR Law Enforcement Division\'s official boating rules and regulations page, which links the current handbook -- the authoritative source this practice content is grounded in.',
+      topic: 'General Reference', free: true },
+  ],
+  nj_boating: [
+    { title: 'N.J.A.C. Title 13, Chapter 61 -- Boat Safety Course', type: 'pdf', url: 'https://nj.gov/njsp/maritime/pdf/title13ch61_042511.pdf',
+      desc: 'The official New Jersey Administrative Code chapter governing the Boat Safety Certificate program, published by the NJ State Police -- the regulatory source behind this practice content.',
+      topic: 'General Reference', free: true },
+  ],
+  wa_boating: [
+    { title: 'Washington Boater Education Card', type: 'web', url: 'https://parks.wa.gov/about/rules-and-safety/boater-education-safety/boater-education-card',
+      desc: 'The Washington State Parks and Recreation Commission\'s official Boater Education Card page -- the authoritative source the age/horsepower mandate and application process are based on.',
+      topic: 'General Reference', free: true },
+  ],
+  az_boating: [
+    { title: "The Boater's Guide of Arizona", type: 'pdf', url: 'https://assets.kalkomey.com/boater/pdfs/handbook/arizona-handbook-entire.pdf',
+      desc: 'The official boating handbook developed for the Arizona Game and Fish Department (AZGFD) -- the authoritative source this practice content is grounded in, though Arizona has no mandatory education law requiring boaters to study it.',
+      topic: 'General Reference', free: true },
+  ],
+  ma_boating: [
+    { title: 'Massachusetts Boat Safety Certificate Course', type: 'web', url: 'https://www.mass.gov/how-to/boat-safety-certificate-course',
+      desc: 'The Massachusetts Environmental Police\'s official page on the new boater education requirement -- the authoritative source this practice content is grounded in, including the phased birth-date certification deadlines.',
+      topic: 'General Reference', free: true },
+  ],
+  tn_boating: [
+    { title: 'Boating Education In Tennessee (TWRA)', type: 'web', url: 'https://www.tn.gov/twra/boating/boating-education.html',
+      desc: "The Tennessee Wildlife Resources Agency's official boater education page -- the authoritative source this practice content is grounded in, including the Type 600 Boating Safety Exam Permit process.",
+      topic: 'General Reference', free: true },
+  ],
+  mo_boating: [
+    { title: 'Boater Education Law FAQ (Missouri State Highway Patrol)', type: 'web', url: 'https://www.mshp.dps.missouri.gov/MSHPWeb/WaterPatrol/BoatingLaws_Education/boaterEduLawFAQ.html',
+      desc: "The Missouri State Highway Patrol Water Patrol Division's official FAQ page -- the authoritative source this practice content is grounded in, including the RSMo 306.127 birth-date threshold and card process.",
+      topic: 'General Reference', free: true },
+  ],
+  md_boating: [
+    { title: 'Boating Safety Certificate (Maryland DNR / NRP)', type: 'web', url: 'https://dnr.maryland.gov/nrp/pages/boatingsafety/safety_certificate.aspx',
+      desc: "The Maryland DNR Natural Resources Police's official boating safety certificate page -- the authoritative source this practice content is grounded in, including the July 1, 1972 birth-date threshold and the under-16 PWC rule.",
+      topic: 'General Reference', free: true },
+  ],
+  sc_boating: [
+    { title: 'Boater Education (SCDNR)', type: 'web', url: 'https://dnr.sc.gov/education/boated.html',
+      desc: "The South Carolina Department of Natural Resources' official boater education page -- the authoritative source this practice content is grounded in, including the July 1, 2007 birth-date threshold.",
+      topic: 'General Reference', free: true },
+  ],
+  mn_boating: [
+    { title: 'Minnesota Boating Guide', type: 'pdf', url: 'https://files.dnr.state.mn.us/rlp/regulations/boatwater/boatingguide.pdf',
+      desc: 'The official guide published by the Minnesota Department of Natural Resources -- the authoritative source this practice content is grounded in, including Minn. Stat. 86B boating law, PWC rules, and the phased-in watercraft operator\'s permit schedule.',
+      topic: 'General Reference', free: true },
+  ],
+  wi_boating: [
+    { title: 'Wisconsin DNR Boating Safety Education', type: 'web', url: 'https://dnr.wisconsin.gov/Education/OutdoorSkills/safetyEducation',
+      desc: 'The Wisconsin DNR\'s official boating safety education page -- the authoritative source on approved course providers and the state\'s boating safety certificate requirement under Wis. Stat. ch. 30.',
+      topic: 'General Reference', free: true },
+  ],
+  al_boating: [
+    { title: 'Alabama Boat Certification Manual (ALEA)', type: 'pdf', url: 'https://www.alea.gov/sites/default/files/inline-files/Boat%20Certification%20Manual_0.pdf',
+      desc: 'The official certification manual published by the Alabama Law Enforcement Agency -- the authoritative source this practice content is grounded in, covering the vessel "V" license requirements and Alabama-specific boating rules.',
+      topic: 'General Reference', free: true },
+  ],
+  la_boating: [
+    { title: 'LDWF Mandatory Boater Education', type: 'web', url: 'https://www.wlf.louisiana.gov/page/boater-education',
+      desc: 'The Louisiana Department of Wildlife and Fisheries\' official boater education page -- the authoritative source on the January 1, 1984 birth-date mandate, course options, and passing requirements.',
+      topic: 'General Reference', free: true },
+  ],
+  nv_boating: [
+    { title: 'NRS Chapter 488 -- Watercraft', type: 'web', url: 'https://www.leg.state.nv.us/nrs/NRS-488.html',
+      desc: 'The Nevada Legislature\'s official statute text -- the authoritative source for NRS 488.730\'s safe-boating course requirement and its interstate-waters scope.',
+      topic: 'General Reference', free: true },
+  ],
+  ct_boating: [
+    { title: "Connecticut Boater's Guide (DEEP)", type: 'web', url: 'https://portal.ct.gov/DEEP/Boating/Connecticut-Boaters-Guide',
+      desc: 'The official Boater\'s Guide portal published by the Connecticut Department of Energy and Environmental Protection -- the authoritative source this practice content is grounded in, including Connecticut\'s registration-based certificate mandate.',
       topic: 'General Reference', free: true },
   ],
   mi_real_estate: [
@@ -9243,6 +9644,132 @@ var ADDITIONAL_INFO_LINKS = {
       desc: "The Washington State Department of Licensing's official page on motorcycle endorsement training and testing, covering approved training schools, permit/endorsement testing options, and requirements under RCW 46.20.515." },
     { title: 'Washington Motorcycle Operator Manual', url: 'https://dol.wa.gov/driver-licenses-and-permits/motorcycle/motorcycle-endorsement-training-and-testing/motorcycle-operator-manual',
       desc: 'The official manual published by the Washington State Department of Licensing — the authoritative source the permit and endorsement knowledge tests are based on.' },
+  ],
+  ca_boating: [
+    { title: 'California Boater Card Program (DBW)', url: 'https://dbw.parks.ca.gov/?page_id=28711',
+      desc: "DBW's official program page -- confirms the education requirement became universal for all motorized-vessel operators on January 1, 2025, and covers the $10 lifetime card, application process and approved-course list." },
+    { title: 'CaliforniaBoaterCard.com (Official DBW Info Site)', url: 'https://californiaboatercard.com/',
+      desc: "DBW's dedicated public information site for the California Boater Card -- lists approved course providers, exemptions and FAQs." },
+  ],
+  tx_boating: [
+    { title: 'Texas Boating Laws and Responsibilities Handbook (PDF)', url: 'https://assets.kalkomey.com/boater/pdfs/handbook/texas-handbook-entire.pdf',
+      desc: 'The boater education handbook produced in partnership with TPWD, covering Texas boating law, safety equipment and operating rules.' },
+    { title: 'TPWD Boater Education Program', url: 'https://tpwd.texas.gov/education/boater-education',
+      desc: "TPWD's official boater education hub -- confirms the requirement and links to approved course providers and additional publications." },
+  ],
+  fl_boating: [
+    { title: 'Boating Safety Education ID Card (FWC)', url: 'https://myfwc.com/license/boating-navigation/id-card/',
+      desc: "FWC's official ID card page -- confirms the requirement (born on/after Jan. 1, 1988, operating a vessel with 10+hp) and the lifetime validity of the card." },
+    { title: 'FAQs About Boating Safety Education Requirements (FWC)', url: 'https://myfwc.com/boating/safety-education/faqs/',
+      desc: "FWC's official FAQ page answering common questions about the education requirement, approved courses and exemptions." },
+  ],
+  ny_boating: [
+    { title: "New York State Boater's Guide (PDF)", url: 'https://parks.ny.gov/documents/recreation/boating/2018NYSBoatersGuide.pdf',
+      desc: 'The official OPRHP handbook covering registration, navigation rules, required equipment and safety information for New York boaters.' },
+    { title: 'Boating Education (OPRHP)', url: 'https://parks.ny.gov/activities/boating/boating-education',
+      desc: "OPRHP's official boating education page -- confirms Brianna's Law's universal certificate requirement as of January 1, 2025, the minimum age of 10 to take the course, and how to find an approved provider." },
+  ],
+  pa_boating: [
+    { title: 'Pennsylvania Boating Handbook (PDF)', url: 'https://www.pa.gov/content/dam/copapwp-pagov/en/fishandboat/documents/boating/regulations/boatinghandbook.pdf',
+      desc: "The official PFBC handbook text used for the Commission's boating safety courses." },
+    { title: 'Apply for a Boating Safety Education Certificate (PFBC)', url: 'https://www.pa.gov/services/fishandboat/apply-for-bsec-and-safety-courses',
+      desc: "PFBC's official application page -- confirms the requirement (born on/after Jan. 1, 1982, operating motors over 25hp, or any PWC operator regardless of age) and lists approved course providers." },
+  ],
+  il_boating: [
+    { title: 'IDNR Watercraft Frequently Asked Questions', url: 'https://dnr.illinois.gov/boating/watercraft-frequently-asked-questions.html',
+      desc: "IDNR's official FAQ page covering the Boating Safety Certificate requirement, registration/titling, and age-tiered supervision rules for 10-17 year old operators." },
+    { title: 'Boat-Ed Illinois Boater Safety Course', url: 'https://www.boat-ed.com/illinois/',
+      desc: 'The NASBLA-approved course provider IDNR\'s own handbook directs boaters to -- its embedded final exam is the de facto Illinois boating knowledge test.' },
+  ],
+  ga_boating: [
+    { title: 'GA DNR Boating Rules and Regulations', url: 'https://gadnrle.org/boating-rules-regulations',
+      desc: "The Georgia DNR Law Enforcement Division's official page on boating rules, equipment requirements, and the boating education certificate process." },
+    { title: 'Boating in Georgia -- Boater Resources', url: 'https://georgiawildlife.com/boating/boater-resources',
+      desc: "The Georgia DNR Wildlife Resources Division's official boater resources page, covering registration, education requirements, and safety information." },
+  ],
+  nj_boating: [
+    { title: 'NJSP Marine Services Bureau', url: 'https://njsp.njoag.gov/boat/',
+      desc: "The New Jersey State Police's official Marine Services Bureau page -- administers the Boat Safety Certificate program, including the mandatory in-person proctored exam." },
+    { title: 'NJ MVC -- How to Get a Motorboat or Jet Ski License', url: 'https://www.nj.gov/mvc/vehicles/boating.htm',
+      desc: "The NJ Motor Vehicle Commission's official page on boat titling and registration -- handled by MVC rather than a wildlife/natural-resources agency, unlike most other states." },
+  ],
+  wa_boating: [
+    { title: 'Boater Education Courses (WA State Parks)', url: 'https://parks.wa.gov/about/rules-and-safety/boater-education-safety/boater-education-courses',
+      desc: "Washington State Parks' official page listing approved boater education course providers and formats (classroom, online, home-study)." },
+    { title: 'Boater Education & Safety Hub (WA State Parks)', url: 'https://parks.wa.gov/about/rules-and-safety/boater-education-safety',
+      desc: "The Recreational Boating Safety Program's official hub page, covering the Boater Education Card, equivalency exam option, and general boating safety requirements." },
+  ],
+  az_boating: [
+    { title: 'AZGFD Boating', url: 'https://www.azgfd.com/boating/',
+      desc: "The Arizona Game and Fish Department's official boating homepage, covering lakes, safety education (voluntary), and watercraft registration." },
+    { title: 'AZGFD Boating Rules and Regulations', url: 'https://www.azgfd.com/boating/register-and-renew-your-registration/rules-and-regulations/',
+      desc: "AZGFD's official rules and regulations page, including registration, required equipment, BUI thresholds, and accident-reporting duties under ARS Title 5, Chapter 3." },
+  ],
+  ma_boating: [
+    { title: 'Massachusetts Boat Safety Certificate Course (Mass.gov)', url: 'https://www.mass.gov/how-to/boat-safety-certificate-course',
+      desc: "The Massachusetts Environmental Police's official how-to page on the Hanson-Milone Boater Safety Act -- confirms the phased certification deadlines (April 2026 / April 2028), minimum operating ages, and the two course-format options (classroom or online)." },
+    { title: 'Massachusetts General Laws Chapter 90B', url: 'https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXIV/Chapter90B',
+      desc: 'The Massachusetts statute governing motorboats and vessel registration -- the legal basis for reckless/negligent operation and marine operating-under-the-influence (OUI) content covered in this practice exam.' },
+  ],
+  tn_boating: [
+    { title: 'Boating Education In Tennessee (TWRA)', url: 'https://www.tn.gov/twra/boating/boating-education.html',
+      desc: "TWRA's official boater education page -- confirms the birth-date cutoff (born after January 1, 1989), the 8.5hp threshold, the Type 600 Exam Permit process, and the adult-supervision exemption." },
+    { title: 'Boating Regulations and Safety Concerns (TWRA)', url: 'https://www.tn.gov/twra/boating/regulations-and-safety-concerns.html',
+      desc: "TWRA's official regulations page covering registration, PWC rules, and general boating law enforced across Tennessee's TVA reservoir system." },
+  ],
+  mo_boating: [
+    { title: 'Boater Education Law FAQ (MSHP Water Patrol)', url: 'https://www.mshp.dps.missouri.gov/MSHPWeb/WaterPatrol/BoatingLaws_Education/boaterEduLawFAQ.html',
+      desc: "The Water Patrol Division's official FAQ -- confirms the RSMo 306.127 birth-date threshold, the card fee/process, and the 2027 extension to those born on or after January 1, 2006." },
+    { title: 'Water Patrol Division Programs and Services (MSHP)', url: 'https://www.mshp.dps.missouri.gov/MSHPWeb/WaterPatrol/programsAndServices.html',
+      desc: "The Water Patrol Division's official programs page, covering registration, enforcement, and boating safety education across Missouri's waterways." },
+  ],
+  md_boating: [
+    { title: 'Boating Safety Certificate (Maryland DNR / NRP)', url: 'https://dnr.maryland.gov/nrp/pages/boatingsafety/safety_certificate.aspx',
+      desc: "The Natural Resources Police's official certificate page -- confirms the July 1, 1972 birth-date threshold, the lifetime validity of the certificate, and the absolute under-16 PWC operating ban." },
+    { title: 'Boating Safety Course Certification Details (Maryland OneStop)', url: 'https://onestop.md.gov/licenses/boating-safety-course-certification-5d1540b854f24d03e999852b',
+      desc: "Maryland's official OneStop licensing portal page for the boating safety certification, listing approved course providers and the certification process." },
+  ],
+  sc_boating: [
+    { title: 'Boater Education (SCDNR)', url: 'https://dnr.sc.gov/education/boated.html',
+      desc: "SCDNR's official boater education page -- confirms the birth-date threshold, vessel/HP scope, and approved course standards (NASBLA, U.S. Coast Guard Auxiliary, U.S. Power Squadrons)." },
+    { title: 'S.C. Code of Laws Title 50, Chapter 21 (Motorboats and Watercraft)', url: 'https://www.scstatehouse.gov/code/t50c021.php',
+      desc: "The South Carolina Code of Laws' full statutory text on motorboats and watercraft -- the legal basis for the reckless-operation, BUI, PWC, and accident-reporting content covered in this practice exam." },
+  ],
+  mn_boating: [
+    { title: 'Boat and Water Safety Education (MN DNR)', url: 'https://www.dnr.state.mn.us/safety/boatwater/education.html',
+      desc: 'The Minnesota DNR\'s official safety education page, covering the phased-in watercraft operator\'s permit birth-date schedule (2025-2028) and approved course providers.' },
+    { title: 'Minnesota Boating Guide (PDF)', url: 'https://files.dnr.state.mn.us/rlp/regulations/boatwater/boatingguide.pdf',
+      desc: 'The current official DNR guide summarizing Minnesota boating laws and regulations, including PWC rules, PFD requirements, and Sophia\'s Law carbon monoxide detector rules.' },
+  ],
+  wi_boating: [
+    { title: 'Wisconsin DNR Safety Education', url: 'https://dnr.wisconsin.gov/Education/OutdoorSkills/safetyEducation',
+      desc: 'The DNR\'s official page on signing up for an approved boating safety course, covering the January 1, 1989 birth-date cutoff and PWC age-12 minimum.' },
+    { title: 'Wisconsin DNR Boat Registration & Boating', url: 'https://dnr.wisconsin.gov/topic/Boat',
+      desc: 'The DNR\'s official boating topic hub, covering registration, HIN handling, and accident reporting under Wis. Stat. ch. 30 and Admin. Code NR 5.' },
+  ],
+  al_boating: [
+    { title: 'Boating Rules and Regulations (ALEA)', url: 'https://www.alea.gov/resources/laws/boating-rules-and-regulations',
+      desc: 'ALEA\'s official rules and regulations page, covering vessel registration, PFD requirements, and Marine Patrol\'s Northern/Central/Southern district enforcement.' },
+    { title: 'ALEA Boating Education and Operator Certification', url: 'https://www.alea.gov/dps/marine-patrol/boating-education-and-operator-certificationlicense',
+      desc: 'ALEA\'s official page describing the state-run written/oral exam pathway and the exam-exempt approved-course alternative for the vessel "V" license.' },
+  ],
+  la_boating: [
+    { title: 'LDWF Recreational Boating Regulations', url: 'https://www.wlf.louisiana.gov/page/boating-regulations',
+      desc: 'LDWF\'s official regulations page, covering PWC-specific restrictions, safe-speed/no-wake rules, and BUI parity with Louisiana\'s highway DUI standard.' },
+    { title: 'LDWF Required Boating Equipment', url: 'https://www.wlf.louisiana.gov/page/required-boating-equipment',
+      desc: 'LDWF\'s official equipment requirements page, covering PFD carriage rules, fire extinguishers, and visual distress signals scaled by vessel class.' },
+  ],
+  nv_boating: [
+    { title: 'NRS Chapter 488 -- Watercraft (Nevada Legislature)', url: 'https://www.leg.state.nv.us/nrs/NRS-488.html',
+      desc: 'The full official statute text covering NRS 488.730\'s safe-boating course requirement, the 0.08 BUI standard (NRS 488.400/488.405), and aquatic invasive species rules.' },
+    { title: 'Nevada Boating Law Handbook (NDOW)', url: 'https://www.ndow.org/wp-content/uploads/2025/10/Nevada-Boating-Law-Handbook-Unable-to-Remediate.pdf',
+      desc: "NDOW's official handbook covering Chapter 488 of the NRS, registration/titling, and Nevada's split desert-heat/alpine-cold-water boating geography." },
+  ],
+  ct_boating: [
+    { title: 'Connecticut Boating Certificate (DEEP)', url: 'https://portal.ct.gov/deep/boating/certification',
+      desc: "DEEP's official certificate page, covering the registration/residency-based mandate, the 9 DEEP-approved local providers, and the optional Equivalency Examination." },
+    { title: "Connecticut Boater's Guide (DEEP)", url: 'https://portal.ct.gov/DEEP/Boating/Connecticut-Boaters-Guide',
+      desc: "DEEP's official guide portal, covering required equipment by federal length class, the engine cut-off switch law, and Thames River security zones." },
   ],
 };
 
