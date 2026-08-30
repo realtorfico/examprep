@@ -1904,6 +1904,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Licensing, Qualifications & Applications', '18%'], ['Agency Disclosure, Brokerage Relationships & Listings', '19%'], ['Trust Accounts, Property Management & Advertising', '17%'], ['Disciplinary Grounds, Unlicensed Activity & Recovery Fund', '21%'], ['Commission Administration, Continuing Education & Reciprocity', '16%'], ['Closing Practices & Timeshare Sales', '9%']],
   },
   {
+    examType: 'fl_re_broker',
+    title: 'Florida Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/fl',
+    duration: '3 Hours 30 Minutes', questions: '100 Multiple Choice', passScore: '75/100 Correct (75%)',
+    description: 'Practice questions covering FREC\'s official 12-area broker exam content outline: real estate brokerage business (licensure, brokerage entities and office requirements, ownership/management/supervision, escrow management and trust accounts, FREC discipline and investigations), valuing real property, listing and selling real property (brokerage relationships), contracts, financing, closing transactions and disclosure, federal income tax laws, investment, zoning/planning/environmental issues, property management and landlord-tenant law, and the real estate market. Grounded in Florida Statutes Chapter 475 and Florida Administrative Code 61J2, with extra depth in escrow/trust account management and broker supervision of sales associates -- content the sales associate exam doesn\'t cover.',
+    breakdown: [['Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)', '43%'], ['Closing Transactions & Disclosure', '12%'], ['Contracts', '11%'], ['Valuing Real Property', '9%'], ['Listing & Selling Real Property (Brokerage Relationships)', '6%'], ['Federal Income Tax Laws', '5%'], ['Financing & Investment', '8%'], ['Real Estate Market, Zoning/Environmental & Property Management', '6%']],
+  },
+  {
     examType: 'tx_re_salesperson',
     title: 'Texas Real Estate Sales Agent Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/tx',
     duration: '90 Minutes', questions: '40 Multiple Choice (State Law Portion)', passScore: '28/40 Correct (70%)',
@@ -4055,6 +4062,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 63-hour Commission-prescribed pre-license education requirement (FREC Course I) for a Florida real estate sales associate license (or the separate post-license course of up to 45 hours required before your first license renewal), and does not issue any official course-completion certificate — our content is a supplementary study aid only. <strong>Important scope note:</strong> Florida's real Sales Associate Examination (administered by Pearson VUE on behalf of DBPR/FREC) is a single unified 100-question, 3.5-hour exam covering 19 official content areas that blend general real estate principles, practices, mathematics, property law, financing, appraisal, and taxation together with Florida-specific licensing law — there is no separate national-portion test. This track covers only the licensing-law and regulatory content areas of that official outline (grounded in Florida Statutes Chapter 475, Part I and Florida Administrative Code Chapter 61J2) — roughly Content Areas II through VII — not the general real estate principles, legal descriptions, contract law, mortgage financing, appraisal, market analysis, taxation, or planning/zoning content areas that make up the majority of the exam's official weighting. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Florida Statutes and Commission Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Sales Associate Examination or the required 63-hour pre-license education — this track covers the licensing-law and regulatory content areas only, not the full unified exam.",
     passScoreNote: "a practice-sizing convention using the real exam's own pass threshold — 30 of 40 correct (75%) — the actual Sales Associate Examination is scored as a raw 75-of-100-point exam (not a scaled 0-100 score)",
+  },
+  fl_re_broker: {
+    orgLine: "the Florida Real Estate Commission (FREC), within the Department of Business and Professional Regulation (DBPR)",
+    footerRequirement: "do not fulfill the broker license prerequisite -- 24 months of active real estate licensure within the preceding 5 years, a 72-classroom-hour FREC-approved broker prelicensing course, and (before the initial license expires) a 60-classroom-hour post-licensing course -- required before and after sitting for the exam",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the prerequisites for a Florida real estate broker license -- 24 months of active real estate licensure (as a sales associate or broker, in Florida or another state) within the preceding 5 years, a FREC-approved 72-classroom-hour broker prelicensing course, and a FREC-approved 60-classroom-hour broker post-licensing course completed before your initial broker license expires -- and does not issue any official course-completion certificate. Confirmed directly from DBPR's official Real Estate Broker Examination Candidate Information Booklet (effective March 2024): the real broker exam is a single 100-question, closed-book, multiple-choice exam with a 3.5-hour time limit, requiring a score of 75 or higher (75/100) to pass -- no separate national/state portions, but a materially higher bar than the sales associate exam's 70% threshold. FREC's own official content outline weights Real Estate Brokerage Business (licensure, escrow/trust accounts, broker supervision, discipline) at 43% of the exam, by far the largest single area -- this bank's question weighting follows that same official outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of DBPR/FREC, and the prelicensing/post-licensing education must be completed through a Commission-approved school. While we strive to align our content with the current Florida Statutes Chapter 475 and Florida Administrative Code 61J2, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real DBPR/FREC Broker Examination or the required licensure/education prerequisites.",
+    passScoreNote: "the same threshold as the real broker exam — 75 of 100 correct (75%), a higher bar than the sales associate exam's 70%",
   },
   tx_re_salesperson: {
     orgLine: "the Texas Real Estate Commission (TREC)",
@@ -7017,6 +7031,14 @@ var RESOURCES = {
       desc: "The official candidate handbook, effective January 2025, published by Florida DBPR and administered by Pearson VUE — the authoritative source for exam format, the 19-content-area outline, and testing logistics.",
       topic: "General Reference", free: true },
   ],
+  fl_re_broker: [
+    { title: "Florida Statutes Chapter 475, Part I (Real Estate Brokers, Sales Associates, and Schools)", type: "pdf", url: "https://www.flsenate.gov/Laws/Statutes/2025/Chapter475/All",
+      desc: "The official Florida Statutes text published by the Florida Senate — the statutory basis for the broker exam and this practice content.",
+      topic: "General Reference", free: true },
+    { title: "DBPR — Real Estate Broker Examination Candidate Information Booklet (Pearson VUE)", type: "pdf", url: "https://www2.myfloridalicense.com/servop/testing/documents/RE_broker_cib.pdf",
+      desc: "The official candidate handbook, effective March 2024, published by Florida DBPR and administered by Pearson VUE — the authoritative source for the broker exam's 100-question/75%-to-pass format and its 12-content-area outline.",
+      topic: "General Reference", free: true },
+  ],
   tx_re_salesperson: [
     { title: "Texas Real Estate Commission (TREC)", type: "pdf", url: "https://www.trec.texas.gov",
       desc: "The Texas Real Estate Commission's official site — the authoritative source the state law portion of the exam is based on.",
@@ -9078,6 +9100,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official Florida Real Estate Commission (FREC) page under the Department of Business and Professional Regulation (DBPR).' },
     { title: 'Candidate Information Booklet / Exam Registration', url: 'https://www2.myfloridalicense.com/servop/testing/documents/RE_sales_cibs.pdf',
       desc: 'DBPR\'s official Candidate Information Booklet for the Real Estate Sales Associate Examination, confirming Pearson VUE as the contracted testing vendor.' },
+  ],
+  fl_re_broker: [
+    { title: 'Real Estate Broker Requirements (DBPR)', url: 'https://www2.myfloridalicense.com/re/documents/REBKRequirements.pdf',
+      desc: 'DBPR\'s official broker license requirements page, confirming the 24-month/5-year licensure prerequisite, the 72-hour prelicensing course, and the 60-hour post-licensing course.' },
+    { title: 'Real Estate Broker Examination Candidate Information Booklet', url: 'https://www2.myfloridalicense.com/servop/testing/documents/RE_broker_cib.pdf',
+      desc: 'DBPR\'s official Candidate Information Booklet for the Real Estate Broker Examination, confirming the 100-question/75%-to-pass format and Pearson VUE as the contracted testing vendor.' },
   ],
   ga_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://georgia.gov/organization/georgia-real-estate-commission-appraisers-board',
