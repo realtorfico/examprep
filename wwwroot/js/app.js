@@ -1197,6 +1197,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Property Ownership & Land Use Controls', '15%'], ['Agency & Fiduciary Duties', '17%'], ['Valuation, Financing & Transfer of Property', '31%'], ['Practice of Real Estate, Disclosures & Contracts', '37%']],
   },
   {
+    examType: 'ca_re_broker',
+    title: 'California Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ca',
+    duration: '4 Hours', questions: '200 Multiple Choice', passScore: '75% (150/200 Correct)',
+    description: 'Practice questions covering the California Real Estate Law (Business and Professions Code, Division 4) at broker level, scoped to the DRE\'s own official RE 425 exam content outline: broker supervision and office management, trust fund handling, property management and landlord-tenant law, agency and fiduciary duties, fair housing/advertising ethics, mandated disclosures, property ownership and land use, valuation and appraisal math, contracts, financing and loan brokerage, transfer of property, and commercial/specialty areas. The broker exam shares the same seven-area outline as the salesperson exam, but the DRE states it "differs in emphasis and difficulty" -- this bank concentrates extra depth in broker-specific supervision, trust accounting and property-management content the salesperson exam doesn\'t weight as heavily.',
+    breakdown: [['Broker Supervision, Office Management & Trust Fund Handling', '22%'], ['Property Management, Landlord-Tenant Law & Mandated Disclosures', '16%'], ['Agency, Fiduciary Duties & Fair Housing/Advertising Ethics', '16%'], ['Property Ownership, Land Use & Valuation/Appraisal Math', '19%'], ['Contracts & Transfer of Property', '15%'], ['Financing, Loan Brokerage & Commercial/Specialty Areas', '12%']],
+  },
+  {
     examType: 'oh_driver',
     title: 'Ohio Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', route: '/driver/oh',
     duration: 'Untimed', questions: '40 Multiple Choice', passScore: '30/40 Correct (75%)',
@@ -3117,6 +3124,13 @@ var TRACK_COMPLIANCE = {
       'constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real DRE Salesperson exam or the required pre-license education courses.',
     passScoreNote: 'the same threshold as the real DRE exam — 105 of 150 correct',
+  },
+  ca_re_broker: {
+    orgLine: 'the California Department of Real Estate (DRE)',
+    footerRequirement: "do not fulfill the broker license prerequisite -- two years of licensed salesperson experience within the preceding five years plus eight DRE-approved college-level courses (or qualifying equivalent experience) -- required before sitting for the exam",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the prerequisite for a California real estate broker license -- generally two years of licensed salesperson experience within the preceding five years, plus eight DRE-approved college-level courses (including Real Estate Practice, Legal Aspects of Real Estate, Real Estate Appraisal, Real Estate Finance, Real Estate Economics or Accounting, and three electives), though DRE also accepts qualifying equivalent experience (e.g. an attorney admitted to the California Bar, or a specified number of years of general real estate experience evaluated case-by-case) -- and does not issue any official course-completion certificate. The broker exam shares the DRE\'s same seven-area content outline as the salesperson exam, but is longer (200 questions vs. 150) and requires a higher passing score (75% vs. 70%); DRE itself states the two exams "differ in emphasis and difficulty" by license level. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered directly by the California Department of Real Estate (not outsourced to a testing vendor, unlike most other states\' broker exams), and the experience/education prerequisites must be verified through DRE\'s own application process. While we strive to align our content with the current California Real Estate Law (Business and Professions Code, Division 4) and the Commissioner\'s Regulations on broker supervision and trust funds, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real DRE Broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold as the real DRE broker exam — 150 of 200 correct (75%), a higher bar than the salesperson exam\'s 70%',
   },
   oh_driver: {
     orgLine: 'the Ohio Bureau of Motor Vehicles (BMV)',
@@ -6282,6 +6296,14 @@ var RESOURCES = {
       desc: 'DRE\'s own official exam content outline — the 7 major subject areas and their exam-weight percentages.',
       topic: 'General Reference', free: true },
   ],
+  ca_re_broker: [
+    { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
+      desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the broker exam is based on, including broker supervision (Sec. 10159.2) and trust fund handling provisions.',
+      topic: 'General Reference', free: true },
+    { title: 'DRE Examination Description (RE 425)', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/forms/re425.pdf',
+      desc: 'DRE\'s own official exam content outline, confirming the broker exam\'s 200-question/4-hour/75%-to-pass format alongside the same 7 subject areas as the salesperson exam.',
+      topic: 'General Reference', free: true },
+  ],
   oh_driver: [
     { title: 'Ohio Digest of Motor Vehicle Laws (Driver Manual)', type: 'pdf', url: 'https://publicsafety.ohio.gov/links/hsy7607.pdf',
       desc: 'The official manual published by the Ohio Department of Public Safety (HSY 7607) — the authoritative source the BMV written knowledge test is based on.',
@@ -9004,6 +9026,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The California Department of Real Estate\'s official page on salesperson exam content, requiring a 70% passing score; DRE administers the exam directly rather than through a third-party vendor.' },
     { title: 'eLicensing Exam Scheduling', url: 'https://secure.dre.ca.gov/elicensing/',
       desc: 'The DRE\'s official eLicensing system, used to self-schedule or reschedule the salesperson licensing exam.' },
+  ],
+  ca_re_broker: [
+    { title: 'Department of Real Estate Broker Exam Content', url: 'https://www.dre.ca.gov/examinees/BrokerExamContent.html',
+      desc: 'The California Department of Real Estate\'s official page on broker exam content, confirming the 200-question/4-hour format and 75% passing score; DRE administers the exam directly rather than through a third-party vendor.' },
+    { title: 'eLicensing Exam Scheduling', url: 'https://secure.dre.ca.gov/elicensing/',
+      desc: 'The DRE\'s official eLicensing system, used to self-schedule or reschedule the broker licensing exam.' },
   ],
   co_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://dre.colorado.gov/',
