@@ -10035,6 +10035,18 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'WYDOT -- Driver License Testing Requirements', url: 'https://www.dot.state.wy.us/home/driver_license_records/driver-license/testing.html',
       desc: "WYDOT's official Testing Requirements page -- confirms the written knowledge test covers traffic-control devices, safe driving practices and traffic laws, but does not publish an item count, passing score, or time limit." },
   ],
+  il_managing_broker: [
+    { title: 'Illinois Real Estate License Act of 2000', url: 'https://www.ilga.gov/legislation/ILCS/details?MajorTopic=&Chapter=&ActName=Real+Estate+License+Act+of+2000.&ActID=1364&ChapterID=24&SeqStart=&ChapAct=FullText',
+      desc: 'The official statute (225 ILCS 454) published by the Illinois General Assembly -- the authoritative source the state-specific exam is based on.' },
+    { title: 'PSI Illinois Candidate Handbook', url: 'https://test-takers.psiexams.com/api/content/bulletin/4655',
+      desc: "PSI's official Illinois real estate candidate handbook, covering exam registration, content outline, and mechanics for the IDFPR-contracted managing broker upgrade exam (50 questions, 90 minutes, 75% passing)." },
+  ],
+  wa_managing_broker: [
+    { title: 'Exam: Real Estate Managing Brokers (WA DOL)', url: 'https://dol.wa.gov/professional-licenses/real-estate-managing-brokers/exam-real-estate-managing-brokers',
+      desc: "The Washington State Department of Licensing's official managing broker exam page, confirming PSI Testing Excellence as the exam partner and the national/state simulation-problem exam structure." },
+    { title: 'PSI Washington Managing Broker Candidate Bulletin', url: 'https://test-takers.psiexams.com/api/content/bulletin/4658',
+      desc: "PSI's official candidate handbook for the Washington managing broker exam, covering registration, the $138.25 fee, and the 10-national/5-state-law simulation-problem exam structure." },
+  ],
 };
 
 function renderAdditionalInfo() {
