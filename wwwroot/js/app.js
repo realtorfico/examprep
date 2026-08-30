@@ -1946,6 +1946,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Agency Law, Fair Housing & Contracts', '18%'], ['Commission, Compensation, License Law & Business Ethics', '16%'], ['Finance, Valuation & Real Estate Math', '16%'], ['Property Management, Land Use & Taxes', '14%'], ['Broker Licensure, Office Management & Recordkeeping', '13%'], ['Broker Supervision & Escrow/Trust Fund Management', '12%'], ['Closing, Seller Disclosure & Environmental Issues', '11%']],
   },
   {
+    examType: 'oh_re_broker',
+    title: 'Ohio Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/oh',
+    duration: '3 Hours (Estimated -- Combined National + State Portions)', questions: '115 Multiple Choice (Estimated -- Split Between National & Ohio-Specific Portions, Exact Split Not Published)', passScore: '75% on Each Portion (Estimated -- Exact Passing Threshold Confirmed via State Regulation, Item Split Not Independently Vendor-Confirmed)',
+    description: 'Practice questions covering the Ohio Revised Code Chapter 4735 (Real Estate Brokers, Salespersons) and Ohio Administrative Code Chapter 1301:5: broker licensure requirements and application, broker office management and branch offices/recordkeeping, broker supervision by principal brokers and management-level licensees, escrow and trust fund management, commission and broker-salesperson compensation relationships, and license law/Real Estate Commission discipline/Recovery Fund, plus the agency law, fair housing, contracts, finance, valuation, and disclosure content the salesperson exam covers at a deeper broker level. Ohio splits its real estate exams into a national portion (two-thirds of the exam) and an Ohio-specific portion (one-third), each requiring 75% to pass independently, confirmed via Ohio Administrative Code rule 1301:5-1-05. PSI is well-corroborated as Ohio\'s exam vendor via independent secondary sources, though a primary vendor candidate-handbook PDF could not be independently fetched this pass -- the 115-question/180-minute figures are corroborated-secondary-source estimates, not an independently vendor-confirmed count. Ohio does not have a separate "principal broker" license or exam -- it is a supervisory designation any licensed broker takes on to run a brokerage under ORC 4735.081, using the identical broker exam and licensure path.',
+    breakdown: [['Agency Law, Fair Housing & Contracts', '17%'], ['Commission, Compensation, License Law & Business Ethics', '17%'], ['Finance, Valuation & Real Estate Math', '17%'], ['Property Management, Land Use & Taxes', '16%'], ['Broker Licensure, Office Management & Recordkeeping', '11%'], ['Broker Supervision & Escrow/Trust Fund Management', '11%'], ['Closing, Property Disclosure & Environmental Issues', '11%']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -4112,6 +4119,26 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the prerequisites for a New York real estate broker license -- 2 years of experience as a licensed salesperson, or 3 years of general qualifying real estate experience (or a combination, evaluated on DOS's own experience-point scale), plus 152 hours of DOS-approved education -- and does not issue any official course-completion certificate. Our content is grounded in New York Real Property Law Article 12-A at broker level and 19 NYCRR Part 175 (Department of State real estate rules covering escrow, net-listing bans, branch offices, broker supervision, recordkeeping, and advertising). Confirmed directly from dos.ny.gov: unlike most states, New York DOS administers the broker exam directly (no PSI/Pearson VUE or similar vendor), with a confirmed 150-minute time limit, a $15 exam fee, and a $185 initial license fee; a passing result is valid for 2 years. DOS reports the real exam as pass/fail only and does not publish an exact item count or passing percentage; the 100-question/70% format used here is a commonly-cited study convention, not an official DOS figure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is scheduled through DOS's eAccessNY system, and broker education must be completed through a DOS-approved provider. While we strive to align our content with the current Real Property Law and DOS regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real New York DOS broker exam or the required experience/education prerequisites.",
     passScoreNote: "a practice-study convention only — New York DOS reports the real broker exam as pass/fail, with no published item count or numeric passing percentage",
+  },
+  oh_re_broker: {
+    orgLine: 'the Ohio Division of Real Estate & Professional Licensing (Ohio Department of Commerce)',
+    footerRequirement: "do not fulfill the 2-of-5-years licensed-experience/20-transaction prerequisite or the 240-hour broker pre-license education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Ohio real estate broker ' +
+      'prerequisites — holding an Ohio broker\'s or salesperson\'s license for at least 2 of the preceding 5 years, completing at least ' +
+      '20 real estate sales transactions in that period (or Commission-recognized equivalent), and 240 hours of Commission-approved ' +
+      'broker education (40 hrs real estate practice, 40 hrs Ohio real estate/civil rights law, 20 hrs appraisal, 20 hrs finance, plus ' +
+      '30 hrs each in financial management, HR/personnel management, applied business economics, and business law) — and does not ' +
+      'issue any official course-completion certificate. Our content is grounded in Ohio Revised Code Chapter 4735 and Ohio ' +
+      'Administrative Code Chapter 1301:5. PSI is well-corroborated as Ohio\'s exam vendor via independent secondary sources, ' +
+      'administering the exam as a national portion (two-thirds of the exam) and an Ohio-specific portion (one-third), each requiring ' +
+      '75% to pass independently, confirmed via Ohio Administrative Code rule 1301:5-1-05 — though the exact question count and time ' +
+      'limit could not be independently confirmed against a primary vendor candidate handbook this pass, and are flagged as ' +
+      'corroborated-secondary-source estimates. Completing practice exams here also does not register you for, or schedule, the ' +
+      'official licensing exam; official testing is scheduled through PSI, and broker education must be completed through a ' +
+      'Division-approved provider. While we strive to align our content with the current Ohio Revised Code and Administrative Code, ' +
+      'it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Ohio real estate broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold required by the real exam on each portion — 75% within the national portion and 75% within the Ohio-specific portion, confirmed via OAC rule 1301:5-1-05',
   },
   pa_re_broker: {
     orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
@@ -6404,6 +6431,14 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Ohio Administrative Code Chapter 1301:5 (Division of Real Estate)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-administrative-code/1301:5',
       desc: 'The official practice-conduct regulations — escrow/trust accounts, advertising, dual agency, continuing education — published by the Ohio Legislative Service Commission.',
+      topic: 'General Reference', free: true },
+  ],
+  oh_re_broker: [
+    { title: 'Ohio Revised Code Chapter 4735 (Real Estate Brokers)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-revised-code/chapter-4735',
+      desc: 'The official statute, published by the Ohio Legislative Service Commission — the authoritative source for broker licensure, escrow, discipline, and the Recovery Fund.',
+      topic: 'General Reference', free: true },
+    { title: 'Ohio Administrative Code Chapter 1301:5 (Division of Real Estate)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-administrative-code/1301:5',
+      desc: 'The official practice-conduct regulations — trust accounts, principal-broker supervision duties, branch offices, advertising — published by the Ohio Legislative Service Commission.',
       topic: 'General Reference', free: true },
   ],
   oh_boating: [
@@ -9327,6 +9362,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Ohio Department of Commerce\'s official Salesperson & Broker Candidate Information Bulletin page for real estate licensing exam candidates.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/ohre',
       desc: 'PSI\'s official Ohio real estate candidate portal for registering and scheduling the state licensing exam.' },
+  ],
+  oh_re_broker: [
+    { title: 'Division of Real Estate Site', url: 'https://com.ohio.gov/divisions-and-programs/real-estate-and-professional-licensing/salespersons-and-brokers/guides-and-resources/salesperson-and-broker-candidate-information-bulletin',
+      desc: 'The Ohio Department of Commerce\'s official Salesperson & Broker Candidate Information Bulletin page, covering broker licensing exam candidates.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/ohre',
+      desc: 'PSI\'s official Ohio real estate candidate portal for registering and scheduling the state broker licensing exam.' },
   ],
   ok_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://oklahoma.gov/orec/licensing/application-and-exam-faqs.html',
