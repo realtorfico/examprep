@@ -1911,6 +1911,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Agency/Brokerage (Disclosure, Intermediary Practice & Broker-Sales Agent Relationships)', '27.5%'], ['Standards of Conduct (Ethics, Discipline & Trust Accounts)', '22.5%'], ['Contracts (Promulgated Forms, Statute of Frauds & Seller Disclosure)', '22.5%'], ['Special Topics (Community Property, Homestead & Landlord-Tenant)', '12.5%'], ['Commission Duties & Powers (Complaints, Hearings & Penalties)', '7.5%'], ['Licensing (Requirements, Education & Renewal)', '7.5%']],
   },
   {
+    examType: 'tx_re_broker',
+    title: 'Texas Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/tx',
+    duration: '4 Hours', questions: '145 Multiple Choice (85 National / 60 State)', passScore: 'Both Portions: 75% National, 76% State',
+    description: 'Practice questions covering the Pearson VUE-administered Texas Broker exam\'s combined National and State content: broker supervision, intermediary practice and sponsorship of sales agents, broker office management and policy manuals, trust account and escrow handling under TREC\'s trust-money rules, TREC standards of conduct and ethics, the Real Estate License Act (TRELA) and TREC rules (22 TAC), promulgated contracts and forms, plus the same national-level property, contracts, agency, valuation, financing and math content the sales agent exam covers -- scoped to the official Pearson VUE Candidate Handbook and State/National Content Outlines. Requires 900 hours of qualifying/related education (including a mandatory Broker Responsibility course) and 4 years of qualifying experience -- both verified separately at application, not tested here.',
+    breakdown: [['Broker Supervision, Intermediary Practice & Office Management', '17%'], ['Trust Accounts, Escrow & TREC Standards of Conduct/Ethics', '13%'], ['TREC Rules, Licensing & Promulgated Contracts/Forms', '10%'], ['Contracts, Agency & National Real Estate Practice', '15%'], ['Property Characteristics, Ownership, Value & Real Estate Math', '22%'], ['Disclosures, Environmental, Financing & Special TX Law Topics', '17%'], ['Case Studies & Applied Scenarios', '6%']],
+  },
+  {
     examType: 'ny_re_salesperson',
     title: 'New York Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ny',
     duration: '90 Minutes', questions: '75 Multiple Choice (Estimated -- NY DOS Does Not Publish an Exact Item Count)', passScore: '70% (Estimated -- Real Exam Is Pass/Fail Only, No Numeric Score Published by NY DOS)',
@@ -4055,6 +4062,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 180-classroom-hour pre-license education requirement for a Texas real estate sales agent license (six TREC-approved 30-hour qualifying courses: Principles of Real Estate I, Principles of Real Estate II, Law of Agency, Law of Contracts, Promulgated Contract Forms, and Real Estate Finance), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state law portion of the exam (grounded in the Real Estate License Act (TRELA), Texas Occupations Code Chapter 1101, and TREC's rules at 22 TAC Chapters 531, 533, 534, and 535), not the separate 80-item national/general portion, and not every topic on TREC's own published state law content outline — our question bank does not include a dedicated Special Topics section, which TREC's outline weights at 12.5% of the state law exam (community property, homestead protections and tax exemptions, the Deceptive Trade Practices Act, landlord-tenant issues, foreclosure and short sales, recording statutes, mechanic's and materialman's liens, the Veterans Land Board, homeowners associations, wills and estates, and equitable interest). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of TREC as a single combined national-plus-state sitting (candidates must pass both separately-scored portions to be licensed, and may retake only the portion they fail), and pre-license education must be completed through a TREC-approved qualifying education provider. While we strive to align our content with the current TRELA statute and TREC Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real TREC Sales Agent exam or the required 180-hour pre-license education.",
     passScoreNote: "the same threshold as the real state law portion — 28 of 40 correct (70%)",
+  },
+  tx_re_broker: {
+    orgLine: "the Texas Real Estate Commission (TREC)",
+    footerRequirement: "do not fulfill the broker license prerequisite -- 900 hours of qualifying and related education (including a mandatory TREC Broker Responsibility course) plus 4 years of qualifying experience within a 60-month window (720 points, verified by TREC) -- required before sitting for the exam",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the prerequisite for a Texas real estate broker license -- 900 hours of TREC-qualifying and related education (including a mandatory Broker Responsibility course; a bachelor's degree can offset up to 300 hours) plus 4 years of qualifying experience within the preceding 60 months, evaluated on a 720-point scale by TREC -- and does not issue any official course-completion certificate. Confirmed directly from the official Pearson VUE Texas Real Estate Candidate Handbook (#094400) and its companion State/National Content Outlines (#094401): the real broker exam is 145 items (85 National including a pretest, 60 State including a pretest) in a single 240-minute sitting, requiring 60 of 80 scored National items correct (75%) AND 38 of 50 scored State items correct (76%) -- two separately-scored thresholds, both required, a meaningfully higher bar than the sales agent exam's 56/80 and 28/50. Candidates get 3 attempts before TREC requires 30 additional classroom hours (for one failed portion) or 60 hours (for both) before retesting. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of TREC, and the education/experience prerequisites must be verified through TREC's own application process. While we strive to align our content with the current Real Estate License Act (TRELA), Texas Occupations Code Chapter 1101, and TREC Rules (22 TAC), it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real TREC Broker exam or the required 900-hour education/4-year experience prerequisites.",
+    passScoreNote: "the same two thresholds as the real broker exam — 60 of 80 National correct (75%) AND 38 of 50 State correct (76%), both required — a higher bar than the sales agent exam's 56/80 and 28/50",
   },
   ny_re_salesperson: {
     orgLine: "the New York Department of State (DOS), Division of Licensing Services",
@@ -7011,6 +7025,14 @@ var RESOURCES = {
       desc: "The Real Estate License Act (TRELA) — the statutory basis for TREC's rules at 22 TAC Chapters 531, 533, 534, and 535.",
       topic: "General Reference", free: true },
   ],
+  tx_re_broker: [
+    { title: "Texas Real Estate Commission (TREC)", type: "pdf", url: "https://www.trec.texas.gov",
+      desc: "The Texas Real Estate Commission's official site — the authoritative source the broker exam and its education/experience prerequisites are based on.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE Texas Real Estate Candidate Handbook (#094400)", type: "pdf", url: "https://www.pearsonvue.com/content/dam/VUE/vue/en/documents/publications/094400.pdf",
+      desc: "The official candidate handbook confirming the broker exam's 145-item, 240-minute, dual-threshold (75% National / 76% State) format — the authoritative source this practice content's mechanics are based on.",
+      topic: "General Reference", free: true },
+  ],
   ny_re_salesperson: [
     { title: "New York Real Property Law Article 12-A (Real Estate Brokers and Real Estate Salespersons)", type: "pdf", url: "https://www.nysenate.gov/legislation/laws/RPP/A12-A",
       desc: "The official New York Real Property Law text published by the NY Senate — the statutory basis for licensing, discipline, and this practice content.",
@@ -9260,6 +9282,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Texas Real Estate Commission\'s official page on becoming a licensed real estate sales agent, including exam requirements.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/tx/realestate.html',
       desc: 'Pearson VUE\'s official Texas real estate licensing exam page with the candidate handbook and scheduling.' },
+  ],
+  tx_re_broker: [
+    { title: 'Become an Individual Real Estate Broker (TREC)', url: 'https://www.trec.texas.gov/become-licensed/individual-real-estate-broker',
+      desc: 'The Texas Real Estate Commission\'s official page on the broker license path, confirming the 900-hour education and 4-year/720-point experience requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/tx/realestate.html',
+      desc: 'Pearson VUE\'s official Texas real estate licensing exam page, covering both the sales agent and broker exam candidate handbooks and scheduling.' },
   ],
   ut_re_salesperson: [
     { title: 'Division of Real Estate Site', url: 'https://commerce.utah.gov/realestate/real-estate/licensing',
