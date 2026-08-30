@@ -307,25 +307,10 @@ function loadSiteConfig() {
       if (c && Number.isFinite(c.refundFailurePercent)) refundFailurePercent = c.refundFailurePercent;
       if (c && Number.isFinite(c.accuracyPassPct)) progressAccuracyPassPct = c.accuracyPassPct;
       if (c && Number.isFinite(c.coveragePassPct)) progressCoveragePassPct = c.coveragePassPct;
-      // inactiveTracks overrides are applied by boot() itself, not here -- applying them requires
-      // HUB_EXAMS to already be built from track_registry, and this fetch runs concurrently with
-      // loadTrackRegistry() (Promise.all in boot()), so either could resolve first. Applying here
-      // would silently no-op if this one won the race while HUB_EXAMS was still empty.
       return c;
     }).catch(function () { /* keep defaults */ });
   }
   return siteConfigPromise;
-}
-
-// Admin-settable "pull from sale" override (examprep-admin's Settings > Course pricing table),
-// applied on top of each track's own coded HUB_EXAMS.active default -- every existing .active
-// check (hub grid, header dropdown, loadOtherTracksPricing, etc.) picks this up automatically
-// since it mutates the shared HUB_EXAMS objects in place, once, at boot.
-function applyInactiveTrackOverrides(examTypes) {
-  examTypes.forEach(function (examType) {
-    var track = trackByExamType(examType);
-    if (track) track.active = false;
-  });
 }
 
 // Shared cached fetch -- the hub's readiness card and outcomes strip both need /stats/public on
@@ -12341,23 +12326,17 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderSiteHeader();
   renderSiteFooter();
   renderHelpChatWidget(); // outside appEl -- rendered once here only, so it survives every route() re-render
-  // Must know which track the token (if any) actually belongs to, AND have any admin
-  // track-deactivation override applied, AND have the real track_registry identity data (kind/
-  // state/short_name/active for all 244 tracks) BEFORE #app's first render -- otherwise
-  // isLoggedInForCurrentTrack() would wrongly read as "not logged in" for a moment
-  // (accountExamType still null), route()/the hub grid could briefly show a track an admin just
-  // pulled from sale before disappearing on the next render, or HUB_EXAMS could render as empty
-  // (see buildHubExams -- it starts as []). All three resolve near-instantly in the common case.
-  // The header/footer sync calls above necessarily ran before this resolves too (with
-  // accountExamType still null, no override applied, and HUB_EXAMS still empty) -- re-render both
-  // once the real values are in, so a logged-in visitor's Refer/sample links reflect their own
-  // track's account instead of no track/whatever page they'd last viewed.
-  Promise.all([loadSiteConfig(), loadAccountExamType(), loadTrackRegistry()]).then(function (results) {
-    var siteConfig = results[0];
-    // Applied here (not inside loadSiteConfig itself) so it's guaranteed to run after
-    // loadTrackRegistry() has already built HUB_EXAMS, regardless of which of the two fetches
-    // above actually resolved first -- see loadSiteConfig's own comment on this.
-    if (siteConfig && Array.isArray(siteConfig.inactiveTracks)) applyInactiveTrackOverrides(siteConfig.inactiveTracks);
+  // Must know which track the token (if any) actually belongs to, AND have the real
+  // track_registry identity data (kind/state/short_name/active for all 244 tracks, including any
+  // admin "pull from sale" toggle -- active lives directly on the registry row now, no separate
+  // override layer) BEFORE #app's first render -- otherwise isLoggedInForCurrentTrack() would
+  // wrongly read as "not logged in" for a moment (accountExamType still null), and HUB_EXAMS could
+  // render as empty (see buildHubExams -- it starts as []). Both resolve near-instantly in the
+  // common case. The header/footer sync calls above necessarily ran before this resolves too (with
+  // accountExamType still null and HUB_EXAMS still empty) -- re-render both once the real values
+  // are in, so a logged-in visitor's Refer/sample links reflect their own track's account instead
+  // of no track/whatever page they'd last viewed.
+  Promise.all([loadSiteConfig(), loadAccountExamType(), loadTrackRegistry()]).then(function () {
     renderSiteHeader();
     renderSiteFooter();
     route();
