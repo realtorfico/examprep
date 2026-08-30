@@ -1953,6 +1953,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Agency Law, Fair Housing & Contracts', '17%'], ['Commission, Compensation, License Law & Business Ethics', '17%'], ['Finance, Valuation & Real Estate Math', '17%'], ['Property Management, Land Use & Taxes', '16%'], ['Broker Licensure, Office Management & Recordkeeping', '11%'], ['Broker Supervision & Escrow/Trust Fund Management', '11%'], ['Closing, Property Disclosure & Environmental Issues', '11%']],
   },
   {
+    examType: 'ga_re_broker',
+    title: 'Georgia Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ga',
+    duration: 'Approx. 4 Hours (Estimated -- Combined National + 48-Item GA State Portions, No Official Total Time Published)', questions: '148 Multiple Choice (48 GA State Portion Confirmed + 100 National Portion Estimated by Analogy to the Salesperson Exam)', passScore: '75% on Each Portion (Confirmed via Secondary Corroboration -- GREC/PSI Bulletin Does Not Publish a Numeric Passing Score)',
+    description: 'Practice questions covering O.C.G.A. Title 43, Chapter 40 (Real Estate Brokers and Salespersons) and Ga. Comp. R. & Regs. Chapter 520: broker licensure requirements and application, broker/qualifying-broker office management and advertising, broker supervision of affiliated licensees, escrow and trust fund management, commission and broker-salesperson relationships, and license law/GREC discipline/Recovery Fund, plus the agency law (including BRRETA, Georgia\'s statutory alternative to common-law fiduciary duty), fair housing, contracts, finance, valuation, and disclosure content the salesperson exam covers at a deeper broker level. PSI Services LLC is confirmed as GREC\'s exam vendor directly from the current GREC/PSI Candidate Information Bulletin: the Georgia-specific Broker Supplement is confirmed at exactly 48 items (31 State Laws & Rules, 12 Management, 5 Closing & Calculations), while the national portion\'s category weights are published as percentages, not a raw count -- this bank uses a well-corroborated 100-item estimate (by analogy to Georgia\'s confirmed salesperson national-portion count) for the combined 148-question/75%-per-portion practice format, flagged as an estimate since GREC/PSI does not publish a total item count or time limit for the Broker exam as a whole. Georgia is a confirmed attorney-required-closing state (In re UPL Advisory Opinion 2003-2, 588 S.E.2d 741 (Ga. 2003)), and uses security deeds with nonjudicial power-of-sale foreclosure rather than deeds of trust.',
+    breakdown: [['GA State Laws, Rules, Fair Housing, Unfair Practices & Recovery Fund', '21%'], ['Contracts & Agency Law (BRRETA)', '22%'], ['Broker Management, Supervision & Practice of Real Estate', '20%'], ['Property Ownership, Land Use & Transfer of Title', '14%'], ['Financing & Valuation', '11%'], ['Closing & Real Estate Calculations', '7%'], ['Property Disclosures', '5%']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -4139,6 +4146,26 @@ var TRACK_COMPLIANCE = {
       'it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Ohio real estate broker exam or the required experience/education prerequisites.',
     passScoreNote: 'the same threshold required by the real exam on each portion — 75% within the national portion and 75% within the Ohio-specific portion, confirmed via OAC rule 1301:5-1-05',
+  },
+  ga_re_broker: {
+    orgLine: 'the Georgia Real Estate Commission (GREC)',
+    footerRequirement: "do not fulfill the 3-years'-active-licensure prerequisite or the 60-hour Broker's Prelicense Course requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Georgia real estate broker ' +
+      'prerequisites — holding an active Georgia real estate license for at least 3 of the preceding 5 years, and completing one of the ' +
+      'Commission-approved broker education paths (a 60-hour Broker\'s Prelicense Course, 15 quarter-hours/9 semester-hours of qualifying ' +
+      'college coursework, or an equivalent out-of-state/Canadian course) — and does not issue any official course-completion ' +
+      'certificate. Our content is grounded in O.C.G.A. Title 43, Chapter 40 and Ga. Comp. R. & Regs. Chapter 520, including Georgia\'s ' +
+      'Brokerage Relationships in Real Estate Transactions Act (BRRETA), which displaces common-law fiduciary duty with statutory ' +
+      '"reasonable care" duties by default. PSI Services LLC is confirmed as GREC\'s exam vendor directly from the current GREC/PSI ' +
+      'Candidate Information Bulletin — the Georgia-specific Broker Supplement is confirmed at exactly 48 items (31 State Laws & Rules, ' +
+      '12 Management, 5 Closing & Calculations), each portion requiring 75% to pass, though GREC/PSI does not publish a total item count ' +
+      'or time limit for the Broker exam as a whole; the 148-question/national-portion figures used here are well-corroborated estimates, ' +
+      'not a vendor-confirmed total, and are flagged as such. Completing practice exams here also does not register you for, or schedule, ' +
+      'the official licensing exam; official testing is scheduled through PSI, and broker education must be completed through a ' +
+      'GREC-approved provider. While we strive to align our content with current Georgia law and GREC regulations, it is provided ' +
+      '"as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Georgia real estate broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold required by the real exam on each portion — 75%, confirmed via secondary corroboration since GREC/PSI does not publish a numeric passing score directly',
   },
   pa_re_broker: {
     orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
@@ -6439,6 +6466,14 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Ohio Administrative Code Chapter 1301:5 (Division of Real Estate)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-administrative-code/1301:5',
       desc: 'The official practice-conduct regulations — trust accounts, principal-broker supervision duties, branch offices, advertising — published by the Ohio Legislative Service Commission.',
+      topic: 'General Reference', free: true },
+  ],
+  ga_re_broker: [
+    { title: 'Georgia Real Estate Commission Rules (Chapter 520)', type: 'pdf', url: 'https://rules.sos.ga.gov/gac/520',
+      desc: 'The official regulations published by the Georgia Secretary of State — trust accounts, broker supervision duties, advertising, and office management for the broker exam.',
+      topic: 'General Reference', free: true },
+    { title: 'O.C.G.A. Title 43, Chapter 40 (Real Estate Brokers, Salespersons and Rental Agents)', type: 'pdf', url: 'https://law.justia.com/codes/georgia/title-43/chapter-40/',
+      desc: 'The Georgia Real Estate License Act — the statutory basis for broker licensure, escrow duties, discipline, and the Recovery Fund.',
       topic: 'General Reference', free: true },
   ],
   oh_boating: [
@@ -9206,6 +9241,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official Georgia.gov page for the Georgia Real Estate Commission & Appraisers Board (GREC), the state agency regulating real estate salesperson and broker licensing.' },
     { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://test-takers.psiexams.com/api/content/bulletin/4672',
       desc: 'PSI Services\' official Georgia Real Estate Commission Candidate Information Bulletin, confirming PSI as GREC\'s contracted testing vendor.' },
+  ],
+  ga_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://georgia.gov/organization/georgia-real-estate-commission-appraisers-board',
+      desc: 'Official Georgia.gov page for the Georgia Real Estate Commission & Appraisers Board (GREC), the state agency regulating real estate broker licensing.' },
+    { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://test-takers.psiexams.com/api/content/bulletin/4672',
+      desc: 'PSI Services\' official Georgia Real Estate Commission Candidate Information Bulletin, confirming PSI as GREC\'s contracted broker exam vendor and the 48-item state-portion structure.' },
   ],
   hi_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://cca.hawaii.gov/reb/real_ed/real_ed-exam_lic/',
