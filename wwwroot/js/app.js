@@ -166,11 +166,14 @@ function renderSiteHeader() {
   // profile controls (unchanged, still always visible) rather than merged into one cluster, so
   // adding these doesn't touch anything already working.
   // Refer is track-specific (points/pricing depend on which course you're unlocking) -- deep-links
-  // into the current track if there is one, otherwise sends to the tracks picker rather than
-  // guessing. Redeem needs no track at all (global route, see route()) -- the code you submit
-  // determines the track server-side, so this link never has to pick one.
-  var currentTrack = currentTrackOrNull();
-  var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
+  // into the account's real track or whichever track's page is currently being viewed (see
+  // referTrackOrNull()'s own comment on why not the sticky currentTrackOrNull()), otherwise sends
+  // to the tracks picker rather than guessing. Redeem needs no track at all (global route, see
+  // route()) -- the code you submit determines the track server-side, so this link never has to
+  // pick one.
+  var pageTrack = activeTrackForPath(window.location.pathname);
+  var referTrack = referTrackOrNull(pageTrack);
+  var referHref = referTrack ? (referTrack.route + '#/refer') : tracksHomeHref();
   // "Exam tracks" (nav) and "Guarantee" (nav) dropped as redundant: "Browse exams" (CTA below)
   // already covers the tracks link, and the guarantee page is still reachable via the promo
   // ribbon's "Pass or X% of Your Money Back" link -- no need for three links to the same place.
@@ -185,7 +188,7 @@ function renderSiteHeader() {
   var navCtaHtml = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
     '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
   // Prominent, always-visible "which track am I logged into" indicator -- accountExamType
-  // specifically (the account's real track), NOT currentTrack above (whichever track's PAGE is
+  // specifically (the account's real track), NOT pageTrack above (whichever track's PAGE is
   // being viewed, which could differ, e.g. a driver-track account browsing the notary track's
   // sales page to compare). Was the missing piece behind the "why does this say California Notary"
   // confusion earlier -- surfacing it in the header means a logged-in visitor never has to guess.
@@ -241,6 +244,20 @@ function renderSiteHeader() {
 function tracksHomeHref() {
   var t = currentTrackOrNull();
   return t ? '/' + kindSlug(t.examKind) + '#tracks' : '/#tracks';
+}
+
+// The track "Refer & earn" should point into: the logged-in account's real track (referring for
+// what you actually have makes sense), else whichever track's page is CURRENTLY being viewed
+// (pageTrack, from activeTrackForPath(location.pathname) -- each caller computes this from its own
+// current pathname). Deliberately does NOT fall through to currentTrackOrNull()'s third case --
+// "last viewed this browser," possibly in a past session (lastViewedTrackExamType()) -- the same
+// staleness trap tracksHomeHref() has for its own callers (see the header's "Browse exams"/footer's
+// "All exam tracks" comments): referring shouldn't silently lock onto a track from a past session
+// just because it was glanced at once. Falls back to null (caller sends to tracksHomeHref() instead,
+// i.e. "go pick a track first") when neither a real account track nor a current page track exists.
+function referTrackOrNull(pageTrack) {
+  if (getToken() && accountExamType) return trackByExamType(accountExamType);
+  return pageTrack || null;
 }
 
 function closeHeaderMenuIfOpen() {
@@ -333,15 +350,16 @@ var HUB_FOOTER_REQUIREMENT = 'do not fulfill any state-mandated licensing, drive
 
 // Four-column footer (ported from v0's site-footer.tsx) -- link destinations are all real routes
 // (no v0 placeholder hrefs carried over): the Exams column samples a few real live tracks rather
-// than hardcoding specific slugs, so it stays correct as tracks are added; Product/Legal links use
-// currentTrackOrNull() for whichever track-scoped destination is relevant on the current page,
-// falling back to the tracks picker (never a specific track) when there isn't one.
+// than hardcoding specific slugs, so it stays correct as tracks are added; the Refer link uses
+// referTrackOrNull() (account's real track, or whichever track's page is currently being viewed --
+// deliberately NOT the sticky "last viewed this browser" case, see its own comment), falling back
+// to the tracks picker (never a specific, possibly-stale track) when there isn't one.
 function renderSiteFooter() {
   var pageTrack = activeTrackForPath(window.location.pathname);
   var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
-  var currentTrack = currentTrackOrNull();
-  var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
+  var referTrack = referTrackOrNull(pageTrack);
+  var referHref = referTrack ? (referTrack.route + '#/refer') : tracksHomeHref();
   // Strictly the visitor's own scoped state's tracks -- never padded with other states' tracks
   // (which in practice always meant California, since it's first in HUB_EXAMS) just because the
   // scoped state itself has fewer than 3 active tracks. A 1- or 2-track state legitimately shows
