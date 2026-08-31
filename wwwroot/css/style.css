@@ -27,9 +27,17 @@
      steps, chroma near-zero/gray). Round 2 below: --accent pushed close to the original indigo's
      own L/C (0.585/0.233) instead of splitting the difference, and the bg->card->surface-2 ramp
      widened its lightness steps and added real chroma at each level (was a near-gray ramp). */
-  --bg: oklch(0.16 0.024 262);
-  --card: oklch(0.215 0.038 262);
-  --surface-2: oklch(0.27 0.05 262);
+  /* Round 3 (2026-08-30): tester feedback said dark mode reads "too bluish" overall, not just in
+     the accent. Root cause -- bg/card/surface-2 all shared --accent's own hue (262, blue), just at
+     different lightness steps, so the blue tint was bleeding into every neutral surface, not just
+     buttons/highlights. Fix is hue-only (same lightness, same chroma magnitude as round 2, so the
+     richness that fixed round 1's "flat/gray" complaint is untouched): shifted bg/card/surface-2's
+     hue from 262 to 80, matching light mode's warm neutral family (and the gold --highlight's own
+     hue ~73-74) instead of navy's. Blue now lives only in --accent/--accent-hover/--accent-deep,
+     same split light mode already has (light mode's own bg/card/surface-2 are hue 80 too). */
+  --bg: oklch(0.16 0.024 80);
+  --card: oklch(0.215 0.038 80);
+  --surface-2: oklch(0.27 0.05 80);
   --accent: oklch(0.64 0.19 262);
   --accent-hover: oklch(0.7 0.17 262);
   /* Text placed ON TOP of an --accent background. Dark mode's navy is deliberately lighter (for
