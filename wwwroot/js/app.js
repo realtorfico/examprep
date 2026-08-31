@@ -5984,12 +5984,9 @@ function fillReadinessCard() {
     // Question count paired with the radial in its own top row, same layout as the category
     // pages' stats card (categoryStatsHtml) -- left blank (not a fabricated "0+") if the count
     // didn't come back, same best-effort posture as that card's own question-count tile.
-    var siteActiveTracks = HUB_EXAMS.filter(function (e) { return e.active; });
-    var siteStateCount = new Set(siteActiveTracks.map(function (e) { return e.stateCode; })).size;
-    var siteTrackCount = siteActiveTracks.length;
     var questionCountHtml = s.totalQuestions != null
       ? '<div class="outcome-tile-value">' + Number(s.totalQuestions).toLocaleString() + '+</div>' +
-        '<div class="outcome-tile-label">Practice Questions<br>Across ' + siteStateCount + ' States &amp; ' + siteTrackCount + ' Tracks</div>'
+        '<div class="outcome-tile-label">Practice Questions<br>Across All Tracks</div>'
       : '';
     var tiles = [
       { value: s.tracksLive, label: 'Live Tracks' },
