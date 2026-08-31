@@ -920,6 +920,20 @@ function refreshFaqDynamicSpans() {
   });
 }
 
+// Injects/updates a <script type="application/ld+json"> in <head> -- shared helper for any
+// JSON-LD structured data added to the (client-rendered) SPA. `id` lets a later call replace a
+// prior injection instead of stacking duplicates as the user navigates between routes.
+function injectJsonLd(id, data) {
+  var existing = document.getElementById(id);
+  if (existing) existing.remove();
+  var script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.id = id;
+  script.textContent = JSON.stringify(data);
+  document.head.appendChild(script);
+}
+function stripHtml(html) { return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+
 function renderFaq() {
   appEl.innerHTML = '<div class="narrow-page"><h1>Frequently Asked Questions</h1>' +
     '<p class="muted">Quick answers on buying, your access code, studying, and the guarantee. Still stuck? ' +
@@ -933,6 +947,19 @@ function renderFaq() {
     }).join('') +
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
   refreshFaqDynamicSpans();
+  // FAQPage JSON-LD -- real content, the exact same Q&A already on the page, just structured for
+  // Google's rich-snippet eligibility. Answer text is stripped to plain text (schema.org's own
+  // recommendation) since item.a() can return HTML (links, etc).
+  var faqEntities = [];
+  FAQ_CATEGORIES.forEach(function (cat) {
+    cat.items.forEach(function (item) {
+      faqEntities.push({
+        '@type': 'Question', name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: stripHtml(item.a()) },
+      });
+    });
+  });
+  injectJsonLd('faq-jsonld', { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqEntities });
 }
 
 function renderContact() {
@@ -5951,6 +5978,15 @@ function categoryCardsHtml() {
 
 function renderHub() {
   var tracksHeaderHtml = '<div class="hub-section-header" id="tracks"><h2>Browse by Category</h2></div>';
+  // Organization + WebSite JSON-LD on the homepage -- the page Google looks to first for a site's
+  // identity/brand data. location.origin so this works under whatever domain actually serves the
+  // page, not a hardcoded one.
+  injectJsonLd('org-jsonld', {
+    '@context': 'https://schema.org', '@graph': [
+      { '@type': 'Organization', name: 'PassExamHQ', url: location.origin },
+      { '@type': 'WebSite', name: 'PassExamHQ', url: location.origin },
+    ],
+  });
 
   appEl.innerHTML =
     renderNewsBanner() +
