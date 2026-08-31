@@ -957,9 +957,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
-  /* Homepage category cards: capped at 2 per row (2026-08-31) so the longer descriptions read
-     comfortably -- overrides the general 4-column .exam-track-grid default above. */
-  .exam-track-grid.category-card-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Homepage category cards: stacked single-column (2026-08-31, revised from an earlier 2-per-row
+     cap) -- with the fuller description + tinted points panel + CTA button each card now carries,
+     a single readable column beats a side-by-side grid. Capped width + centered so it doesn't
+     stretch edge-to-edge on wide screens. Overrides the general 4-column .exam-track-grid default
+     above. */
+  .exam-track-grid.category-card-grid { grid-template-columns: 1fr; max-width: 34rem; margin: 0 auto; }
 }
 
 /* Track landing/sales page (renderTrackLanding, Round 2 redesign decision) -- same marketing-
