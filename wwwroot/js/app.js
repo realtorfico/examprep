@@ -134,6 +134,23 @@ function loadLocalPrefs() {
     fontScale: parseFloat(localStorage.getItem('examprep_font') || '1'),
   };
 }
+
+// Shared referral-link attribution: a visitor arriving via someone's ?ref=<accountId> share link
+// (see the refer page's Share button) gets that id remembered so it can ride along on a LATER
+// purchase, even if they browse several pages first -- see detectAndCreditConversion() on the API
+// side for how it's actually used (a fallback credit path, only fires if no email-invite referral
+// already matches, and only ever on a real completed purchase).
+function captureRefCodeFromUrl() {
+  try {
+    var params = new URLSearchParams(location.search);
+    var ref = params.get('ref');
+    if (ref) localStorage.setItem('examprep_ref_code', ref);
+  } catch (e) { /* localStorage unavailable (private mode etc) -- just skip attribution */ }
+}
+function getStoredRefCode() {
+  try { return localStorage.getItem('examprep_ref_code') || undefined; } catch (e) { return undefined; }
+}
+captureRefCodeFromUrl();
 function saveLocalPrefs(theme, fontScale) {
   localStorage.setItem('examprep_theme', theme);
   localStorage.setItem('examprep_font', String(fontScale));
@@ -11389,7 +11406,7 @@ async function submitStripePayment() {
     var res = await apiFetch('/stripe/confirm', {
       method: 'POST', body: {
         paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory,
-        isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage,
+        isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage, refCode: getStoredRefCode(),
       },
     });
     if (res.isGift) {
@@ -12576,6 +12593,20 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'share-refer-link') {
     var shareUrl = el.getAttribute('data-share-url');
     var shareTitle = el.getAttribute('data-share-title');
+    // If the referrer has already typed their own email into the form above, mint a real
+    // tracked ?ref=<accountId> link (via /referrals/link) so a purchase later actually credits
+    // them -- see detectAndCreditConversion() on the API side. Best-effort: if this fails (no
+    // email filled in yet, offline, etc.) falls back to sharing the plain untracked page link.
+    var referrerEmailEl = document.querySelector('[name="referrerEmail"]');
+    var referrerEmailVal = referrerEmailEl ? referrerEmailEl.value.trim() : '';
+    if (referrerEmailVal) {
+      try {
+        var linkRes = await apiFetch('/referrals/link', { method: 'POST', body: { email: referrerEmailVal } });
+        if (linkRes && linkRes.accountId) {
+          shareUrl += (shareUrl.indexOf('?') === -1 ? '?' : '&') + 'ref=' + encodeURIComponent(linkRes.accountId);
+        }
+      } catch (e) { /* fall back to the untracked link below */ }
+    }
     var shareText = 'I\'ve been using this to study for my ' + shareTitle + ' exam — worth a look:';
     if (navigator.share) {
       navigator.share({ title: shareTitle, text: shareText, url: shareUrl }).catch(function () { /* user cancelled -- no-op */ });
