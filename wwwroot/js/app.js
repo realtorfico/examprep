@@ -6139,7 +6139,7 @@ function fillReadinessCard() {
       { value: s.examsCompleted, label: 'Mock Exams' },
     ];
     wrap.innerHTML = '<div class="hub-readiness-card">' +
-      '<p class="hub-readiness-label">Real Results, Not Marketing Copy</p>' +
+      '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Results</span>, Not Marketing Copy</p>' +
       '<div class="hub-readiness-top-row">' +
       '<div class="outcome-tile hub-readiness-question-count">' + questionCountHtml + '</div>' +
       '<div class="hub-readiness-radial-wrap">' + radial + '</div>' +
