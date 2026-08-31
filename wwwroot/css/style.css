@@ -1109,14 +1109,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    use of .exam-track-grid renders -- centered, capped width instead of stretching/misaligning. */
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
 .category-nav-card-desc { font-size: 0.85rem; line-height: 1.5; opacity: 0.85; margin: 0 0 0.9rem; }
-/* Divider between the description and the point list gives the card an internal rhythm instead
-   of one unbroken block of text. */
+/* Points list gets its own tinted, bordered panel -- borrowed from an unrelated dashboard app's
+   "recommendation box" pattern (info set off in a distinctly-colored card-within-a-card) rather
+   than plain bullets sitting on the card's own background -- gives the card a second visual
+   plane instead of one flat stack of text (2026-08-31 second visual pass). */
 .category-nav-card-points {
-  list-style: none; padding: 0.85rem 0 0; margin: 0 0 0.9rem; text-align: left;
-  font-size: 0.8rem; line-height: 1.5; opacity: 0.85;
-  border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  list-style: none; padding: 0.9rem 1rem; margin: 0 0 0.9rem; text-align: left;
+  font-size: 0.8rem; line-height: 1.5;
+  background: color-mix(in srgb, var(--accent) 6%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 10px;
 }
-.category-nav-card-points li { padding-left: 1.3rem; position: relative; margin-bottom: 0.45rem; }
+.category-nav-card-points li { padding-left: 1.3rem; position: relative; margin-bottom: 0.5rem; opacity: 0.9; }
 .category-nav-card-points li:last-child { margin-bottom: 0; }
 .category-nav-card-points li::before {
   content: '✓'; position: absolute; left: 0; top: 0.05em; color: var(--highlight); font-weight: 700;
@@ -1127,6 +1131,21 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.65rem; border-radius: 999px;
   background: color-mix(in srgb, var(--accent-deep) 12%, transparent); color: var(--accent-deep);
+}
+/* Footer CTA rendered as a solid full-width button rather than a plain text link -- same
+   "browse dashboard cards end in a clear action bar" pattern, scoped to category cards only so
+   every other .exam-track-card (state track cards elsewhere on the site) keeps its existing
+   plain-link footer. */
+.category-card-grid .exam-track-footer {
+  padding: 0; border-top: none;
+}
+.category-card-grid .exam-track-view-link {
+  display: block; width: 100%; padding: 0.75rem 1rem; text-align: center;
+  background: var(--accent); color: var(--accent-foreground); font-weight: 700; font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.category-card-grid .exam-track-card:hover .exam-track-view-link {
+  background: var(--accent-hover); text-decoration: none;
 }
 /* Visual separator between the two homepage category-card groups (2026-08-31 ordering) -- a plain
    spaced rule, not a section header, since both groups already sit under one "Browse by Category"
