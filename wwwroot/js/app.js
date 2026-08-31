@@ -8872,17 +8872,46 @@ function trackLandingPreviewHtml(exam) {
     radialProgressSvg(64, { size: 96, strokeWidth: 9, label: 'Coverage', color: 'var(--highlight)' }) +
     '</div>';
 
+  // Resources and Info aren't login-gated at all (see renderTabs()'s `gated` map -- only
+  // quiz/exam/toughest45/progress require an account), so unlike the three panels above these show
+  // real, un-blurred content straight from the same data every visitor already sees on #/resources
+  // and #/info, not a fabricated mockup. Each links out to that real tab to explore further.
+  var resourceItems = (RESOURCES[exam.examType] || []).slice(0, 4);
+  var resourcesPanel = '<div class="locked-preview-resources">' +
+    (resourceItems.length ? resourceItems.map(function (r) {
+      return '<div class="card locked-preview-resource-card">' +
+        '<div class="locked-preview-resource-title">' + escapeHtml(r.title) + (r.free ? ' <span class="badge">Free</span>' : '') + '</div>' +
+        '<p class="muted">' + escapeHtml(r.desc) + '</p>' +
+        '</div>';
+    }).join('') : '<p class="muted">Study resources for this track.</p>') +
+    '<a class="muted locked-preview-seeall" href="#/resources">See all resources →</a>' +
+    '</div>';
+  var infoLinks = (ADDITIONAL_INFO_LINKS[exam.examType] || []).slice(0, 3);
+  var infoPanel = '<div class="locked-preview-info">' +
+    (infoLinks.length ? infoLinks.map(function (l) {
+      return '<a class="card additional-info-card" href="' + l.url + '" target="_blank" rel="noopener noreferrer">' +
+        '<div class="additional-info-title">' + escapeHtml(l.title) + ' ↗</div>' +
+        '<p class="muted">' + escapeHtml(l.desc) + '</p>' +
+        '</a>';
+    }).join('') : '<p class="muted">Official exam information for this track.</p>') +
+    '<a class="muted locked-preview-seeall" href="#/info">See all official info →</a>' +
+    '</div>';
+
   return '<div class="locked-preview-tabs-wrap">' +
     '<div class="locked-preview-tabs" role="tablist">' +
-    '<button type="button" class="active" data-act="landing-preview-tab" data-tab="quiz">Quiz</button>' +
+    '<button type="button" class="active" data-act="landing-preview-tab" data-tab="resources">Resources</button>' +
+    '<button type="button" data-act="landing-preview-tab" data-tab="quiz">Quiz</button>' +
     '<button type="button" data-act="landing-preview-tab" data-tab="exam">Exam</button>' +
     '<button type="button" data-act="landing-preview-tab" data-tab="progress">Progress</button>' +
+    '<button type="button" data-act="landing-preview-tab" data-tab="info">Info</button>' +
     '</div>' +
     '<div class="locked-preview-body">' +
-    '<div class="locked-preview-mockup" data-preview-panel="quiz">' + quizPanel + '</div>' +
+    '<div class="locked-preview-mockup is-open" data-preview-panel="resources">' + resourcesPanel + '</div>' +
+    '<div class="locked-preview-mockup" data-preview-panel="quiz" hidden>' + quizPanel + '</div>' +
     '<div class="locked-preview-mockup" data-preview-panel="exam" hidden>' + examPanel + '</div>' +
     '<div class="locked-preview-mockup" data-preview-panel="progress" hidden>' + progressPanel + '</div>' +
-    '<div class="locked-preview-overlay">' +
+    '<div class="locked-preview-mockup is-open" data-preview-panel="info" hidden>' + infoPanel + '</div>' +
+    '<div class="locked-preview-overlay" id="landing-preview-overlay" hidden>' +
     '<div class="locked-preview-icon">🔒</div>' +
     '<p id="landing-preview-unlock-text">Unlock the full quiz for this track</p>' +
     '<a class="btn-primary hub-cta" href="#/buy">Unlock for <span id="landing-preview-price">…</span></a>' +
@@ -12328,8 +12357,13 @@ document.addEventListener('click', async function (e) {
     document.querySelectorAll('.locked-preview-mockup').forEach(function (p) {
       p.hidden = p.getAttribute('data-preview-panel') !== previewTabKey;
     });
+    // Resources/Info aren't login-gated (see renderTabs()) -- no lock overlay over their real
+    // content, unlike quiz/exam/progress.
+    var isGatedPreviewTab = previewTabKey === 'quiz' || previewTabKey === 'exam' || previewTabKey === 'progress';
+    var overlayEl = document.getElementById('landing-preview-overlay');
+    if (overlayEl) overlayEl.hidden = !isGatedPreviewTab;
     var unlockTextEl = document.getElementById('landing-preview-unlock-text');
-    if (unlockTextEl) unlockTextEl.textContent = 'Unlock the full ' + previewTabKey + ' for this track';
+    if (unlockTextEl && isGatedPreviewTab) unlockTextEl.textContent = 'Unlock the full ' + previewTabKey + ' for this track';
   } else if (act === 'copy-code') {
     var codeVal = el.getAttribute('data-code');
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
