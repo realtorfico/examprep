@@ -1094,18 +1094,40 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .guarantee-band-card p { font-size: 0.82rem; opacity: 0.85; line-height: 1.5; margin: 0; }
 
 /* Category landing pages + homepage category grid (category-first restructure, phase 4) */
-.category-nav-card-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.category-card-grid .exam-track-body { padding: 1.5rem 1.4rem 1.15rem; text-align: center; align-items: center; }
+/* Circular tinted badge behind the icon, instead of a bare emoji floating in space -- gives each
+   card a visual anchor before the text starts (2026-08-31 visual pass, doc audit's "cards read
+   flat/dry" note). */
+.category-nav-card-icon {
+  width: 3.4rem; height: 3.4rem; display: flex; align-items: center; justify-content: center;
+  font-size: 1.7rem; border-radius: 999px; margin: 0 auto 0.75rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--highlight) 16%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.category-nav-card h3 { font-size: 1.05rem; margin: 0 0 0.35rem; }
 /* Just one track card (the visitor's selected state), not the full multi-column grid every other
    use of .exam-track-grid renders -- centered, capped width instead of stretching/misaligning. */
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
-.category-card-grid .exam-track-body { text-align: center; align-items: center; }
-.category-nav-card-desc { font-size: 0.82rem; line-height: 1.4; opacity: 0.85; margin: 0.1rem 0 0.5rem; }
+.category-nav-card-desc { font-size: 0.85rem; line-height: 1.5; opacity: 0.85; margin: 0 0 0.9rem; }
+/* Divider between the description and the point list gives the card an internal rhythm instead
+   of one unbroken block of text. */
 .category-nav-card-points {
-  list-style: none; padding: 0; margin: 0 0 0.6rem; text-align: left;
-  font-size: 0.78rem; line-height: 1.45; opacity: 0.85;
+  list-style: none; padding: 0.85rem 0 0; margin: 0 0 0.9rem; text-align: left;
+  font-size: 0.8rem; line-height: 1.5; opacity: 0.85;
+  border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
 }
-.category-nav-card-points li { padding-left: 1.1rem; position: relative; margin-bottom: 0.3rem; }
-.category-nav-card-points li::before { content: '✓'; position: absolute; left: 0; color: var(--highlight); }
+.category-nav-card-points li { padding-left: 1.3rem; position: relative; margin-bottom: 0.45rem; }
+.category-nav-card-points li:last-child { margin-bottom: 0; }
+.category-nav-card-points li::before {
+  content: '✓'; position: absolute; left: 0; top: 0.05em; color: var(--highlight); font-weight: 700;
+}
+/* State count as a small pill instead of a bare muted line -- matches the badge language used
+   elsewhere on the site (.status-badge) rather than trailing off as an afterthought. */
+.category-nav-card-statecount {
+  display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.65rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-deep) 12%, transparent); color: var(--accent-deep);
+}
 /* Visual separator between the two homepage category-card groups (2026-08-31 ordering) -- a plain
    spaced rule, not a section header, since both groups already sit under one "Browse by Category"
    heading. */

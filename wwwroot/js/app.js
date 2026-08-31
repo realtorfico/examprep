@@ -5937,7 +5937,7 @@ function categoryCardsHtml() {
       '<h3>' + escapeHtml(kind) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
-      '<p class="muted">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</p>' +
+      '<span class="category-nav-card-statecount">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</span>' +
       '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
       '</a>';
   }
