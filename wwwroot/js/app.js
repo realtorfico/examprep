@@ -5735,7 +5735,7 @@ function categoryStatsHtml(activeCount, stateCount) {
     { value: stateCount, label: 'States Covered' },
   ];
   return '<div class="hub-readiness-card">' +
-    '<p class="hub-readiness-label">Real Coverage, Not Marketing Copy</p>' +
+    '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Coverage</span>, Not Marketing Copy</p>' +
     '<div class="hub-readiness-top-row">' +
     '<div class="outcome-tile hub-readiness-question-count" id="category-question-count-tile"></div>' +
     '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
