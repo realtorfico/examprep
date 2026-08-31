@@ -11648,6 +11648,9 @@ async function renderReferForm() {
     '<h1>Help a friend pass. Earn real points doing it.</h1>' +
     '<p>Add a friend below — they get a personal invite, and you earn ' + rules.referralVerifiedPoints +
     ' points once they confirm, plus ' + rules.referralConvertedPoints + ' more if they go on to buy a course.</p>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="share-refer-link" ' +
+    'data-share-url="' + escapeHtml(location.origin + ((trackByExamType(referExamType) || {}).route || '')) + '" ' +
+    'data-share-title="' + escapeHtml((trackByExamType(referExamType) || {}).title || 'PassExamHQ') + '">Share with a friend</button>' +
     '</section>' +
     trustStripHtml() +
     '<div class="narrow-page">' +
@@ -12570,6 +12573,18 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'share-refer-link') {
+    var shareUrl = el.getAttribute('data-share-url');
+    var shareTitle = el.getAttribute('data-share-title');
+    var shareText = 'I\'ve been using this to study for my ' + shareTitle + ' exam — worth a look:';
+    if (navigator.share) {
+      navigator.share({ title: shareTitle, text: shareText, url: shareUrl }).catch(function () { /* user cancelled -- no-op */ });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText + ' ' + shareUrl).catch(function () {});
+      var originalLabel = el.textContent;
+      el.textContent = 'Link copied!';
+      setTimeout(function () { el.textContent = originalLabel; }, 1500);
+    }
   } else if (act === 'add-referred-friend') {
     var friendsListEl = document.getElementById('referred-friends-list');
     if (friendsListEl) friendsListEl.insertAdjacentHTML('beforeend', renderReferFriendRow(referFriendRowCount++));
