@@ -1991,6 +1991,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['GA State Laws, Rules, Fair Housing, Unfair Practices & Recovery Fund', '21%'], ['Contracts & Agency Law (BRRETA)', '22%'], ['Broker Management, Supervision & Practice of Real Estate', '20%'], ['Property Ownership, Land Use & Transfer of Title', '14%'], ['Financing & Valuation', '11%'], ['Closing & Real Estate Calculations', '7%'], ['Property Disclosures', '5%']],
   },
   {
+    examType: 'mi_re_broker',
+    title: 'Michigan Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/mi',
+    duration: '3 Hours 30 Minutes (210 Minutes)', questions: '115 Multiple Choice (~75 National + 40 Michigan-Specific)', passScore: '75% (90 of 120 Raw Points)',
+    description: 'Practice questions covering the Occupational Code Article 25 (MCL 339.2501-339.2518) and Michigan Administrative Code Real Estate Brokers and Salespersons General Rules (R 339.22101-339.22667) at broker level: broker/associate broker licensure requirements, Department and State Board of Real Estate duties and powers, statutory requirements governing licensee activities (advertising, commissions, trust accounts, branch offices, recordkeeping), Michigan\'s statutory agency-relationship types (transaction coordinator, designated agency, dual agency), and broker-only supervisory responsibilities, plus the national-portion content (property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, property management, transfer of title, practice of real estate, real estate calculations) the salesperson exam covers at a deeper broker level. The exam is administered by PSI Services LLC on behalf of LARA, confirmed directly from PSI\'s official Candidate Information Bulletin (updated 10/8/2024): a single combined 115-question exam (worth up to 120 points via partial-credit scenario items), 75% passing (90/120 raw score), 210 minutes. Broker licensure requires 3 years\' equivalent full-time real estate experience (MCL 339.2505) and 90 hours of pre-licensure education including at least 9 hours of civil rights law and equal opportunity in housing (MCL 339.2504).',
+    breakdown: [['Contracts', '19%'], ['Agency', '13%'], ['Practice of Real Estate', '12%'], ['Property Ownership', '10%'], ['Financing', '9%'], ['Valuation', '8%'], ['Property Disclosures', '7%'], ['Transfer of Title', '6%'], ['Real Estate Calculations', '6%'], ['Land Use Controls & Property Management', '10%'], ['Michigan Statutory Requirements, Licensing & Additional State Topics', '(40 MI-specific items)']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -4206,6 +4213,23 @@ var TRACK_COMPLIANCE = {
       '"as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Georgia real estate broker exam or the required experience/education prerequisites.',
     passScoreNote: 'the same threshold required by the real exam on each portion — 75%, confirmed via secondary corroboration since GREC/PSI does not publish a numeric passing score directly',
+  },
+  mi_re_broker: {
+    orgLine: 'the Michigan Department of Licensing and Regulatory Affairs (LARA)',
+    footerRequirement: "do not fulfill the 3-year full-time real estate experience prerequisite or the 90-hour (incl. 9 hours civil rights/equal housing opportunity) broker pre-license education requirement",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the Michigan real estate broker ' +
+      'prerequisites — 3 years\' equivalent full-time experience in the business of real estate (MCL 339.2505) plus 90 hours of ' +
+      'LARA-approved pre-licensure education including at least 9 hours of civil rights law and equal opportunity in housing (MCL 339.2504) ' +
+      '— and does not issue any official course-completion certificate. Our content is grounded in the Occupational Code Article 25 ' +
+      '(MCL 339.2501-339.2518) and the Michigan Administrative Code Real Estate Brokers and Salespersons General Rules (R 339.22101-339.22667). ' +
+      'PSI Services LLC is confirmed as LARA\'s exam vendor directly from the current PSI Candidate Information Bulletin: a single combined ' +
+      '115-question exam (worth up to 120 points via partial-credit scenario items on the real exam), 75% passing (90/120 raw score), 210 ' +
+      'minutes. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is ' +
+      'scheduled through PSI, and broker education must be completed through a LARA-approved provider. While we strive to align our content ' +
+      'with current Michigan law and LARA regulations, it is provided "as-is" for self-study and does not constitute legal advice or a ' +
+      'guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Michigan real estate broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold required by the real exam — 75% (90 of 120 raw points), confirmed via the official PSI Candidate Information Bulletin',
   },
   pa_re_broker: {
     orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
@@ -6513,6 +6537,14 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'O.C.G.A. Title 43, Chapter 40 (Real Estate Brokers, Salespersons and Rental Agents)', type: 'pdf', url: 'https://law.justia.com/codes/georgia/title-43/chapter-40/',
       desc: 'The Georgia Real Estate License Act — the statutory basis for broker licensure, escrow duties, discipline, and the Recovery Fund.',
+      topic: 'General Reference', free: true },
+  ],
+  mi_re_broker: [
+    { title: 'Occupational Code Article 25 (MCL 339.2501-339.2518)', type: 'pdf', url: 'https://www.legislature.mi.gov/documents/mcl/pdf/mcl-299-1980-25.pdf',
+      desc: 'The official statute, published by the Michigan Legislature — the authoritative source for broker/associate broker licensure, statutory requirements, and agency relationships.',
+      topic: 'General Reference', free: true },
+    { title: 'Michigan Administrative Code — Real Estate Brokers and Salespersons General Rules', type: 'pdf', url: 'https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=R+339.22101+to+R+339.22667.pdf&ReturnHTML=True',
+      desc: 'The official practice-conduct regulations published by LARA — trust accounts, advertising, branch offices, and broker supervisory duties for the broker exam.',
       topic: 'General Reference', free: true },
   ],
   oh_boating: [
@@ -9315,6 +9347,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official Georgia.gov page for the Georgia Real Estate Commission & Appraisers Board (GREC), the state agency regulating real estate broker licensing.' },
     { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://test-takers.psiexams.com/api/content/bulletin/4672',
       desc: 'PSI Services\' official Georgia Real Estate Commission Candidate Information Bulletin, confirming PSI as GREC\'s contracted broker exam vendor and the 48-item state-portion structure.' },
+  ],
+  mi_re_broker: [
+    { title: 'Real Estate Licensing (LARA)', url: 'https://www.michigan.gov/lara/bureau-list/bpl/real-estate',
+      desc: 'Official Michigan Department of Licensing and Regulatory Affairs (LARA) page for real estate broker and salesperson licensing.' },
+    { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://test-takers.psiexams.com/mire',
+      desc: 'PSI Services\' official Michigan Salesperson and Broker Examinations Candidate Information Bulletin, confirming PSI as LARA\'s contracted testing vendor and the 115-question/75%-passing broker exam structure.' },
   ],
   hi_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://cca.hawaii.gov/reb/real_ed/real_ed-exam_lic/',
