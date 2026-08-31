@@ -804,11 +804,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 #referred-friends-list + .btn-sm { margin-bottom: 0.75rem; }
 
 /* Site-wide header/footer content (bars themselves defined near #site-header above) */
-/* Four-column footer (ported from v0's site-footer.tsx -- see renderSiteFooter in app.js) */
+/* Ported from v0's site-footer.tsx (originally 4 columns) -- see renderSiteFooter in app.js.
+   Widened to 5 (added a Categories column, 2026-08-30) at a slightly higher breakpoint than the
+   original 4-column layout used, so the extra column has room instead of feeling cramped. */
 .footer-shell { padding: 2rem 0 1.25rem; }
 .footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-@media (min-width: 700px) {
-  .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 1.5rem; }
+@media (min-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; }
+}
+@media (min-width: 900px) {
+  .footer-grid { grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 1.5rem; }
 }
 .footer-brand-col .site-logo { margin-bottom: 0.75rem; }
 .footer-brand-blurb { font-size: 0.82rem; max-width: 22rem; line-height: 1.5; }

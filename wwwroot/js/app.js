@@ -360,6 +360,16 @@ function renderSiteFooter() {
     '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
     sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
     '</ul></div>';
+  // Every distinct active kind (Notary, Driver, Real Estate Broker, ...), each linking to its own
+  // category landing page -- same slug logic renderHub()'s category cards and route()'s own
+  // /{category-slug} matching already use (kindSlug()/HUB_KIND_SLUGS), so these links are guaranteed
+  // to resolve to a real page rather than needing a second, easily-drifting list of category slugs.
+  var activeKinds = [];
+  activeTracks.forEach(function (t) { if (activeKinds.indexOf(t.examKind) === -1) activeKinds.push(t.examKind); });
+  activeKinds.sort(function (a, b) { return a.localeCompare(b); });
+  var categoriesCol = '<div><h3>Categories</h3><ul class="footer-link-list">' +
+    activeKinds.map(function (k) { return '<li><a href="/' + kindSlug(k) + '">' + escapeHtml(k) + '</a></li>'; }).join('') +
+    '</ul></div>';
   var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
     '<li><a href="#/redeem">Redeem access code</a></li>' +
     '<li><a href="#/gift">Gift a track</a></li>' +
@@ -384,7 +394,7 @@ function renderSiteFooter() {
     '<span class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></span></span>' +
     '<p class="muted footer-brand-blurb">Independent, one-time-purchase prep for real licensing exams. Question banks built on the current official handbooks — no subscriptions, ever.</p>' +
     '</div>' +
-    exverse + productCol + legalCol +
+    exverse + categoriesCol + productCol + legalCol +
     '</div>' +
     '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>. © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '</div>';
