@@ -2919,6 +2919,15 @@ function trackByExamType(examType) {
   return matches.length ? matches[0] : null;
 }
 
+// Where a successful redeem should navigate to -- pulled out as its own pure function (used by the
+// redeem-submit handler below) rather than inlined, so the destination can be tested directly
+// without needing a real browser navigation to occur. See that handler's own comment for why this
+// has to be a real navigation (a location.href assignment) at all, not just a hash change.
+function redeemDestinationUrl(examType) {
+  var track = trackByExamType(examType);
+  return (track ? track.route : '') + '#/quiz';
+}
+
 // Per-track compliance/legal copy -- deliberately NOT auto-genericized from one template, since the
 // underlying facts differ per track (who administers the real exam, what education/training
 // requirement exists, if any). Add a real entry here before flipping a new track to active:true.
@@ -11962,8 +11971,7 @@ document.addEventListener('submit', async function (e) {
       // A real navigation to the track's own path fixes this at the root -- pathname now matches,
       // so even a hashchange-triggered route() resolves correctly. The token survives (localStorage,
       // not an in-memory var), and the normal boot sequence picks it up on the fresh page load.
-      var redeemedTrack = trackByExamType(res.examType);
-      location.href = (redeemedTrack ? redeemedTrack.route : '') + '#/quiz';
+      location.href = redeemDestinationUrl(res.examType);
     } catch (err) {
       renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
         err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
