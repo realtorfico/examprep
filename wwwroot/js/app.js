@@ -5844,17 +5844,61 @@ var CATEGORY_ICONS = {
   'Mortgage Loan Origination': '💰',
 };
 
-// One-line description of who each category's practice tracks are for, shown on the homepage
-// category card beneath the state count. Falls back to a generic line for any future category
-// added here without a bespoke description.
+// Expanded description of who each category's practice tracks are for, shown on the homepage
+// category card beneath the title. Falls back to a generic line for any future category added
+// here without bespoke copy. Kept as general, broadly-true statements about the category rather
+// than state-specific numbers (those live in each state's own track content) -- deliberately
+// hedged ("often", "typically", "in most states") where the specifics genuinely vary by state.
 var CATEGORY_DESCRIPTIONS = {
-  'Notary': 'Prepare for your state’s notary public commissioning exam or application requirements.',
-  'Real Estate Salesperson': 'Study for your state’s real estate salesperson licensing exam before you can practice.',
-  'Real Estate Broker': 'Study for your state’s broker-level licensing exam to upgrade or lead a brokerage.',
-  'Driver': 'Practice your state’s learner’s permit or driver’s license knowledge test.',
-  'Commercial Driver (CDL)': 'Prepare for your Commercial Driver’s License knowledge tests and endorsements.',
-  'Motorcycle': 'Study for your state’s motorcycle license or endorsement knowledge test.',
-  'Boating': 'Prepare for your state’s boating safety education exam or card requirement.',
+  'Notary': 'Prepare for your state’s notary public commissioning exam or application requirements -- the credential that lets you witness signatures and certify documents.',
+  'Real Estate Salesperson': 'Study for your state’s entry-level real estate license -- the credential required before you can represent buyers and sellers in a transaction.',
+  'Real Estate Broker': 'Study for your state’s broker-level licensing exam -- the upgrade credential needed to supervise agents or open your own brokerage.',
+  'Driver': 'Practice your state’s learner’s permit or driver’s license knowledge test -- the written portion required before you can get behind the wheel on your own.',
+  'Commercial Driver (CDL)': 'Prepare for your Commercial Driver’s License knowledge tests and endorsements -- the credential required to legally operate trucks and buses.',
+  'Motorcycle': 'Study for your state’s motorcycle license or endorsement knowledge test -- the credential required to legally ride on public roads.',
+  'Boating': 'Prepare for your state’s boating safety education exam or card requirement -- often mandatory before operating a powered vessel or PWC.',
+};
+
+// A few salient, generally-true points shown as a short bullet list on each homepage category
+// card, underneath the description. Deliberately hedged/general (not state-specific numeric
+// claims) since these render for every state at once -- exact numbers live in each state's own
+// track content, verified per-state.
+var CATEGORY_POINTS = {
+  'Notary': [
+    'Typically requires an application, exam or course, and often a background check',
+    'Commission periods and renewal cycles vary by state',
+    'Covers acknowledgments, jurats, oaths, and proper recordkeeping',
+  ],
+  'Real Estate Salesperson': [
+    'Pre-licensing coursework is usually required before you can sit the exam',
+    'Most states test national real estate principles plus state-specific law',
+    'A first step before eventually qualifying for a broker license',
+  ],
+  'Real Estate Broker': [
+    'Usually requires prior salesperson experience plus extra coursework',
+    'Adds topics like trust accounting, agency supervision, and office management',
+    'Lets you operate independently or manage other agents',
+  ],
+  'Driver': [
+    'Covers traffic laws, road signs, and safe-driving fundamentals',
+    'Usually the written test taken before a behind-the-wheel road test',
+    'A required step toward a learner’s permit or full license',
+  ],
+  'Commercial Driver (CDL)': [
+    'Built on federal FMCSA standards layered on top of state rules',
+    'General knowledge plus endorsement-specific tests (e.g. air brakes, tankers, hazmat)',
+    'Required before operating most trucks and buses for hire',
+  ],
+  'Motorcycle': [
+    'Covers motorcycle-specific traffic laws, operation, and safety gear',
+    'Often paired with a separate on-bike skills or riding test',
+    'Required for a standalone license or an endorsement on an existing license',
+  ],
+  'Boating': [
+    'Covers navigation rules, required safety equipment, and boating-under-the-influence laws',
+    'Many states waive the requirement for boaters born before a certain date',
+    'Often required specifically for personal watercraft (PWC) operation',
+  ],
 };
 
 // Homepage category-card display order, grouped with a visual break between the licensing-exam
@@ -5886,11 +5930,13 @@ function categoryCardsHtml() {
 
   function cardHtml(kind) {
     var stateCount = new Set(HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; }).map(function (t) { return t.stateCode; })).size;
+    var points = CATEGORY_POINTS[kind] || [];
     return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
       '<h3>' + escapeHtml(kind) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
+      (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
       '<p class="muted">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</p>' +
       '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
       '</a>';

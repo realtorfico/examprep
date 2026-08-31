@@ -1100,6 +1100,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
 .category-card-grid .exam-track-body { text-align: center; align-items: center; }
 .category-nav-card-desc { font-size: 0.82rem; line-height: 1.4; opacity: 0.85; margin: 0.1rem 0 0.5rem; }
+.category-nav-card-points {
+  list-style: none; padding: 0; margin: 0 0 0.6rem; text-align: left;
+  font-size: 0.78rem; line-height: 1.45; opacity: 0.85;
+}
+.category-nav-card-points li { padding-left: 1.1rem; position: relative; margin-bottom: 0.3rem; }
+.category-nav-card-points li::before { content: '✓'; position: absolute; left: 0; color: var(--highlight); }
 /* Visual separator between the two homepage category-card groups (2026-08-31 ordering) -- a plain
    spaced rule, not a section header, since both groups already sit under one "Browse by Category"
    heading. */
