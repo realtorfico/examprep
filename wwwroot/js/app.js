@@ -130,7 +130,7 @@ function applyTheme(theme, fontScale) {
 
 function loadLocalPrefs() {
   return {
-    theme: localStorage.getItem('examprep_theme') || 'dark',
+    theme: localStorage.getItem('examprep_theme') || 'light',
     fontScale: parseFloat(localStorage.getItem('examprep_font') || '1'),
   };
 }
@@ -5844,25 +5844,61 @@ var CATEGORY_ICONS = {
   'Mortgage Loan Origination': '💰',
 };
 
+// One-line description of who each category's practice tracks are for, shown on the homepage
+// category card beneath the state count. Falls back to a generic line for any future category
+// added here without a bespoke description.
+var CATEGORY_DESCRIPTIONS = {
+  'Notary': 'Prepare for your state’s notary public commissioning exam or application requirements.',
+  'Real Estate Salesperson': 'Study for your state’s real estate salesperson licensing exam before you can practice.',
+  'Real Estate Broker': 'Study for your state’s broker-level licensing exam to upgrade or lead a brokerage.',
+  'Driver': 'Practice your state’s learner’s permit or driver’s license knowledge test.',
+  'Commercial Driver (CDL)': 'Prepare for your Commercial Driver’s License knowledge tests and endorsements.',
+  'Motorcycle': 'Study for your state’s motorcycle license or endorsement knowledge test.',
+  'Boating': 'Prepare for your state’s boating safety education exam or card requirement.',
+};
+
+// Homepage category-card display order, grouped with a visual break between the licensing-exam
+// categories (Notary, Real Estate) and the knowledge-test categories (Driver/CDL/Motorcycle/
+// Boating) -- explicit user-specified order (2026-08-31), not alphabetical. Any active category
+// not named here (e.g. a newly-launched one) falls into a third, unlabeled trailing group so it
+// still appears rather than silently vanishing from the homepage.
+var CATEGORY_ORDER_GROUPS = [
+  ['Notary', 'Real Estate Salesperson', 'Real Estate Broker'],
+  ['Driver', 'Commercial Driver (CDL)', 'Motorcycle', 'Boating'],
+];
+
 // One card per category with at least one active track, each linking straight to that category's
 // landing page -- browsing by category, not by a flat list of every state x category track, is
 // the whole point of the category-first restructure (2026-08-24), so the homepage leads with this
 // instead of the old full state x category grid.
 function categoryCardsHtml() {
-  var kinds = [];
-  HUB_EXAMS.forEach(function (e) { if (e.active && kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
-  kinds.sort(function (a, b) { return a.localeCompare(b); });
-  var cards = kinds.map(function (kind) {
+  var activeKinds = [];
+  HUB_EXAMS.forEach(function (e) { if (e.active && activeKinds.indexOf(e.examKind) === -1) activeKinds.push(e.examKind); });
+
+  var ordered = [];
+  CATEGORY_ORDER_GROUPS.forEach(function (group) {
+    var groupKinds = group.filter(function (k) { return activeKinds.indexOf(k) !== -1; });
+    if (groupKinds.length) ordered.push(groupKinds);
+  });
+  var named = CATEGORY_ORDER_GROUPS.reduce(function (acc, g) { return acc.concat(g); }, []);
+  var leftover = activeKinds.filter(function (k) { return named.indexOf(k) === -1; }).sort(function (a, b) { return a.localeCompare(b); });
+  if (leftover.length) ordered.push(leftover);
+
+  function cardHtml(kind) {
     var stateCount = new Set(HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; }).map(function (t) { return t.stateCode; })).size;
     return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
       '<h3>' + escapeHtml(kind) + '</h3>' +
+      '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       '<p class="muted">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</p>' +
       '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
       '</a>';
-  });
-  return '<div class="exam-track-grid category-card-grid">' + cards.join('') + '</div>';
+  }
+
+  return ordered.map(function (group) {
+    return '<div class="exam-track-grid category-card-grid">' + group.map(cardHtml).join('') + '</div>';
+  }).join('<div class="category-card-group-break"></div>');
 }
 
 function renderHub() {

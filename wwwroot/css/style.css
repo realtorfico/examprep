@@ -957,6 +957,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .exam-track-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
+  /* Homepage category cards: capped at 2 per row (2026-08-31) so the longer descriptions read
+     comfortably -- overrides the general 4-column .exam-track-grid default above. */
+  .exam-track-grid.category-card-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Track landing/sales page (renderTrackLanding, Round 2 redesign decision) -- same marketing-
@@ -1096,6 +1099,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    use of .exam-track-grid renders -- centered, capped width instead of stretching/misaligning. */
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
 .category-card-grid .exam-track-body { text-align: center; align-items: center; }
+.category-nav-card-desc { font-size: 0.82rem; line-height: 1.4; opacity: 0.85; margin: 0.1rem 0 0.5rem; }
+/* Visual separator between the two homepage category-card groups (2026-08-31 ordering) -- a plain
+   spaced rule, not a section header, since both groups already sit under one "Browse by Category"
+   heading. */
+.category-card-group-break { border-top: 1px solid var(--border); margin: 1.75rem 0; opacity: 0.6; }
 .category-state-select-label { display: block; font-size: 0.85rem; font-weight: 600; margin: 1rem 0; }
 .category-state-select-label select {
   display: block; margin-top: 0.4rem; width: 100%; max-width: 22rem; padding: 0.55rem 0.75rem;
