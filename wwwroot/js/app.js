@@ -355,8 +355,13 @@ function renderSiteFooter() {
   var scopedTracks = hubScopedState ? activeTracks.filter(function (e) { return e.stateCode === hubScopedState; }) : [];
   var sampleTracks = hubScopedState ? scopedTracks.slice(0, 3) : activeTracks.slice(0, 3);
 
+  // "All exam tracks" is a global "see the whole catalog" link, so -- same reasoning as the
+  // header's "Browse exams" CTA (see renderSiteHeader()'s own comment on this exact trap) -- it
+  // must NOT use tracksHomeHref(), which resolves to whatever track was last viewed (even in a
+  // past session, via lastViewedTrackExamType()) whenever no track is active on the CURRENT page,
+  // making this link silently re-link into one category instead of the actual full catalog.
   var exverse = '<div><h3>Exams</h3><ul class="footer-link-list" id="footer-exams-links">' +
-    '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
+    '<li><a href="/#tracks">All exam tracks</a></li>' +
     sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
     '</ul></div>';
   // Every distinct active kind (Notary, Driver, Real Estate Broker, ...), each linking to its own
@@ -420,7 +425,7 @@ function loadFooterExamLinksPricing() {
     var top3 = priced.slice(0, 3).map(function (r) { return r.track; });
     var listEl = document.getElementById('footer-exams-links');
     if (!listEl) return;
-    listEl.innerHTML = '<li><a href="' + tracksHomeHref() + '">All exam tracks</a></li>' +
+    listEl.innerHTML = '<li><a href="/#tracks">All exam tracks</a></li>' + // see the sync render's own comment on why not tracksHomeHref()
       top3.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('');
   }).catch(function () {}); // best-effort -- keep the already-shown default-order list
 }
