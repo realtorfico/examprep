@@ -11952,14 +11952,18 @@ document.addEventListener('submit', async function (e) {
     try {
       var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
       setToken(res.token);
-      state.examType = res.examType;
-      accountExamType = res.examType;
-      renderSiteHeader();
-      renderSiteFooter();
-      var local = loadLocalPrefs();
-      applyTheme(local.theme, local.fontScale);
-      location.hash = '#/quiz';
-      renderTrackApp();
+      // Redeem is reached via a hash-only route (#/redeem) while location.pathname stays whatever
+      // it already was (often "/", since redeem is deliberately track-agnostic -- see route()'s own
+      // comment on this). Just setting location.hash + calling renderTrackApp() directly used to
+      // race the browser's own async hashchange event: hashchange still fires route(), which
+      // resolves the current track from PATHNAME (activeTrackForPath()), not state.examType/hash --
+      // so on a still-"/" pathname it fell through to renderHub(), clobbering the correct render a
+      // moment after it happened. Net effect: redeeming never visibly landed on the code's track.
+      // A real navigation to the track's own path fixes this at the root -- pathname now matches,
+      // so even a hashchange-triggered route() resolves correctly. The token survives (localStorage,
+      // not an in-memory var), and the normal boot sequence picks it up on the fresh page load.
+      var redeemedTrack = trackByExamType(res.examType);
+      location.href = (redeemedTrack ? redeemedTrack.route : '') + '#/quiz';
     } catch (err) {
       renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
         err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
