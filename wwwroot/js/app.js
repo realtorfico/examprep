@@ -5934,10 +5934,12 @@ function categoryCardsHtml() {
     return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
+      '<div class="category-nav-card-content">' +
       '<h3>' + escapeHtml(kind) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
       '<span class="category-nav-card-statecount">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</span>' +
+      '</div>' +
       '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
       '</a>';
   }

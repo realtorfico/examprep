@@ -958,11 +958,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 900px) {
   .exam-track-grid { grid-template-columns: repeat(4, 1fr); }
   /* Homepage category cards: stacked single-column (2026-08-31, revised from an earlier 2-per-row
-     cap) -- with the fuller description + tinted points panel + CTA button each card now carries,
-     a single readable column beats a side-by-side grid. Capped width + centered so it doesn't
-     stretch edge-to-edge on wide screens. Overrides the general 4-column .exam-track-grid default
-     above. */
-  .exam-track-grid.category-card-grid { grid-template-columns: 1fr; max-width: 34rem; margin: 0 auto; }
+     cap), full page width -- with the fuller description + tinted points panel + CTA button each
+     card now carries, a single readable column beats a side-by-side grid, and a horizontal
+     icon-left/content-right card interior (see .category-nav-card-content below) puts that width
+     to use instead of leaving it as side padding. Overrides the general 4-column .exam-track-grid
+     default above; no max-width override, so it inherits the page's normal content width like
+     every other homepage section. */
+  .exam-track-grid.category-card-grid { grid-template-columns: 1fr; }
 }
 
 /* Track landing/sales page (renderTrackLanding, Round 2 redesign decision) -- same marketing-
@@ -1097,17 +1099,23 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .guarantee-band-card p { font-size: 0.82rem; opacity: 0.85; line-height: 1.5; margin: 0; }
 
 /* Category landing pages + homepage category grid (category-first restructure, phase 4) */
-.category-card-grid .exam-track-body { padding: 1.5rem 1.4rem 1.15rem; text-align: center; align-items: center; }
+/* Horizontal layout (icon left, content right) -- makes actual use of the full page width once
+   cards are stacked single-column (2026-08-31, third revision: stacked-but-centered-narrow read
+   as wasted horizontal space, so this replaces the centered/stacked-vertically card interior). */
+.category-card-grid .exam-track-body {
+  padding: 1.5rem 1.6rem; display: flex; align-items: flex-start; gap: 1.25rem; text-align: left;
+}
+.category-nav-card-content { flex: 1; min-width: 0; }
 /* Circular tinted badge behind the icon, instead of a bare emoji floating in space -- gives each
    card a visual anchor before the text starts (2026-08-31 visual pass, doc audit's "cards read
    flat/dry" note). */
 .category-nav-card-icon {
-  width: 3.4rem; height: 3.4rem; display: flex; align-items: center; justify-content: center;
-  font-size: 1.7rem; border-radius: 999px; margin: 0 auto 0.75rem;
+  width: 3.6rem; height: 3.6rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; border-radius: 999px;
   background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--highlight) 16%, transparent));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
 }
-.category-nav-card h3 { font-size: 1.05rem; margin: 0 0 0.35rem; }
+.category-nav-card h3 { font-size: 1.1rem; margin: 0 0 0.35rem; }
 /* Just one track card (the visitor's selected state), not the full multi-column grid every other
    use of .exam-track-grid renders -- centered, capped width instead of stretching/misaligning. */
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
@@ -1122,9 +1130,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   background: color-mix(in srgb, var(--accent) 6%, var(--card));
   border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
   border-radius: 10px;
+  /* Row on wide screens (matches the reference dashboard's side-by-side stat layout, now that the
+     card has the horizontal room for it), wraps back to a vertical stack on narrow viewports. */
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
 }
-.category-nav-card-points li { padding-left: 1.3rem; position: relative; margin-bottom: 0.5rem; opacity: 0.9; }
-.category-nav-card-points li:last-child { margin-bottom: 0; }
+.category-nav-card-points li { flex: 1 1 12rem; padding-left: 1.3rem; position: relative; opacity: 0.9; }
 .category-nav-card-points li::before {
   content: '✓'; position: absolute; left: 0; top: 0.05em; color: var(--highlight); font-weight: 700;
 }
