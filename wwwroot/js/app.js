@@ -342,7 +342,6 @@ function renderSiteFooter() {
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
   var currentTrack = currentTrackOrNull();
   var referHref = currentTrack ? (currentTrack.route + '#/refer') : tracksHomeHref();
-  var sampleHref = currentTrack ? (currentTrack.route + '#/sample') : tracksHomeHref();
   // Strictly the visitor's own scoped state's tracks -- never padded with other states' tracks
   // (which in practice always meant California, since it's first in HUB_EXAMS) just because the
   // scoped state itself has fewer than 3 active tracks. A 1- or 2-track state legitimately shows
@@ -375,7 +374,6 @@ function renderSiteFooter() {
     '<li><a href="#/gift">Gift a track</a></li>' +
     '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
     '<li><a href="' + referHref + '">Refer &amp; earn</a></li>' +
-    '<li><a href="' + sampleHref + '">Free sample questions</a></li>' +
     '</ul></div>';
   var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/about">About us</a></li>' +
