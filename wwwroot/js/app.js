@@ -958,10 +958,11 @@ function blogListItemsHtml(posts, activeKind) {
         var kindLabel = kindFromSlug(p.kind) || p.kind;
         var href = blogPostHref(p.slug, activeKind);
         return '<article class="blog-list-item card">' +
+          '<span class="badge blog-list-item-badge">' + escapeHtml(kindLabel) + '</span>' +
           '<h2><a href="' + href + '">' + escapeHtml(p.title) + '</a></h2>' +
-          '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (p.stateCode ? ' · ' + escapeHtml(p.stateCode) : '') +
-          (p.published_at ? ' · ' + new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
-          '<p>' + escapeHtml(p.excerpt) + '</p>' +
+          '<p class="muted blog-list-meta">' + (p.stateCode ? escapeHtml(p.stateCode) + ' · ' : '') +
+          (p.published_at ? new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
+          '<p class="blog-list-excerpt">' + escapeHtml(p.excerpt) + '</p>' +
           '<a class="blog-read-more" href="' + href + '">Read more →</a>' +
           '</article>';
       }).join('') + '</div>'
@@ -988,19 +989,38 @@ function blogCategoryTabsHtml(posts, activeKind) {
     '</div>';
 }
 
+// Renders in batches instead of the whole filtered list at once -- with 30+ posts in "All", a
+// single-column list of full cards became an extremely long scroll. blogListState holds the
+// already-fetched data (one /blog call covers every category) plus how many of the current
+// filter's posts are currently shown; "Load more" (see the delegated click handler) just bumps
+// visibleCount and redraws from the cached arrays, no new fetch needed.
+var BLOG_PAGE_SIZE = 12;
+var blogListState = null;
+
+function drawBlogList() {
+  var posts = blogListState.posts, shown = blogListState.shown, activeKind = blogListState.activeKind;
+  var visibleCount = blogListState.visibleCount;
+  var remaining = shown.length - visibleCount;
+  appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1>' +
+    '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
+    blogCategoryTabsHtml(posts, activeKind) +
+    blogListItemsHtml(shown.slice(0, visibleCount), activeKind) +
+    (remaining > 0
+      ? '<div class="blog-load-more-wrap"><button class="btn-secondary" data-act="blog-load-more">Load more (' + remaining + ' remaining)</button></div>'
+      : '') +
+    '<button class="btn-secondary btn-sm blog-back-btn" data-act="go-back">← Back</button></div>';
+}
+
 function renderBlogList() {
   var activeKind = new URLSearchParams(location.search).get('kind') || '';
-  appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
     var shown = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
-    appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1>' +
-      '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
-      blogCategoryTabsHtml(posts, activeKind) +
-      blogListItemsHtml(shown, activeKind) +
-      '<button class="btn-secondary btn-sm blog-back-btn" data-act="go-back">← Back</button></div>';
+    blogListState = { posts: posts, shown: shown, activeKind: activeKind, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
+    drawBlogList();
   }).catch(function () {
-    appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
+    appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
   });
 }
 
@@ -2043,6 +2063,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '80 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
     description: 'Practice questions covering the Tennessee Real Estate Broker License Act of 1973 (Tenn. Code Ann. Title 62, Chapter 13) and the Real Estate Commission\'s Rules (Tenn. Comp. R. and Regs. Chapter 1260) -- the state-specific portion of the PSI-administered Affiliate Broker exam: Commission powers and licensing requirements, advertising and marketing, broker/affiliate relationships, handling of documents, trust/escrow funds and consumer protection, agency and disclosure issues, and special areas of practice -- plus additional Tennessee-specific licensing topics (vacation lodging and rental location agents, time-share programs, and commercial real estate broker liens) drawn from the same statute and rules.',
     breakdown: [['Documents, Trust/Escrow Funds & Consumer Protection', '27%'], ['Commission Powers & Licensing Requirements', '20%'], ['Advertising & Marketing', '18%'], ['Agency & Disclosure Issues', '15%'], ['Broker/Affiliate Relationships', '13%'], ['Special Areas of Practice', '7%']],
+  },
+  {
+    examType: 'tn_re_broker',
+    title: 'Tennessee Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/tn',
+    duration: '4 Hours (150 Min National + 90 Min State)', questions: '125 Multiple Choice (75 National + 50 State-Specific)', passScore: '75% on Both Portions (60/80 National, 38/50 State)',
+    description: 'Practice questions covering PSI Services LLC\'s official Tennessee Real Estate Broker exam content outline (administered on behalf of the Tennessee Real Estate Commission, TREC): a separately-scored, separately-timed National portion (75 items, up to 80 points -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, property management, transfer of title, practice of real estate, and real estate calculations) plus a separately-scored Tennessee-specific portion (50 items -- TREC\'s duties and powers, licensing requirements, advertising and marketing, broker/affiliate relationships, handling of documents and recordkeeping, handling of trust and escrow funds, other improper activities and consumer protection, agency and disclosure issues, and special areas of practice, grounded in the Tennessee Real Estate Broker License Act of 1973, Tenn. Code Ann. Title 62, Chapter 13, and TREC Rules, Tenn. Comp. R. and Regs. Chapter 1260). PSI\'s own Candidate Information Bulletin confirms 75% required to pass EACH portion independently (60 of 80 national points, 38 of 50 state items) within a combined 4-hour time limit (150 minutes national, 90 minutes state); 5-10 unscored experimental items may also appear.',
+    breakdown: [['Contracts (National)', '11%'], ['Agency (National)', '8%'], ['Practice of Real Estate (National)', '7%'], ['Property Ownership (National)', '6%'], ['Financing (National)', '5%'], ['Valuation (National)', '5%'], ['Property Disclosures (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Transfer of Title (National)', '4%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%'], ['Advertising & Marketing (TN)', '6%'], ['Handling of Trust & Escrow Funds (TN)', '6%'], ['Duties & Powers of the Commission (TN)', '5%'], ['Broker & Affiliate Relationships (TN)', '5%'], ['Handling of Documents & Recordkeeping (TN)', '5%'], ['Agency & Disclosure Issues (TN)', '5%'], ['Licensing Requirements (TN)', '4%'], ['Other Improper Activities & Consumer Protection (TN)', '2%'], ['Special Areas of Practice (TN)', '2%']],
   },
   {
     examType: 'ut_re_salesperson',
@@ -4255,6 +4282,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour Real Estate Principles/Fundamentals pre-license education requirement to sit for a Tennessee affiliate broker license exam (or the separate 30-hour \"Course for New Affiliates\" required before a license is issued), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers the licensing and regulatory portion of the state-specific exam (grounded in the Tennessee Real Estate Broker License Act of 1973, Tenn. Code Ann. Title 62, Chapter 13, and the Real Estate Commission's Rules, Tenn. Comp. R. and Regs. Chapter 1260) -- not the separate national/general portion, and not every topic on PSI's official 40-item Affiliate Broker State Portion content outline; it also covers additional Tennessee-specific licensing topics (vacation lodging/rental location agents, time-share programs, and commercial real estate broker liens) that extend beyond that narrower exam blueprint. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current TREC Rules and Tennessee statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion -- 28 of 40 correct",
+  },
+  tn_re_broker: {
+    orgLine: 'the Tennessee Real Estate Commission (TREC)',
+    footerRequirement: 'do not fulfill any Tennessee affiliate-broker-experience prerequisite, broker prelicensure education requirement, or TREC application/eligibility process required before sitting the Broker exam',
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the experience-as-affiliate-broker prerequisite, TREC-approved broker prelicensure education, or the Commission\'s license application process required before sitting the Tennessee Real Estate Broker exam, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Tennessee Real Estate Broker License Act of 1973 (Tenn. Code Ann. Title 62, Chapter 13) and the Real Estate Commission\'s Rules (Tenn. Comp. R. and Regs. Chapter 1260) for the state-specific portion, plus standard national real estate principles (property ownership, agency, contracts, valuation, financing, and real estate math) for the national portion, mirroring PSI\'s own published Broker content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and broker prelicensure education must be completed through a Commission-approved provider. This site did not independently verify the exact experience-duration and education-hour prerequisites for broker eligibility (as opposed to the exam\'s own content and scoring, which are confirmed directly from PSI\'s official Candidate Information Bulletin) — confirm current eligibility requirements directly with TREC before applying. While we strive to align our content with current Tennessee law and TREC Rules, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Tennessee Real Estate Broker exam or the required affiliate-broker experience/education prerequisites.',
+    passScoreNote: 'the same overall threshold required by the real exam — 75% on both the National and Tennessee-specific portions, confirmed via the official PSI Candidate Information Bulletin',
   },
   ut_re_salesperson: {
     orgLine: "the Utah Division of Real Estate (DRE)",
@@ -7549,6 +7583,20 @@ var RESOURCES = {
       desc: "The official administrative rules published by the Tennessee Secretary of State -- the authoritative source the licensing, conduct, and state-specific portion of the exam is based on.",
       topic: "General Reference", free: true },
   ],
+  tn_re_broker: [
+    { title: "Tennessee Real Estate Commission (TREC)", type: "pdf", url: "https://www.tn.gov/commerce/regboards/trec.html",
+      desc: "The Tennessee Real Estate Commission's official site -- the authoritative source the license law and rules are based on.",
+      topic: "General Reference", free: true },
+    { title: "Tenn. Code Ann. Title 62, Chapter 13 (Tennessee Real Estate Broker License Act of 1973)", type: "pdf", url: "https://law.justia.com/codes/tennessee/title-62/chapter-13/",
+      desc: "The Tennessee Real Estate Broker License Act of 1973 -- the statutory basis for the Commission's Rules and broker licensing.",
+      topic: "General Reference", free: true },
+    { title: "Tenn. Comp. R. & Regs. Chapter 1260 (Real Estate Commission Rules)", type: "pdf", url: "https://publications.tnsosfiles.com/rules/1260/1260.htm",
+      desc: "The official administrative rules published by the Tennessee Secretary of State -- the authoritative source the licensing, conduct, and state-specific portion of the exam is based on.",
+      topic: "General Reference", free: true },
+    { title: "PSI Tennessee Real Estate Candidate Information Bulletin", type: "link", url: "https://www.psiexams.com/test-takers/tnre/",
+      desc: "PSI's official Tennessee Real Estate exam page -- the authoritative source for the Broker exam's mechanics (125 items, two separately-scored portions) and content outline.",
+      topic: "General Reference", free: true },
+  ],
   ut_re_salesperson: [
     { title: "Utah Division of Real Estate — Real Estate Licensing", type: "pdf", url: "https://commerce.utah.gov/realestate/real-estate/licensing/",
       desc: "The Utah Division of Real Estate's official licensing site — the authoritative source Utah's Sales Agent licensing requirements are based on.",
@@ -9955,6 +10003,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Tennessee Real Estate Commission\'s official page confirming PSI as the exam vendor and linking to licensing exam information.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.psiexams.com/test-takers/tnre/',
       desc: 'PSI\'s official Tennessee Real Estate License (TNRE) exam page for scheduling and candidate information.' },
+  ],
+  tn_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.tn.gov/commerce/regboards/trec/license/psi.html',
+      desc: 'The Tennessee Real Estate Commission\'s official page confirming PSI as the exam vendor and linking to licensing exam information.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.psiexams.com/test-takers/tnre/',
+      desc: 'PSI\'s official Tennessee Real Estate License (TNRE) exam page, confirming the Broker exam\'s 125-item, two-portion (National + Tennessee-specific), 75%-passing structure.' },
   ],
   tx_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://www.trec.texas.gov/become-licensed/sales-agent',
@@ -12730,6 +12784,9 @@ document.addEventListener('click', async function (e) {
     drawExamSitting();
   } else if (act === 'go-back') {
     history.back();
+  } else if (act === 'blog-load-more') {
+    blogListState.visibleCount = Math.min(blogListState.visibleCount + BLOG_PAGE_SIZE, blogListState.shown.length);
+    drawBlogList();
   } else if (act === 'sample-answer') {
     sampleState.selected = el.getAttribute('data-choice');
     drawSampleQuestion();
