@@ -1377,7 +1377,7 @@ var HUB_EXAMS_CONTENT = [
     title: 'Illinois Driver License Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', route: '/driver/il',
     duration: 'Untimed', questions: '35 Multiple Choice', passScore: '28/35 Correct (80%)',
     description: 'Practice questions covering the Illinois Rules of the Road: licensing and exam procedures, roadway signs and signals, traffic laws, safe driving and vehicle ownership, sharing the road, and young-driver/DUI license sanctions for the Class D written knowledge test.',
-    breakdown: [['Licensing & Exams', '17%'], ['Roadway Signs, Signals & Traffic Laws', '35%'], ['Safe Driving, Equipment & Vehicle Ownership', '17%'], ['Sharing the Road, Crash Procedures, Young Drivers & DUI', '31%']],
+    breakdown: [['Licensing & Exams', '12%'], ['Roadway Signs, Signals & Traffic Laws', '40%'], ['Safe Driving, Equipment & Vehicle Ownership', '19%'], ['Sharing the Road, Crash Procedures, Young Drivers & DUI', '29%']],
   },
   {
     examType: 'il_re_salesperson',
@@ -1390,8 +1390,8 @@ var HUB_EXAMS_CONTENT = [
     examType: 'il_re_broker',
     title: 'Illinois Managing Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/il',
     duration: '90 Minutes', questions: '50 Multiple Choice', passScore: '75% or Higher',
-    description: 'Practice questions covering the Illinois Real Estate License Act of 2000 (225 ILCS 454) for the Managing Broker upgrade credential: brokerage administration and supervision, agency relationships, financing and calculations, disciplinary provisions, and escrow handling.',
-    breakdown: [['Licensing Requirements & Disclosures', '15%'], ['Agency Relationships & Brokerage Practices', '18%'], ['Managing Broker Supervisory Duties, Financing & Calculations', '39%'], ['Disciplinary Provisions, Escrow & Additional IL Laws', '28%']],
+    description: 'Practice questions covering the Illinois Real Estate License Act of 2000 (225 ILCS 454) for the Managing Broker upgrade credential, scoped to PSI/IDFPR\'s own official Candidate Information Booklet state-specific Content Outline for the Managing Broker exam: licensing requirements, the Illinois Real Estate License Act (agency, advertising, sponsored-licensee relationships, teams, handling of monies/documents, disciplinary provisions), additional Illinois laws and regulations (ownership interests, transfer of title, real estate taxes, fair housing/landlord-tenant statutes), disclosures, and the Managing Broker-only topics (sponsoring-broker supervision, special/escrow accounts, examination of records, licensure by endorsement, real estate calculations and financing/lending).',
+    breakdown: [['Licensing Requirements', '5%'], ['Illinois Real Estate License Act', '30%'], ['Additional Illinois Laws & Regulations', '15%'], ['Disclosures', '10%'], ['Managing Broker Supervisory Duties, Special Accounts, Records & Calculations', '40%']],
   },
   {
     examType: 'pa_driver',
@@ -2399,7 +2399,7 @@ var HUB_EXAMS_CONTENT = [
     title: 'Illinois Notary Public Exam Prep', category: 'State Licensing', route: '/notary/il',
     duration: 'Untimed', questions: '50 Multiple Choice (218-Question Practice Pool)', passScore: '85% (at least 42 of 50 correct on the real course-embedded exam)',
     description: 'Practice questions covering the Illinois Notary Public Act (5 ILCS 312), including its 2023 Article/Section renumbering and substantive rewrite under P.A. 102-160: general provisions and statutory definitions, commissioning, training and bond requirements, duties, seals, fees and authority, notarial acts and certificate forms, electronic and remote notarization, liability, misconduct and revocation, and status changes and reappointment. A second, deeper pass adds scenario-based application questions, error-spotting on prohibited acts, fee and deadline computation, and true statutory gaps and edge cases. The real Illinois notary exam is a 50-question, 85%-to-pass test administered online immediately after the required 3-hour SOS-approved training course; this bank is a much larger practice pool for self-study, not a copy of that exam.',
-    breakdown: [['General Provisions & Definitions', '12%'], ['Commissioning, Training, Bond & Status Changes', '19%'], ['Duties, Seal, Fees & Deadlines', '23%'], ['Notarial Acts & Forms', '7%'], ['Electronic & Remote Notarization', '15%'], ['Liability, Misconduct & Revocation', '18%'], ['Statutory Gaps & Edge Cases', '6%']],
+    breakdown: [['General Provisions & Definitions', '16%'], ['Commissioning, Training, Bond, Status Changes & Reappointment', '24%'], ['Duties, Seal, Fees & Authority', '19%'], ['Notarial Acts & Forms', '13%'], ['Electronic & Remote Notarization', '10%'], ['Liability, Misconduct & Revocation', '12%'], ['Statutory Gaps & Edge Cases', '6%']],
   },
   {
     examType: 'in_notary',
