@@ -563,26 +563,30 @@ function withSeoMeta(response, canonicalHref, meta) {
   const rewriter = new HTMLRewriter().on('head', {
     element(el) {
       el.append('<link rel="canonical" href="' + canonicalHref + '">', { html: true });
-      // Open Graph / Twitter Card tags -- no dedicated og:image exists yet (no logo/preview asset
-      // in wwwroot), so this deliberately omits og:image/twitter:image rather than invent one;
-      // add those two tags here once a real image asset exists. Falls back to the static
-      // site-wide title/description (from index.html's own <title>/<meta name="description">,
-      // read via `defaultTitle`/`defaultDescription` params below) when no per-route `meta` entry
-      // exists, so every page gets valid OG tags, not just the ones with SEO_META overrides.
-      // Falls back to the site-wide default (matching index.html's own static <title>/<meta
-      // name="description">) for routes with no SEO_META entry -- the homepage and anything not
-      // yet covered by generate-seo-meta.js -- so every page ships valid OG/Twitter tags, not
-      // just the ones with a per-route override.
+      // Open Graph / Twitter Card tags. Falls back to the site-wide default (matching index.html's
+      // own static <title>/<meta name="description">) for routes with no SEO_META entry -- the
+      // homepage and anything not yet covered by generate-seo-meta.js -- so every page ships valid
+      // OG/Twitter tags, not just the ones with a per-route override. og:image/twitter:image point
+      // at wwwroot/og-image.png (1200x630, added 2026-08-31 -- the real header logo mark/wordmark/
+      // tagline, rebuilt at OG-card size+resolution rather than upscaling a low-res screenshot of
+      // the actual header) -- same image site-wide, no per-route variants.
       const title = (meta && meta.title) || 'PassExamHQ';
       const description = (meta && meta.description) || 'Exam prep practice questions, timed to how you actually study.';
+      // Derived from canonicalHref's own origin (not a hardcoded domain) -- same "correct on prod
+      // and any preview domain alike" reasoning as canonicalHref itself, just above.
+      const ogImage = new URL(canonicalHref).origin + '/og-image.png';
       el.append('<meta property="og:title" content="' + escapeAttr(title) + '">', { html: true });
       el.append('<meta property="og:description" content="' + escapeAttr(description) + '">', { html: true });
       el.append('<meta property="og:type" content="website">', { html: true });
       el.append('<meta property="og:url" content="' + canonicalHref + '">', { html: true });
       el.append('<meta property="og:site_name" content="PassExamHQ">', { html: true });
-      el.append('<meta name="twitter:card" content="summary">', { html: true });
+      el.append('<meta property="og:image" content="' + ogImage + '">', { html: true });
+      el.append('<meta property="og:image:width" content="1200">', { html: true });
+      el.append('<meta property="og:image:height" content="630">', { html: true });
+      el.append('<meta name="twitter:card" content="summary_large_image">', { html: true });
       el.append('<meta name="twitter:title" content="' + escapeAttr(title) + '">', { html: true });
       el.append('<meta name="twitter:description" content="' + escapeAttr(description) + '">', { html: true });
+      el.append('<meta name="twitter:image" content="' + ogImage + '">', { html: true });
     },
   });
   if (meta) {
