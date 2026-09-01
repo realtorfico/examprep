@@ -179,8 +179,11 @@ objects.forEach((obj) => {
     `  '/${slug}': { title: '${escapeForJs(m.title)}', description: '${escapeForJs(m.description)}' },`
   ).join('\n');
   const blogIndexMetaEntry = `  '/blog': { title: '${escapeForJs(BLOG_INDEX_META.title)}', description: '${escapeForJs(BLOG_INDEX_META.description)}' },`;
+  // seo_title, when set, is admin-authored and already ends in "| PassExamHQ" by convention (see
+  // the Blog admin tab's placeholder/the pilot content) -- only append the suffix ourselves when
+  // falling back to the bare title, or it doubles up ("... | PassExamHQ | PassExamHQ").
   const blogPostMetaEntries = blogPosts.map((p) =>
-    `  '/blog/${p.slug}': { title: '${escapeForJs((p.seo_title || p.title) + ' | PassExamHQ')}', description: '${escapeForJs(truncate(p.seo_description || p.excerpt, 155))}' },`
+    `  '/blog/${p.slug}': { title: '${escapeForJs(p.seo_title || (p.title + ' | PassExamHQ'))}', description: '${escapeForJs(truncate(p.seo_description || p.excerpt, 155))}' },`
   ).join('\n');
 
   const seoMetaBlock =
