@@ -6301,7 +6301,8 @@ function drawRecentActivityTicker() {
 }
 function loadRecentActivity() {
   apiFetch('/activity/recent').then(function (res) {
-    recentActivityItems = res.items || [];
+    var cutoff = Math.floor(Date.now() / 1000) - 7 * 86400;
+    recentActivityItems = (res.items || []).filter(function (item) { return item.submittedAt >= cutoff; });
     if (!recentActivityItems.length) return;
     recentActivityIndex = 0;
     drawRecentActivityTicker();
