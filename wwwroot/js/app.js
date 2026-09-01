@@ -6429,11 +6429,11 @@ function comparisonTableHtml() {
     '<h2 class="comparison-heading">A Better Way to Pass Your Exam</h2>' +
     '<p class="muted comparison-subheading">How PassExamHQ stacks up against typical licensing-exam prep options.</p>' +
     '<div class="comparison-table-scroll"><table class="comparison-table">' +
-    '<thead><tr><th></th><th>Free Practice Sites</th><th>Other Paid Apps</th><th class="comparison-us-col">PassExamHQ</th></tr></thead>' +
+    '<thead><tr><th></th><th class="comparison-us-col">PassExamHQ</th><th>Free Practice Sites</th><th>Other Paid Apps</th></tr></thead>' +
     '<tbody>' +
     COMPARISON_FEATURES.map(function (f) {
       return '<tr><td class="comparison-feature">' + f[0] + '</td>' +
-        comparisonCell(f[1]) + comparisonCell(f[2]) + comparisonCell(f[3], true) + '</tr>';
+        comparisonCell(f[3], true) + comparisonCell(f[1]) + comparisonCell(f[2]) + '</tr>';
     }).join('') +
     '</tbody></table></div>' +
     '<p class="comparison-footnote muted">Comparison based on publicly available information as of August 2026.</p>' +
