@@ -766,18 +766,36 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .faq-item .faq-answer a { color: var(--accent); }
 /* Blog list/post (#/blog, #/blog/{slug}) -- same card language as the rest of the site's
    narrow-page content, not a bespoke blog theme. */
+/* The blog LIST page uses this wider shell (grid needs the room); an individual post still opens
+   in .narrow-page for a comfortable reading width -- only the list was too long/narrow at once. */
+.blog-page { max-width: min(92vw, 1400px); margin: 0 auto; }
 .blog-category-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
 .blog-category-tabs a {
   background: var(--card); color: var(--muted); border: 1px solid var(--border); border-radius: 999px;
   padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 600; text-decoration: none;
 }
 .blog-category-tabs a.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
-.blog-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
-.blog-list-item h2 { margin: 0 0 0.35rem; font-size: 1.15rem; }
+.blog-list {
+  display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.5rem;
+}
+@media (min-width: 700px) { .blog-list { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1050px) { .blog-list { grid-template-columns: repeat(3, 1fr); } }
+.blog-list-item {
+  display: flex; flex-direction: column; align-items: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.blog-list-item:hover { transform: translateY(-2px); box-shadow: 0 4px 10px -2px color-mix(in srgb, var(--accent-deep) 16%, transparent), 0 20px 34px -20px color-mix(in srgb, var(--accent-deep) 42%, transparent); }
+.blog-list-item-badge { margin-bottom: 0.6rem; }
+.blog-list-item h2 { margin: 0 0 0.35rem; font-size: 1.1rem; line-height: 1.35; }
 .blog-list-item h2 a { color: var(--fg); text-decoration: none; }
 .blog-list-item h2 a:hover { color: var(--accent); }
 .blog-list-meta { font-size: 0.8rem; margin: 0 0 0.5rem; }
-.blog-read-more { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.blog-list-excerpt {
+  margin: 0 0 0.75rem; font-size: 0.9rem; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.blog-read-more { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-top: auto; }
+.blog-load-more-wrap { text-align: center; margin-top: 2rem; }
 .blog-back-btn { margin-top: 1.5rem; }
 .blog-post-body { margin-top: 1.25rem; line-height: 1.7; }
 .blog-post-body h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
