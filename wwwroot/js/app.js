@@ -422,6 +422,7 @@ function renderSiteFooter() {
     '<li><a href="#/privacy">Privacy policy</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
     '<li><a href="#/contact">Contact us</a></li>' +
+    '<li><a href="#/feedback">Share your experience</a></li>' +
     '</ul></div>';
 
   document.getElementById('site-footer').innerHTML =
@@ -993,6 +994,39 @@ function renderContact() {
     '<textarea name="message" rows="5" placeholder="How can we help?" required></textarea>' +
     '<div id="turnstile-container"></div>' +
     '<button class="btn-primary" type="submit">Send message</button>' +
+    '</form>' +
+    '</div>';
+  renderTurnstileWidget();
+}
+
+// Real-student testimonial submission form (#/feedback) -- goes into a moderation queue
+// (testimonial_submissions), not published automatically; see the API's own comment on that
+// table for why. Prefers the visitor's own current track (state.examType) as the preselected
+// option if it's active, since arriving via a specific track's "leave feedback" link is the
+// expected common path, but lets them pick any active track.
+function testimonialTrackOptionsHtml() {
+  var active = HUB_EXAMS.filter(function (e) { return e.active; })
+    .slice().sort(function (a, b) { return (a.shortName || a.title).localeCompare(b.shortName || b.title); });
+  return active.map(function (t) {
+    return '<option value="' + t.examType + '"' + (t.examType === state.examType ? ' selected' : '') + '>' + escapeHtml(t.shortName || t.title) + '</option>';
+  }).join('');
+}
+function renderTestimonialForm() {
+  appEl.innerHTML =
+    '<div class="narrow-page">' +
+    '<h1>Share Your Experience</h1>' +
+    '<p class="muted">Passed your exam, or just found the practice questions helpful? A quick note from you may show up as a testimonial on the site (we\'ll only publish it with your name as you enter it, and only after reviewing it).</p>' +
+    '<form data-act="testimonial-submit" class="card">' +
+    '<label class="muted buy-email-label">Your name (as you\'d like it shown)</label>' +
+    '<input type="text" name="author" placeholder="Jane D." required maxlength="100">' +
+    '<label class="muted buy-email-label refund-field-spacing">Your email (optional, private — only so we can follow up if needed)</label>' +
+    '<input type="email" name="email" placeholder="you@example.com">' +
+    '<label class="muted buy-email-label refund-field-spacing">Which track?</label>' +
+    '<select name="examType" required>' + testimonialTrackOptionsHtml() + '</select>' +
+    '<label class="muted buy-email-label refund-field-spacing">Your testimonial</label>' +
+    '<textarea name="quote" rows="4" placeholder="What was your experience like?" required maxlength="1000"></textarea>' +
+    '<div id="turnstile-container"></div>' +
+    '<button class="btn-primary" type="submit">Submit</button>' +
     '</form>' +
     '</div>';
   renderTurnstileWidget();
@@ -11007,6 +11041,10 @@ function renderExamResults(result, opts) {
     '<div class="stat-box"><div class="label">Time used</div><div class="val">' + formatClock(result.timeTakenSec) + '</div></div>' +
     '</div>' +
     '<p class="muted mockexam-result-note">Practice score only — the real exam reports a proprietary scaled score, not raw percent-correct.</p>' +
+    // Ask right at the moment of a genuine positive outcome, not on every repeat view of exam
+    // history -- only on a fresh pass, not opts.fromHistory.
+    (result.passed && !opts.fromHistory
+      ? '<p class="muted mockexam-feedback-prompt">Nice work! <a href="#/feedback">Share your experience →</a></p>' : '') +
     ctaHtml +
     '<h3 class="mockexam-review-heading">Review your answers</h3>' +
     '<label class="wrong-only-toggle"><input type="checkbox" data-act="toggle-wrong-only"> Show only questions I got wrong</label>' +
@@ -12115,6 +12153,7 @@ function route() {
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
+  if (hashView === 'feedback') { renderTestimonialForm(); return; }
   if (hashView === 'about') { renderAbout(); return; }
   if (hashView === 'faq') { renderFaq(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
@@ -12362,6 +12401,31 @@ document.addEventListener('submit', async function (e) {
       renderContact();
       var contactFormEl = document.querySelector('form[data-act="contact-submit"]');
       if (contactFormEl) contactFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + contactMsg + '</p>');
+    }
+  } else if (act === 'testimonial-submit') {
+    e.preventDefault();
+    var testimonialForm = e.target;
+    var testimonialTurnstileToken = '';
+    try { testimonialTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
+    catch (ignored) { testimonialTurnstileToken = ''; }
+    try {
+      await apiFetch('/testimonials/submit', {
+        method: 'POST',
+        body: {
+          author: testimonialForm.author.value.trim(),
+          email: testimonialForm.email.value.trim() || undefined,
+          examType: testimonialForm.examType.value,
+          quote: testimonialForm.quote.value.trim(),
+          turnstileToken: testimonialTurnstileToken,
+        },
+      });
+      appEl.innerHTML = '<h1>Thank you!</h1>' +
+        '<p class="muted">Your testimonial has been submitted for review — thanks for taking the time to share it.</p>' +
+        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+    } catch (err) {
+      renderTestimonialForm();
+      var testimonialFormEl = document.querySelector('form[data-act="testimonial-submit"]');
+      if (testimonialFormEl) testimonialFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">Something went wrong. Please try again.</p>');
     }
   }
 });
