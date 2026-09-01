@@ -2,10 +2,12 @@
 // bug reports: picking a state in the category landing page's hero dropdown (or loading the page
 // with a state already known via cookie) is supposed to scope EVERY state-dependent piece of the
 // page to that state -- the sample-question subhead, the curriculum breakdown, the hero/breakdown
-// "view full track details" links, the single track card, AND the site footer's "Exams" links
-// (via the site-wide hubScopedState variable, which also drives the #/gift page). Each of these
-// was fixed piecemeal as a separate report in the same conversation; this test asserts all of them
-// together so a future change can't silently regress one while fixing/touching another.
+// "view full track details" links, the single track card, AND the site-wide hubScopedState
+// variable (which also drives the #/gift page). Each of these was fixed piecemeal as a separate
+// report in the same conversation; this test asserts all of them together so a future change
+// can't silently regress one while fixing/touching another.
+// (The footer's own "Exams" links assertions were dropped 2026-09-02 when that column was removed
+// from the footer as redundant with "Categories" -- see renderSiteFooter()'s own comment.)
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -62,18 +64,9 @@ test('picking a state in the category page picker scopes every dependent section
   );
 
   assert.equal(window.hubScopedState, target.stateCode, 'hubScopedState should follow the picked state');
-
-  const footerHrefs = Array.from(document.querySelectorAll('#footer-exams-links a')).map((a) => a.getAttribute('href'));
-  const footerTrackHrefs = footerHrefs.slice(1); // first link is always "All exam tracks"
-  assert.ok(footerTrackHrefs.length > 0, 'expected the footer to list at least one scoped track');
-  for (const href of footerTrackHrefs) {
-    const entry = window.HUB_EXAMS.find((e) => e.route === href);
-    assert.ok(entry, 'footer link ' + href + ' should resolve to a real HUB_EXAMS track');
-    assert.equal(entry.stateCode, target.stateCode, 'footer track links should all belong to the newly picked state, not fall back to the sitewide default');
-  }
 });
 
-test('loading a category page with a state already known via cookie scopes the footer from the first render', async (t) => {
+test('loading a category page with a state already known via cookie scopes hubScopedState from the first render', async (t) => {
   // Use whichever state real HUB_EXAMS data says offers Driver, other than the very first one --
   // read from the live boot rather than hardcoding a state code, so this doesn't silently stop
   // testing anything if track data changes.
@@ -90,10 +83,4 @@ test('loading a category page with a state already known via cookie scopes the f
 
   assert.equal(document.querySelector('.category-state-select').value, cookieState);
   assert.equal(window.hubScopedState, cookieState, 'hubScopedState should be scoped from the cookie on first render, not left null until an explicit pick');
-
-  const footerHrefs = Array.from(document.querySelectorAll('#footer-exams-links a')).map((a) => a.getAttribute('href')).slice(1);
-  for (const href of footerHrefs) {
-    const entry = window.HUB_EXAMS.find((e) => e.route === href);
-    assert.equal(entry.stateCode, cookieState, 'footer should be scoped to the cookie-derived state on first render');
-  }
 });

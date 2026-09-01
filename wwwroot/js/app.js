@@ -365,9 +365,9 @@ function loadPublicStats() {
 var HUB_FOOTER_ORG_LINE = 'any state department of motor vehicles, state licensing agency, official examination vendor,';
 var HUB_FOOTER_REQUIREMENT = 'do not fulfill any state-mandated licensing, driver education, or training requirement';
 
-// Four-column footer (ported from v0's site-footer.tsx) -- link destinations are all real routes
-// (no v0 placeholder hrefs carried over): the Exams column samples a few real live tracks rather
-// than hardcoding specific slugs, so it stays correct as tracks are added; the Refer link uses
+// Four-column footer (ported from v0's site-footer.tsx, regrouped 2026-09-02 by user intent --
+// browse / manage my purchase / get help / company info -- rather than the old grab-bag "Product"/
+// "Legal" columns that mixed unrelated link types under mislabeled headers). The Refer link uses
 // referTrackOrNull() (account's real track, or whichever track's page is currently being viewed --
 // deliberately NOT the sticky "last viewed this browser" case, see its own comment), falling back
 // to the tracks picker (never a specific, possibly-stale track) when there isn't one.
@@ -377,53 +377,38 @@ function renderSiteFooter() {
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
   var referTrack = referTrackOrNull(pageTrack);
   var referHref = referTrack ? (referTrack.route + '#/refer') : tracksHomeHref();
-  // Strictly the visitor's own scoped state's tracks -- never padded with other states' tracks
-  // (which in practice always meant California, since it's first in HUB_EXAMS) just because the
-  // scoped state itself has fewer than 3 active tracks. A 1- or 2-track state legitimately shows
-  // only 1 or 2 links here; cross-state browsing isn't a real user need for a licensing-exam
-  // product. Falls back to the first 3 active tracks overall only when genuinely unscoped
-  // (hubScopedState null -- e.g. on a category landing page, which shows every state anyway).
-  // This is just the synchronous starting order (HUB_EXAMS array order) -- loadFooterExamLinksPricing()
-  // (called below, after the innerHTML assignment) swaps it for real price-descending order once
-  // pricing resolves, since price isn't known client-side until fetched.
   var activeTracks = HUB_EXAMS.filter(function (e) { return e.active; });
-  var scopedTracks = hubScopedState ? activeTracks.filter(function (e) { return e.stateCode === hubScopedState; }) : [];
-  var sampleTracks = hubScopedState ? scopedTracks.slice(0, 3) : activeTracks.slice(0, 3);
 
-  // "All exam tracks" is a global "see the whole catalog" link, so -- same reasoning as the
-  // header's "Browse exams" CTA (see renderSiteHeader()'s own comment on this exact trap) -- it
-  // must NOT use tracksHomeHref(), which resolves to whatever track was last viewed (even in a
-  // past session, via lastViewedTrackExamType()) whenever no track is active on the CURRENT page,
-  // making this link silently re-link into one category instead of the actual full catalog.
-  var exverse = '<div><h3>Exams</h3><ul class="footer-link-list" id="footer-exams-links">' +
-    '<li><a href="/#tracks">All exam tracks</a></li>' +
-    sampleTracks.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('') +
-    '</ul></div>';
   // Every distinct active kind (Notary, Driver, Real Estate Broker, ...), each linking to its own
   // category landing page -- same slug logic renderHub()'s category cards and route()'s own
   // /{category-slug} matching already use (kindSlug()/HUB_KIND_SLUGS), so these links are guaranteed
   // to resolve to a real page rather than needing a second, easily-drifting list of category slugs.
+  // This column alone covers the "browse the catalog" job -- the old separate "Exams" column (a
+  // few sample state tracks + a link duplicating the header's own "Browse exams" CTA) was dropped
+  // as redundant with it.
   var activeKinds = [];
   activeTracks.forEach(function (t) { if (activeKinds.indexOf(t.examKind) === -1) activeKinds.push(t.examKind); });
   activeKinds.sort(function (a, b) { return a.localeCompare(b); });
   var categoriesCol = '<div><h3>Categories</h3><ul class="footer-link-list">' +
     activeKinds.map(function (k) { return '<li><a href="/' + kindSlug(k) + '">' + escapeHtml(k) + '</a></li>'; }).join('') +
     '</ul></div>';
-  var productCol = '<div><h3>Product</h3><ul class="footer-link-list">' +
+  var accountCol = '<div><h3>Account</h3><ul class="footer-link-list">' +
     '<li><a href="#/redeem">Redeem access code</a></li>' +
     '<li><a href="#/gift">Gift a track</a></li>' +
-    '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
     '<li><a href="' + referHref + '">Refer &amp; earn</a></li>' +
     '</ul></div>';
-  var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
-    '<li><a href="#/about">About us</a></li>' +
+  var supportCol = '<div><h3>Support</h3><ul class="footer-link-list">' +
     '<li><a href="#/faq">FAQ</a></li>' +
-    '<li><a href="/blog">Blog</a></li>' +
-    '<li><a href="#/terms">Terms of service</a></li>' +
-    '<li><a href="#/privacy">Privacy policy</a></li>' +
+    '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
     '<li><a href="#/contact">Contact us</a></li>' +
+    '</ul></div>';
+  var companyCol = '<div><h3>Company &amp; Legal</h3><ul class="footer-link-list">' +
+    '<li><a href="#/about">About us</a></li>' +
+    '<li><a href="/blog">Blog</a></li>' +
     '<li><a href="#/feedback">Share your experience</a></li>' +
+    '<li><a href="#/terms">Terms of service</a></li>' +
+    '<li><a href="#/privacy">Privacy policy</a></li>' +
     '</ul></div>';
 
   document.getElementById('site-footer').innerHTML =
@@ -434,37 +419,10 @@ function renderSiteFooter() {
     '<span class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></span></span>' +
     '<p class="muted footer-brand-blurb">Independent, one-time-purchase prep for real licensing exams. Question banks built on the current official handbooks — no subscriptions, ever.</p>' +
     '</div>' +
-    exverse + categoriesCol + productCol + legalCol +
+    categoriesCol + accountCol + supportCol + companyCol +
     '</div>' +
     '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>. © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '</div>';
-  loadFooterExamLinksPricing();
-}
-
-// Reorders the footer's "Exams" links to the 3 highest-priced tracks in the scoped state, once
-// pricing resolves (unknown client-side until fetched -- HUB_EXAMS carries no price field).
-// scopedAtCallTime guards against a late response landing after the visitor has since navigated to
-// a different state (same idea as quizStatsToken/quizRenderToken elsewhere in this file).
-function loadFooterExamLinksPricing() {
-  if (!hubScopedState) return; // unscoped catalog keeps the static default order -- no state to sort within
-  var scopedAtCallTime = hubScopedState;
-  var tracksInState = HUB_EXAMS.filter(function (e) { return e.active && e.stateCode === scopedAtCallTime; });
-  if (tracksInState.length <= 1) return; // nothing to reorder
-  Promise.all(tracksInState.map(function (t) {
-    return apiFetch('/pricing?examType=' + encodeURIComponent(t.examType))
-      .then(function (p) { return { track: t, priceCents: p.priceCents }; })
-      .catch(function () { return null; });
-  })).then(function (results) {
-    if (hubScopedState !== scopedAtCallTime) return; // stale -- visitor switched states before this resolved
-    var priced = results.filter(Boolean);
-    if (!priced.length) return; // best-effort -- keep the already-shown default-order list
-    priced.sort(function (a, b) { return b.priceCents - a.priceCents; });
-    var top3 = priced.slice(0, 3).map(function (r) { return r.track; });
-    var listEl = document.getElementById('footer-exams-links');
-    if (!listEl) return;
-    listEl.innerHTML = '<li><a href="/#tracks">All exam tracks</a></li>' + // see the sync render's own comment on why not tracksHomeHref()
-      top3.map(function (t) { return '<li><a href="' + t.route + '">' + escapeHtml(t.shortName || t.title) + '</a></li>'; }).join('');
-  }).catch(function () {}); // best-effort -- keep the already-shown default-order list
 }
 
 // ---- Help chat widget (v1: canned FAQ answers, no LLM/API key) ------------
