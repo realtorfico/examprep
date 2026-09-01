@@ -11061,6 +11061,7 @@ var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification 
 function renderBuy(giftIntent) {
   var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
+  trackEvent('checkout_started', state.examType);
   Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
     buyPricing = p;
@@ -11448,6 +11449,7 @@ async function submitStripePayment() {
       method: 'POST', body: {
         paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory,
         isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage, refCode: getStoredRefCode(),
+        sessionId: getOrCreateSessionId(),
       },
     });
     if (res.isGift) {
@@ -12081,6 +12083,18 @@ document.addEventListener('visibilitychange', function () {
   }
 });
 
+// Funnel/conversion event beacon -- same opt-out (isTrackingExcluded) as pageview tracking.
+// eventName must be one of the API's FUNNEL_EVENT_NAMES allowlist (quiz_completed,
+// checkout_started as of this writing) -- purchase_completed is recorded server-side directly,
+// not through this.
+function trackEvent(eventName, examType) {
+  if (isTrackingExcluded()) return;
+  apiFetch('/track/event', {
+    method: 'POST',
+    body: { sessionId: getOrCreateSessionId(), visitorId: getOrCreateVisitorId(), eventName: eventName, examType: examType || null },
+  }).catch(function () { /* best-effort */ });
+}
+
 function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
@@ -12455,6 +12469,7 @@ document.addEventListener('click', async function (e) {
     stopSpeaking();
     sampleState.answered = sampleState.selected;
     drawSampleQuestion();
+    trackEvent('quiz_completed', sampleState.examType);
   } else if (act === 'sample-listen') {
     speak(questionReadText(sampleState.questions[sampleState.index]));
   } else if (act === 'category-sample-answer') {
@@ -12464,6 +12479,7 @@ document.addEventListener('click', async function (e) {
     stopSpeaking();
     categoryPageState.sampleAnswered = categoryPageState.sampleSelected;
     drawCategorySampleQuestion();
+    trackEvent('quiz_completed', categoryPageState.repTrack && categoryPageState.repTrack.examType);
   } else if (act === 'category-sample-listen') {
     speak(questionReadText(categoryPageState.sampleQuestion));
   } else if (act === 'track-landing-sample-answer') {
@@ -12473,6 +12489,7 @@ document.addEventListener('click', async function (e) {
     stopSpeaking();
     trackLandingSample.answered = trackLandingSample.selected;
     drawTrackLandingSampleQuestion();
+    trackEvent('quiz_completed', state.examType);
   } else if (act === 'track-landing-sample-listen') {
     speak(questionReadText(trackLandingSample.question));
   } else if (act === 'sample-next') {
