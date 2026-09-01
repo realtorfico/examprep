@@ -1236,7 +1236,10 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Narrower than #app's own wide fluid default (up to 1680px, tuned for the functional track grid
    next to these) -- pure marketing content, so it gets the redesign's other container-width tier
    instead (~1400px cap), matching the plan's "don't force one width everywhere" decision. */
-.comparison-section { padding: 2rem 0; max-width: min(92vw, 1400px); margin: 0 auto; }
+.comparison-section {
+  max-width: min(92vw, 1400px); margin: 1.5rem auto; padding: 2.25rem clamp(1.25rem, 4vw, 3rem);
+  background: var(--surface-2); border-radius: var(--radius-2xl);
+}
 .comparison-heading { text-align: center; font-size: 1.5rem; }
 .comparison-subheading { text-align: center; max-width: 34rem; margin: 0.5rem auto 1.25rem; }
 .comparison-table-scroll {
