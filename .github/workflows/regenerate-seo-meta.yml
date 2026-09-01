@@ -1,0 +1,44 @@
+name: Auto-regenerate SEO meta + sitemap
+
+# scripts/generate-seo-meta.js was previously a manual step ("run after adding/changing any
+# HUB_EXAMS_CONTENT entry ... before deploying" -- see its own header comment) with nothing
+# enforcing it actually happens. This runs it on a schedule instead of relying on someone
+# remembering to.
+#
+# Deliberately NOT run on every push: the script fetches the LIVE /api/track-registry endpoint
+# (see its own header comment), so a brand-new track added in the same push wouldn't be live yet
+# for it to pick up -- running some time after a push has had a chance to deploy avoids that
+# ordering problem entirely, at the cost of up to ~24h staleness, which is fine for SEO metadata.
+#
+# If this ever needs to run immediately after a specific change (e.g. flipping a track active in
+# admin), trigger it by hand from the Actions tab (workflow_dispatch) instead of waiting for the
+# next scheduled run.
+on:
+  schedule:
+    - cron: '17 9 * * *' # ~09:17 UTC daily -- arbitrary off-peak minute, not on the hour
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Regenerate SEO meta + sitemap
+        run: node scripts/generate-seo-meta.js
+      - name: Commit and push if changed
+        run: |
+          if ! git diff --quiet -- wwwroot/_worker.js wwwroot/sitemap.xml; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add wwwroot/_worker.js wwwroot/sitemap.xml
+            git commit -m "chore: auto-regenerate SEO meta + sitemap"
+            git push
+          else
+            echo "No SEO meta / sitemap changes to commit."
+          fi
