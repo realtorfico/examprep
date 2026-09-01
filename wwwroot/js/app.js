@@ -987,18 +987,24 @@ function renderFaq() {
 // comment), not hardcoded here, so publishing needs no code deploy. kind is a category slug
 // (matches HUB_KIND_SLUGS values / category_content.slug) so each post can link back to its
 // category page via kindFromSlug().
-var _blogListAllPosts = [];
+// blogPostHref/blogListHref carry the active category filter across a real page navigation (this
+// site uses real <a href> page loads for /blog, not client-side pushState routing -- see the route()
+// comment below) via a ?from=<kind> query param on the post URL, so clicking "← Blog" from a post
+// can return to the same filtered list instead of always resetting to "All".
+function blogListHref(kind) { return '/blog' + (kind ? '?kind=' + encodeURIComponent(kind) : ''); }
+function blogPostHref(slug, kind) { return '/blog/' + encodeURIComponent(slug) + (kind ? '?from=' + encodeURIComponent(kind) : ''); }
 
-function blogListItemsHtml(posts) {
+function blogListItemsHtml(posts, activeKind) {
   return posts.length
     ? '<div class="blog-list">' + posts.map(function (p) {
         var kindLabel = kindFromSlug(p.kind) || p.kind;
+        var href = blogPostHref(p.slug, activeKind);
         return '<article class="blog-list-item card">' +
-          '<h2><a href="/blog/' + encodeURIComponent(p.slug) + '">' + escapeHtml(p.title) + '</a></h2>' +
+          '<h2><a href="' + href + '">' + escapeHtml(p.title) + '</a></h2>' +
           '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (p.stateCode ? ' · ' + escapeHtml(p.stateCode) : '') +
           (p.published_at ? ' · ' + new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
           '<p>' + escapeHtml(p.excerpt) + '</p>' +
-          '<a class="blog-read-more" href="/blog/' + encodeURIComponent(p.slug) + '">Read more →</a>' +
+          '<a class="blog-read-more" href="' + href + '">Read more →</a>' +
           '</article>';
       }).join('') + '</div>'
     : '<p class="muted">No articles in this category yet — check back soon.</p>';
@@ -1007,41 +1013,45 @@ function blogListItemsHtml(posts) {
 // Category slugs actually present in the fetched posts, in HUB_KIND_SLUGS' declared order (not
 // alphabetical/appearance order) so the tab bar always reads in the same category order the rest
 // of the site uses -- only categories with at least one published post get a tab, so an empty
-// category never shows a dead-end filter.
-function blogCategoryTabsHtml(posts) {
+// category never shows a dead-end filter. Real <a href="/blog?kind=..."> links, not JS-only
+// buttons, since a full page load is how this site navigates -- the ?kind= param is read back out
+// by renderBlogList() below so a reload/bookmark/back-button lands on the same filtered view.
+function blogCategoryTabsHtml(posts, activeKind) {
   var present = {};
   posts.forEach(function (p) { present[p.kind] = true; });
   var slugs = [];
   for (var label in HUB_KIND_SLUGS) { if (present[HUB_KIND_SLUGS[label]]) slugs.push(HUB_KIND_SLUGS[label]); }
   if (slugs.length < 2) return ''; // nothing to filter if every post is the same (or only) category
   return '<div class="blog-category-tabs" role="tablist">' +
-    '<button type="button" class="active" data-act="blog-category-tab" data-kind="">All</button>' +
+    '<a class="' + (activeKind ? '' : 'active') + '" href="' + blogListHref('') + '">All</a>' +
     slugs.map(function (slug) {
-      return '<button type="button" data-act="blog-category-tab" data-kind="' + escapeHtml(slug) + '">' + escapeHtml(kindFromSlug(slug) || slug) + '</button>';
+      return '<a class="' + (slug === activeKind ? 'active' : '') + '" href="' + blogListHref(slug) + '">' + escapeHtml(kindFromSlug(slug) || slug) + '</a>';
     }).join('') +
     '</div>';
 }
 
 function renderBlogList() {
+  var activeKind = new URLSearchParams(location.search).get('kind') || '';
   appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
-    _blogListAllPosts = posts;
+    var shown = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
     appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1>' +
       '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
-      blogCategoryTabsHtml(posts) +
-      '<div id="blog-list-wrap">' + blogListItemsHtml(posts) + '</div>' +
-      '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
+      blogCategoryTabsHtml(posts, activeKind) +
+      blogListItemsHtml(shown, activeKind) +
+      '<button class="btn-secondary btn-sm blog-back-btn" data-act="go-back">← Back</button></div>';
   }).catch(function () {
     appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
   });
 }
 
 function renderBlogPost(slug) {
+  var fromKind = new URLSearchParams(location.search).get('from') || '';
   appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
   Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
     var post = results[0] && results[0].post;
-    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Blog</a></div>'; return; }
+    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind) + '">← Back to Blog</a></div>'; return; }
     var kindLabel = kindFromSlug(post.kind) || post.kind;
     var categoryHref = '/' + post.kind;
     // Prev/next -- the list is already published_at DESC (newest first), so "next" (older) is the
@@ -1053,12 +1063,12 @@ function renderBlogPost(slug) {
     var nextPost = myIndex !== -1 && myIndex < allPosts.length - 1 ? allPosts[myIndex + 1] : null;
     var prevNextHtml = (prevPost || nextPost)
       ? '<div class="blog-post-prevnext">' +
-        (prevPost ? '<a href="/blog/' + encodeURIComponent(prevPost.slug) + '">← ' + escapeHtml(prevPost.title) + '</a>' : '<span></span>') +
-        (nextPost ? '<a href="/blog/' + encodeURIComponent(nextPost.slug) + '">' + escapeHtml(nextPost.title) + ' →</a>' : '<span></span>') +
+        (prevPost ? '<a href="' + blogPostHref(prevPost.slug, fromKind) + '">← ' + escapeHtml(prevPost.title) + '</a>' : '<span></span>') +
+        (nextPost ? '<a href="' + blogPostHref(nextPost.slug, fromKind) + '">' + escapeHtml(nextPost.title) + ' →</a>' : '<span></span>') +
         '</div>'
       : '';
     appEl.innerHTML = '<div class="narrow-page blog-post">' +
-      '<p class="muted"><a href="/blog">← Blog</a></p>' +
+      '<p class="muted"><a href="' + blogListHref(fromKind) + '">← Blog</a></p>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
       '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (post.state_code ? ' · ' + escapeHtml(post.state_code) : '') +
       (post.published_at ? ' · ' + new Date(post.published_at * 1000).toLocaleDateString() : '') + '</p>' +
@@ -12871,17 +12881,6 @@ document.addEventListener('click', async function (e) {
     var isOpen = drawerEl ? drawerEl.classList.toggle('open') : false;
     el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     el.textContent = isOpen ? '✕' : '☰';
-  } else if (act === 'blog-category-tab') {
-    var blogKind = el.getAttribute('data-kind');
-    document.querySelectorAll('.blog-category-tabs button').forEach(function (b) {
-      b.classList.toggle('active', b === el);
-    });
-    var blogListWrap = document.getElementById('blog-list-wrap');
-    if (blogListWrap) {
-      blogListWrap.innerHTML = blogListItemsHtml(blogKind
-        ? _blogListAllPosts.filter(function (p) { return p.kind === blogKind; })
-        : _blogListAllPosts);
-    }
   } else if (act === 'landing-preview-tab') {
     var previewTabKey = el.getAttribute('data-tab');
     document.querySelectorAll('.locked-preview-tabs button').forEach(function (b) {

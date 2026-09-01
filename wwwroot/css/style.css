@@ -767,17 +767,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Blog list/post (#/blog, #/blog/{slug}) -- same card language as the rest of the site's
    narrow-page content, not a bespoke blog theme. */
 .blog-category-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-.blog-category-tabs button {
+.blog-category-tabs a {
   background: var(--card); color: var(--muted); border: 1px solid var(--border); border-radius: 999px;
-  padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 600;
+  padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 600; text-decoration: none;
 }
-.blog-category-tabs button.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
+.blog-category-tabs a.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
 .blog-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
 .blog-list-item h2 { margin: 0 0 0.35rem; font-size: 1.15rem; }
 .blog-list-item h2 a { color: var(--fg); text-decoration: none; }
 .blog-list-item h2 a:hover { color: var(--accent); }
 .blog-list-meta { font-size: 0.8rem; margin: 0 0 0.5rem; }
 .blog-read-more { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.blog-back-btn { margin-top: 1.5rem; }
 .blog-post-body { margin-top: 1.25rem; line-height: 1.7; }
 .blog-post-body h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
 .blog-post-body h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; }
