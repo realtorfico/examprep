@@ -1599,7 +1599,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'tx_boating',
     title: 'Texas Boater Education Knowledge Exam', category: 'Boating & Watercraft Safety', route: '/boating/tx',
-    duration: 'Untimed', questions: '75 Multiple Choice', passScore: '60/75 Correct (80%)',
+    duration: 'Untimed', questions: '75 Multiple Choice', passScore: '53/75 Correct (70%)',
     description: 'Practice questions covering Texas\'s boater education requirement (Texas Parks & Wildlife Department, TPWD) and the Texas Boating Laws and Responsibilities handbook: boat types and classification, required safety equipment, navigation rules and right-of-way, aids to navigation, navigation lights and anchoring, operating rules, speed zones and boating while intoxicated (BWI), Texas-specific boating laws, trailering and launching, on-water emergencies, weather and water conditions, water sports and towing, invasive species (Clean, Drain, Dry), accident reporting and duty to assist, and general safe boating practices -- modeled on the common format used by TPWD-approved boater education course providers.',
     breakdown: [['Boat Types & Required Safety Equipment', '25%'], ['Navigation Rules, Aids to Navigation & Lights/Anchoring', '21%'], ['Operating Rules, BWI & Texas-Specific Boating Laws', '16%'], ['On-Water Emergencies, Weather & Water Sports/Towing', '17%'], ['Trailering, Invasive Species & Accident Reporting/General Practices', '21%']],
   },
