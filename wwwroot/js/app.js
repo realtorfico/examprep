@@ -5626,12 +5626,44 @@ var categoryPageState = { kind: null, tracks: [], repTrack: null };
 // visitor sees a different state's track; this section just reflects whichever one is selected.
 // Reuses hubTrackCards's own card markup (a 1-element array) rather than a bespoke layout, so it
 // looks identical to every other track card on the site.
+// First sentence (or ~220 chars) of a track's full `description` -- those run long (built for the
+// track landing page itself), too long for a card; the full text is still one click away via the
+// card's own "View details" link and the page's breakdown section below.
+function trackDescExcerpt(description) {
+  if (!description) return '';
+  var firstSentence = description.split(/(?<=[.!?])\s+/)[0];
+  if (firstSentence.length <= 260) return firstSentence;
+  return description.slice(0, 220).replace(/\s+\S*$/, '') + '…';
+}
+
+// Replaces the old compact hubTrackCards()-style card (badge/title/price/resource-count only, no
+// real content) with the same rich icon+content card layout as the homepage's category cards
+// (.category-nav-card -- icon badge, tinted points panel, full-width CTA button), filled with
+// this specific state+category's OWN real data (duration/questions/passScore/description already
+// exist per-track in HUB_EXAMS -- no new content needed, this was the compact-card's gap, not a
+// content gap). 2026-08-31 visual pass, mirrors the homepage cards' final look.
 function categoryCurrentTrackHtml() {
   var track = categoryPageState.repTrack;
   if (!track) return '<p class="muted">No states are live for this category yet — check back soon.</p>';
-  var cardHtml = hubTrackCards([track])[0];
   fillHubPricing([track]);
-  return '<div class="exam-track-grid category-single-track-grid">' + cardHtml + '</div>';
+  var points = [
+    track.duration ? 'Format: ' + track.duration : '',
+    track.questions ? track.questions : '',
+    track.passScore ? 'Passing score: ' + track.passScore : '',
+  ].filter(Boolean);
+  return '<div class="exam-track-grid category-card-grid category-current-track-grid">' +
+    '<a class="exam-track-card is-active category-nav-card" href="' + track.route + '">' +
+    '<div class="exam-track-body">' +
+    '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[track.examKind] || '📚') + '</div>' +
+    '<div class="category-nav-card-content">' +
+    '<h3>' + escapeHtml(track.shortName || track.title) +
+    ' <span class="exam-track-price" data-price-for="' + track.examType + '">…</span></h3>' +
+    '<p class="category-nav-card-desc">' + escapeHtml(trackDescExcerpt(track.description)) + '</p>' +
+    (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
+    (track.active ? '<span class="category-nav-card-statecount"><span class="pulse-dot"></span> Active — start now</span>' : '') +
+    '</div></div>' +
+    '<div class="exam-track-footer"><span class="exam-track-view-link">View details &amp; pricing →</span></div>' +
+    '</a></div>';
 }
 
 function categoryActiveTracks(kind) {

@@ -56,7 +56,7 @@ test('picking a state in the category page picker scopes every dependent section
   );
 
   assert.equal(
-    document.querySelector('.category-single-track-grid a').getAttribute('href'),
+    document.querySelector('.category-current-track-grid a').getAttribute('href'),
     target.route,
     'the single track card should be the newly picked state\'s track'
   );
