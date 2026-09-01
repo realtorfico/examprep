@@ -5726,6 +5726,26 @@ function categoryStateSelectHtml(tracks, selectedState) {
     '<select class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
 }
 
+// "Notify me when my state launches" -- categoryStateSelectHtml() above only ever lists ACTIVE
+// tracks, so there's otherwise no UI surface at all for a visitor whose state isn't built yet for
+// this category. Collapsed by default (<details>) so it doesn't compete with the main state picker.
+function categoryWaitlistPromptHtml(kind, tracks) {
+  var activeCodes = {};
+  tracks.forEach(function (t) { activeCodes[t.stateCode] = true; });
+  var missing = Object.keys(STATE_LABELS).filter(function (code) { return !activeCodes[code]; })
+    .sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
+  if (!missing.length) return '';
+  var options = missing.map(function (code) { return '<option value="' + code + '">' + escapeHtml(STATE_LABELS[code]) + '</option>'; }).join('');
+  return '<details class="category-waitlist-prompt">' +
+    '<summary class="muted">Don\'t see your state? Get notified when it launches</summary>' +
+    '<form data-act="waitlist-join" data-kind="' + escapeHtml(kind) + '" class="card">' +
+    '<select name="stateCode" required><option value="">Choose your state…</option>' + options + '</select>' +
+    '<input type="email" name="email" placeholder="you@example.com" required>' +
+    '<button class="btn-secondary btn-sm" type="submit">Notify me</button>' +
+    '</form>' +
+    '</details>';
+}
+
 // Second hero CTA button: a direct link to the visitor's selected track's own details page
 // (buy button, full pricing, full breakdown) instead of just scrolling to the single track card
 // further down. Falls back to the old scroll-to-tracks behavior on the rare category with zero
@@ -5924,6 +5944,7 @@ async function renderCategoryPage(kind) {
     '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' +
     '</div>' +
     (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    categoryWaitlistPromptHtml(kind, tracks) +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
@@ -12401,6 +12422,23 @@ document.addEventListener('submit', async function (e) {
       renderContact();
       var contactFormEl = document.querySelector('form[data-act="contact-submit"]');
       if (contactFormEl) contactFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + contactMsg + '</p>');
+    }
+  } else if (act === 'waitlist-join') {
+    e.preventDefault();
+    var waitlistForm = e.target;
+    try {
+      await apiFetch('/waitlist/join', {
+        method: 'POST',
+        body: {
+          email: waitlistForm.email.value.trim(),
+          kind: waitlistForm.getAttribute('data-kind'),
+          stateCode: waitlistForm.stateCode.value,
+        },
+      });
+      waitlistForm.outerHTML = '<p class="muted">Thanks! We\'ll email you when it\'s live.</p>';
+    } catch (err) {
+      var waitlistBtn = waitlistForm.querySelector('button[type="submit"]');
+      if (waitlistBtn) { waitlistBtn.textContent = 'Something went wrong — try again'; waitlistBtn.disabled = false; }
     }
   } else if (act === 'testimonial-submit') {
     e.preventDefault();

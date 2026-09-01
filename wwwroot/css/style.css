@@ -1119,6 +1119,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Just one track card (the visitor's selected state), not the full multi-column grid every other
    use of .exam-track-grid renders -- centered, capped width instead of stretching/misaligning. */
 .category-single-track-grid { display: block; max-width: 22rem; margin: 0 auto; }
+.category-waitlist-prompt { margin-top: 0.75rem; font-size: 0.85rem; }
+.category-waitlist-prompt summary { cursor: pointer; }
+.category-waitlist-prompt summary:hover { color: var(--accent); }
+.category-waitlist-prompt form { margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; max-width: 28rem; }
+.category-waitlist-prompt select, .category-waitlist-prompt input { flex: 1; min-width: 10rem; }
 .category-nav-card-desc { font-size: 0.85rem; line-height: 1.5; opacity: 0.85; margin: 0 0 0.9rem; }
 /* Points list gets its own tinted, bordered panel -- borrowed from an unrelated dashboard app's
    "recommendation box" pattern (info set off in a distinctly-colored card-within-a-card) rather
