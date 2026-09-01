@@ -1282,7 +1282,17 @@ var HUB_EXAMS_CONTENT = [
     title: 'California Notary Public Exam', category: 'State Licensing', route: '/notary/ca',
     duration: '60 Minutes', questions: '45 Multiple Choice', passScore: '70% (Scaled Score 70+)',
     description: 'Practice questions covering the California notary handbook: statutory fees, thumbprint rules, journal requirements, and civil/criminal misconduct exposure.',
-    breakdown: [['Fees, Misconduct & Conflict of Interest', '35%'], ['Common Questions & Scenarios', '20%'], ['Acknowledgment, Jurat & Journal', '30%'], ['Application, Commission & Misc', '15%']],
+    // Rebuilt 2026-09-01 directly from the CA Secretary of State's own January 2026 Notary Public
+    // Handbook (fetched from notary.cdn.sos.ca.gov/forms/notary-handbook-current.pdf), matching its
+    // actual "General Information" section structure (pp. 7-27) rather than the old generic 4-bucket
+    // template. CA publishes no official exam blueprint/topic weighting -- these percentages are
+    // this handbook's own body-text proportion per section (page space per section / total body page
+    // space), not a state-disclosed weighting. The old "Fees, Misconduct & Conflict of Interest"
+    // bucket at 35% was overweighted relative to the real handbook (~15%), and Identification /
+    // Satisfactory Evidence -- one of the handbook's densest, most-tested topics (ID-document tiers,
+    // credible-witness rules, pp. 9-10) -- had no bucket of its own at all, buried inside a generic
+    // "Application, Commission & Misc" line.
+    breakdown: [['Appointment, Qualifications & Commission Administration', '14%'], ['Seal, Identification & Journal Requirements', '14%'], ['Acknowledgments, Jurats & Certifications', '37%'], ['Fees, Advertising & Discipline', '15%'], ['Common Questions & Scenarios', '20%']],
   },
   {
     examType: 'ca_driver',
