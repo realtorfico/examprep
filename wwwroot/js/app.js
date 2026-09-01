@@ -1041,17 +1041,28 @@ function renderBlogPost(slug) {
     var nextPost = myIndex !== -1 && myIndex < allPosts.length - 1 ? allPosts[myIndex + 1] : null;
     var prevNextHtml = (prevPost || nextPost)
       ? '<div class="blog-post-prevnext">' +
-        (prevPost ? '<a href="' + blogPostHref(prevPost.slug, fromKind) + '">← ' + escapeHtml(prevPost.title) + '</a>' : '<span></span>') +
-        (nextPost ? '<a href="' + blogPostHref(nextPost.slug, fromKind) + '">' + escapeHtml(nextPost.title) + ' →</a>' : '<span></span>') +
+        (prevPost
+          ? '<a class="blog-post-prevnext-link" href="' + blogPostHref(prevPost.slug, fromKind) + '"><span class="muted blog-post-prevnext-label">← Previous</span><span class="blog-post-prevnext-title">' + escapeHtml(prevPost.title) + '</span></a>'
+          : '<span></span>') +
+        (nextPost
+          ? '<a class="blog-post-prevnext-link blog-post-prevnext-next" href="' + blogPostHref(nextPost.slug, fromKind) + '"><span class="muted blog-post-prevnext-label">Next →</span><span class="blog-post-prevnext-title">' + escapeHtml(nextPost.title) + '</span></a>'
+          : '<span></span>') +
         '</div>'
       : '';
+    // ~200 wpm is the commonly-cited average adult silent reading speed -- a rough estimate label,
+    // not a precise claim, same spirit as this project's other honestly-hedged display numbers.
+    var readMins = Math.max(1, Math.round(stripHtml(post.body_html).split(/\s+/).length / 200));
     appEl.innerHTML = '<div class="narrow-page blog-post">' +
-      '<p class="muted"><a href="' + blogListHref(fromKind) + '">← Blog</a></p>' +
+      '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind) + '">← Blog</a></p>' +
+      '<span class="badge blog-post-badge">' + escapeHtml(kindLabel) + '</span>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
-      '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (post.state_code ? ' · ' + escapeHtml(post.state_code) : '') +
-      (post.published_at ? ' · ' + new Date(post.published_at * 1000).toLocaleDateString() : '') + '</p>' +
+      '<p class="muted blog-post-meta">' + (post.state_code ? escapeHtml(post.state_code) + ' · ' : '') +
+      (post.published_at ? new Date(post.published_at * 1000).toLocaleDateString() + ' · ' : '') + readMins + ' min read</p>' +
       '<div class="blog-post-body">' + post.body_html + '</div>' +
-      '<p class="blog-post-cta"><a class="btn-primary btn-sm" href="' + categoryHref + '">Practice ' + escapeHtml(kindLabel) + ' questions →</a></p>' +
+      '<div class="blog-post-cta-box">' +
+      '<p>Ready to put this into practice?</p>' +
+      '<a class="btn-primary" href="' + categoryHref + '">Practice ' + escapeHtml(kindLabel) + ' questions →</a>' +
+      '</div>' +
       prevNextHtml +
       '</div>';
     injectJsonLd('blog-post-jsonld', {

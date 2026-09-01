@@ -797,18 +797,35 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .blog-read-more { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-top: auto; }
 .blog-load-more-wrap { text-align: center; margin-top: 2rem; }
 .blog-back-btn { margin-top: 1.5rem; }
-.blog-post-body { margin-top: 1.25rem; line-height: 1.7; }
-.blog-post-body h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
-.blog-post-body h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; }
-.blog-post-body p { margin: 0 0 1rem; }
-.blog-post-body ul, .blog-post-body ol { margin: 0 0 1rem 1.25rem; }
+.blog-post-back { margin-bottom: 1rem; }
+.blog-post-badge { margin-bottom: 0.75rem; }
+.blog-post h1 { margin: 0 0 0.5rem; line-height: 1.25; }
+.blog-post-meta { font-size: 0.85rem; margin: 0; }
+.blog-post-body { margin-top: 1.5rem; font-size: 1.02rem; line-height: 1.75; }
+.blog-post-body h2 { font-size: 1.3rem; margin: 2rem 0 0.65rem; }
+.blog-post-body h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+.blog-post-body p { margin: 0 0 1.1rem; }
+.blog-post-body ul, .blog-post-body ol { margin: 0 0 1.1rem 1.25rem; }
+.blog-post-body li { margin-bottom: 0.4rem; }
 .blog-post-body a { color: var(--accent); }
-.blog-post-cta { margin-top: 2rem; }
+.blog-post-cta-box {
+  margin-top: 2.5rem; padding: 1.5rem; text-align: center;
+  background: var(--surface-2); border-radius: var(--radius-xl);
+}
+.blog-post-cta-box p { margin: 0 0 0.85rem; font-weight: 600; }
 .blog-post-prevnext {
   display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem;
-  padding-top: 1.25rem; border-top: 1px solid var(--border);
+  padding-top: 1.5rem; border-top: 1px solid var(--border);
 }
-.blog-post-prevnext a { color: var(--accent); font-weight: 600; font-size: 0.9rem; max-width: 48%; }
+.blog-post-prevnext-link {
+  display: flex; flex-direction: column; gap: 0.3rem; max-width: 48%;
+  text-decoration: none; color: var(--fg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 1rem; transition: border-color 0.15s;
+}
+.blog-post-prevnext-link:hover { border-color: var(--accent); }
+.blog-post-prevnext-next { text-align: right; align-items: flex-end; margin-left: auto; }
+.blog-post-prevnext-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.blog-post-prevnext-title { font-weight: 600; font-size: 0.9rem; line-height: 1.3; }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
    site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
 .refer-hero {
