@@ -6116,6 +6116,7 @@ function renderHub() {
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-tracks">Browse by Category</button>' +
     '</div>' +
     '<p class="muted hub-hero-subtext">Already have a code? <a href="#/redeem">Enter it here</a></p>' +
+    '<div id="recent-activity-ticker" class="hub-activity-ticker"></div>' +
     '</div>' +
     '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
@@ -6158,6 +6159,43 @@ function renderHub() {
   // decision -- the homepage's job is routing to a category, not closing a sale, and most
   // category-page visitors arrive there directly via search without ever seeing this page first).
   loadSiteConfig();
+  loadRecentActivity();
+}
+
+// Real, anonymized "recent passes" ticker -- rotates through GET /activity/recent's items every
+// few seconds. Self-cleaning: the interval checks the wrap element still exists on every tick and
+// clears itself once the visitor navigates away from the homepage, rather than needing an
+// explicit teardown hook wired into route().
+var recentActivityItems = [];
+var recentActivityIndex = 0;
+var recentActivityTimer = null;
+function relativeTimeAgo(unixSec) {
+  var diff = Math.floor(Date.now() / 1000) - unixSec;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) { var m = Math.floor(diff / 60); return m + ' minute' + (m === 1 ? '' : 's') + ' ago'; }
+  if (diff < 86400) { var h = Math.floor(diff / 3600); return h + ' hour' + (h === 1 ? '' : 's') + ' ago'; }
+  var d = Math.floor(diff / 86400); return d + ' day' + (d === 1 ? '' : 's') + ' ago';
+}
+function drawRecentActivityTicker() {
+  var wrap = document.getElementById('recent-activity-ticker');
+  if (!wrap || !recentActivityItems.length) return;
+  var item = recentActivityItems[recentActivityIndex];
+  var stateLabel = item.stateCode ? (STATE_LABELS[item.stateCode] || item.stateCode) + ' ' : '';
+  wrap.textContent = '✓ A ' + stateLabel + item.kind + ' student passed ' + relativeTimeAgo(item.submittedAt);
+}
+function loadRecentActivity() {
+  apiFetch('/activity/recent').then(function (res) {
+    recentActivityItems = res.items || [];
+    if (!recentActivityItems.length) return;
+    recentActivityIndex = 0;
+    drawRecentActivityTicker();
+    clearInterval(recentActivityTimer);
+    recentActivityTimer = setInterval(function () {
+      if (!document.getElementById('recent-activity-ticker')) { clearInterval(recentActivityTimer); return; }
+      recentActivityIndex = (recentActivityIndex + 1) % recentActivityItems.length;
+      drawRecentActivityTicker();
+    }, 4000);
+  }).catch(function () { /* best-effort -- ticker just stays empty */ });
 }
 
 // ---- Home page: trust strip, how it works, guarantee band (ported from v0's page.tsx) ----
