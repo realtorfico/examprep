@@ -1017,15 +1017,15 @@ function blogListItemsHtml(posts, activeKind) {
 // buttons, since a full page load is how this site navigates -- the ?kind= param is read back out
 // by renderBlogList() below so a reload/bookmark/back-button lands on the same filtered view.
 function blogCategoryTabsHtml(posts, activeKind) {
-  var present = {};
-  posts.forEach(function (p) { present[p.kind] = true; });
+  var counts = {};
+  posts.forEach(function (p) { counts[p.kind] = (counts[p.kind] || 0) + 1; });
   var slugs = [];
-  for (var label in HUB_KIND_SLUGS) { if (present[HUB_KIND_SLUGS[label]]) slugs.push(HUB_KIND_SLUGS[label]); }
+  for (var label in HUB_KIND_SLUGS) { if (counts[HUB_KIND_SLUGS[label]]) slugs.push(HUB_KIND_SLUGS[label]); }
   if (slugs.length < 2) return ''; // nothing to filter if every post is the same (or only) category
   return '<div class="blog-category-tabs" role="tablist">' +
-    '<a class="' + (activeKind ? '' : 'active') + '" href="' + blogListHref('') + '">All</a>' +
+    '<a class="' + (activeKind ? '' : 'active') + '" href="' + blogListHref('') + '">All (' + posts.length + ')</a>' +
     slugs.map(function (slug) {
-      return '<a class="' + (slug === activeKind ? 'active' : '') + '" href="' + blogListHref(slug) + '">' + escapeHtml(kindFromSlug(slug) || slug) + '</a>';
+      return '<a class="' + (slug === activeKind ? 'active' : '') + '" href="' + blogListHref(slug) + '">' + escapeHtml(kindFromSlug(slug) || slug) + ' (' + counts[slug] + ')</a>';
     }).join('') +
     '</div>';
 }
