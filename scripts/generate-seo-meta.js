@@ -25,6 +25,12 @@ const workerPath = path.join(__dirname, '..', 'wwwroot', '_worker.js');
 const sitemapPath = path.join(__dirname, '..', 'wwwroot', 'sitemap.xml');
 const SITE_ORIGIN = 'https://passexamhq.com';
 const TRACK_REGISTRY_URL = SITE_ORIGIN + '/api/track-registry';
+const BLOG_LIST_URL = SITE_ORIGIN + '/api/blog';
+
+const BLOG_INDEX_META = {
+  title: 'Blog — Exam Prep Guides & Tips | PassExamHQ',
+  description: 'Guides and tips for passing your licensing exam, from notary to real estate to boating safety.',
+};
 
 const CATEGORY_META = {
   'notary': {
@@ -157,6 +163,14 @@ objects.forEach((obj) => {
   // route is '/{kind-slug}/{state}' -- kind-slug is everything up to the last '/'.
   const kindSlugsWithActiveTracks = new Set(tracks.map((t) => t.route.slice(1, t.route.lastIndexOf('/'))));
 
+  // ---- Blog posts (DB-backed, published via admin -- see schema.sql's blog_posts comment) ----
+  // Fetched live same as track_registry above, so a newly-published post gets real SEO_META and a
+  // sitemap entry on the next daily regen run without a code change of its own.
+  const blogRes = await fetch(BLOG_LIST_URL);
+  if (!blogRes.ok) throw new Error(`fetching ${BLOG_LIST_URL} failed: HTTP ${blogRes.status}`);
+  const blogData = await blogRes.json();
+  const blogPosts = blogData.posts || [];
+
   // ---- Write SEO_META block into _worker.js ----
   const seoMetaEntries = tracks.map((t) =>
     `  '${t.route}': { title: '${escapeForJs(t.title)} | PassExamHQ', description: '${escapeForJs(truncate(t.description, 155))}' },`
@@ -164,11 +178,17 @@ objects.forEach((obj) => {
   const categoryMetaEntries = Object.entries(CATEGORY_META).map(([slug, m]) =>
     `  '/${slug}': { title: '${escapeForJs(m.title)}', description: '${escapeForJs(m.description)}' },`
   ).join('\n');
+  const blogIndexMetaEntry = `  '/blog': { title: '${escapeForJs(BLOG_INDEX_META.title)}', description: '${escapeForJs(BLOG_INDEX_META.description)}' },`;
+  const blogPostMetaEntries = blogPosts.map((p) =>
+    `  '/blog/${p.slug}': { title: '${escapeForJs((p.seo_title || p.title) + ' | PassExamHQ')}', description: '${escapeForJs(truncate(p.seo_description || p.excerpt, 155))}' },`
+  ).join('\n');
 
   const seoMetaBlock =
 `const SEO_META = {
 ${categoryMetaEntries}
 ${seoMetaEntries}
+${blogIndexMetaEntry}
+${blogPostMetaEntries}
 };`;
 
   let workerSrc = fs.readFileSync(workerPath, 'utf8');
@@ -186,7 +206,9 @@ ${seoMetaEntries}
   // worth inviting crawlers to, and would just read as thin content.
   const urls = [SITE_ORIGIN + '/']
     .concat(Object.keys(CATEGORY_META).filter((slug) => kindSlugsWithActiveTracks.has(slug)).map((slug) => SITE_ORIGIN + '/' + slug))
-    .concat(tracks.map((t) => SITE_ORIGIN + t.route));
+    .concat(tracks.map((t) => SITE_ORIGIN + t.route))
+    .concat(blogPosts.length ? [SITE_ORIGIN + '/blog'] : [])
+    .concat(blogPosts.map((p) => SITE_ORIGIN + '/blog/' + p.slug));
   const sitemapXml =
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

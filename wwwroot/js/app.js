@@ -418,6 +418,7 @@ function renderSiteFooter() {
   var legalCol = '<div><h3>Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/about">About us</a></li>' +
     '<li><a href="#/faq">FAQ</a></li>' +
+    '<li><a href="/blog">Blog</a></li>' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
@@ -978,6 +979,61 @@ function renderFaq() {
     });
   });
   injectJsonLd('faq-jsonld', { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqEntities });
+}
+
+// Educational blog/guide content (/blog, /blog/{slug} -- real pathname routes, not hash routes,
+// so _worker.js can inject per-post SEO meta and sitemap.xml can list them; see route()'s own
+// comment on why). Admin-authored via the DB-backed blog_posts table (see the API's schema.sql
+// comment), not hardcoded here, so publishing needs no code deploy. kind is a category slug
+// (matches HUB_KIND_SLUGS values / category_content.slug) so each post can link back to its
+// category page via kindFromSlug().
+function renderBlogList() {
+  appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Loading…</p></div>';
+  apiFetch('/blog').then(function (res) {
+    var posts = (res && res.posts) || [];
+    appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1>' +
+      '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
+      (posts.length
+        ? '<div class="blog-list">' + posts.map(function (p) {
+            var kindLabel = kindFromSlug(p.kind) || p.kind;
+            return '<article class="blog-list-item card">' +
+              '<h2><a href="/blog/' + encodeURIComponent(p.slug) + '">' + escapeHtml(p.title) + '</a></h2>' +
+              '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (p.stateCode ? ' · ' + escapeHtml(p.stateCode) : '') +
+              (p.published_at ? ' · ' + new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
+              '<p>' + escapeHtml(p.excerpt) + '</p>' +
+              '<a class="blog-read-more" href="/blog/' + encodeURIComponent(p.slug) + '">Read more →</a>' +
+              '</article>';
+          }).join('') + '</div>'
+        : '<p class="muted">No articles published yet — check back soon.</p>') +
+      '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
+  }).catch(function () {
+    appEl.innerHTML = '<div class="narrow-page"><h1>Blog</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
+  });
+}
+
+function renderBlogPost(slug) {
+  appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
+  apiFetch('/blog/' + encodeURIComponent(slug)).then(function (res) {
+    var post = res && res.post;
+    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Blog</a></div>'; return; }
+    var kindLabel = kindFromSlug(post.kind) || post.kind;
+    var categoryHref = '/' + post.kind;
+    appEl.innerHTML = '<div class="narrow-page blog-post">' +
+      '<p class="muted"><a href="/blog">← Blog</a></p>' +
+      '<h1>' + escapeHtml(post.title) + '</h1>' +
+      '<p class="muted blog-list-meta">' + escapeHtml(kindLabel) + (post.state_code ? ' · ' + escapeHtml(post.state_code) : '') +
+      (post.published_at ? ' · ' + new Date(post.published_at * 1000).toLocaleDateString() : '') + '</p>' +
+      '<div class="blog-post-body">' + post.body_html + '</div>' +
+      '<p class="blog-post-cta"><a class="btn-primary btn-sm" href="' + categoryHref + '">Practice ' + escapeHtml(kindLabel) + ' questions →</a></p>' +
+      '</div>';
+    injectJsonLd('blog-post-jsonld', {
+      '@context': 'https://schema.org', '@type': 'Article',
+      headline: post.title, description: post.seo_description || post.excerpt,
+      datePublished: post.published_at ? new Date(post.published_at * 1000).toISOString() : undefined,
+    });
+  }).catch(function () {
+    appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Blog</a></div>';
+  });
 }
 
 function renderContact() {
@@ -12228,6 +12284,13 @@ function route() {
     renderHub();
     return;
   }
+  // Blog (#/blog is NOT used here -- these are real pathname routes, not hash routes, so
+  // _worker.js can inject per-post SEO meta and list them in sitemap.xml; a hash fragment never
+  // reaches the server, so a hash-routed blog would be invisible to search engines entirely).
+  if (location.pathname === '/blog' || location.pathname === '/blog/') { renderBlogList(); return; }
+  var blogPostMatch = location.pathname.match(/^\/blog\/([a-z0-9-]+)\/?$/);
+  if (blogPostMatch) { renderBlogPost(blogPostMatch[1]); return; }
+
   // Category landing page: bare /{category-slug} (e.g. /notary, /real-estate-salesperson, /cdl).
   // renderCategoryPage() itself now resolves hubScopedState (to the page's own current track's
   // state), not this branch -- see its own comment.
