@@ -779,6 +779,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .blog-post-body ul, .blog-post-body ol { margin: 0 0 1rem 1.25rem; }
 .blog-post-body a { color: var(--accent); }
 .blog-post-cta { margin-top: 2rem; }
+.blog-post-prevnext {
+  display: flex; justify-content: space-between; gap: 1rem; margin-top: 2rem;
+  padding-top: 1.25rem; border-top: 1px solid var(--border);
+}
+.blog-post-prevnext a { color: var(--accent); font-weight: 600; font-size: 0.9rem; max-width: 48%; }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
    site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
 .refer-hero {

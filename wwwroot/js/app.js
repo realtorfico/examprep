@@ -1013,11 +1013,24 @@ function renderBlogList() {
 
 function renderBlogPost(slug) {
   appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
-  apiFetch('/blog/' + encodeURIComponent(slug)).then(function (res) {
-    var post = res && res.post;
+  Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
+    var post = results[0] && results[0].post;
     if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Blog</a></div>'; return; }
     var kindLabel = kindFromSlug(post.kind) || post.kind;
     var categoryHref = '/' + post.kind;
+    // Prev/next -- the list is already published_at DESC (newest first), so "next" (older) is the
+    // following array entry and "previous" (newer) is the preceding one. Falls back to nothing if
+    // this is the only post, or the oldest/newest of the set.
+    var allPosts = results[1].posts || [];
+    var myIndex = allPosts.findIndex(function (p) { return p.slug === slug; });
+    var prevPost = myIndex > 0 ? allPosts[myIndex - 1] : null;
+    var nextPost = myIndex !== -1 && myIndex < allPosts.length - 1 ? allPosts[myIndex + 1] : null;
+    var prevNextHtml = (prevPost || nextPost)
+      ? '<div class="blog-post-prevnext">' +
+        (prevPost ? '<a href="/blog/' + encodeURIComponent(prevPost.slug) + '">← ' + escapeHtml(prevPost.title) + '</a>' : '<span></span>') +
+        (nextPost ? '<a href="/blog/' + encodeURIComponent(nextPost.slug) + '">' + escapeHtml(nextPost.title) + ' →</a>' : '<span></span>') +
+        '</div>'
+      : '';
     appEl.innerHTML = '<div class="narrow-page blog-post">' +
       '<p class="muted"><a href="/blog">← Blog</a></p>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
@@ -1025,6 +1038,7 @@ function renderBlogPost(slug) {
       (post.published_at ? ' · ' + new Date(post.published_at * 1000).toLocaleDateString() : '') + '</p>' +
       '<div class="blog-post-body">' + post.body_html + '</div>' +
       '<p class="blog-post-cta"><a class="btn-primary btn-sm" href="' + categoryHref + '">Practice ' + escapeHtml(kindLabel) + ' questions →</a></p>' +
+      prevNextHtml +
       '</div>';
     injectJsonLd('blog-post-jsonld', {
       '@context': 'https://schema.org', '@type': 'Article',
