@@ -2192,6 +2192,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Property Ownership & Land Use Controls', '10%'], ['Valuation, Financing & Real Estate Calculations', '15%'], ['Agency', '10%'], ['Property Condition & Disclosures', '8%'], ['Contracts', '11%'], ['Practice of Real Estate & Specialty Areas', '13%'], ['Transfer of Title', '5%'], ['Department/Board Duties & Licensing Requirements (Michigan)', '6%'], ['Statutory Requirements Governing Licensee Activities (Michigan)', '13%'], ['Contractual Relationships & Michigan Agency Types (Michigan)', '4%'], ['Additional Michigan State Topics', '5%']],
   },
   {
+    examType: 'nj_re_broker',
+    title: 'New Jersey Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/nj',
+    duration: '4 Hours', questions: '115 Multiple Choice (120 Points -- Some Items Worth Up to 2 Points)', passScore: '70% (84 of 120 Points)',
+    description: 'Practice questions covering PSI Services LLC\'s official New Jersey Real Estate Broker exam content outline (administered on behalf of the NJ Real Estate Commission, NJREC): a combined National portion (75 items -- property ownership, land use controls, valuation/market analysis, financing, general principles of agency, property disclosures, contracts, leasing/property management, transfer of title, practice of real estate, and real estate calculations) plus a 40-item New Jersey-specific portion (NJREC\'s duties and licensing requirements, the statutes and rules governing licensee activities -- broker-salesperson relationships, commissions, N.J.A.C. 11:5-5.1 trust-account rules, agency disclosure via the Consumer Information Statement, advertising, listings, inducements and buyer rebates -- and NJ-specific acts including the Farmland Assessment Act, Pinelands Protection Act, Freshwater Wetlands Protection Act, Municipal Land Use Law, the Mount Laurel/Fair Housing Act, the Realty Transfer Fee\'s 2025 seller-pays "mansion tax" reform, the Truth in Renting Act, the Real Estate Guaranty Fund, the Law Against Discrimination, the Real Estate Sales Full Disclosure Act, and the Real Estate Time Share Act), not separately scored or reported. PSI\'s own Candidate Information Bulletin confirms 115 scored questions worth 120 points -- national broker exams score some items up to two points each, a genuine New Jersey scoring nuance this practice exam discloses rather than silently flattening -- with a 4-hour time limit and 70% (84 of 120 points) required to pass; 5-10 unscored experimental items may also appear. Broker eligibility requires 3 years of full-time salesperson experience plus 150 hours of NJREC-approved broker prelicensure education (a 90-hour general course, then two 30-hour courses in ethics/agency and office management) and a Certificate of Examination Eligibility from NJREC before scheduling.',
+    breakdown: [['Contracts (National)', '12%'], ['Practice of Real Estate (National)', '9%'], ['General Principles of Agency (National)', '7%'], ['Property Ownership (National)', '7%'], ['Financing (National)', '5%'], ['Real Estate Calculations (National)', '5%'], ['Valuation & Market Analysis (National)', '5%'], ['Property Disclosures (National)', '5%'], ['Transfer of Title (National)', '5%'], ['Land Use Controls & Regulations (National)', '3%'], ['Leasing & Property Management (National)', '3%'], ['NJ Statutes & Rules Governing Licensee Activities (NJ)', '26%'], ['NJREC Duties, Powers & Licensing Requirements (NJ)', '6%'], ['Additional NJ Requirements: Guaranty Fund, LAD, Disclosure & Time Share Acts (NJ)', '2%']],
+  },
+  {
     examType: 'al_notary',
     title: 'Alabama Notary Public Practice Questions', category: 'State Licensing', route: '/notary/al',
     duration: 'Untimed', questions: '40 Multiple Choice (138-Question Practice Pool)', passScore: 'Education-Only — No State Exam',
@@ -4424,6 +4431,25 @@ var TRACK_COMPLIANCE = {
       'guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Michigan real estate broker exam or the required experience/education prerequisites.',
     passScoreNote: 'the same threshold required by the real exam — 75% (90 of 120 raw points), confirmed via the official PSI Candidate Information Bulletin',
+  },
+  nj_re_broker: {
+    orgLine: 'the New Jersey Real Estate Commission (NJREC)',
+    footerRequirement: "do not fulfill the 3-years'-full-time-salesperson-experience prerequisite or the 150-hour broker prelicensure education requirement (a 90-hour general course followed by two 30-hour courses)",
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the New Jersey real estate broker ' +
+      'prerequisites — 3 years of full-time experience as a licensed salesperson, approved by NJREC, plus 150 hours of NJREC-approved ' +
+      'broker prelicensure education completed in sequence (a 90-hour general course, then two 30-hour courses in ethics/agency and office ' +
+      'management) — and does not issue any official course-completion certificate or NJREC Certificate of Examination Eligibility. Our ' +
+      'content is grounded in the New Jersey Real Estate License Act (N.J.S.A. 45:15-1 et seq.) and N.J.A.C. 11:5 (Real Estate Commission ' +
+      'rules), including the Guaranty Fund, the Law Against Discrimination, and New Jersey-specific acts such as the Farmland Assessment ' +
+      'Act, Pinelands Protection Act, Freshwater Wetlands Protection Act, Municipal Land Use Law, and the Mount Laurel/Fair Housing Act. ' +
+      'PSI Services LLC is confirmed as NJREC\'s exam vendor directly from PSI\'s own Candidate Information Bulletin: 115 scored questions ' +
+      'worth 120 points — national broker exams score some items up to two points each, a real New Jersey scoring nuance this site discloses ' +
+      'rather than silently flattening — a 4-hour time limit, and 70% (84 of 120 points) required to pass. Completing practice exams here ' +
+      'also does not register you for, or schedule, the official licensing exam; official testing is scheduled through PSI, and broker ' +
+      'education must be completed through an NJREC-approved provider. While we strive to align our content with current New Jersey law ' +
+      'and NJREC regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered New Jersey real estate broker exam or the required experience/education prerequisites.',
+    passScoreNote: 'the same threshold required by the real exam — 70% (84 of 120 points), confirmed via the official PSI Candidate Information Bulletin',
   },
   pa_re_broker: {
     orgLine: 'the Pennsylvania Real Estate Commission (PA Department of State)',
@@ -6933,6 +6959,20 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
     { title: 'Michigan Administrative Code — Real Estate Brokers and Salespersons General Rules', type: 'pdf', url: 'https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=R+339.22101+to+R+339.22667.pdf&ReturnHTML=True',
       desc: 'The official practice-conduct regulations published by LARA — trust accounts, advertising, branch offices, and broker supervisory duties for the broker exam.',
+      topic: 'General Reference', free: true },
+  ],
+  nj_re_broker: [
+    { title: 'New Jersey Real Estate Commission (NJREC) — Licensing & Applications', type: 'link', url: 'https://www.nj.gov/dobi/division_rec/licensing/recforms.htm',
+      desc: "NJREC's official licensing and forms page, published by the NJ Department of Banking and Insurance — broker applications, the Certificate of Examination Eligibility, and Guaranty Fund information.",
+      topic: 'General Reference', free: true },
+    { title: 'N.J.S.A. 45:15-1 et seq. (New Jersey Real Estate License Act)', type: 'pdf', url: 'https://law.justia.com/codes/new-jersey/title-45/section-45-15-9/',
+      desc: 'The statutory basis for New Jersey real estate licensing, broker-salesperson relationships, and NJREC disciplinary authority.',
+      topic: 'General Reference', free: true },
+    { title: 'N.J.A.C. 11:5 — NJ Real Estate Commission Rules', type: 'pdf', url: 'https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-11-5-5-1',
+      desc: 'The official trust-account and licensee-conduct regulations, including the 5-business-day deposit rule for funds held for others.',
+      topic: 'General Reference', free: true },
+    { title: 'PSI New Jersey Real Estate Candidate Information Bulletin', type: 'link', url: 'https://www.psiexams.com/njre',
+      desc: "PSI Services LLC's official exam scheduling and candidate information portal for the NJ Salesperson, Broker, and Instructor exams.",
       topic: 'General Reference', free: true },
   ],
   oh_boating: [
@@ -9741,6 +9781,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official Michigan Department of Licensing and Regulatory Affairs (LARA) page for real estate broker and salesperson licensing.' },
     { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://test-takers.psiexams.com/mire',
       desc: 'PSI Services\' official Michigan Salesperson and Broker Examinations Candidate Information Bulletin, confirming PSI as LARA\'s contracted testing vendor and the 115-question/75%-passing broker exam structure.' },
+  ],
+  nj_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.nj.gov/dobi/division_rec/',
+      desc: 'Official New Jersey Real Estate Commission (NJREC) page, part of the NJ Department of Banking and Insurance, covering broker licensing, education, and discipline.' },
+    { title: 'Candidate Information Bulletin / Exam Registration', url: 'https://www.psiexams.com/njre',
+      desc: 'PSI Services\' official New Jersey Real Estate Salesperson, Broker and Instructor Examination Candidate Information Bulletin, confirming PSI as NJREC\'s contracted exam vendor and the 115-question/120-point/70%-passing broker exam structure.' },
   ],
   hi_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://cca.hawaii.gov/reb/real_ed/real_ed-exam_lic/',
