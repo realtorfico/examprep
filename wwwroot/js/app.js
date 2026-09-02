@@ -6271,6 +6271,13 @@ function categoryCardsHtml() {
 
 function renderHub() {
   var tracksHeaderHtml = '<div class="hub-section-header" id="tracks"><h2>Browse by Category</h2></div>';
+  // Reuses the exact same widget/state/dispatcher (categorySampleWidgetHtml/loadCategorySampleQuestion/
+  // drawCategorySampleQuestion, all keyed off categoryPageState.repTrack) that category pages already
+  // use -- no new sample-question UI or handlers needed, just point repTrack at a representative
+  // track for a zero-click "try before you buy" moment right on the homepage. Prefers the visitor's
+  // own state (cookie) if it's live for ANY category, else just the first active track overall --
+  // there's no single "the" category on the homepage to scope this to.
+  categoryPageState.repTrack = pickRepresentativeTrack(HUB_EXAMS.filter(function (e) { return e.active; }));
   // Organization + WebSite JSON-LD on the homepage -- the page Google looks to first for a site's
   // identity/brand data. location.origin so this works under whatever domain actually serves the
   // page, not a hardcoded one.
@@ -6303,6 +6310,7 @@ function renderHub() {
     '<div id="hub-readiness-wrap"></div>' +
     '</div>' +
     trustStripHtml() +
+    categorySampleWidgetHtml() +
     howItWorksHtml() +
     tracksHeaderHtml +
     categoryCardsHtml() +
@@ -6335,6 +6343,7 @@ function renderHub() {
     wrap.innerHTML = promoBannersHtml(active.slice(1), true, false);
   }).catch(function () { /* best-effort -- a promo banner failing to load shouldn't break the hub page */ });
   fillReadinessCard();
+  if (categoryPageState.repTrack) loadCategorySampleQuestion();
   // No guarantee band here (moved to category/track pages only, closer to an actual purchase
   // decision -- the homepage's job is routing to a category, not closing a sale, and most
   // category-page visitors arrive there directly via search without ever seeing this page first).
