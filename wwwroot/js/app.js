@@ -1870,6 +1870,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Violations & Grounds for Disciplinary Action', '38%'], ['Licensing Requirements, License Status & Role of the Commission', '25%'], ['RECAD, Trust Funds & Estimated Closing Statements', '15%'], ['Broker, Company & Place-of-Business Licenses', '12%'], ['Recovery Fund & the Disciplinary Process', '10%']],
   },
   {
+    examType: 'al_re_broker',
+    title: 'Alabama Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/al',
+    duration: '210 Minutes (2.5hr National + 1hr State)', questions: '120 Multiple Choice (80 National + 40 State-Specific)', passScore: 'Scaled Score of 70 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s official Alabama Real Estate Broker exam content outline (administered on behalf of the Alabama Real Estate Commission, effective 2/1/2026): a National/General portion (80 items -- real property characteristics and legal descriptions, forms of ownership and title, property value and appraisal, real estate contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math calculations) plus an Alabama-specific portion (40 items -- licensing requirements, license status, broker/company/place-of-business licenses, the Recovery Fund, disciplinary actions and process, the estimated closing statement, trust funds, RECAD, and violations which may result in disciplinary action). A flat scaled score of 70 is required to pass, the same threshold for salespersons and brokers. Grounded in Ala. Code Title 34, Chapter 27 and Alabama Administrative Code Chapter 790-X, sourced primarily via the Alabama Real Estate Commission\'s own official site.',
+    breakdown: [['Real Estate Contracts & Agency (National)', '13%'], ['Real Estate Practice (National)', '10%'], ['Violations & Disciplinary Actions (AL)', '10%'], ['Property Value & Appraisal (National)', '8%'], ['Real Property Characteristics (National)', '8%'], ['Property Disclosures & Environmental Issues (National)', '8%'], ['Forms of Ownership & Title (National)', '7%'], ['Financing & Settlement (National)', '7%'], ['Real Estate Math Calculations (National)', '7%'], ['Licensing Requirements (AL)', '5%'], ['Broker, Company & Place-of-Business Licenses (AL)', '5%'], ['RECAD (AL)', '4%'], ['Trust Funds (AL)', '3%'], ['Disciplinary Actions & Process (AL)', '3%'], ['License Status (AL)', '2%'], ['Estimated Closing Statement (AL)', '2%'], ['Recovery Fund (AL)', '1%']],
+  },
+  {
     examType: 'ar_re_salesperson',
     title: 'Arkansas Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ar',
     duration: '60 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: '21/30 Correct (70%)',
@@ -4143,6 +4150,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for an Alabama real estate salesperson license (or the separate 30-hour post-license course that must be completed within the first six months of licensure to remain active), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Alabama Real Estate License Law, Code of Alabama 1975, Title 34, Chapter 27, and the Commission's administrative rules, Alabama Administrative Code Title 790), not the separate 80-item national/general portion. Alabama's real Salesperson exam does not raw-score the state-specific portion on its own — Pearson VUE combines both portions into a single equated scaled score (0 to 100) with a passing score of 70, and failing the overall exam requires retaking the entire test; the 40-question/70%-pass format used here models the state portion's official item count and Alabama's real numeric passing score as a practice-sizing convention, not a literal reproduction of that blended scoring method. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Alabama Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission rules and Alabama statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "a practice-sizing convention modeled on the state portion's official 40-item count and Alabama's real overall passing scaled score of 70 — not a literal reproduction of Pearson VUE's blended scoring method, which combines the state and national portions into one equated score rather than scoring the state portion separately",
+  },
+  al_re_broker: {
+    orgLine: "the Alabama Real Estate Commission (AREC)",
+    footerRequirement: "do not fulfill the 60-clock-hour broker pre-license course requirement, the 24-of-preceding-36-months active licensure requirement, or any Alabama real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-clock-hour broker pre-license course requirement (minimum grade 70) or the requirement of holding an active license in any state for 24 of the preceding 36 months, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in Pearson VUE's own official Alabama Candidate Handbook and Content Outlines together with the Alabama Real Estate License Law (Code of Alabama 1975, Title 34, Chapter 27) and the Commission's administrative rules (Alabama Administrative Code Chapter 790-X). Alabama's real Broker exam does not separately score the National and State portions — Pearson VUE combines both into a single equated scaled score (0 to 100) with a flat passing score of 70, the same threshold used for salespersons; the 120-question/70-scaled-score format used here models the exam's official combined item count and Alabama's real numeric passing score as a practice-sizing convention, not a literal reproduction of that blended scoring method. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Alabama Real Estate Commission, and broker pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Commission rules and Alabama statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Commission Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "a practice-sizing convention modeled on the exam's official 120-item combined count and Alabama's real overall passing scaled score of 70 — not a literal reproduction of Pearson VUE's blended scoring method",
   },
   ar_re_salesperson: {
     orgLine: "the Arkansas Real Estate Commission (AREC)",
@@ -7431,6 +7445,17 @@ var RESOURCES = {
       desc: "The Alabama Real Estate License Law of 1951 — the statutory basis for the Commission's administrative rules.",
       topic: "General Reference", free: true },
   ],
+  al_re_broker: [
+    { title: "Alabama Administrative Code, Title 790 (Alabama Real Estate Commission Rules)", type: "pdf", url: "https://admincode.legislature.state.al.us/administrative-code/790",
+      desc: "The official Alabama Real Estate Commission administrative rules, published by the Alabama Legislature — the authoritative source the Broker exam's state-specific portion is based on, including qualifying-broker and trust-fund rules.",
+      topic: "General Reference", free: true },
+    { title: "Code of Alabama 1975, Title 34, Chapter 27 (Real Estate License Law of 1951)", type: "pdf", url: "https://law.justia.com/codes/alabama/title-34/chapter-27/",
+      desc: "The Alabama Real Estate License Law of 1951 — the statutory basis for the Commission's administrative rules, including RECAD (Art. 4) and the Recovery Fund.",
+      topic: "General Reference", free: true },
+    { title: "Alabama Real Estate Commission (AREC)", type: "link", url: "https://arec.alabama.gov/",
+      desc: "The Alabama Real Estate Commission's official site — the authoritative source for broker licensing requirements and the Commission's own live-published law and rules text.",
+      topic: "General Reference", free: true },
+  ],
   ar_re_salesperson: [
     { title: "Arkansas Real Estate Commission — License Law & Regulations Booklets", type: "pdf", url: "https://arec.arkansas.gov/forms-publications/booklets/",
       desc: "The Arkansas Real Estate Commission's official Booklets page, publishing the current Real Estate License Law and Commission Rules and Regulations booklets — the authoritative source the Arkansas law portion of the exam is based on.",
@@ -9981,6 +10006,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official website of the Alabama Real Estate Commission (AREC), the state agency that licenses and regulates real estate salespersons and brokers.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/al/realestate.html',
       desc: 'Pearson VUE\'s Alabama real estate licensure exam page, offering the candidate handbook download and salesperson/broker exam registration for the state\'s official testing vendor.' },
+  ],
+  al_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://arec.alabama.gov/',
+      desc: 'Official website of the Alabama Real Estate Commission (AREC), the state agency that licenses and regulates real estate brokers.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/al/realestate.html',
+      desc: 'Pearson VUE\'s Alabama real estate licensure exam page, offering the Broker candidate handbook download and exam registration.' },
   ],
   ar_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://arec.arkansas.gov/licensing/exam-information/',
