@@ -2157,6 +2157,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Licensing Requirements, Prelicensing & Renewal Education', '25%'], ['Duties, Prohibited Conduct & Discipline', '21%'], ['Trust Accounts, Fees & Commissions', '19%'], ['Definitions, Board Authority & Firm Structure', '19%'], ['Agency Disclosure, Property Condition & Unlicensed Practice', '16%']],
   },
   {
+    examType: 'wi_re_broker',
+    title: 'Wisconsin Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/wi',
+    duration: '195 Minutes (3hr 15min)', questions: '100 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 75 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s official Wisconsin Real Estate Broker exam content outline (administered on behalf of the Wisconsin Real Estate Examining Board, REEB): Real Estate Practice (licenses, trust accounts, duties of licensees, disclosure of relationships, sex offender registry and condominium disclosure), Trust Accounts (REEB 18\'s full account-structure and disbursement rules), Conduct and Ethical Practices for Real Estate Licensees (REEB 24), Approved Forms and Legal Advice (the named Wisconsin WB-series forms and the unauthorized-practice-of-law boundary under REEB 16), Drafting and Supervision Knowledge -- the largest section by far -- covering the WB forms\' individual clauses and Wis. Stat. ch. 709 real estate condition/vacant-land/new-construction disclosure reports, and Miscellaneous (Wisconsin and federal Fair Housing Law, federal lead-based-paint disclosure). Unlike every other state\'s broker exam on this site, Wisconsin\'s Broker exam is administered as a State-specific-only content outline -- Pearson VUE\'s separate National/General portion is not covered here, matching this site\'s existing wi_re_salesperson track\'s own established scope.',
+    breakdown: [['Drafting & Supervision Knowledge', '37%'], ['Conduct & Ethical Practices for Licensees', '22%'], ['Real Estate Practice', '19%'], ['Trust Accounts', '12%'], ['Approved Forms & Legal Advice', '6%'], ['Miscellaneous (Fair Housing & Lead-Paint Disclosure)', '4%']],
+  },
+  {
     examType: 'wv_re_salesperson',
     title: 'West Virginia Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/wv',
     duration: '60 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (0-100 Scale, Not Raw Percent-Correct)',
@@ -4422,6 +4429,13 @@ var TRACK_COMPLIANCE = {
     footerRequirement: "do not fulfill the 72-hour pre-license education requirement for a Wisconsin real estate salesperson license, or any other Wisconsin real estate salesperson training requirement",
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Wisconsin's 72-hour pre-license education requirement for a real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the licensing and regulatory portion of the state-specific exam (grounded in Wisconsin Statutes Chapter 452 and Wisconsin Administrative Code chs. REEB 11, 12, 15, 16, 17, 18, 23, 24, and 25) — not the separate national portion, and not every topic on the Real Estate Examining Board's official 140-item state-portion content outline (which also covers property valuation/financing math, land use controls, contract-form specifics, fair housing, and federal antitrust law). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Examining Board, and pre-license education must be completed through a DSPS-approved school. Wisconsin's real exam also reports a scaled score on a 0-100 scale (a passing score of 75, set by the DSPS in conjunction with Pearson), not a raw percent-correct count — this practice exam uses a comparable 75% raw-score threshold for simplicity. While we strive to align our content with the current REEB Administrative Code and Wisconsin Statutes Chapter 452, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Examining Board exam or the required 72-hour pre-license education.",
+    passScoreNote: "a comparable threshold to the real exam's DSPS-set cut score — a scaled score of 75 on Pearson's 0-100 scale, not a raw percent-correct count",
+  },
+  wi_re_broker: {
+    orgLine: "the Wisconsin Real Estate Examining Board",
+    footerRequirement: "do not fulfill any Wisconsin real estate broker pre-license education, experience, or training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy any Wisconsin real estate broker eligibility requirement, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in Pearson VUE's own official Wisconsin Real Estate Broker Candidate Handbook and Content Outlines together with Wisconsin Statutes Chapter 452 and Wisconsin Administrative Code REEB 15, 16, 17, 18, and 24. This track models ONLY Wisconsin's State-specific exam portion (100 items), matching this site's existing wi_re_salesperson track's own established scope — it does not cover Pearson VUE's separate National/General portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Examining Board, and broker pre-license education must be completed through a DSPS-approved school. Wisconsin's real exam reports a scaled score on a 0-100 scale (a passing score of 75), not a raw percent-correct count — this practice exam uses a comparable 75% raw-score threshold for simplicity. While we strive to align our content with the current REEB Administrative Code and Wisconsin Statutes Chapter 452, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Examining Board Broker exam or the required broker experience/education prerequisites.",
     passScoreNote: "a comparable threshold to the real exam's DSPS-set cut score — a scaled score of 75 on Pearson's 0-100 scale, not a raw percent-correct count",
   },
   wv_re_salesperson: {
@@ -7850,6 +7864,17 @@ var RESOURCES = {
       desc: "The official rules published by the Wisconsin Real Estate Examining Board — the authoritative source the licensing and regulatory portion of the exam is based on.",
       topic: "General Reference", free: true },
   ],
+  wi_re_broker: [
+    { title: "Wisconsin Statutes Chapter 452 (Real Estate Practice)", type: "pdf", url: "https://docs.legis.wisconsin.gov/statutes/statutes/452",
+      desc: "Wisconsin's Real Estate Practice statute, published by the Wisconsin Legislature — the statutory basis for the Broker exam's REEB 16/18/24 rules.",
+      topic: "General Reference", free: true },
+    { title: "Wisconsin Administrative Code chs. REEB 15-25 (Real Estate Examining Board Rules)", type: "pdf", url: "https://docs.legis.wisconsin.gov/code/admin_code/reeb",
+      desc: "The official rules published by the Wisconsin Real Estate Examining Board — the authoritative source for the Broker exam's Trust Accounts (REEB 18), Approved Forms (REEB 16), and Conduct (REEB 24) content.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE Wisconsin Real Estate Candidate Handbook", type: "link", url: "https://www.pearsonvue.com/us/en/wi/realestate.html",
+      desc: "Pearson VUE's official Wisconsin real estate licensure page -- the authoritative source for the Broker exam's State-specific-only mechanics and content outline.",
+      topic: "General Reference", free: true },
+  ],
   wv_re_salesperson: [
     { title: "West Virginia Real Estate Commission -- Law & Rules", type: "pdf", url: "https://rec.wv.gov/Law/Pages/default.aspx",
       desc: "The Real Estate Commission's own compiled page linking to the current Title 174 legislative rules -- the authoritative source the state-specific portion of the exam is based on.",
@@ -10334,6 +10359,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Wisconsin Department of Safety and Professional Services\' official Real Estate Salesperson licensing page.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/wi/realestate.html',
       desc: 'Pearson VUE\'s official Wisconsin real estate licensing exam page with the candidate handbook and scheduling.' },
+  ],
+  wi_re_broker: [
+    { title: 'DSPS Real Estate Broker Site', url: 'https://dsps.wi.gov/Pages/Professions/RealEstateBroker/Default.aspx',
+      desc: 'The Wisconsin Department of Safety and Professional Services\' official Real Estate Broker licensing page.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/wi/realestate.html',
+      desc: 'Pearson VUE\'s official Wisconsin real estate licensing exam page with the Broker candidate handbook and scheduling.' },
   ],
   wv_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://rec.wv.gov/License-Info/Pages/Licensing.aspx',
