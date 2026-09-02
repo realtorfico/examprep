@@ -411,6 +411,7 @@ function renderSiteFooter() {
   var companyCol = '<div><h3>Company &amp; Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/about">About us</a></li>' +
     '<li><a href="/blog">Guides &amp; Tips</a></li>' +
+    '<li><a href="#/embed">Embed a question widget</a></li>' +
     '<li><a href="#/feedback">Share your experience</a></li>' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
@@ -916,6 +917,31 @@ function injectJsonLd(id, data) {
 }
 function stripHtml(html) { return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 
+// Schema.org Question node for one real sample question -- shared by the standalone #/sample page
+// (wrapped in a Quiz, see quizJsonLd below) and the single-question widgets on category/track
+// landing pages (used bare, same shape as renderFaq()'s FAQPage Question entries). Wrong choices
+// go in suggestedAnswer (schema.org's own field for this) rather than being omitted, since a
+// multiple-choice question genuinely has 3 incorrect options, not just 1 accepted answer.
+function questionJsonLd(q) {
+  var wrongAnswers = ['A', 'B', 'C', 'D'].filter(function (k) { return k !== q.correctChoice && q.choices[k]; })
+    .map(function (k) { return { '@type': 'Answer', text: q.choices[k] }; });
+  return {
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: { '@type': 'Answer', text: q.choices[q.correctChoice] },
+    suggestedAnswer: wrongAnswers,
+  };
+}
+// Wraps a set of real sample questions for one track as a schema.org Quiz -- used on the
+// standalone #/sample page, which is the one surface showing more than a single question at once.
+function quizJsonLd(trackLabel, questions) {
+  return {
+    '@context': 'https://schema.org', '@type': 'Quiz',
+    about: { '@type': 'Thing', name: trackLabel },
+    hasPart: questions.map(questionJsonLd),
+  };
+}
+
 function renderFaq() {
   appEl.innerHTML = '<div class="narrow-page"><h1>Frequently Asked Questions</h1>' +
     '<p class="muted">Quick answers on buying, your access code, studying, and the guarantee. Still stuck? ' +
@@ -1221,6 +1247,73 @@ function guaranteeStepHtml(num, icon, title, body) {
 }
 function guaranteeFaqHtml(q, a) {
   return '<div class="guarantee-faq-item"><dt>' + q + '</dt><dd class="muted">' + a + '</dd></div>';
+}
+
+// Embeddable "Question of the Day" widget generator (#/embed) -- built 2026-09-02 as a real
+// backlink/distribution lever: state subreddits, forums, and agent blogs can iframe-embed
+// wwwroot/embed/qotd/index.html (a separate, self-contained static page, NOT part of this SPA --
+// see that file for why) on their own site, with attribution back to the real track page. This
+// page is just the "pick your track, get your <iframe> snippet" generator; the widget itself is
+// served standalone and fetches GET /api/qotd?examType=... (passexamhq-api), which deterministically
+// rotates through a track's real question pool once per UTC calendar day.
+var embedPickedKind = '';
+var embedPickedState = '';
+
+function embedActiveKinds() {
+  var kinds = [];
+  HUB_EXAMS.forEach(function (e) { if (e.active && kinds.indexOf(e.examKind) === -1) kinds.push(e.examKind); });
+  return kinds.sort(function (a, b) { return a.localeCompare(b); });
+}
+
+function embedPickerHtml() {
+  var kindOptions = ['<option value="">Choose a category…</option>'].concat(
+    embedActiveKinds().map(function (k) {
+      return '<option value="' + escapeHtml(k) + '"' + (k === embedPickedKind ? ' selected' : '') + '>' + escapeHtml(k) + '</option>';
+    })
+  );
+  var stateTracks = embedPickedKind ? categoryActiveTracks(embedPickedKind) : [];
+  var stateOptions = ['<option value="">Choose a state…</option>'].concat(
+    stateTracks.slice().sort(function (a, b) { return (STATE_LABELS[a.stateCode] || a.stateCode).localeCompare(STATE_LABELS[b.stateCode] || b.stateCode); })
+      .map(function (t) {
+        return '<option value="' + t.stateCode + '"' + (t.stateCode === embedPickedState ? ' selected' : '') + '>' +
+          escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</option>';
+      })
+  );
+  return '<div class="card embed-picker">' +
+    '<label class="gift-picker-field">Category' +
+    '<select data-act="pick-embed-kind">' + kindOptions.join('') + '</select>' +
+    '</label>' +
+    '<label class="gift-picker-field">State' +
+    '<select data-act="pick-embed-state"' + (embedPickedKind ? '' : ' disabled') + '>' + stateOptions.join('') + '</select>' +
+    '</label>' +
+    '</div>';
+}
+
+function embedResultHtml() {
+  if (!embedPickedKind || !embedPickedState) return '';
+  var track = categoryActiveTracks(embedPickedKind).filter(function (t) { return t.stateCode === embedPickedState; })[0];
+  if (!track) return '';
+  var src = location.origin + '/embed/qotd?examType=' + encodeURIComponent(track.examType);
+  var snippet = '<iframe src="' + src + '" width="380" height="420" style="border:1px solid #ddd;border-radius:12px;max-width:100%;" loading="lazy" title="PassExamHQ Question of the Day"></iframe>';
+  return '<div class="embed-result">' +
+    '<h3>Your embed code</h3>' +
+    '<textarea class="embed-snippet-box" readonly rows="3">' + escapeHtml(snippet) + '</textarea>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="copy-embed-snippet" data-snippet="' + escapeHtml(snippet) + '">Copy snippet</button>' +
+    '<h3>Live preview</h3>' +
+    '<div class="embed-preview-frame">' + snippet + '</div>' +
+    '</div>';
+}
+
+function renderEmbedGenerator() {
+  embedPickedKind = '';
+  embedPickedState = '';
+  appEl.innerHTML = '<div class="narrow-page embed-generator-page"><h1>Embed a Question of the Day</h1>' +
+    '<p class="muted page-intro-text">Add a real, rotating practice question to your site — a state subreddit, ' +
+    'a forum, an agent blog — with a link back to the full question bank. A new question from the real pool ' +
+    'shows automatically every day; no upkeep on your end.</p>' +
+    '<div id="embed-picker-wrap">' + embedPickerHtml() + '</div>' +
+    '<div id="embed-result-wrap">' + embedResultHtml() + '</div>' +
+    '</div>';
 }
 
 // Public pass-rate transparency page (#/pass-rates) -- built 2026-09-02 as a marketing-ideas
@@ -6235,6 +6328,9 @@ async function loadCategorySampleQuestion() {
     categoryPageState.sampleSelected = null;
     categoryPageState.sampleAnswered = null;
     drawCategorySampleQuestion();
+    var qNode = questionJsonLd(q);
+    qNode['@context'] = 'https://schema.org';
+    injectJsonLd('category-sample-jsonld', qNode);
   } catch (e) {
     wrap.innerHTML = '<p class="muted">Could not load a sample question. Try again shortly.</p>';
   }
@@ -9609,6 +9705,9 @@ async function loadTrackLandingSampleQuestion(exam) {
     trackLandingSample.selected = null;
     trackLandingSample.answered = null;
     drawTrackLandingSampleQuestion();
+    var qNode = questionJsonLd(q);
+    qNode['@context'] = 'https://schema.org';
+    injectJsonLd('track-landing-sample-jsonld', qNode);
   } catch (e) {
     wrap.innerHTML = '<p class="muted">Could not load a sample question. Try again shortly.</p>';
   }
@@ -12628,6 +12727,7 @@ async function renderSample() {
     }
   }
   drawSampleQuestion();
+  injectJsonLd('sample-quiz-jsonld', quizJsonLd(track.shortName || track.title, sampleState.questions));
 }
 
 function drawSampleQuestion() {
@@ -12887,6 +12987,7 @@ function route() {
   if (hashView === 'faq') { renderFaq(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (hashView === 'pass-rates') { renderPassRates(); return; }
+  if (hashView === 'embed') { renderEmbedGenerator(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
   // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the
   // server resolve which track it belongs to, so unlike refer/sample/buy (which really are
@@ -13221,6 +13322,17 @@ document.addEventListener('change', function (e) {
     giftPickedState = e.target.value;
     var giftResultWrapState = document.getElementById('gift-result-wrap');
     if (giftResultWrapState) giftResultWrapState.innerHTML = giftResultHtml();
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-embed-kind') {
+    embedPickedKind = e.target.value;
+    embedPickedState = ''; // the old state pick may not offer this category
+    var embedPickerWrap = document.getElementById('embed-picker-wrap');
+    if (embedPickerWrap) embedPickerWrap.innerHTML = embedPickerHtml();
+    var embedResultWrapKind = document.getElementById('embed-result-wrap');
+    if (embedResultWrapKind) embedResultWrapKind.innerHTML = embedResultHtml();
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-embed-state') {
+    embedPickedState = e.target.value;
+    var embedResultWrapState = document.getElementById('embed-result-wrap');
+    if (embedResultWrapState) embedResultWrapState.innerHTML = embedResultHtml();
   }
 });
 
@@ -13478,6 +13590,11 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'copy-embed-snippet') {
+    var snippetVal = el.getAttribute('data-snippet');
+    if (navigator.clipboard) navigator.clipboard.writeText(snippetVal).catch(function () {});
+    el.textContent = 'Copied!';
+    setTimeout(function () { el.textContent = 'Copy snippet'; }, 1500);
   } else if (act === 'share-refer-link') {
     var shareUrl = el.getAttribute('data-share-url');
     var shareTitle = el.getAttribute('data-share-title');
