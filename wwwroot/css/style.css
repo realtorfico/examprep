@@ -1079,13 +1079,19 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Distinct washed-out panel tone for just the gated (quiz/exam/progress) mockups, added 2026-09-02
    alongside the "Preview only" badge. NOTE: var(--surface-2) was tried first and reverted -- it's
    the exact background the real Interactive Sample Question's own .card wrapper already uses, so
-   it produced NO visible difference at all, the opposite of the point. color-mix()'ing --muted (a
-   genuinely different hue/tone, not another near-white surface token) into --card instead gives a
-   visibly grayed/washed look distinct from both --card and --surface-2, theme-aware in both light
-   and dark automatically since both source tokens are already defined per-theme. Excluded from
+   it produced NO visible difference at all. A first color-mix() attempt at 14% muted-into-card was
+   ALSO reported as not visibly different -- both --card and --muted sit close together in this
+   theme's pale palette, so a subtle percentage wasn't enough contrast to actually notice at a
+   glance, only to measure in devtools. Bumped hard to 32% plus a dashed border, so this reads as
+   unmistakably "different surface, not just a slightly different shade of the same one" rather
+   than something you need a color picker to confirm. Theme-aware in both light and dark
+   automatically since both source tokens are already defined per-theme. Excluded from
    resources/info (.is-open) since those already read as real content via their own nested .card
    elements and shouldn't look like part of the "this is a mockup" treatment. */
-.locked-preview-mockup:not(.is-open) { background: color-mix(in srgb, var(--muted) 14%, var(--card)); border-radius: var(--radius-lg); }
+.locked-preview-mockup:not(.is-open) {
+  background: color-mix(in srgb, var(--muted) 32%, var(--card));
+  border: 1px dashed var(--muted); border-radius: var(--radius-lg);
+}
 .locked-preview-badge, .locked-preview-badge-live { position: relative; margin-bottom: 0.6rem; display: inline-block; }
 .locked-preview-badge-live { background: color-mix(in srgb, var(--correct) 18%, transparent); color: var(--correct); border-color: color-mix(in srgb, var(--correct) 35%, transparent); margin-left: 0.5rem; vertical-align: middle; }
 .locked-preview-resource-card { margin-bottom: 0.75rem; }
