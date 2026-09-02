@@ -28,7 +28,7 @@ const TRACK_REGISTRY_URL = SITE_ORIGIN + '/api/track-registry';
 const BLOG_LIST_URL = SITE_ORIGIN + '/api/blog';
 
 const BLOG_INDEX_META = {
-  title: 'Blog — Exam Prep Guides & Tips | PassExamHQ',
+  title: 'Guides & Tips — Exam Prep Articles | PassExamHQ',
   description: 'Guides and tips for passing your licensing exam, from notary to real estate to boating safety.',
 };
 

@@ -194,9 +194,13 @@ function renderSiteHeader() {
   // "Exam tracks" (nav) and "Guarantee" (nav) dropped as redundant: "Browse exams" (CTA below)
   // already covers the tracks link, and the guarantee page is still reachable via the promo
   // ribbon's "Pass or X% of Your Money Back" link -- no need for three links to the same place.
+  // "Guides & Tips" (added 2026-09-02) isn't redundant with anything else here -- unlike those two,
+  // it was previously reachable ONLY via the footer -- so it's additive, not a replacement. Folds
+  // into the same mobile drawer as the other two below the breakpoint, same as they already do.
   var navLinksHtml =
     '<a href="' + referHref + '">Refer &amp; earn</a>' +
-    '<a href="#/gift">Gift a track 🎁</a>';
+    '<a href="#/gift">Gift a track 🎁</a>' +
+    '<a href="/blog">Guides &amp; Tips</a>';
   // "Browse exams" is a global "see the whole catalog" CTA, so it always targets the homepage's
   // category grid -- unlike referHref above (deliberately track-scoped), it must NOT use
   // tracksHomeHref(), which resolves to the CURRENT category's own page whenever a track is
@@ -405,7 +409,7 @@ function renderSiteFooter() {
     '</ul></div>';
   var companyCol = '<div><h3>Company &amp; Legal</h3><ul class="footer-link-list">' +
     '<li><a href="#/about">About us</a></li>' +
-    '<li><a href="/blog">Blog</a></li>' +
+    '<li><a href="/blog">Guides &amp; Tips</a></li>' +
     '<li><a href="#/feedback">Share your experience</a></li>' +
     '<li><a href="#/terms">Terms of service</a></li>' +
     '<li><a href="#/privacy">Privacy policy</a></li>' +
@@ -1001,7 +1005,7 @@ function drawBlogList() {
   var posts = blogListState.posts, shown = blogListState.shown, activeKind = blogListState.activeKind;
   var visibleCount = blogListState.visibleCount;
   var remaining = shown.length - visibleCount;
-  appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1>' +
+  appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1>' +
     '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
     blogCategoryTabsHtml(posts, activeKind) +
     blogListItemsHtml(shown.slice(0, visibleCount), activeKind) +
@@ -1013,14 +1017,14 @@ function drawBlogList() {
 
 function renderBlogList() {
   var activeKind = new URLSearchParams(location.search).get('kind') || '';
-  appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
     var shown = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
     blogListState = { posts: posts, shown: shown, activeKind: activeKind, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
     drawBlogList();
   }).catch(function () {
-    appEl.innerHTML = '<div class="blog-page"><h1>Blog</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
+    appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
   });
 }
 
@@ -1029,7 +1033,7 @@ function renderBlogPost(slug) {
   appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
   Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
     var post = results[0] && results[0].post;
-    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind) + '">← Back to Blog</a></div>'; return; }
+    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind) + '">← Back to Guides &amp; Tips</a></div>'; return; }
     var kindLabel = kindFromSlug(post.kind) || post.kind;
     var categoryHref = '/' + post.kind;
     // Prev/next -- the list is already published_at DESC (newest first), so "next" (older) is the
@@ -1053,7 +1057,7 @@ function renderBlogPost(slug) {
     // not a precise claim, same spirit as this project's other honestly-hedged display numbers.
     var readMins = Math.max(1, Math.round(stripHtml(post.body_html).split(/\s+/).length / 200));
     appEl.innerHTML = '<div class="narrow-page blog-post">' +
-      '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind) + '">← Blog</a></p>' +
+      '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind) + '">← Guides &amp; Tips</a></p>' +
       '<span class="badge blog-post-badge">' + escapeHtml(kindLabel) + '</span>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
       '<p class="muted blog-post-meta">' + (post.state_code ? escapeHtml(post.state_code) + ' · ' : '') +
@@ -1071,7 +1075,7 @@ function renderBlogPost(slug) {
       datePublished: post.published_at ? new Date(post.published_at * 1000).toISOString() : undefined,
     });
   }).catch(function () {
-    appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Blog</a></div>';
+    appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Guides &amp; Tips</a></div>';
   });
 }
 
