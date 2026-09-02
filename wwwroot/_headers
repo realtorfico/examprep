@@ -23,3 +23,16 @@
   Cache-Control: public, max-age=86400
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# The embeddable Question of the Day widget (wwwroot/embed/qotd/) is designed to be iframed on
+# arbitrary THIRD-PARTY sites -- the entire point of the feature -- which directly conflicts with
+# the site-wide frame-ancestors 'self' above. Override CSP here with frame-ancestors * for this
+# path only; every other directive stays 'self'-only (script/style are external files, not inline,
+# specifically so this scoped CSP never needs 'unsafe-inline'). The site-wide X-Frame-Options:
+# SAMEORIGIN above still applies alongside this (Cloudflare Pages headers rules are additive, not
+# replacing), but per the CSP spec, frame-ancestors takes precedence over X-Frame-Options in every
+# browser that supports both (all current browsers) -- the same mechanism that lets YouTube/Twitter
+# embeds work despite X-Frame-Options existing. No Stripe/Turnstile allowances needed here -- this
+# page has no payment form or Turnstile widget.
+/embed/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'; frame-ancestors *

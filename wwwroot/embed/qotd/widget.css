@@ -1,0 +1,49 @@
+/* Deliberately self-contained (no /css/style.css) -- this page is meant to be iframe-embedded on
+   arbitrary third-party sites, so it can't assume anything about the host page's CSS environment
+   and shouldn't try to look like the full site's SPA chrome. Colors are a light echo of the site's
+   real navy+gold palette, not a copy of its CSS variables. External file (not inline) so this page
+   can ship a strict path-scoped CSP (script-src/style-src 'self', no 'unsafe-inline') -- see
+   wwwroot/_headers' /embed/* block. */
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+body {
+  margin: 0; padding: 0.9rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #ffffff; color: #1a1f2e; font-size: 14px; line-height: 1.5;
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #14161f; color: #eef0f6; }
+  .qotd-card { background: #1c1f2b; border-color: #2c3040; }
+  .qotd-option { background: #1c1f2b; border-color: #2c3040; color: #eef0f6; }
+  .qotd-option:hover:not(:disabled) { border-color: #6d7bff; }
+  .qotd-muted { color: #9ba1b5; }
+  .qotd-footer { border-top-color: #2c3040; }
+}
+.qotd-eyebrow { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8a6d1f; font-weight: 700; margin: 0 0 0.4rem; }
+@media (prefers-color-scheme: dark) { .qotd-eyebrow { color: #e0b84a; } }
+.qotd-card { background: #f8f7f2; border: 1px solid #e4e1d6; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.7rem; }
+.qotd-topic { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; color: #6d5fd6; margin-bottom: 0.3rem; }
+.qotd-question { font-weight: 600; font-size: 0.95rem; margin: 0; }
+.qotd-options { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.7rem; }
+.qotd-option {
+  text-align: left; padding: 0.55rem 0.75rem; border-radius: 8px; border: 1px solid #d8d5c8;
+  background: #fff; cursor: pointer; font-size: 0.88rem; font-family: inherit; color: inherit;
+}
+.qotd-option:hover:not(:disabled) { border-color: #2c4bd6; }
+.qotd-option.selected { border-color: #2c4bd6; border-width: 2px; }
+.qotd-option.correct { border-color: #1a8a4a; background: rgba(26,138,74,0.12); }
+.qotd-option.wrong { border-color: #c23b3b; background: rgba(194,59,59,0.1); }
+.qotd-option:disabled { cursor: default; }
+.qotd-submit {
+  display: block; width: 100%; padding: 0.6rem; border-radius: 8px; border: none;
+  background: #2c4bd6; color: #fff; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-bottom: 0.7rem;
+}
+.qotd-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.qotd-explanation { font-size: 0.85rem; padding: 0.7rem 0.85rem; border-radius: 8px; background: rgba(44,75,214,0.07); margin-bottom: 0.7rem; }
+.qotd-result-label { font-weight: 700; }
+.qotd-result-correct { color: #1a8a4a; }
+.qotd-result-wrong { color: #c23b3b; }
+.qotd-muted { color: #6b7080; }
+.qotd-footer { border-top: 1px solid #e4e1d6; padding-top: 0.55rem; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.qotd-footer a { color: #2c4bd6; text-decoration: none; font-weight: 600; }
+.qotd-footer a:hover { text-decoration: underline; }
+.qotd-loading, .qotd-error { padding: 1.5rem 0.5rem; text-align: center; }
