@@ -32,6 +32,20 @@ const BLOG_INDEX_META = {
   description: 'Guides and tips for passing your licensing exam, from notary to real estate to boating safety.',
 };
 
+// Static /guides/* "requirements by state" pages, built by scripts/generate-guides.js -- their
+// SEO_META lives in GUIDES_SEO_META in _worker.js (hand-maintained, outside the SEO_META_START/END
+// block this script rewrites), but their sitemap.xml entries are added here so a full sitemap
+// regen doesn't drop them.
+const GUIDE_URLS = [
+  '/guides/notary-requirements-by-state',
+  '/guides/real-estate-salesperson-requirements-by-state',
+  '/guides/real-estate-broker-requirements-by-state',
+  '/guides/driver-requirements-by-state',
+  '/guides/cdl-requirements-by-state',
+  '/guides/motorcycle-requirements-by-state',
+  '/guides/boating-requirements-by-state',
+];
+
 const CATEGORY_META = {
   'notary': {
     label: 'Notary',
@@ -210,6 +224,7 @@ ${blogPostMetaEntries}
   const urls = [SITE_ORIGIN + '/']
     .concat(Object.keys(CATEGORY_META).filter((slug) => kindSlugsWithActiveTracks.has(slug)).map((slug) => SITE_ORIGIN + '/' + slug))
     .concat(tracks.map((t) => SITE_ORIGIN + t.route))
+    .concat(GUIDE_URLS.map((u) => SITE_ORIGIN + u))
     .concat(blogPosts.length ? [SITE_ORIGIN + '/blog'] : [])
     .concat(blogPosts.map((p) => SITE_ORIGIN + '/blog/' + p.slug));
   const sitemapXml =

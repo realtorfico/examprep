@@ -380,6 +380,7 @@ const SEO_META = {
   '/real-estate-broker/az': { title: 'Arizona Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering Pearson VUE\'s official Arizona Real Estate Broker Examination Content Outline (administered on behalf of the Arizona…' },
   '/real-estate-salesperson/co': { title: 'Colorado Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering the Colorado Real Estate Manual, Colorado Revised Statutes Title 12, Article 10, and 4 CCR 725-1 (Rules Regarding Real Estate…' },
   '/real-estate-salesperson/ct': { title: 'Connecticut Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Connecticut General Statutes Title 20, Chapter 392 (Real Estate Licensees) and its implementing Regulations of Connecticut…' },
+  '/real-estate-broker/ct': { title: 'Connecticut Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering PSI\'s national real estate broker content outline (property ownership, land use controls, valuation, financing, agency,…' },
   '/real-estate-salesperson/de': { title: 'Delaware Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Delaware Code Title 24, Chapter 29 (Real Estate Services, Brokers, Associate Brokers and Salespersons) and the Delaware Real…' },
   '/real-estate-salesperson/hi': { title: 'Hawaii Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering the Hawaii Real Estate Brokers and Salespersons Law (Hawaii Revised Statutes Chapter 467) and the Real Estate Commission\'s…' },
   '/real-estate-salesperson/ia': { title: 'Iowa Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Iowa Code Chapter 543B (Real Estate Brokers and Salespersons) and Iowa Administrative Code 193E (Real Estate Commission):…' },
@@ -387,7 +388,9 @@ const SEO_META = {
   '/real-estate-salesperson/in': { title: 'Indiana Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering Indiana Code Title 25, Article 34.1 (the Real Estate Broker Licensing Act) and 876 IAC (Indiana Administrative Code, Indiana…' },
   '/real-estate-salesperson/ks': { title: 'Kansas Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering the Kansas Real Estate Brokers\' and Salespersons\' License Act (K.S.A. 58-3034 et seq.), the Brokerage Relationships in Real…' },
   '/real-estate-salesperson/ky': { title: 'Kentucky Real Estate Sales Associate Exam | PassExamHQ', description: 'Practice questions covering Kentucky Revised Statutes Chapter 324 and the Real Estate Commission\'s regulations at 201 KAR Chapter 11 -- the…' },
+  '/real-estate-broker/ky': { title: 'Kentucky Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering PSI\'s official Kentucky Real Estate Commission content outline: a separately-scored, separately-timed National/General…' },
   '/real-estate-salesperson/la': { title: 'Louisiana Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering the Louisiana Real Estate License Law (La. R.S. 37:1430-1470) and the Louisiana Real Estate Commission\'s Rules (Louisiana…' },
+  '/real-estate-broker/la': { title: 'Louisiana Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering Pearson VUE\'s official Louisiana content outlines: an 80-item National/General portion (real property characteristics and…' },
   '/real-estate-salesperson/ma': { title: 'Massachusetts Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Massachusetts General Laws Chapter 112, Sections 87PP-87DDD 1/2 and 254 CMR 2.00-7.00 (Board of Registration of Real Estate…' },
   '/real-estate-broker/ma': { title: 'Massachusetts Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering PSI Services LLC\'s official Massachusetts Real Estate Broker exam content outline (administered on behalf of the Division of…' },
   '/real-estate-salesperson/md': { title: 'Maryland Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering the Maryland Real Estate Commission Law (Business Occupations and Professions Article, Title 17) and COMAR Title 09, Subtitle…' },
@@ -406,6 +409,7 @@ const SEO_META = {
   '/real-estate-salesperson/nm': { title: 'New Mexico Real Estate Broker Examination | PassExamHQ', description: 'Practice questions covering the New Mexico Real Estate Brokers and Salesmen Act (NMSA 1978 §§ 61-29-1 to 61-29-29) and the New Mexico Real Estate…' },
   '/real-estate-salesperson/nv': { title: 'Nevada Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Nevada Revised Statutes (NRS) Chapter 645 and Nevada Administrative Code (NAC) Chapter 645 -- Real Estate Brokers and…' },
   '/real-estate-salesperson/ok': { title: 'Oklahoma Real Estate Provisional Sales Associate Exam | PassExamHQ', description: 'Practice questions covering the Oklahoma Real Estate License Code (59 O.S. § 858-101 et seq.) and Title 605 of the Oklahoma Administrative Code: laws and…' },
+  '/real-estate-broker/ok': { title: 'Oklahoma Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering PSI\'s official Oklahoma Real Estate Commission content outline: a 75-item National/General portion (property ownership, land…' },
   '/real-estate-salesperson/or': { title: 'Oregon Real Estate Broker Exam | PassExamHQ', description: 'Practice questions covering Oregon Revised Statutes Chapter 696 (Real Estate and Escrow Activities) and Oregon Administrative Rules Chapter 863 (Real…' },
   '/real-estate-salesperson/ri': { title: 'Rhode Island Real Estate Salesperson Exam | PassExamHQ', description: 'Practice questions covering Rhode Island\'s real estate licensing law -- R.I. Gen. Laws Chapter 5-20.5 (Real Estate Brokers and Salespersons), Chapter…' },
   '/real-estate-salesperson/sc': { title: 'South Carolina Real Estate Associate Exam | PassExamHQ', description: 'Practice questions covering the South Carolina Real Estate License Act (S.C. Code Title 40, Chapter 57) and the Real Estate Commission\'s Regulations…' },
@@ -621,6 +625,18 @@ const SEO_META = {
 };
 // SEO_META_END
 
+// Static, hand-maintained SEO overrides for pages outside HUB_EXAMS/blog -- NOT touched by
+// scripts/generate-seo-meta.js, which only rewrites the SEO_META_START/END block above.
+const GUIDES_SEO_META = {
+  '/guides/notary-requirements-by-state': { title: 'Notary Public Exam Requirements by State | PassExamHQ', description: 'Real, sourced notary exam requirements for every state -- which states require an exam, question counts, time limits, and passing scores, compared side by side.' },
+  '/guides/real-estate-salesperson-requirements-by-state': { title: 'Real Estate Salesperson Exam Requirements by State | PassExamHQ', description: 'Real, sourced real estate salesperson licensing exam requirements for all 50 states -- question counts, time limits, and passing scores, compared side by side.' },
+  '/guides/real-estate-broker-requirements-by-state': { title: 'Real Estate Broker Exam Requirements by State | PassExamHQ', description: 'Real, sourced real estate broker licensing exam requirements by state -- question counts, time limits, and passing scores, compared side by side.' },
+  '/guides/driver-requirements-by-state': { title: "Driver's License Knowledge Test Requirements by State | PassExamHQ", description: "Real, sourced driver's license knowledge test requirements for all 50 states -- question counts, time limits, and passing scores, compared side by side." },
+  '/guides/cdl-requirements-by-state': { title: 'CDL Knowledge Test Requirements by State | PassExamHQ', description: 'Real, sourced CDL general knowledge test requirements for all 50 states -- question counts, time limits, and passing scores, compared side by side.' },
+  '/guides/motorcycle-requirements-by-state': { title: 'Motorcycle Knowledge Test Requirements by State | PassExamHQ', description: 'Real, sourced motorcycle permit/license knowledge test requirements by state -- question counts, time limits, and passing scores, compared side by side.' },
+  '/guides/boating-requirements-by-state': { title: 'Boating Safety Exam Requirements by State | PassExamHQ', description: 'Real, sourced boating safety exam requirements by state -- which states mandate an exam, question counts, time limits, and passing scores, compared side by side.' },
+};
+
 function parseCookie(header, name) {
   if (!header) return null;
   const match = header.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
@@ -754,7 +770,7 @@ export default {
 
     if (isHtml) {
       const canonicalHref = url.origin + url.pathname; // self-referencing -- correct on prod and any preview domain alike
-      response = withSeoMeta(response, canonicalHref, SEO_META[url.pathname]);
+      response = withSeoMeta(response, canonicalHref, SEO_META[url.pathname] || GUIDES_SEO_META[url.pathname]);
     }
     return response;
   },

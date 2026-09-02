@@ -1,0 +1,34 @@
+# PassExamHQ
+
+> PassExamHQ is a licensing-exam practice platform covering Notary Public, Real Estate Salesperson, Real Estate Broker, Driver's License, Commercial Driver's License (CDL), Motorcycle, and Boating Safety exams across every U.S. state that requires one — 260+ active exam tracks, each built from that state's own official handbook, statute, or administrative code rather than generic national content.
+
+## For AI agents
+
+- [Remote MCP server](https://passexamhq.com/mcp): a public, unauthenticated Model Context Protocol server. Call `list_available_tracks` first to discover the exact `examType` for a given state/category, then `get_sample_question` to fetch a real practice question and `grade_practice_answer` to check a response. No API key required.
+
+## Exam requirements by state
+
+Real, sourced comparison tables (question count, time allowed, passing score) for every state in each category — not estimates:
+
+- [Notary requirements by state](https://passexamhq.com/guides/notary-requirements-by-state)
+- [Real Estate Salesperson requirements by state](https://passexamhq.com/guides/real-estate-salesperson-requirements-by-state)
+- [Real Estate Broker requirements by state](https://passexamhq.com/guides/real-estate-broker-requirements-by-state)
+- [Driver's License requirements by state](https://passexamhq.com/guides/driver-requirements-by-state)
+- [CDL requirements by state](https://passexamhq.com/guides/cdl-requirements-by-state)
+- [Motorcycle requirements by state](https://passexamhq.com/guides/motorcycle-requirements-by-state)
+- [Boating Safety requirements by state](https://passexamhq.com/guides/boating-requirements-by-state)
+
+## Category pages
+
+- [Notary Public Exam Prep](https://passexamhq.com/notary)
+- [Real Estate Salesperson Exam Prep](https://passexamhq.com/real-estate-salesperson)
+- [Real Estate Broker Exam Prep](https://passexamhq.com/real-estate-broker)
+- [Driver's License Knowledge Test Prep](https://passexamhq.com/driver)
+- [CDL Practice Test](https://passexamhq.com/cdl)
+- [Motorcycle Permit Practice Test](https://passexamhq.com/motorcycle)
+- [Boating Safety Exam Practice Test](https://passexamhq.com/boating)
+- [Blog: exam-prep guides and explainers](https://passexamhq.com/blog)
+
+## Notes for citation
+
+Every practice question is grounded in a specific citation to the issuing state's own handbook, statute, or administrative code — not paraphrased from other prep sites or generic quiz banks. Exam mechanics (question count, time limit, passing score) are independently sourced per track the same way; see the requirements-by-state guides above for state-by-state comparisons. Any pass-rate figure shown on the site (e.g. on the guarantee page) reflects practice mock-exam attempts taken on PassExamHQ itself, not official state exam outcomes, which no vendor has access to.

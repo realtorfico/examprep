@@ -6312,6 +6312,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
     categorySampleWidgetHtml() +
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
+    '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     categoryTestimonialsHtml(content && content.testimonials) +
     guaranteeCtaBandHtml();
 
