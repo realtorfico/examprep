@@ -1260,6 +1260,17 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-nav-card-footer .exam-track-view-link {
   flex: 1; background: transparent; color: var(--accent); border: 1px solid var(--border);
 }
+/* Overrides the generic .category-card-grid .exam-track-card:hover .exam-track-view-link rule
+   above, which only touches `background` (turning it solid var(--accent-hover)) assuming the
+   accent-foreground-on-accent button styling further up -- against this footer link's own
+   var(--accent) text color (same hue family as accent-hover), that left the label unreadable on
+   hover in both themes. Selector specificity is deliberately bumped past the generic rule's so it
+   wins regardless of source order. */
+.category-card-grid .exam-track-card:hover .category-nav-card-footer .exam-track-view-link {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  text-decoration: none;
+}
 .category-nav-card-footer .btn-primary {
   flex: 1; width: auto;
 }

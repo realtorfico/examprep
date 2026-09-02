@@ -1912,6 +1912,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Real Estate Commission, Licensing Requirements & Registrations', '20%'], ['Licensee Conduct: Deposits, Disclosure, Advertising & Compensation', '31%'], ['Real Estate Agency, Disclosure & Designated Agency', '26%'], ['Connecticut-Specific Property, Landlord-Tenant & Fair Housing Law', '23%']],
   },
   {
+    examType: 'ct_re_broker',
+    title: 'Connecticut Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ct',
+    duration: '180 Minutes (120 Min National + 60 Min State)', questions: '120 Multiple Choice (80 National + 40 State-Specific)', passScore: '75% on Both Portions',
+    description: 'Practice questions covering PSI\'s national real estate broker content outline (property ownership, land use controls, valuation, financing, agency, property disclosures, contracts, leasing and property management, transfer of title, practice of real estate, and real estate calculations) plus the Connecticut-specific portion administered on behalf of the CT Department of Consumer Protection: broker licensing requirements, license status and branch office rules, the Real Estate Guaranty Fund and trust account handling, disciplinary authority and prohibited conduct, and Connecticut\'s own agency-disclosure and residential property condition disclosure statutes. Item count and the 75%-on-each-portion passing standard are confirmed directly against Connecticut Dept. of Consumer Protection sources. The 180-minute time allowance is derived from Connecticut\'s own confirmed 1.5-minute-per-item pacing (seen consistently in PSI\'s real Connecticut Salesperson bulletin: 80 national items/120 minutes and 30 state items/45 minutes) applied to the Broker exam\'s larger 40-item state portion, since Connecticut\'s Broker-specific candidate bulletin sits behind a JavaScript-only portal that could not be independently fetched.',
+    breakdown: [['Contracts (National)', '10%'], ['Practice of Real Estate (National)', '8%'], ['General Principles of Agency (National)', '9%'], ['Licensing Requirements (CT)', '6%'], ['Property Condition & Disclosures (National)', '8%'], ['Financing (National)', '6%'], ['Real Estate Guaranty Fund & Trust Accounts (CT)', '3%'], ['Disciplinary Actions & Commission Authority (CT)', '3%'], ['Agency Relationships & Disclosures (CT)', '3%'], ['License Status & Broker Offices (CT)', '6%'], ['Property Ownership (National)', '5%'], ['Valuation & Market Analysis (National)', '5%'], ['Transfer of Title (National)', '4%'], ['Land Use Controls (National)', '4%'], ['Leasing & Property Management (National)', '4%'], ['Real Estate Calculations (National)', '3%']],
+  },
+  {
     examType: 'de_re_salesperson',
     title: 'Delaware Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/de',
     duration: '80 Minutes', questions: '40 Multiple Choice (Delaware State Portion)', passScore: 'Scaled Score of 70 (0–100 Scale)',
@@ -1961,11 +1968,25 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Brokerage Activities & Requirements', '36%'], ['Requirements for a License', '20%'], ['Disclosures & Agency Issues', '16%'], ['License Law Requirements for Contracts', '12%'], ['Real Estate Commission Powers & Enforcement', '10%'], ['Property Management', '6%']],
   },
   {
+    examType: 'ky_re_broker',
+    title: 'Kentucky Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ky',
+    duration: '240 Minutes (150 Min National + 90 Min State)', questions: '120 Multiple Choice (80 National + 40 State-Specific)', passScore: '75% on Both Portions',
+    description: 'Practice questions covering PSI\'s official Kentucky Real Estate Commission content outline: a separately-scored, separately-timed National/General portion (80 items, 150 minutes -- property ownership, land use controls, valuation, financing, agency, property condition and disclosures, contracts, transfer of title, practice of real estate, real estate calculations, and specialty areas like 1031 exchanges and commercial property) plus a separately-scored Kentucky State portion (40 items, 90 minutes -- Kentucky Revised Statutes Chapter 324 and 201 KAR Chapter 11: Real Estate Commission powers and enforcement, requirements for a license, brokerage activities and requirements including trust accounts and the broker lien law, license law requirements for contracts, disclosures and agency issues, and property management). PSI\'s official Candidate Information Bulletin confirms 75% required to pass EACH portion independently. Broker eligibility requires 24 months of active sales-associate experience plus a mandatory KREC-approved brokerage management course.',
+    breakdown: [['Contracts (National)', '10%'], ['Practice of Real Estate (National)', '10%'], ['Brokerage Activities & Requirements (KY)', '13%'], ['General Principles of Agency (National)', '9%'], ['Property Condition & Disclosures (National)', '8%'], ['Financing (National)', '6%'], ['Real Estate Commission Powers (KY)', '6%'], ['Requirements for a License (KY)', '6%'], ['Property Ownership (National)', '5%'], ['Valuation & Market Analysis (National)', '5%'], ['Transfer of Title (National)', '4%'], ['Land Use Controls (National)', '4%'], ['Real Estate Calculations (National)', '3%'], ['Specialty Areas (National)', '3%'], ['License Law Requirements for Contracts (KY)', '3%'], ['Disclosures & Agency Issues (KY)', '3%'], ['Property Management (KY)', '3%']],
+  },
+  {
     examType: 'la_re_salesperson',
     title: 'Louisiana Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/la',
     duration: '90 Minutes', questions: '55 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (0-100 Scale, Not a Raw Percentage)',
     description: 'Practice questions covering the Louisiana Real Estate License Law (La. R.S. 37:1430-1470) and the Louisiana Real Estate Commission\'s Rules (Louisiana Administrative Code Title 46, Part LXVII): duties, overview and powers of the Real Estate Commission, investigations and discipline; licensing requirements, renewal, education and reciprocity; advertising, compensation, listings, offers and broker supervision; escrow/trust accounts, property management and recordkeeping; and agency relationships and required disclosures. This track covers License Law and Commission Rules subject matter only -- it does not include the separate Louisiana Civil Law System portion of the official state-specific content outline (property, successions, obligations/contracts, sales and leases under the Louisiana Civil Code), which Pearson VUE weights at roughly a quarter of the 55-item state-specific exam.',
     breakdown: [['Licensing, Renewal, Education & Reciprocity', '41%'], ['Commission Powers, Investigations & Discipline', '22%'], ['Advertising, Compensation, Listings & Broker Supervision', '21%'], ['Escrow, Trust Accounts, Property Management & Recordkeeping', '11%'], ['Agency Relationships & Disclosures', '5%']],
+  },
+  {
+    examType: 'la_re_broker',
+    title: 'Louisiana Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/la',
+    duration: '240 Minutes (National + State Portions)', questions: '135 Multiple Choice (80 National + 55 State-Specific)', passScore: 'Scaled Score of 75 on Both Portions',
+    description: 'Practice questions covering Pearson VUE\'s official Louisiana content outlines: an 80-item National/General portion (real property characteristics and legal descriptions, forms of ownership and title transfer, property value and appraisal, contracts and agency, real estate practice, property disclosures, financing and settlement, and real estate math) plus a 55-item Louisiana State portion covering the Louisiana Real Estate License Law and Commission Rules AND, unlike the standard Salesperson content bank, the full Louisiana Civil Law System -- Louisiana\'s unique civil-law property regime (movables/immovables, servitudes, usufruct, successions, redhibition, "privileges" in place of common-law liens, and lease reconduction) that Pearson VUE weights at roughly a quarter of the state-specific exam. Louisiana is the only U.S. state administering real estate licensing under a civil-law rather than common-law framework, making this one of the most distinctive state portions in the country.',
+    breakdown: [['Real Estate Contracts and Agency (National)', '11%'], ['Louisiana Civil Law System (LA)', '10%'], ['Statutory Requirements Governing Licensees (LA)', '10%'], ['Louisiana Law of Agency (LA)', '10%'], ['Real Estate Practice (National)', '9%'], ['Real Property Characteristics & Legal Descriptions (National)', '7%'], ['Property Value and Appraisal (National)', '7%'], ['Property Disclosures & Environmental Issues (National)', '7%'], ['Licensing Requirements (LA)', '6%'], ['Forms of Ownership, Transfer & Recording of Title (National)', '6%'], ['Financing and Settlement (National)', '6%'], ['Real Estate Math Calculations (National)', '6%'], ['Duties & Powers of the Real Estate Commission (LA)', '4%']],
   },
   {
     examType: 'ma_re_salesperson',
@@ -2092,6 +2113,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '70% Scaled Score (State-Specific Portion)',
     description: 'Practice questions covering the Oklahoma Real Estate License Code (59 O.S. § 858-101 et seq.) and Title 605 of the Oklahoma Administrative Code: laws and rules affecting Oklahoma real estate practice, the Oklahoma Broker Relationships Act, property management and landlord-tenant requirements, and mandatory property disclosures and hazards — Pearson VUE’s own four content areas for the state-specific portion of the Provisional Sales Associate exam — plus additional Code and Rules coverage (licensing and application, trust and escrow accounts, the Education and Recovery Fund, nonresident licensing, and investigations/discipline) that extends beyond that 40-item outline.',
     breakdown: [['Laws & Rules Affecting Oklahoma Real Estate Practice', '50%'], ['Oklahoma Broker Relationships Act', '20%'], ['Property Management', '15%'], ['Disclosures & Hazards', '15%']],
+  },
+  {
+    examType: 'ok_re_broker',
+    title: 'Oklahoma Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ok',
+    duration: '240 Minutes (4 Hours)', questions: '135 Multiple Choice (Scored up to 140 Points)', passScore: '75% (105/140 Points)',
+    description: 'Practice questions covering PSI\'s official Oklahoma Real Estate Commission content outline: a 75-item National/General portion (property ownership, land use controls, valuation, financing, agency, property disclosures, contracts -- the largest national section at 18% -- leasing and property management, transfer of title, practice of real estate, and real estate calculations) plus a 60-item Oklahoma State portion covering the Oklahoma Real Estate License Code (59 O.S. Ch. 20) and OAC Title 605 rules: laws and rules affecting Oklahoma practice, the distinctive Oklahoma Broker Relationships Act (Oklahoma brokers do not practice under the common-law of agency with consumers at all -- one of the most exam-relevant, counterintuitive facts on this exam), property management, disclosures and hazards, trust accounts and trust funds, and broker management (supervision, place of business, advertising oversight, trade names). PSI\'s official bulletin confirms 135 items scored up to 140 points (some scenario-based items are worth 2 points) with 75% (105/140) required to pass, in 4 hours.',
+    breakdown: [['Contracts (National)', '10%'], ['Laws & Rules Affecting Oklahoma Practice (OK)', '15%'], ['Practice of Real Estate (National)', '8%'], ['Broker Management (OK)', '7%'], ['Oklahoma Broker Relationships Act (OK)', '7%'], ['General Principles of Agency (National)', '6%'], ['Property Ownership (National)', '6%'], ['Trust Accounts & Trust Funds (OK)', '6%'], ['Real Estate Calculations (National)', '4%'], ['Financing (National)', '4%'], ['Property Disclosures (National)', '4%'], ['Transfer of Title (National)', '4%'], ['Property Management (OK)', '5%'], ['Valuation & Market Analysis (National)', '4%'], ['Disclosures & Hazards (OK)', '4%'], ['Leasing & Property Management (National)', '3%'], ['Land Use Controls (National)', '3%']],
   },
   {
     examType: 'or_re_salesperson',
@@ -4193,6 +4221,13 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "the real state-specific portion's published threshold — PSI requires at least 70%, which does not divide evenly across 35 questions, so this practice exam uses the nearest whole-number pass bar of 25 of 35 correct (71.4%)",
   },
+  ct_re_broker: {
+    orgLine: "the Connecticut Department of Consumer Protection (DCP)",
+    footerRequirement: "do not fulfill Connecticut's broker prelicensure education requirement, the 3-years-of-licensed-salesperson-experience prerequisite, or any Connecticut real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Connecticut's broker-level education requirement, the requirement of 3 years of active licensed experience as a salesperson (1,500 supervised hours, 4+ transactions), or any other Connecticut Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering PSI's national real estate broker content outline plus Connecticut-specific broker licensing, license status, Real Estate Guaranty Fund, disciplinary, and agency-disclosure subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Connecticut DCP. While we strive to align our content with current Connecticut General Statutes Title 20, Chapter 392 and PSI's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Connecticut Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% on both the national and state portions, confirmed via Connecticut DCP sources",
+  },
   de_re_salesperson: {
     orgLine: "the Delaware Real Estate Commission",
     footerRequirement: "do not fulfill the 99-hour pre-license education requirement or any Delaware real estate salesperson training requirement",
@@ -4242,12 +4277,26 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 96-hour pre-license education.",
     passScoreNote: "the same 75%-correct threshold as the real state-specific portion -- since 75% of 50 items is 37.5, PSI requires the next whole question, 38 of 50 correct",
   },
+  ky_re_broker: {
+    orgLine: "the Kentucky Real Estate Commission (KREC)",
+    footerRequirement: "do not fulfill Kentucky's broker prelicensure education requirement (21 semester credit hours or 336 classroom hours, including the mandatory brokerage management course), the 24-month/20-hours-per-week active sales associate experience prerequisite, or any Kentucky real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Kentucky's broker prelicensure education requirement, the requirement of 24 months of active licensed experience (averaging 20 hours/week) as a sales associate, the mandatory KREC-approved brokerage management course, or any other Kentucky Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in PSI's own official Kentucky Real Estate Commission Candidate Information Bulletin: an 80-item national/general portion (property ownership, land use, valuation, financing, agency, disclosures, contracts, transfer of title, practice of real estate, calculations, and specialty areas) and a 40-item Kentucky state portion (Kentucky Revised Statutes Chapter 324 and 201 KAR Chapter 11). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of KREC. While we strive to align our content with the current KREC bulletin and KRS 324, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Kentucky Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% on both the national and state portions, confirmed via PSI's official Kentucky Candidate Information Bulletin",
+  },
   la_re_salesperson: {
     orgLine: "the Louisiana Real Estate Commission (LREC)",
     footerRequirement: "do not fulfill the 90-hour pre-license education requirement (Real Estate 101) or the separate 45-hour post-license education requirement due within 180 days of initial licensure, or any other Louisiana real estate salesperson training requirement",
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Louisiana's 90-hour pre-license education requirement for a real estate salesperson license (Real Estate 101), or the separate 45-hour post-license education requirement due within 180 days of initial licensure, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Louisiana Real Estate License Law (La. R.S. 37:1430-1470) and the Real Estate Commission's Rules (Louisiana Administrative Code Title 46, Part LXVII). Our question bank covers four of the five sections on Pearson VUE's official state-specific content outline — Commission duties/powers, licensing requirements, statutory requirements governing licensee activities, and Louisiana law of agency/disclosures — but does NOT cover the outline's separate Louisiana Civil Law System section (property, successions, obligations/contracts, sales and leases under the Louisiana Civil Code), which Pearson VUE weights at roughly a quarter of the 55-item state-specific exam; it also does not cover the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through an LREC-certified real estate school. The real state-specific exam reports a scaled score from 0 to 100, not raw percent-correct — a passing score of 70 is required; the practice threshold used here reuses that same number as a study-sizing convention, not a transcription of the real scoring method. While we strive to align our content with the current Louisiana Real Estate License Law and Commission Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
     passScoreNote: "a study-sizing convention reusing the real scaled-score threshold — the real Louisiana state-specific portion is scored on a scaled 0-to-100 basis with a passing score of 70, not a raw percentage or fixed correct-answer count",
+  },
+  la_re_broker: {
+    orgLine: "the Louisiana Real Estate Commission (LREC)",
+    footerRequirement: "do not fulfill Louisiana's broker prelicensure education requirement (150 classroom hours including the mandatory 30-hour Broker Responsibilities course), the 4-years-of-active-licensure prerequisite (2 of the 4 immediately preceding application), or any Louisiana real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Louisiana's 150-hour broker prelicensure education requirement (including the mandatory Real Estate 203 Broker Responsibilities course), the requirement of 4 years of active licensure with 2 of those years immediately preceding application, or any other Louisiana Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in Pearson VUE's official Louisiana Candidate Handbook: an 80-item national/general portion and a 55-item Louisiana state portion that, unlike the standard Salesperson content, includes the full Louisiana Civil Law System — Louisiana's unique civil-law property regime, distinct from every other U.S. state's common-law approach. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of LREC. While we strive to align our content with the current Louisiana Real Estate License Law and Civil Code, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Louisiana Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 75 on both the national and state portions, confirmed via Pearson VUE's official Louisiana Candidate Handbook",
   },
   ma_re_salesperson: {
     orgLine: "the Massachusetts Board of Registration of Real Estate Brokers and Salespersons",
@@ -4374,6 +4423,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for an Oklahoma real estate provisional sales associate license (or the separate 45-hour post-license course required before the provisional license's first expiration), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers the Oklahoma Real Estate License Code and Rules more broadly than the state-specific exam portion's own four-category outline (laws and rules affecting practice, the Broker Relationships Act, property management, and disclosures/hazards) — including additional Code and Rules topics (trust and escrow accounts, the Education and Recovery Fund, instructor/school approval, and nonresident licensing) not separately broken out on that outline, some of which correspond to Broker-only exam content rather than the Salesperson/Provisional Sales Associate state portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current OREC License Code and Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
     passScoreNote: "a practice approximation of the real state-specific portion's scaled-score-70 requirement (Pearson VUE reports a scaled score on the 40-item state portion, not raw percent-correct)",
+  },
+  ok_re_broker: {
+    orgLine: "the Oklahoma Real Estate Commission (OREC)",
+    footerRequirement: "do not fulfill Oklahoma's 90-hour broker prelicensure education requirement, the 2-years-of-active-experience prerequisite (within the preceding 5 years), or any Oklahoma real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Oklahoma's 90-hour advanced broker education requirement, the requirement of 2 years of active experience as a Provisional Sales Associate or Sales Associate within the preceding 5 years, or any other Oklahoma Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in PSI's official Oklahoma Real Estate Licensure Applicant Information Bulletin: a 75-item national/general portion and a 60-item Oklahoma state portion covering the Oklahoma Real Estate License Code and the distinctive Oklahoma Broker Relationships Act (Oklahoma brokers do not practice under the common law of agency with consumers). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of OREC. While we strive to align our content with OREC's current Code and Rules Book, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Oklahoma Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% (105 of 140 scored points) on the combined 135-item exam, confirmed via PSI's official Oklahoma bulletin",
   },
   or_re_salesperson: {
     orgLine: "the Oregon Real Estate Agency (OREA)",
@@ -6195,8 +6251,7 @@ async function fillCategoryQuestionCount(tracks) {
     var countByExamType = {};
     (res.counts || []).forEach(function (row) { countByExamType[row.exam_type] = row.count; });
     var total = tracks.reduce(function (sum, t) { return sum + (countByExamType[t.examType] || 0); }, 0);
-    var stateCount = new Set(tracks.map(function (t) { return t.stateCode; })).size;
-    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across ' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + ')</div>';
+    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across all states)</div>';
   } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
@@ -10055,6 +10110,12 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://proctor2.psionline.com/media/programs/50%2010-1.pdf',
       desc: 'PSI Services candidate information bulletin/handbook for the Connecticut Department of Consumer Protection real estate salesperson and broker licensing exams.' },
   ],
+  ct_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://portal.ct.gov/dcp/license-services-division/all-license-applications/real-estate-broker---initialexam',
+      desc: 'Official Connecticut Department of Consumer Protection page covering the real estate broker initial exam, application fees, and PSI as the contracted testing vendor.' },
+    { title: 'Connecticut General Statutes Title 20, Chapter 392', url: 'https://www.cga.ct.gov/current/pub/chap_392.htm',
+      desc: 'The Connecticut statute governing real estate broker and salesperson licensing, the Real Estate Guaranty Fund, and disciplinary authority — the statutory basis for the state-specific portion of the Broker exam.' },
+  ],
   de_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://dpr.delaware.gov/boards/realestate/',
       desc: 'Official Delaware Real Estate Commission page (Division of Professional Regulation) covering salesperson/broker licensing, applications, and commission meetings.' },
@@ -10139,11 +10200,23 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.psiexams.com/test-takers/kentucky-real-estate/',
       desc: 'PSI\'s official Kentucky real estate exam registration and scheduling page; PSI is Kentucky\'s designated testing vendor.' },
   ],
+  ky_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://krec.ky.gov/newstatic_Info.aspx?static_ID=655',
+      desc: 'The Kentucky Real Estate Commission\'s official broker license application and eligibility page.' },
+    { title: 'Candidate Information Bulletin', url: 'https://proctor2.psionline.com/media/programs/481%20KY.pdf',
+      desc: 'PSI\'s official Kentucky Real Estate Commission Candidate Information Bulletin, including the full national and state examination content outlines for both Sales Associate and Broker exams.' },
+  ],
   la_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://www.lrec.gov/',
       desc: 'The Louisiana Real Estate Commission\'s official homepage for licensing and salesperson applicants.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/la/realestate.html',
       desc: 'Pearson VUE\'s official Louisiana real estate licensure exam page, including the candidate handbook and exam scheduling; Pearson VUE is Louisiana\'s designated testing vendor.' },
+  ],
+  la_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.lrec.gov/become-licensed/broker',
+      desc: 'The Louisiana Real Estate Commission\'s official broker licensing requirements page.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/la/realestate.html',
+      desc: 'Pearson VUE\'s official Louisiana real estate licensure exam page, including the Candidate Handbook (#091900) with full national and state content outlines; Pearson VUE is Louisiana\'s designated testing vendor.' },
   ],
   ma_re_salesperson: [
     { title: 'Board of Registration Site', url: 'https://www.mass.gov/orgs/board-of-registration-of-real-estate-brokers-and-salespersons',
@@ -10288,6 +10361,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Oklahoma Real Estate Commission\'s official licensing and exam FAQ page for provisional sales associate applicants.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ok/realestate.html',
       desc: 'Pearson VUE\'s official Oklahoma real estate licensure exam page, with the candidate handbook and exam scheduling.' },
+  ],
+  ok_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://oklahoma.gov/orec.html',
+      desc: 'The Oklahoma Real Estate Commission\'s official site — the state regulatory agency that licenses brokers and retains PSI as its exam vendor.' },
+    { title: 'Oklahoma Real Estate License Code and Rules (As of Nov. 1, 2025)', url: 'https://oklahoma.gov/content/dam/ok/en/orec/documents/meetings/Nov%201%202025%20Oklahoma%20Real%20Estate%20Commission%20Code%20and%20Rules%20Book.pdf',
+      desc: 'OREC\'s official compiled volume reproducing the Oklahoma Real Estate License Code (59 O.S. § 858-101 et seq., including the Broker Relationships Act) and Title 605 of the Oklahoma Administrative Code verbatim — the authoritative source this practice content is based on.' },
   ],
   or_re_salesperson: [
     { title: 'Real Estate Agency Site', url: 'https://www.oregon.gov/rea/pages/index.aspx',
