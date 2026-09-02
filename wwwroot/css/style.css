@@ -1079,6 +1079,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    using barely half the page. Let it use the full .track-landing width instead. */
 .track-landing-description { max-width: none; }
 .track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
+.track-landing-freshness { font-size: 0.72rem; margin: 0.35rem 0 0; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }
 .track-landing-preview-section h2 { margin-bottom: 0.3rem; }

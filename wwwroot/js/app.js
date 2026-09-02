@@ -9768,12 +9768,22 @@ function renderTrackLanding() {
     ? '<p class="muted track-landing-official-inline">Verify with the official source: ' +
       '<a class="exam-track-view-link" href="' + infoLinks[0].url + '" target="_blank" rel="noopener noreferrer">Official exam info ↗</a></p>'
     : '';
+  // Real freshness signal (MAX(questions.created_at) per track, from /track-registry -- see
+  // examprep-api's handleTrackRegistryList) -- deliberately labeled "last updated," not "last
+  // verified," since every addition to a track (including a pure pool-depth backfill) goes through
+  // this site's same real-citation drafting process, but this timestamp can't itself prove a
+  // full manual re-read of EVERY existing question in the bank happened on that date.
+  var freshnessHtml = exam.questionsUpdatedAt
+    ? '<p class="muted track-landing-freshness">🔄 Question bank last updated ' +
+      new Date(exam.questionsUpdatedAt * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) +
+      ' — every question is sourced from the current official handbook or statute, not third-party prep material.</p>'
+    : '';
   var specsHtml = '<div class="exam-specs">' +
     '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
-    '</div>' + officialLinkHtml;
+    '</div>' + officialLinkHtml + freshnessHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
