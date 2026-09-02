@@ -770,7 +770,14 @@ export default {
 
     if (isHtml) {
       const canonicalHref = url.origin + url.pathname; // self-referencing -- correct on prod and any preview domain alike
-      response = withSeoMeta(response, canonicalHref, SEO_META[url.pathname] || GUIDES_SEO_META[url.pathname]);
+      // /guides/* are real static directory-style files (wwwroot/guides/{slug}/index.html) --
+      // Cloudflare Pages' asset handler 308s the bare "/guides/{slug}" request to a trailing-slash
+      // "/guides/{slug}/" before this branch ever runs, so the pathname actually seen here always
+      // has the trailing slash even though GUIDES_SEO_META's keys (and SEO_META's, for consistency)
+      // don't. Strip it for the lookup only -- every other route on this site is flat (single
+      // wwwroot/index.html SPA shell) so this never affects them.
+      const seoLookupPath = url.pathname.length > 1 ? url.pathname.replace(/\/$/, '') : url.pathname;
+      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath]);
     }
     return response;
   },
