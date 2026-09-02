@@ -1982,6 +1982,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Brokerage Relationships: Listing Agreements & Disclosure', '24%'], ['Business Conduct: Offers, Commissions & Advertising', '20%'], ['Supervision: Trust Monies & Recordkeeping', '17%'], ['Duties & Powers of the Real Estate Commission', '13%'], ['Licensing Requirements', '13%'], ['Ethics', '13%']],
   },
   {
+    examType: 'md_re_broker',
+    title: 'Maryland Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/md',
+    duration: '120 Minutes (90 Min National + 30 Min State)', questions: '115 Multiple Choice (75 National + 40 State-Specific)', passScore: '84/120 Points (70% on Both Portions)',
+    description: 'Practice questions covering PSI Services LLC\'s official Maryland Real Estate Broker exam content outline (administered on behalf of the Maryland Real Estate Commission, bulletin id 529): a separately-scored National portion (75 items -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, broker-level property management, transfer of title, broker-level practice of real estate and supervisory responsibilities, and real estate calculations) plus a separately-scored Maryland-specific portion (40 items -- duties and powers of the Real Estate Commission including the Guaranty Fund, licensing requirements, brokerage relationships and required disclosures, supervision and trust-monies handling, business conduct including offers/commissions/advertising, and ethics). Passing requires 56 of 80 National points AND 28 of 40 State points independently -- both national broker items scoring up to two points each -- within a combined 120-minute time limit, notably shorter than several other states\' broker exams despite a nearly identical 115-item/70%-pass structure. Grounded in the Annotated Code of Maryland Real Property Article Title 17 and COMAR Title 09, Subtitle 11.',
+    breakdown: [['Contracts (National)', '12%'], ['Business Conduct (MD)', '8%'], ['Agency (National)', '8%'], ['Practice of Real Estate (National)', '8%'], ['Licensing Requirements (MD)', '7%'], ['Brokerage Relationships (MD)', '6%'], ['Financing (National)', '6%'], ['Supervision (MD)', '5%'], ['Valuation (National)', '5%'], ['Property Disclosures (National)', '5%'], ['Transfer of Title (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Duties & Powers of the Commission (MD)', '4%'], ['Ethics (MD)', '4%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%']],
+  },
+  {
     examType: 'me_re_salesperson',
     title: 'Maine Real Estate Sales Agent Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/me',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '75% (Scaled Score 75+)',
@@ -1994,6 +2001,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
     description: 'Practice questions covering Minnesota Statutes Chapter 82, Sections 82.55-82.89 (Real Estate Broker, Salesperson, and Closing Agent Licensing Law): licensing, fees, examinations, and pre-license/continuing education; agency disclosure and brokerage contracts; advertising, compensation, records, and prohibited practices; trust accounts and specialty business operations; and discipline, public information, and the real estate education research and recovery fund -- the state-specific portion of the PSI-administered Salesperson exam.',
     breakdown: [['Discipline, Penalties, Public Information & Recovery Fund', '20%'], ['Definitions, Pre-License Education & Continuing Education', '19%'], ['Advertising, Compensation, Records & Prohibited Practices', '19%'], ['Licensing, Fees, Examinations & Closing Agent Licensure', '17%'], ['Agency Disclosure & Brokerage Contracts', '16%'], ['Trust Accounts & Specialty Business Operations', '9%']],
+  },
+  {
+    examType: 'mn_re_broker',
+    title: 'Minnesota Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/mn',
+    duration: '240 Minutes (2.5hr General + 1.5hr State)', questions: '135 Multiple Choice (75 General + 60 State-Specific)', passScore: '75% Correct',
+    description: 'Practice questions covering PSI Services LLC\'s official Minnesota Real Estate Broker exam content outline (administered on behalf of the Minnesota Department of Commerce, bulletin id 10954): a General portion (75 items -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, broker-level property management, transfer of title, broker-level practice of real estate and supervisory responsibilities, and real estate calculations) plus a Minnesota-specific portion (grounded in Minn. Stat. Chapter 82 -- Real Estate Brokerage License Law, interests in real property including common-interest ownership and landlord-tenant law, conveyance procedures and protection of parties including recording/registration and environmental disclosures, and financial instruments/obligations covering mortgages, contracts for deed, and foreclosure). A flat 75% correct is required to pass; candidates who pass one portion and fail the other need only retake the failed portion. Note: PSI\'s own published bulletin has a genuine internal arithmetic discrepancy between its summary table (60 state items) and its detailed category breakdown (which sums to 50) -- our content is proportionally sized using the more granular category breakdown while the exam mechanics reflect the real administered 135-item/75% structure.',
+    breakdown: [['Real Estate Brokerage License Law (MN)', '22%'], ['Contracts (National)', '11%'], ['Interests in Real Property (MN)', '9%'], ['Conveyance Procedures & Protection of Parties (MN)', '8%'], ['Agency (National)', '7%'], ['Practice of Real Estate (National)', '7%'], ['Property Ownership (National)', '6%'], ['Financial Instruments, Obligations & Remedies (MN)', '5%'], ['Financing (National)', '5%'], ['Valuation (National)', '4%'], ['Property Disclosures (National)', '4%'], ['Transfer of Title (National)', '3%'], ['Real Estate Calculations (National)', '3%'], ['Property Management (National)', '3%'], ['Land Use Controls (National)', '3%']],
   },
   {
     examType: 'mo_re_salesperson',
@@ -2092,6 +2106,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '80 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
     description: 'Practice questions covering the South Carolina Real Estate License Act (S.C. Code Title 40, Chapter 57) and the Real Estate Commission\'s Regulations (S.C. Code of Regulations, Chapter 105): the Commission\'s powers and licensing requirements, statutes governing licensee and non-licensee conduct (advertising, compensation, disclosure, and handling of monies), South Carolina agency and non-agency relationships, additional South Carolina statutes (residential property disclosure, fair housing, landlord-tenant and consumer protection topics), and closing details -- the state-specific portion of the PSI-administered Real Estate Associate exam.',
     breakdown: [['Real Estate Commission & Licensing Requirements', '22%'], ['Statutes Governing Licensee & Non-Licensee Activities', '28%'], ['SC Agency & Non-Agency Relationships & Issues', '28%'], ['Additional SC Statutes & Topics', '15%'], ['Closing Details', '7%']],
+  },
+  {
+    examType: 'sc_re_broker',
+    title: 'South Carolina Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/sc',
+    duration: '200 Minutes (120 Min National + 80 Min State)', questions: '125 Multiple Choice (75 National + 50 State-Specific)', passScore: '96/125 Points (60/80 National + 36/50 State)',
+    description: 'Practice questions covering PSI Services LLC\'s official South Carolina Real Estate Broker exam content outline (administered on behalf of the SC Real Estate Commission, bulletin id 441): a separately-scored National portion (75 items -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, broker-level property management, transfer of title, broker-level practice of real estate and supervisory responsibilities, and real estate calculations) plus a separately-scored South Carolina-specific portion (50 items -- Commission powers and licensing requirements, statutes governing licensee and non-licensee activities including advertising and trust-money handling, South Carolina agency and non-agency relationships, additional South Carolina statutes such as the Residential Property Condition Disclosure Act, Fair Housing Law, and Landlord-Tenant Act, and closing details). Passing requires 60 of 80 National points AND 36 of 50 State points independently, within a combined 200-minute time limit. Grounded in S.C. Code Ann. Title 40, Chapter 57 -- notably, South Carolina requires a licensed attorney to conduct residential real estate closings (State v. Buyers Service Co.), a genuine state-specific practice this bank covers under Closing Details.',
+    breakdown: [['Statutes Governing Licensees & Non-Licensees (SC)', '13%'], ['Contracts (National)', '11%'], ['SC Agency & Non-Agency Relationships (SC)', '10%'], ['Agency (National)', '8%'], ['Commission & Licensing Requirements (SC)', '8%'], ['Practice of Real Estate (National)', '7%'], ['Property Ownership (National)', '6%'], ['Additional SC Statutes & Topics (SC)', '6%'], ['Valuation (National)', '5%'], ['Financing (National)', '5%'], ['Property Disclosures (National)', '4%'], ['Transfer of Title (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%'], ['Closing Details (SC)', '3%']],
   },
   {
     examType: 'sd_re_salesperson',
@@ -4228,6 +4249,13 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion — 21 of 30 correct (70%), a straight raw-count percentage, not a scaled score",
   },
+  md_re_broker: {
+    orgLine: "the Maryland Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill the 135-hour broker pre-licensing course requirement, the 3-immediately-preceding-years active licensure requirement, or any Maryland real estate broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 135-hour broker pre-licensing course requirement, the requirement of 3 immediately preceding years of active, regular, and lawful licensed practice, or any other Maryland broker eligibility requirement, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in PSI Services LLC's own official Maryland Candidate Information Bulletin (bulletin id 529) together with the Annotated Code of Maryland Real Property Article Title 17 and COMAR Title 09, Subtitle 11. Maryland scores the National and State portions of the exam independently — candidates must score 56 of 80 National points AND 28 of 40 State points to pass. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Maryland Real Estate Commission, and broker pre-license education must be completed through an MREC-approved real estate school. While we strive to align our content with the current PSI Candidate Bulletin and Maryland statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Maryland Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 56 of 80 National points AND 28 of 40 State points independently, confirmed via PSI's official Candidate Bulletin",
+  },
   me_re_salesperson: {
     orgLine: "the Maine Real Estate Commission",
     footerRequirement: "do not fulfill the 55-hour Sales Agent Course pre-license education requirement or any Maine real estate sales agent training requirement",
@@ -4241,6 +4269,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Minnesota's 90-hour pre-license education requirement for a real estate salesperson license (Course I, Course II, and Course III, 30 hours each, completed at a Department of Commerce-approved real estate school), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Minnesota Statutes Chapter 82, Sections 82.55-82.89), not the separate 80-question national portion, and not necessarily every item on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Minnesota Department of Commerce, and pre-license education must be completed through a Commerce-approved school. While we strive to align our content with the current Minnesota Statutes Chapter 82, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Department of Commerce exam or the required 90-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion -- 30 of 40 correct",
+  },
+  mn_re_broker: {
+    orgLine: "the Minnesota Department of Commerce",
+    footerRequirement: "do not fulfill any Minnesota real estate broker pre-license education, experience, or training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy any Minnesota real estate broker eligibility requirement, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in PSI Services LLC's own official Real Estate Salesperson, Broker and Abstracter Examination Candidate Information Bulletin (bulletin id 10954) together with Minnesota Statutes Chapter 82 -- Real Estate Brokerage License Law. Minnesota requires a flat 75% correct to pass; candidates who pass one portion and fail the other need only retake the failed portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Minnesota Department of Commerce, and broker pre-license education must be completed through a Commerce-approved school. While we strive to align our content with the current PSI Candidate Bulletin and Minnesota Statutes Chapter 82, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Minnesota Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same flat threshold required by the real exam -- 75% correct, confirmed via PSI's official Candidate Bulletin",
   },
   mo_re_salesperson: {
     orgLine: "the Missouri Real Estate Commission (MREC)",
@@ -4339,6 +4374,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy South Carolina's pre-license education requirement for a real estate associate license -- sixty hours of Unit I (Fundamentals of Real Estate Principles and Practices) plus thirty hours of Unit II (Advanced Real Estate Principles), though state law permits sitting for the license examination after completing Unit I alone -- and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the PSI-administered Real Estate Associate exam (grounded in the Real Estate Commission's own Regulations and S.C. Code Title 40, Chapter 57), not the separate national portion, which candidates must also pass to qualify for licensure. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved provider. While we strive to align our content with the current PSI Candidate Information Bulletin and South Carolina Real Estate Commission Regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Real Estate Commission exam or the required pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion -- 28 of 40 correct (70%)",
+  },
+  sc_re_broker: {
+    orgLine: "the South Carolina Real Estate Commission",
+    footerRequirement: "do not fulfill any South Carolina real estate broker pre-license education, experience, or eligibility requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy any South Carolina real estate broker eligibility requirement, and does not issue any official course-completion certificate -- our content is a supplementary study aid only, grounded in PSI Services LLC's own official South Carolina Real Estate Candidate Information Bulletin (bulletin id 441) together with S.C. Code Ann. Title 40, Chapter 57 (Real Estate Brokers, Salesmen, and Property Managers License Law). South Carolina scores the National and State portions of the exam independently -- candidates must score 60 of 80 National points AND 36 of 50 State points to pass. South Carolina also requires a licensed attorney to conduct residential real estate closings, a distinctive state requirement our content covers but that does not license any user to perform legal closing services. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the South Carolina Real Estate Commission, and broker pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current PSI Candidate Bulletin and South Carolina statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered South Carolina Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam -- 60 of 80 National points AND 36 of 50 State points independently, confirmed via PSI's official Candidate Bulletin",
   },
   sd_re_salesperson: {
     orgLine: "the South Dakota Real Estate Commission",
@@ -7545,6 +7587,17 @@ var RESOURCES = {
       desc: "The official exam scheduling, format, and Maryland State Portion content outline published by PSI Services LLC, the Real Estate Commission's contracted exam vendor.",
       topic: "General Reference", free: true },
   ],
+  md_re_broker: [
+    { title: "Md. Code Ann., Business Occupations and Professions Article, Title 17 (Real Estate Brokers)", type: "pdf", url: "https://mgaleg.maryland.gov/2023RS/Statute_Web/gbo/gbo.pdf",
+      desc: "The official compiled statute published by the Maryland General Assembly, Department of Legislative Services — the authoritative statutory basis for the state-specific portion of the Broker exam.",
+      topic: "General Reference", free: true },
+    { title: "COMAR Title 09, Subtitle 11 (Real Estate Commission)", type: "pdf", url: "https://regs.maryland.gov/us/md/exec/comar/09.11/index.full.html",
+      desc: "The Code of Maryland Regulations implementing Title 17, published by the Division of State Documents — covers broker supervision, trust money handling, licensing, and Commission procedure.",
+      topic: "General Reference", free: true },
+    { title: "PSI Real Estate Candidate Information Bulletin (Maryland)", type: "pdf", url: "https://test-takers.psiexams.com/api/content/bulletin/529",
+      desc: "The official exam scheduling, format, and Maryland Broker National/State content outlines published by PSI Services LLC, the Real Estate Commission's contracted exam vendor.",
+      topic: "General Reference", free: true },
+  ],
   me_re_salesperson: [
     { title: "Maine Real Estate Commission Rules (Code of Maine Rules 02-039, Chapters 300-410)", type: "pdf", url: "https://www.maine.gov/pfr/professionallicensing/sites/maine.gov.pfr.professionallicensing/files/inline-files/RealEstateCommission-Rules-Adopted-October-26-2025_0.pdf",
       desc: "The Maine Real Estate Commission's official consolidated Rules, adopted October 26, 2025 -- the authoritative source the state-specific portion of the exam is based on.",
@@ -7559,6 +7612,17 @@ var RESOURCES = {
       topic: "General Reference", free: true },
     { title: "Minnesota Department of Commerce -- Real Estate Licensing", type: "pdf", url: "https://mn.gov/commerce/licensing/list/real-estate/",
       desc: "The Minnesota Department of Commerce's official real estate licensing page -- the authoritative source for salesperson licensing requirements, pre-license education, and PSI exam scheduling.",
+      topic: "General Reference", free: true },
+  ],
+  mn_re_broker: [
+    { title: "Minnesota Statutes Chapter 82 (Real Estate Brokerage License Law, Sections 82.55-82.89)", type: "pdf", url: "https://www.revisor.mn.gov/statutes/cite/82/full",
+      desc: "The official chapter text published by the Office of the Revisor of Statutes, Minnesota Legislature -- the authoritative source the Broker exam's state-specific portion is based on, including broker-level trust account and supervision provisions.",
+      topic: "General Reference", free: true },
+    { title: "PSI Real Estate Salesperson, Broker and Abstracter Examination Candidate Information Bulletin (Minnesota)", type: "link", url: "https://test-takers.psiexams.com/mnre",
+      desc: "PSI's official Minnesota real estate exam page -- the authoritative source for the Broker exam's mechanics (135 items, 75% flat passing) and content outline.",
+      topic: "General Reference", free: true },
+    { title: "Minnesota Department of Commerce -- Real Estate Licensing", type: "pdf", url: "https://mn.gov/commerce/licensing/list/real-estate/",
+      desc: "The Minnesota Department of Commerce's official real estate licensing page -- the authoritative source for broker licensing requirements and PSI exam scheduling.",
       topic: "General Reference", free: true },
   ],
   mo_re_salesperson: [
@@ -7710,6 +7774,17 @@ var RESOURCES = {
       topic: "General Reference", free: true },
     { title: "South Carolina Real Estate Commission Regulations (S.C. Code of Regulations, Chapter 105)", type: "pdf", url: "https://www.scstatehouse.gov/coderegs/Chapter%20105.pdf",
       desc: "The official regulations published by the South Carolina Real Estate Commission -- the authoritative source the licensing/regulatory portion of the exam is based on.",
+      topic: "General Reference", free: true },
+  ],
+  sc_re_broker: [
+    { title: "South Carolina Real Estate Commission", type: "pdf", url: "https://llr.sc.gov/re/",
+      desc: "The South Carolina Real Estate Commission's official site -- the authoritative source for broker licensing law, regulations, and the licensing process.",
+      topic: "General Reference", free: true },
+    { title: "South Carolina Real Estate License Act (S.C. Code of Laws, Title 40, Chapter 57)", type: "pdf", url: "https://www.scstatehouse.gov/code/t40c057.php",
+      desc: "The South Carolina Real Estate License Act -- the statutory basis for the Broker exam's state-specific portion, including broker-in-charge, trust account, and disciplinary provisions.",
+      topic: "General Reference", free: true },
+    { title: "PSI South Carolina Real Estate Candidate Information Bulletin", type: "link", url: "https://test-takers.psiexams.com/scre",
+      desc: "PSI's official South Carolina real estate exam page -- the authoritative source for the Broker exam's mechanics (125 items, two separately-scored portions) and content outline.",
       topic: "General Reference", free: true },
   ],
   sd_re_salesperson: [
@@ -10032,6 +10107,12 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/mdre/',
       desc: 'PSI\'s official Maryland real estate exam registration and scheduling portal; PSI is Maryland\'s designated testing vendor.' },
   ],
+  md_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://labor.maryland.gov/license/mrec/mrecexam.shtml',
+      desc: 'The Maryland Real Estate Commission\'s official \'Taking the Exam\' page, under the Department of Labor\'s Division of Occupational and Professional Licensing.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/api/content/bulletin/529',
+      desc: 'PSI\'s official Maryland Real Estate Candidate Information Bulletin, covering the Broker exam\'s National and State portion mechanics and content outlines.' },
+  ],
   me_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://www.maine.gov/pfr/professionallicensing/professions/real-estate-commission',
       desc: 'The Maine Real Estate Commission\'s official licensing page under the Office of Professional and Occupational Regulation.' },
@@ -10049,6 +10130,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Minnesota Department of Commerce\'s official page for real estate salesperson licensing.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/mnre',
       desc: 'PSI Exams\' official Minnesota real estate salesperson exam registration portal, as directed by the Department of Commerce.' },
+  ],
+  mn_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://mn.gov/commerce/licensees/real-estate/',
+      desc: 'The Minnesota Department of Commerce\'s official page for real estate broker licensing.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/mnre',
+      desc: 'PSI Exams\' official Minnesota real estate exam registration portal, as directed by the Department of Commerce; the same bulletin covers both Salesperson and Broker exam mechanics.' },
   ],
   mo_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://pr.mo.gov/realestate.asp',
@@ -10175,6 +10262,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The South Carolina Department of Labor, Licensing and Regulation\'s official Real Estate Commission page for salesperson licensing.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/scre',
       desc: 'PSI\'s official South Carolina real estate candidate portal for registering and scheduling the state licensing exam.' },
+  ],
+  sc_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://llr.sc.gov/re/',
+      desc: 'The South Carolina Department of Labor, Licensing and Regulation\'s official Real Estate Commission page for broker licensing.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/scre',
+      desc: 'PSI\'s official South Carolina real estate candidate portal for registering and scheduling the Broker exam.' },
   ],
   sd_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://dlr.sd.gov/realestate/exam_information.aspx',
