@@ -1076,6 +1076,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* Resources/Info panels (2026-08-30) aren't login-gated at all, so they show real, unblurred
    content -- this modifier overrides the blur/dim/no-interaction styling above for just those two. */
 .locked-preview-mockup.is-open { filter: none; opacity: 1; pointer-events: auto; user-select: auto; }
+/* Distinct light panel tone for just the gated (quiz/exam/progress) mockups, added 2026-09-02
+   alongside the "Preview only" badge -- var(--surface-2) is the same "secondary panel" token used
+   elsewhere sitewide (how-it-works, comparison table), theme-aware in both light/dark automatically
+   since it's an existing root variable, not a new hardcoded color. Excluded from
+   resources/info (.is-open) since those already read as real content via their own nested .card
+   elements and shouldn't look like part of the "this is a mockup" treatment. */
+.locked-preview-mockup:not(.is-open) { background: var(--surface-2); border-radius: var(--radius-lg); }
+.locked-preview-badge, .locked-preview-badge-live { position: relative; margin-bottom: 0.6rem; display: inline-block; }
+.locked-preview-badge-live { background: color-mix(in srgb, var(--correct) 18%, transparent); color: var(--correct); border-color: color-mix(in srgb, var(--correct) 35%, transparent); margin-left: 0.5rem; vertical-align: middle; }
 .locked-preview-resource-card { margin-bottom: 0.75rem; }
 .locked-preview-resource-card:last-child { margin-bottom: 0; }
 .locked-preview-resource-title { font-weight: 700; }

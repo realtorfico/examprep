@@ -9268,9 +9268,13 @@ async function renderProgress() {
 var trackLandingSample = { question: null, selected: null, answered: null };
 
 function trackLandingSampleWidgetHtml() {
+  // "Live" badge (added 2026-09-02) pairs with the "Preview only" badge on the locked mockup
+  // panels further down this same page (trackLandingPreviewHtml()) -- without it, this real,
+  // answerable question and that illustrative mockup looked like the same kind of thing at a
+  // glance, since both reuse the same .options-grid/.option-btn markup.
   return '<section class="category-sample" id="track-landing-sample">' +
     '<p class="section-eyebrow">Try before you buy</p>' +
-    '<h2 class="comparison-heading">Interactive Sample Question</h2>' +
+    '<h2 class="comparison-heading">Interactive Sample Question <span class="badge locked-preview-badge-live">Live</span></h2>' +
     '<div class="card" id="track-landing-sample-wrap"><p class="muted">Loading…</p></div>' +
     '</section>';
 }
@@ -9440,7 +9444,13 @@ function renderTrackLanding() {
 // this site has always shown to logged-out visitors.
 function trackLandingPreviewHtml(exam) {
   var firstTopic = (exam.breakdown && exam.breakdown[0] && exam.breakdown[0][0]) || 'the exam topics';
+  // "Preview only" badge (added 2026-09-02) -- makes it visually obvious at a glance that these
+  // three gated panels are illustrative mockups, not real interactive content, regardless of tab
+  // state or the mockup's own (deliberately light, see .locked-preview-mockup's own comment) blur.
+  // Resources/Info panels don't get it since they show real, unblurred, un-gated content.
+  var previewOnlyBadge = '<span class="badge locked-preview-badge">Preview only</span>';
   var quizPanel = '<div class="locked-preview-quiz">' +
+    previewOnlyBadge +
     '<p class="muted locked-preview-meta">Question 4 of ' + exam.questions + ' · ' + escapeHtml(firstTopic) + '</p>' +
     '<h4>Sample question about ' + escapeHtml(firstTopic) + '</h4>' +
     '<div class="options-grid">' + ['A', 'B', 'C', 'D'].map(function (k) {
@@ -9448,12 +9458,14 @@ function trackLandingPreviewHtml(exam) {
     }).join('') + '</div>' +
     '</div>';
   var examPanel = '<div class="locked-preview-exam">' +
+    previewOnlyBadge +
     '<div class="locked-preview-exam-bar"><span>Mock exam in progress</span><span>28:14</span></div>' +
     '<div class="breakdown-bar locked-preview-exam-track"><div class="breakdown-bar-fill pct-33"></div></div>' +
     '<p class="muted">' + exam.questions + ' · ' + exam.duration + ' · pass at ' + exam.passScore + '</p>' +
     '<div class="card"><p>No feedback until you finish — just like the real thing.</p></div>' +
     '</div>';
   var progressPanel = '<div class="locked-preview-progress-panel">' +
+    previewOnlyBadge +
     radialProgressSvg(82, { size: 96, strokeWidth: 9, label: 'Accuracy' }) +
     radialProgressSvg(64, { size: 96, strokeWidth: 9, label: 'Coverage', color: 'var(--highlight)' }) +
     '</div>';
