@@ -1968,6 +1968,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Requirements Governing Licensees (Advertising, Agency, Disclosures & Commissions)', '33%'], ['Consumer Protection Laws', '12%'], ['Licensing Requirements', '10%'], ['Massachusetts Fair Housing Law', '10%'], ['Environmental Issues & Hazardous Materials', '10%'], ['Landlord Tenant Law', '10%'], ['Duties & Powers of the Board of Registration', '5%'], ['Contracts', '5%'], ['Additional Topics (Ownership, Condominiums & Registered Land)', '5%']],
   },
   {
+    examType: 'ma_re_broker',
+    title: 'Massachusetts Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ma',
+    duration: '240 Minutes (150 Min General + 90 Min State)', questions: '115 Multiple Choice (75 General + 40 State-Specific)', passScore: '70% on Both Portions',
+    description: 'Practice questions covering PSI Services LLC\'s official Massachusetts Real Estate Broker exam content outline (administered on behalf of the Division of Occupational Licensure Board of Registration of Real Estate Brokers and Salespersons): a separately-scored, separately-timed General portion (75 items -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, property management, transfer of title, practice of real estate, and real estate calculations) plus a separately-scored Massachusetts-specific portion (40 items -- requirements governing licensees, licensing requirements, duties and powers of the Board, Massachusetts contract forms, consumer protection laws, environmental issues and hazardous materials including the Lead Law and Title 5 septic regulations, Massachusetts Fair Housing Law, landlord tenant law, and additional topics including registered land). PSI\'s own Candidate Information Bulletin confirms 70% required to pass EACH portion independently within a combined 4-hour time limit (150 minutes general, 90 minutes state); 5-10 unscored experimental items may also appear.',
+    breakdown: [['Contracts (National)', '12%'], ['Requirements Governing Licensees (MA)', '12%'], ['Agency (National)', '8%'], ['Practice of Real Estate (National)', '8%'], ['Property Ownership (National)', '7%'], ['Financing (National)', '6%'], ['Valuation (National)', '5%'], ['Property Disclosures (National)', '5%'], ['Licensing Requirements (MA)', '4%'], ['Consumer Protection Laws (MA)', '4%'], ['Transfer of Title (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%'], ['Environmental Issues & Hazardous Materials (MA)', '3%'], ['Massachusetts Fair Housing Law (MA)', '3%'], ['Landlord Tenant Law (MA)', '3%'], ['Duties & Powers of the Board (MA)', '2%'], ['Massachusetts Contract Forms (MA)', '2%'], ['Additional Topics (MA)', '2%']],
+  },
+  {
     examType: 'md_re_salesperson',
     title: 'Maryland Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/md',
     duration: '30 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: '21/30 Correct (70%)',
@@ -4199,6 +4206,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 40-hour pre-licensure education requirement for a Massachusetts real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in M.G.L. c. 112, &sect;&sect; 87PP&ndash;87DDD 1/2 and 254 CMR 2.00&ndash;7.00), not the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Board of Registration of Real Estate Brokers and Salespersons, and pre-licensure education must be completed through a Board-approved school. Massachusetts scores the General and State portions of the exam independently — candidates who pass one portion and fail the other are only required to retake the failed portion (within the authorized period) — and this practice exam models only the 40-question State portion at its real 70%-correct passing threshold, not the combined 120-question sitting. While we strive to align our content with the current PSI Candidate Information Bulletin and Massachusetts statute and regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Board of Registration exam or the required 40-hour pre-licensure education.",
     passScoreNote: "the same threshold as the real state-specific portion — 28 of 40 correct (70%)",
+  },
+  ma_re_broker: {
+    orgLine: "the Massachusetts Board of Registration of Real Estate Brokers and Salespersons",
+    footerRequirement: "do not fulfill the 40-hour pre-licensure broker education requirement, the 3-year active-salesperson affiliation requirement, or the $5,000 surety bond requirement for a Massachusetts real estate broker license",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 40-hour pre-licensure broker education requirement, the requirement of at least 3 years of active licensed affiliation as a Massachusetts salesperson (at a minimum of 25 hours per week, no more than 2 years old at exam time), the $5,000 surety bond, or the three candidate endorsements required for a Massachusetts real estate broker license — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in PSI Services LLC's own official Massachusetts Real Estate Broker exam content outline and Massachusetts General Laws Chapter 112, Sections 87PP&ndash;87DDD 1/2. Massachusetts scores the General and State portions of the exam independently &mdash; candidates who pass one portion and fail the other are only required to retake the failed portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Board of Registration of Real Estate Brokers and Salespersons, and broker prelicensure education must be completed through a Board-approved school. While we strive to align our content with the current PSI Candidate Information Bulletin and Massachusetts statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Massachusetts Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 70% on both the General and Massachusetts-specific portions, confirmed via the official PSI Candidate Information Bulletin",
   },
   md_re_salesperson: {
     orgLine: "the Maryland Real Estate Commission (MREC)",
@@ -7492,6 +7506,20 @@ var RESOURCES = {
       desc: "The Board's official regulations page listing the current 254 CMR rules on licensure procedure, professional standards, real estate schools, continuing education, and rental fee disclosure.",
       topic: "General Reference", free: true },
   ],
+  ma_re_broker: [
+    { title: "Massachusetts Board of Registration of Real Estate Brokers and Salespersons", type: "pdf", url: "https://www.mass.gov/orgs/board-of-registration-of-real-estate-brokers-and-salespersons",
+      desc: "The Massachusetts Board of Registration of Real Estate Brokers and Salespersons' official site — the authoritative source for licensing law and regulations.",
+      topic: "General Reference", free: true },
+    { title: "M.G.L. c. 112, Sections 87PP-87DDD 1/2 (Real Estate Brokers and Salesmen)", type: "pdf", url: "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXVI/Chapter112",
+      desc: "The Massachusetts General Laws chapter creating the Board of Registration of Real Estate Brokers and Salespersons and governing licensing, conduct, agency disclosure, and discipline.",
+      topic: "General Reference", free: true },
+    { title: "254 CMR 2.00-7.00 (Code of Massachusetts Regulations)", type: "pdf", url: "https://www.mass.gov/lists/statutes-and-regulations-real-estate-brokers-and-salespersons",
+      desc: "The Board's official regulations page listing the current 254 CMR rules on licensure procedure, professional standards, real estate schools, continuing education, and rental fee disclosure.",
+      topic: "General Reference", free: true },
+    { title: "PSI Massachusetts Real Estate Candidate Information Bulletin", type: "link", url: "https://test-takers.psiexams.com/mare",
+      desc: "PSI's official Massachusetts real estate exam page -- the authoritative source for the Broker exam's mechanics (115 items, two separately-scored portions) and content outline.",
+      topic: "General Reference", free: true },
+  ],
   md_re_salesperson: [
     { title: "Md. Code Ann., Business Occupations and Professions Article, Title 17 (Real Estate Brokers)", type: "pdf", url: "https://mgaleg.maryland.gov/2023RS/Statute_Web/gbo/gbo.pdf",
       desc: "The official compiled statute published by the Maryland General Assembly, Department of Legislative Services — the authoritative statutory basis for the state-specific portion of the exam.",
@@ -9963,6 +9991,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Massachusetts Board of Registration of Real Estate Brokers and Salespersons\' official licensing page.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.psiexams.com/test-takers/massachusetts-real-estate/',
       desc: 'PSI\'s official Massachusetts real estate license exam registration and scheduling page; PSI is Massachusetts\'s designated testing vendor.' },
+  ],
+  ma_re_broker: [
+    { title: 'Board of Registration Site', url: 'https://www.mass.gov/orgs/board-of-registration-of-real-estate-brokers-and-salespersons',
+      desc: 'The Massachusetts Board of Registration of Real Estate Brokers and Salespersons\' official licensing page.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/mare',
+      desc: 'PSI\'s official Massachusetts real estate exam page, confirming the Broker exam\'s 115-item, two-portion (General + Massachusetts-specific), 70%-passing structure.' },
   ],
   md_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://labor.maryland.gov/license/mrec/mrecexam.shtml',
