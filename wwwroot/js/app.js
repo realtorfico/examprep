@@ -5878,12 +5878,13 @@ function categoryCurrentTrackHtml() {
     // Quick-buy CTA (added 2026-09-02) -- lets an already-decided visitor skip straight to
     // checkout instead of going through the track detail page first (which is still the default
     // path via the card link above, and still matters for a first-time visitor who hasn't seen
-    // sample questions/the guarantee yet). Sets state.examType itself since #/buy is a hash route
-    // that reads that global rather than a URL param -- same thing route() does when a track page
-    // itself loads, see its own "state.examType = track.examType" line.
+    // sample questions/the guarantee yet). Navigates to the track's own route with #/buy appended
+    // rather than just setting location.hash while staying on this category pathname -- #/buy is
+    // only handled by renderTrackApp()'s dispatch, which route() only reaches once the pathname
+    // itself has resolved to a real track (see the delegated click handler's own comment on this).
     '<div class="exam-track-footer category-nav-card-footer">' +
     '<a class="category-nav-card-link exam-track-view-link" href="' + track.route + '">View details &amp; pricing →</a>' +
-    '<button type="button" class="btn-primary btn-sm" data-act="category-quick-buy" data-exam-type="' + track.examType + '">Buy now</button>' +
+    '<button type="button" class="btn-primary btn-sm" data-act="category-quick-buy" data-track-route="' + track.route + '">Buy now</button>' +
     '</div>' +
     '</div></div>';
 }
@@ -12876,12 +12877,14 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'go-back') {
     history.back();
   } else if (act === 'category-quick-buy') {
-    var quickBuyExamType = el.getAttribute('data-exam-type');
-    var wasAlreadyOnBuy = location.hash === '#/buy';
-    state.examType = quickBuyExamType;
-    rememberLastViewedTrack(quickBuyExamType);
-    location.hash = '#/buy';
-    if (wasAlreadyOnBuy) route(); // hash didn't change (no hashchange event fires) -- force a render with the new examType
+    // #/buy is only handled by renderTrackApp()'s hash dispatch, which route() only ever reaches
+    // once location.pathname has already matched a real track route (see route()'s own "var track
+    // = activeTrackForPath(...)" branch) -- it does NOT fire from a category page's bare pathname,
+    // so just setting location.hash while staying put here would silently no-op. A real navigation
+    // to the track's own page with the hash already appended lands directly on the buy form once
+    // that fresh load's route() resolves the pathname to this track.
+    var quickBuyRoute = el.getAttribute('data-track-route');
+    if (quickBuyRoute) location.href = quickBuyRoute + '#/buy';
   } else if (act === 'blog-load-more') {
     blogListState.visibleCount = Math.min(blogListState.visibleCount + BLOG_PAGE_SIZE, blogListState.shown.length);
     drawBlogList();
