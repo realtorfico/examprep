@@ -5987,9 +5987,13 @@ function categorySampleSubheadHtml(track) {
 function categorySampleWidgetHtml() {
   var track = categoryPageState.repTrack;
   if (!track) return '';
+  // "Live" badge (added 2026-09-02) for consistency with the track landing page's identical
+  // widget (trackLandingSampleWidgetHtml()) -- this page has no competing locked-mockup nearby to
+  // disambiguate from, but the same real, answerable widget should look the same everywhere it
+  // appears rather than only being labeled on one of its two surfaces.
   return '<section class="category-sample" id="category-sample">' +
     '<p class="section-eyebrow">Try before you buy</p>' +
-    '<h2 class="comparison-heading">Interactive Sample Question</h2>' +
+    '<h2 class="comparison-heading">Interactive Sample Question <span class="badge locked-preview-badge-live">Live</span></h2>' +
     '<p class="muted" id="category-sample-subhead">' + categorySampleSubheadHtml(track) + '</p>' +
     '<div class="card" id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
     '</section>';
