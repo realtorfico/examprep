@@ -421,6 +421,7 @@ function renderSiteFooter() {
     '<li><a href="#/faq">FAQ</a></li>' +
     '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
     '<li><a href="#/pass-rates">Pass rate transparency</a></li>' +
+    '<li><a href="#/changelog">Exam mechanics changelog</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
     '<li><a href="#/contact">Contact us</a></li>' +
     '</ul></div>';
@@ -1396,6 +1397,53 @@ function renderPassRates() {
       '<p class="guide-source-note">Only fully completed (submitted) practice exams count. Each attempt is scored against the ' +
       'passing threshold that applied to it at the time it was taken. See our <a href="#/guarantee">pass-or-refund guarantee</a> ' +
       'for what this backs, or browse per-state exam mechanics on our <a href="/guides/notary-requirements-by-state">requirements-by-state guides</a>.</p>' +
+      '</div>';
+  });
+}
+
+// Public exam-mechanics changelog (#/changelog) -- marketing round 3, item #1. Real, dated
+// corrections only (see examprep-api's track_registry_changelog schema comment for why this can
+// never contain a fabricated/backfilled history): a row only exists here because an admin actually
+// changed a track's real mechanics via the console, with a mandatory reason. A visitor with no
+// entries yet sees an honest empty state, not padded content.
+var CHANGELOG_FIELD_LABELS = {
+  exam_question_count: 'Question count', exam_duration_sec: 'Exam duration',
+  pass_percent: 'Passing score', min_correct: 'Minimum correct',
+};
+function changelogValueLabel(field, value) {
+  if (value == null) return '—';
+  if (field === 'exam_duration_sec') return Math.round(Number(value) / 60) + ' min';
+  if (field === 'pass_percent') return value + '%';
+  return value;
+}
+function renderChangelog() {
+  appEl.innerHTML = '<div class="narrow-page"><h1>Exam Mechanics Changelog</h1><p class="muted">Loading…</p></div>';
+  apiFetch('/changelog').then(function (res) {
+    var items = (res && res.items) || [];
+    var rows = items.map(function (it) {
+      var trackHref = (it.kind && HUB_KIND_SLUGS[it.kind] && it.stateCode)
+        ? '/' + kindSlug(it.kind) + '/' + it.stateCode.toLowerCase() : null;
+      var trackLabelHtml = trackHref ? '<a href="' + trackHref + '">' + escapeHtml(it.trackLabel) + '</a>' : escapeHtml(it.trackLabel);
+      var fieldLabel = CHANGELOG_FIELD_LABELS[it.field] || it.field;
+      return '<div class="card changelog-entry">' +
+        '<div class="changelog-entry-top"><strong>' + trackLabelHtml + '</strong>' +
+        '<span class="muted">' + new Date(it.changedAt * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + '</span></div>' +
+        '<p class="changelog-entry-change">' + escapeHtml(fieldLabel) + ': ' + escapeHtml(changelogValueLabel(it.field, it.oldValue)) +
+        ' → <strong>' + escapeHtml(changelogValueLabel(it.field, it.newValue)) + '</strong></p>' +
+        '<p class="muted changelog-entry-reason">' + escapeHtml(it.reason) + '</p>' +
+        '</div>';
+    }).join('');
+
+    appEl.innerHTML =
+      '<div class="narrow-page changelog-page">' +
+      '<span class="section-eyebrow">Real, dated corrections</span>' +
+      '<h1>Exam Mechanics Changelog</h1>' +
+      '<p class="page-intro-text">Every question count, time limit, and passing score on PassExamHQ is sourced from the current ' +
+      'official handbook or statute for that state. When we catch a real correction — a source we misread, a bulletin the state ' +
+      'updated — it\'s logged here, with the reason, rather than silently edited. ' +
+      (items.length ? 'This log currently covers ' + items.length + ' correction' + (items.length === 1 ? '' : 's') + '.' :
+        'Nothing has needed correcting yet — this page will show real entries as they happen.') + '</p>' +
+      (rows || '<p class="muted">No corrections logged yet.</p>') +
       '</div>';
   });
 }
@@ -13014,6 +13062,7 @@ function route() {
   if (hashView === 'guarantee') { renderGuarantee(); return; }
   if (hashView === 'pass-rates') { renderPassRates(); return; }
   if (hashView === 'embed') { renderEmbedGenerator(); return; }
+  if (hashView === 'changelog') { renderChangelog(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
   // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the
   // server resolve which track it belongs to, so unlike refer/sample/buy (which really are
