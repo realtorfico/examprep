@@ -2003,6 +2003,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Business Conduct & Practices', '42%'], ['Licenses & Application Requirements', '18%'], ['Disciplinary Proceedings & Enforcement', '15%'], ['Brokerage Relationships & Agency Disclosure', '15%'], ['General Rules, Definitions & Educational Requirements', '10%']],
   },
   {
+    examType: 'mo_re_broker',
+    title: 'Missouri Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/mo',
+    duration: '270 Minutes (150 Min National + 120 Min State)', questions: '165 Multiple Choice (90 National + 75 State-Specific)', passScore: '75% on Both Portions',
+    description: 'Practice questions covering PSI Services LLC\'s official Missouri Real Estate Broker exam content outline (administered on behalf of the Missouri Real Estate Commission): a separately-scored, separately-timed National portion (90 items -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, broker-level property management, transfer of title, broker-level practice of real estate and supervisory responsibilities, and real estate calculations) plus a separately-scored Missouri-specific portion (75 items -- licenses and continuing education requirements, business conduct and practices including office/branch/personnel administration, advertising, escrow and trust accounts, earnest money disputes, closings and commissions, disciplinary proceedings, listing/offer/closing contract forms and costs, and brokerage relationships). PSI\'s official Missouri Real Estate Candidate Handbook confirms 75% required to pass EACH portion independently within a combined 270-minute time limit (150 minutes national, 120 minutes state); 5-10 unscored experimental items may also appear. Missouri\'s disciplinary process is notably distinctive: contested cases go first to the independent Administrative Hearing Commission, whose finding is not binding on the Real Estate Commission, which holds its own separate hearing to decide actual discipline. Missouri also imposes a real statutory minimum-services requirement (RSMo 339.780.7) that a broker must provide even under a limited-service listing agreement.',
+    breakdown: [['Transactions, Escrow & Commissions (MO)', '10%'], ['Contracts (National)', '10%'], ['Office & Personnel Administration (MO)', '9%'], ['Agency (National)', '7%'], ['Practice of Real Estate (National)', '7%'], ['Listing, Offer & Closing Contract Forms and Costs (MO)', '7%'], ['Property Ownership (National)', '5%'], ['Financing (National)', '5%'], ['Licenses & Educational Requirements (MO)', '5%'], ['Disciplinary Proceedings (MO)', '5%'], ['Valuation (National)', '4%'], ['Property Disclosures (National)', '4%'], ['Brokerage Relationships (MO)', '4%'], ['Transfer of Title (National)', '3%'], ['Real Estate Calculations (National)', '3%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%'], ['Advertising & Franchises (MO)', '3%'], ['Records & Property Management (MO)', '3%']],
+  },
+  {
     examType: 'ms_re_salesperson',
     title: 'Mississippi Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ms',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
@@ -4241,6 +4248,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 48-hour salesperson pre-examination course requirement for a Missouri real estate salesperson license (or the separate 24-hour Missouri Real Estate Practice (MREP) course required before submitting a license application), and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Missouri Real Estate Practice Act, RSMo Chapter 339, and the statutory Agency Relationships subchapter, RSMo 339.710-339.855) — not the separate 100-question national/general portion, and not every topic on PSI's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Missouri Real Estate Commission, and pre-examination education must be completed through an MREC-accredited real estate school. While we strive to align our content with the current PSI Candidate Handbook and Missouri statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 48-hour pre-examination education.",
     passScoreNote: "the same threshold as the real state-specific portion — 30 of 40 correct (75%), a straight raw-count percentage, not a scaled score",
+  },
+  mo_re_broker: {
+    orgLine: "the Missouri Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill the 2 years of active licensure as a Missouri real estate salesperson or the broker pre-license curriculum requirement (RSMo 339.040) for a Missouri real estate broker license",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the requirement of 2 years of active licensure as a Missouri real estate salesperson or the broker pre-license curriculum required under RSMo 339.040, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in PSI Services LLC's own official Missouri Real Estate Candidate Handbook and the Missouri Real Estate Practice Act (RSMo Chapter 339) together with the Missouri Real Estate Commission's regulations (20 CSR 2250). Missouri scores the National and State portions of the exam independently — candidates must pass each portion at 75%. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Missouri Real Estate Commission, and broker pre-license education must be completed through an MREC-accredited real estate school. While we strive to align our content with the current PSI Candidate Handbook and Missouri statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Missouri Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% on both the National and Missouri-specific portions, confirmed via the official PSI Candidate Handbook",
   },
   ms_re_salesperson: {
     orgLine: "the Mississippi Real Estate Commission (MREC)",
@@ -7558,6 +7572,20 @@ var RESOURCES = {
       desc: "The Missouri Real Estate Commission's official site — the state agency that licenses and regulates real estate brokers and salespersons under RSMo Chapter 339.",
       topic: "General Reference", free: true },
   ],
+  mo_re_broker: [
+    { title: "RSMo Chapter 339 (Real Estate Agents, Brokers, Appraisers and Escrow Agents)", type: "pdf", url: "https://revisor.mo.gov/main/OneChapter.aspx?chapter=339",
+      desc: "The official Missouri Revised Statutes chapter published by the Missouri Revisor of Statutes — the authoritative statutory basis for the state-specific portion of the Broker exam, covering broker licensing, brokerage relationships, business conduct, escrow accounts, and discipline.",
+      topic: "General Reference", free: true },
+    { title: "Missouri Real Estate Candidate Handbook (PSI)", type: "pdf", url: "https://pr.mo.gov/boards/realestate/MOREP-handbook.pdf",
+      desc: "The official PSI candidate handbook for Missouri's real estate licensing exams, published by the Missouri Real Estate Commission — includes the Broker exam's National and State content outlines with item counts per topic, exam-day policies, and score reporting.",
+      topic: "General Reference", free: true },
+    { title: "20 CSR 2250 (Missouri Real Estate Commission Rules)", type: "pdf", url: "https://www.sos.mo.gov/adrules/csr/current/20csr/20csr.asp",
+      desc: "The Missouri Secretary of State's Code of State Regulations index, Division 2250 — the Commission's rules on broker supervision, branch offices, advertising, franchises, records retention, and property management trust accounts.",
+      topic: "General Reference", free: true },
+    { title: "Missouri Real Estate Commission (MREC)", type: "pdf", url: "https://pr.mo.gov/realestate.asp",
+      desc: "The Missouri Real Estate Commission's official site — the state agency that licenses and regulates real estate brokers and salespersons under RSMo Chapter 339.",
+      topic: "General Reference", free: true },
+  ],
   ms_re_salesperson: [
     { title: "Mississippi Real Estate License Law (Miss. Code Ann. §§ 73-35-1 to 73-35-105, plus §§ 89-1-501 to 89-1-527)", type: "pdf", url: "https://www.mrec.ms.gov/wp-content/uploads/2026/07/MREC_LICENSE_LAW_2026_REVISED-7-01-2026.pdf",
       desc: "The Mississippi Real Estate Commission's own compiled statute text (Real Estate Brokers License Law of 1954, plus the bundled residential property condition disclosure statute) — the authoritative source the licensing, conduct, and discipline provisions are based on.",
@@ -10027,6 +10055,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Missouri Real Estate Commission\'s official page for licensing, applications, and exam eligibility.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/api/content/bulletin/4645',
       desc: 'PSI Services\' official Missouri real estate salesperson exam candidate handbook.' },
+  ],
+  mo_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://pr.mo.gov/realestate.asp',
+      desc: 'The Missouri Real Estate Commission\'s official page for licensing, applications, and exam eligibility.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://pr.mo.gov/boards/realestate/MOREP-handbook.pdf',
+      desc: 'PSI Services\' official Missouri real estate Broker exam candidate handbook, covering both the National and State portion content outlines.' },
   ],
   ms_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://www.mrec.ms.gov/applicants-2/',
