@@ -1230,6 +1230,22 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-card-grid .exam-track-card:hover .exam-track-view-link {
   background: var(--accent-hover); text-decoration: none;
 }
+/* The single "current track" card's footer (categoryCurrentTrackHtml(), added 2026-09-02) splits
+   into two actions instead of one full-width link: "View details" for a first-time visitor who
+   still wants the sample questions/guarantee on the track page, "Buy now" for an already-decided
+   one who wants to skip straight to checkout. Buy now gets the solid/primary treatment (it's the
+   faster path this addition exists for); View details steps back to a plain bordered secondary
+   button rather than competing for the same visual weight. */
+.category-nav-card-footer {
+  display: flex; gap: 0.5rem;
+}
+.category-nav-card-footer .exam-track-view-link {
+  flex: 1; background: transparent; color: var(--accent); border: 1px solid var(--border);
+}
+.category-nav-card-footer .btn-primary {
+  flex: 1; width: auto;
+}
+.category-nav-card-link { display: block; text-decoration: none; color: inherit; }
 /* Visual separator between the two homepage category-card groups (2026-08-31 ordering) -- a plain
    spaced rule, not a section header, since both groups already sit under one "Browse by Category"
    heading. */

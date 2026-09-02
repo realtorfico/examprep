@@ -1884,6 +1884,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Timeshares, Membership Camping & Cemetery Regulation', '24%'], ['Licensing, Education & Department Administration', '22%'], ['Disciplinary Grounds, Recovery Fund, Advertising & Conduct Rules', '21%'], ['Definitions, Trust Accounts, Property Management & Consumer Statutes', '18%'], ['Subdivided & Unsubdivided Land Sales', '15%']],
   },
   {
+    examType: 'az_re_broker',
+    title: 'Arizona Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/az',
+    duration: '315 Minutes', questions: '180 Multiple Choice (Single Combined Exam)', passScore: '135/180 Correct (75%)',
+    description: 'Practice questions covering Pearson VUE\'s official Arizona Real Estate Broker Examination Content Outline (administered on behalf of the Arizona Department of Real Estate, ADRE): a single combined 180-item exam -- unlike some states, Arizona does not separately score a national and state portion. Topics include Arizona Real Estate Statutes (A.R.S. Title 32, Chapter 20), Commissioner\'s Rules (A.A.C. Title 4, Chapter 28), agency relationships and managerial duties, contracts, property interests and tenancies, government rights and land descriptions, encumbrances and title transfer, deed of trust foreclosure, escrow and trust accounting, fair housing and consumer protection, leases, property insurance and appraisal, Arizona water and environmental law, financing, and real estate math calculations. 15 additional unscored pretest items may appear during the sitting but do not count toward the 180-item score; 75% (135 of 180) is required to pass.',
+    breakdown: [['Real Estate Statutes', '16%'], ['Encumbrances, Transfer of Title & Foreclosure', '9%'], ['Commissioner\'s Rules', '10%'], ['Agency Relationships & Managerial Duties', '8%'], ['Financing Concepts & Income Tax Aspects', '7%'], ['Government Rights, Land Descriptions & Development', '7%'], ['Escrow, Settlement & Accounting', '6%'], ['Fair Housing & Consumer Protection', '6%'], ['Leases & Leasehold Estates', '6%'], ['Arizona Water & Environmental Law', '6%'], ['Math Calculations', '6%'], ['Contracts & Contract Law', '5%'], ['Property Interests, Estates & Tenancies', '5%'], ['Property Insurance & Appraisal', '3%']],
+  },
+  {
     examType: 'co_re_salesperson',
     title: 'Colorado Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/co',
     duration: '110 Minutes', questions: '74 Multiple Choice (State Portion)', passScore: '53/74 Correct (71.6%)',
@@ -4109,6 +4116,13 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real ADRE Salesperson exam or the required 90-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion — 45 of 60 correct (75%)",
   },
+  az_re_broker: {
+    orgLine: "the Arizona Department of Real Estate (ADRE)",
+    footerRequirement: "do not fulfill Arizona's broker prelicensure education requirement, the 3-years-of-licensed-experience prerequisite, the Broker Candidate Experience Verification (Form LI-226), or any Arizona Fingerprint Clearance Card requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Arizona's broker prelicensure education requirement, the requirement of at least 3 years of active full-time licensed experience as a salesperson or broker within the immediately preceding 5-year period, the Broker Candidate Experience Verification Form (LI-226) signed by a designated/employing broker, or the Level 1 non-IVP Arizona Fingerprint Clearance Card required at license application — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in Pearson VUE's own official Arizona Real Estate Broker Examination Content Outline: Arizona Real Estate Statutes (A.R.S. Title 32, Chapter 20), Commissioner's Rules (A.A.C. Title 4, Chapter 28), and the exam's other real topic areas. Unlike some states, Arizona's Broker exam is a single combined 180-item exam rather than separately-scored national and state portions. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of ADRE, and broker prelicensure education must be completed through an ADRE-approved school. While we strive to align our content with the current Arizona Real Estate Law Book and ADRE Rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Arizona Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% (135 of 180 correct), confirmed via Pearson VUE's official Candidate Handbook",
+  },
   co_re_salesperson: {
     orgLine: "the Colorado Real Estate Commission",
     footerRequirement: "do not fulfill Colorado's 168-hour pre-license education requirement (Real Estate Law and Practice, Colorado Contracts and Regulations, Trust Accounts and Recordkeeping, Current Legal Issues, Real Estate Closings, and Practical Applications) or any Colorado real estate broker training requirement",
@@ -5849,7 +5863,8 @@ function categoryCurrentTrackHtml() {
     track.passScore ? 'Passing score: ' + track.passScore : '',
   ].filter(Boolean);
   return '<div class="exam-track-grid category-card-grid category-current-track-grid">' +
-    '<a class="exam-track-card is-active category-nav-card" href="' + track.route + '">' +
+    '<div class="exam-track-card is-active category-nav-card">' +
+    '<a class="category-nav-card-link" href="' + track.route + '">' +
     '<div class="exam-track-body">' +
     '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[track.examKind] || '📚') + '</div>' +
     '<div class="category-nav-card-content">' +
@@ -5859,8 +5874,18 @@ function categoryCurrentTrackHtml() {
     (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
     (track.active ? '<span class="category-nav-card-statecount"><span class="pulse-dot"></span> Active — start now</span>' : '') +
     '</div></div>' +
-    '<div class="exam-track-footer"><span class="exam-track-view-link">View details &amp; pricing →</span></div>' +
-    '</a></div>';
+    '</a>' +
+    // Quick-buy CTA (added 2026-09-02) -- lets an already-decided visitor skip straight to
+    // checkout instead of going through the track detail page first (which is still the default
+    // path via the card link above, and still matters for a first-time visitor who hasn't seen
+    // sample questions/the guarantee yet). Sets state.examType itself since #/buy is a hash route
+    // that reads that global rather than a URL param -- same thing route() does when a track page
+    // itself loads, see its own "state.examType = track.examType" line.
+    '<div class="exam-track-footer category-nav-card-footer">' +
+    '<a class="category-nav-card-link exam-track-view-link" href="' + track.route + '">View details &amp; pricing →</a>' +
+    '<button type="button" class="btn-primary btn-sm" data-act="category-quick-buy" data-exam-type="' + track.examType + '">Buy now</button>' +
+    '</div>' +
+    '</div></div>';
 }
 
 function categoryActiveTracks(kind) {
@@ -7326,6 +7351,17 @@ var RESOURCES = {
       topic: "General Reference", free: true },
     { title: "Pearson VUE — Arizona Real Estate Candidate Handbook", type: "pdf", url: "https://www.pearsonvue.com/us/en/az/realestate.html",
       desc: "Pearson VUE's official Arizona real estate licensing page, including the Candidate Handbook and the state-specific exam content outline — Pearson VUE administers the licensing exam on ADRE's behalf.",
+      topic: "General Reference", free: true },
+  ],
+  az_re_broker: [
+    { title: "Arizona Real Estate Law Book (ADRE)", type: "pdf", url: "https://azre.gov/resources/law-book",
+      desc: "The official compiled statute and rule reference published by the Arizona Department of Real Estate — reproduces A.R.S. Title 32, Chapter 20 and A.A.C. Title 4, Chapter 28 verbatim, and is the authoritative source this practice content is grounded in.",
+      topic: "General Reference", free: true },
+    { title: "Arizona Department of Real Estate (ADRE)", type: "pdf", url: "https://azre.gov",
+      desc: "The Arizona Department of Real Estate's official site — the state agency that licenses and regulates real estate, cemetery, membership camping, subdivided land and timeshare activity in Arizona.",
+      topic: "General Reference", free: true },
+    { title: "Pearson VUE — Arizona Real Estate Candidate Handbook and Broker Content Outline", type: "pdf", url: "https://www.pearsonvue.com/us/en/az/realestate.html",
+      desc: "Pearson VUE's official Arizona real estate licensing page, including the Candidate Handbook and the Broker exam's own 180-item content outline — Pearson VUE administers the licensing exam on ADRE's behalf.",
       topic: "General Reference", free: true },
   ],
   co_re_salesperson: [
@@ -9770,6 +9806,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'Official homepage of the Arizona Department of Real Estate (ADRE), the state agency that regulates real estate salesperson and broker licensing.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/az/realestate.html',
       desc: 'Pearson VUE\'s official Arizona Real Estate Licensure Examinations page, where salesperson candidates schedule exams and download the current Candidate Handbook.' },
+  ],
+  az_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://azre.gov/',
+      desc: 'Official homepage of the Arizona Department of Real Estate (ADRE), the state agency that regulates real estate salesperson and broker licensing.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/az/realestate.html',
+      desc: 'Pearson VUE\'s official Arizona Real Estate Licensure Examinations page, confirming the Broker exam\'s 180-item, single-combined-exam, 75%-passing structure.' },
   ],
   ca_re_salesperson: [
     { title: 'Department of Real Estate Salesperson Exam Content', url: 'https://www.dre.ca.gov/examinees/SalesExamContent.html',
@@ -12833,6 +12875,13 @@ document.addEventListener('click', async function (e) {
     drawExamSitting();
   } else if (act === 'go-back') {
     history.back();
+  } else if (act === 'category-quick-buy') {
+    var quickBuyExamType = el.getAttribute('data-exam-type');
+    var wasAlreadyOnBuy = location.hash === '#/buy';
+    state.examType = quickBuyExamType;
+    rememberLastViewedTrack(quickBuyExamType);
+    location.hash = '#/buy';
+    if (wasAlreadyOnBuy) route(); // hash didn't change (no hashchange event fires) -- force a render with the new examType
   } else if (act === 'blog-load-more') {
     blogListState.visibleCount = Math.min(blogListState.visibleCount + BLOG_PAGE_SIZE, blogListState.shown.length);
     drawBlogList();
