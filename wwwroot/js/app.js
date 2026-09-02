@@ -151,6 +151,22 @@ function getStoredRefCode() {
   try { return localStorage.getItem('examprep_ref_code') || undefined; } catch (e) { return undefined; }
 }
 captureRefCodeFromUrl();
+
+// Business affiliate-partner attribution (?aff=<partnerId>, e.g. a pre-licensing course
+// provider's link) -- a SEPARATE code namespace from ?ref= above (see examprep-api's
+// creditAffiliateConversion/affiliate_partners schema comment for why), same capture-on-arrival,
+// ride-along-until-purchase pattern.
+function captureAffCodeFromUrl() {
+  try {
+    var params = new URLSearchParams(location.search);
+    var aff = params.get('aff');
+    if (aff) localStorage.setItem('examprep_aff_code', aff);
+  } catch (e) { /* localStorage unavailable (private mode etc) -- just skip attribution */ }
+}
+function getStoredAffCode() {
+  try { return localStorage.getItem('examprep_aff_code') || undefined; } catch (e) { return undefined; }
+}
+captureAffCodeFromUrl();
 function saveLocalPrefs(theme, fontScale) {
   localStorage.setItem('examprep_theme', theme);
   localStorage.setItem('examprep_font', String(fontScale));
@@ -12325,7 +12341,7 @@ async function submitStripePayment() {
       method: 'POST', body: {
         paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory,
         isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage, refCode: getStoredRefCode(),
-        sessionId: getOrCreateSessionId(),
+        affCode: getStoredAffCode(), sessionId: getOrCreateSessionId(),
       },
     });
     if (res.isGift) {
