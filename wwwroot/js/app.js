@@ -5995,7 +5995,7 @@ function categorySampleWidgetHtml() {
     '<p class="section-eyebrow">Try before you buy</p>' +
     '<h2 class="comparison-heading">Interactive Sample Question <span class="badge locked-preview-badge-live">Live</span></h2>' +
     '<p class="muted" id="category-sample-subhead">' + categorySampleSubheadHtml(track) + '</p>' +
-    '<div class="card" id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
+    '<div id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
     '</section>';
 }
 
@@ -6047,8 +6047,16 @@ function drawCategorySampleQuestion() {
       (answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
       '<div class="nav-controls"><a class="btn-primary" href="' + track.route + '#/sample">Try more free questions →</a></div>'
     : '';
-  wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
+  // Card wraps only the question stem (topic/text/audio button), same as the real paid quiz
+  // (drawQuestion()) and the standalone #/sample page (drawSampleQuestion()) -- choices/submit/
+  // explanation sit outside it on the bare page background. Previously this widget (and the track
+  // landing page's identical one) wrapped the WHOLE question including the answer choices in one
+  // card, which was the actual site-wide inconsistency a user flagged: this widget was the outlier
+  // against the two real quiz-taking surfaces, not the other way around.
+  wrap.innerHTML = '<div class="card">' +
+    '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
     '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="category-sample-listen">🔊 Read aloud</button></div>' +
+    '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
@@ -9279,7 +9287,7 @@ function trackLandingSampleWidgetHtml() {
   return '<section class="category-sample" id="track-landing-sample">' +
     '<p class="section-eyebrow">Try before you buy</p>' +
     '<h2 class="comparison-heading">Interactive Sample Question <span class="badge locked-preview-badge-live">Live</span></h2>' +
-    '<div class="card" id="track-landing-sample-wrap"><p class="muted">Loading…</p></div>' +
+    '<div id="track-landing-sample-wrap"><p class="muted">Loading…</p></div>' +
     '</section>';
 }
 
@@ -9324,8 +9332,14 @@ function drawTrackLandingSampleQuestion() {
       (answered === q.correctChoice ? 'Correct.' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>' +
       '<div class="nav-controls"><a class="btn-primary" href="#/sample">Try more free questions →</a></div>'
     : '';
-  wrap.innerHTML = '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
+  // Card wraps only the question stem, same as the real paid quiz (drawQuestion()), the standalone
+  // #/sample page (drawSampleQuestion()), and the category page's identical widget (see its own
+  // comment) -- choices/submit/explanation sit outside it on the bare page background, not inside
+  // one big card like this widget used to.
+  wrap.innerHTML = '<div class="card">' +
+    '<div class="question-topic">' + escapeHtml(q.topic) + '</div><div class="question-text">' + escapeHtml(q.question) + '</div>' +
     '<div class="audio-actions"><button class="btn-secondary btn-sm" type="button" data-act="track-landing-sample-listen">🔊 Read aloud</button></div>' +
+    '</div>' +
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
