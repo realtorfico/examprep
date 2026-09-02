@@ -1548,6 +1548,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Licensing, Qualifications & Escrow Accounts', '37%'], ['Agency Definitions & Brokerage Relationships', '29%'], ['Disclosure Requirements, Advertising & Recordkeeping', '20%'], ['Virginia Fair Housing Law', '14%']],
   },
   {
+    examType: 'va_re_broker',
+    title: 'Virginia Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/va',
+    duration: '160 Minutes (105 Min National + 55 Min State)', questions: '125 Multiple Choice (75 National + 50 State-Specific)', passScore: 'National 75% (60/80), State 76% (38/50) — Both Required',
+    description: 'Practice questions covering PSI Services LLC\'s official Virginia Real Estate Broker exam content outline (administered on behalf of the Virginia Department of Professional and Occupational Regulation Real Estate Board): a separately-scored, separately-timed National portion (75 items, up to 80 points -- property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, property management, transfer of title, practice of real estate, and real estate calculations) plus a separately-scored Virginia-specific portion (50 items -- licensing qualifications and disciplinary procedures, escrow accounts, disclosure requirements including the Chesapeake Bay Act and Megan\'s Law, agency definitions and brokerage relationships, Virginia Fair Housing Law, and specific acts including the Condominium Act, Residential Landlord and Tenant Act, and Property Owners\' Association Act). PSI\'s own Candidate Information Bulletin confirms each portion must be passed independently (60 of 80 National points, 38 of 50 Virginia-specific items) within a combined 160-minute time limit (105 minutes national, 55 minutes state); 1-10 unscored experimental items may also appear.',
+    breakdown: [['Contracts (National)', '11%'], ['Agency (National)', '8%'], ['Practice of Real Estate (National)', '7%'], ['Property Ownership (National)', '6%'], ['Financing (National)', '5%'], ['Valuation (National)', '5%'], ['Property Disclosures (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Transfer of Title (National)', '4%'], ['Land Use Controls (National)', '3%'], ['Property Management (National)', '3%'], ['Licensing (VA)', '10%'], ['Agency Definitions & Relationships (VA)', '9%'], ['Escrow Accounts (VA)', '6%'], ['Disclosure Requirements (VA)', '6%'], ['Virginia Fair Housing Law (VA)', '5%'], ['Specific Acts Pertaining to RE Practice (VA)', '4%']],
+  },
+  {
     examType: 'va_boating',
     title: 'Virginia Boating Safety Education Exam', category: 'Boating & Watercraft Safety', route: '/boating/va',
     duration: 'Untimed', questions: '75 Multiple Choice', passScore: '60/75 Correct (80%)',
@@ -3682,6 +3689,13 @@ var TRACK_COMPLIANCE = {
       '18VAC135-20, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
     examIntroDisclaimer: 'register you for, or count toward, the real Real Estate Board exam or the required prelicense education.',
     passScoreNote: 'the same threshold as the real state-specific portion — 30 of 40 correct',
+  },
+  va_re_broker: {
+    orgLine: 'the Virginia Real Estate Board',
+    footerRequirement: 'do not fulfill any Virginia broker-eligibility prerequisite, broker prelicensure education requirement, or Real Estate Board application process required before sitting the Broker exam',
+    termsParagraph2: '<p class="muted">Using this site\'s practice questions or mock exams does not satisfy the broker-eligibility prerequisites, Board-approved broker prelicensure education, or the Real Estate Board\'s license application process required before sitting the Virginia Real Estate Broker exam, and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in Virginia Code Chapter 21 (Real Estate Board) and 18VAC135-20 (Virginia Real Estate Board Regulations) for the state-specific portion, plus standard national real estate principles (property ownership, agency, contracts, valuation, financing, and real estate math) for the national portion, mirroring PSI\'s own published Broker content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Board, and broker prelicensure education must be completed through a Board-approved provider. While we strive to align our content with current Virginia law and Real Estate Board Regulations, it is provided "as-is" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>',
+    examIntroDisclaimer: 'register you for, or count toward, the real PSI-administered Virginia Real Estate Broker exam or the required broker-eligibility/education prerequisites.',
+    passScoreNote: 'the same overall thresholds required by the real exam — 75% (60/80) on the National portion and 76% (38/50) on the Virginia-specific portion, both required, confirmed via the official PSI Candidate Information Bulletin',
   },
   va_boating: {
     orgLine: 'the Virginia Department of Wildlife Resources (DWR)',
@@ -7055,6 +7069,20 @@ var RESOURCES = {
       desc: 'The Virginia Real Estate Board\'s official regulations — the authoritative source the state-specific portion of the exam is based on.',
       topic: 'General Reference', free: true },
   ],
+  va_re_broker: [
+    { title: 'Virginia Department of Professional and Occupational Regulation — Real Estate Board', type: 'pdf', url: 'https://www.dpor.virginia.gov/Boards/Real-Estate/',
+      desc: 'The Virginia Real Estate Board\'s official site — the authoritative source the license law and regulations are based on.',
+      topic: 'General Reference', free: true },
+    { title: 'Va. Code Title 54.1, Chapter 21 (Real Estate Board)', type: 'pdf', url: 'https://law.lis.virginia.gov/vacode/title54.1/chapter21/',
+      desc: 'The Virginia Real Estate License Laws — the statutory basis for the Real Estate Board\'s regulations and broker licensing.',
+      topic: 'General Reference', free: true },
+    { title: '18VAC135-20 (Virginia Real Estate Board Regulations)', type: 'pdf', url: 'https://law.lis.virginia.gov/admincode/title18/agency135/chapter20/',
+      desc: 'The Virginia Real Estate Board\'s official regulations — the authoritative source the licensing, escrow, and state-specific portion of the exam is based on.',
+      topic: 'General Reference', free: true },
+    { title: 'PSI Virginia Real Estate Candidate Information Bulletin', type: 'link', url: 'https://test-takers.psiexams.com/vare',
+      desc: 'PSI\'s official Virginia real estate exam page -- the authoritative source for the Broker exam\'s mechanics (125 items, two separately-scored portions) and content outline.',
+      topic: 'General Reference', free: true },
+  ],
   va_boating: [
     { title: 'Virginia DWR Boater\'s Guide', type: 'pdf', url: 'https://dwr.virginia.gov/boating/boaters-guide/',
       desc: 'The official guide published by the Virginia Department of Wildlife Resources — the authoritative source this practice content is grounded in.',
@@ -10048,6 +10076,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Virginia Department of Professional and Occupational Regulation\'s Real Estate Board page, which identifies PSI as the exam vendor.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/vare',
       desc: 'PSI\'s official Virginia Real Estate salesperson exam scheduling and candidate information portal.' },
+  ],
+  va_re_broker: [
+    { title: 'Real Estate Board Site', url: 'https://www.dpor.virginia.gov/Boards/Real-Estate',
+      desc: 'The Virginia Department of Professional and Occupational Regulation\'s Real Estate Board page, which identifies PSI as the exam vendor.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/vare',
+      desc: 'PSI\'s official Virginia Real Estate exam page, confirming the Broker exam\'s 125-item, two-portion (National + Virginia-specific), 75%/76%-passing structure.' },
   ],
   vt_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://sos.vermont.gov/real-estate-brokers-salespersons/',
