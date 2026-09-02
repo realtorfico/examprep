@@ -851,6 +851,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .guide-cross-links a { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
 .guide-bottombar { padding: 1.5rem; text-align: center; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--border); }
 .guide-bottombar a { color: var(--accent); text-decoration: none; }
+/* #/pass-rates -- app.js-rendered (not static, unlike /guides/*), reuses .guide-table/.guide-na/
+   .guide-source-note above for the per-category breakdown so the two "real numbers" surfaces read
+   consistently. */
+.pass-rates-page { max-width: 900px; margin: 0 auto; padding: 1rem 0 3rem; }
+.pass-rates-overall-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; margin: 1.5rem 0 2.25rem; }
+.pass-rates-overall-value { font-family: 'Fraunces', Georgia, serif; font-size: 2.6rem; font-weight: 700; color: var(--accent); }
 /* Refer page hero + how-it-works (ported from v0's refer/page.tsx, steps rewritten for this
    site's real submit-a-friend mechanic -- see referHowItWorksHtml() in app.js) */
 .refer-hero {

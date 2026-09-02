@@ -404,6 +404,7 @@ function renderSiteFooter() {
   var supportCol = '<div><h3>Support</h3><ul class="footer-link-list">' +
     '<li><a href="#/faq">FAQ</a></li>' +
     '<li><a href="#/guarantee">Guarantee &amp; refunds</a></li>' +
+    '<li><a href="#/pass-rates">Pass rate transparency</a></li>' +
     '<li><a href="#/refund">Refund request</a></li>' +
     '<li><a href="#/contact">Contact us</a></li>' +
     '</ul></div>';
@@ -1144,7 +1145,8 @@ function renderGuarantee() {
     var stats = results[1];
     var passRateNote = (stats && stats.passRate != null)
       ? '<div class="guarantee-stat-divider"></div><p class="guarantee-stat-label">Backed by real practice data</p>' +
-        '<p class="muted guarantee-stat-note">' + stats.passRate + '% of practice mock exams taken on PassExamHQ end in a passing score.</p>'
+        '<p class="muted guarantee-stat-note">' + stats.passRate + '% of practice mock exams taken on PassExamHQ end in a passing score. ' +
+        '<a href="#/pass-rates">See the real numbers, by category →</a></p>'
       : '';
 
     appEl.innerHTML =
@@ -1219,6 +1221,74 @@ function guaranteeStepHtml(num, icon, title, body) {
 }
 function guaranteeFaqHtml(q, a) {
   return '<div class="guarantee-faq-item"><dt>' + q + '</dt><dd class="muted">' + a + '</dd></div>';
+}
+
+// Public pass-rate transparency page (#/pass-rates) -- built 2026-09-02 as a marketing-ideas
+// follow-on to renderGuarantee()'s own passRateNote, which only ever showed one sitewide number.
+// Every figure here comes straight from /stats/public and /stats/pass-rates-by-category (real
+// completed exam_attempts rows, scored against each attempt's own snapshotted pass_percent), same
+// as the guarantee page -- nothing here is invented or hardcoded, per this site's standing
+// no-fabricated-numbers rule. The one deliberate design choice: a category with fewer than
+// minSampleSize completed attempts shows "Not enough data yet" instead of a percentage -- a
+// sample-size gate only, never a value gate, so a real (if unflattering) rate is never hidden once
+// there's enough data to trust it.
+function renderPassRates() {
+  appEl.innerHTML = '<div class="narrow-page"><h1>Pass Rate Transparency</h1><p class="muted">Loading…</p></div>';
+  Promise.all([
+    apiFetch('/stats/public').catch(function () { return null; }),
+    apiFetch('/stats/pass-rates-by-category').catch(function () { return null; }),
+  ]).then(function (results) {
+    var overall = results[0];
+    var byCategory = results[1];
+    var minSample = (byCategory && byCategory.minSampleSize) || 20;
+
+    var overallHtml = (overall && overall.passRate != null)
+      ? '<div class="pass-rates-overall-card">' +
+        '<div class="pass-rates-overall-value">' + overall.passRate + '%</div>' +
+        '<p class="muted">of the ' + overall.examsCompleted.toLocaleString() + ' completed practice exams taken on PassExamHQ ended in a passing score (' + overall.examsPassed.toLocaleString() + ' of ' + overall.examsCompleted.toLocaleString() + ').</p>' +
+        '</div>'
+      : '<p class="muted">Not enough completed practice exams yet to show a sitewide number.</p>';
+
+    var rows = ((byCategory && byCategory.categories) || []).map(function (cat) {
+      var guideHref = cat.categorySlug ? '/guides/' + cat.categorySlug + '-requirements-by-state' : null;
+      var rateCell = cat.passRate != null
+        ? '<strong>' + cat.passRate + '%</strong>'
+        : '<span class="guide-na">Not enough data yet</span>';
+      return '<tr>' +
+        '<td>' + escapeHtml(cat.kind) + '</td>' +
+        '<td>' + cat.attemptCount.toLocaleString() + '</td>' +
+        '<td>' + rateCell + '</td>' +
+        '<td class="guide-table-cta">' +
+        (cat.categorySlug ? '<a href="/' + cat.categorySlug + '">Practice ' + escapeHtml(cat.kind) + ' →</a>' : '') +
+        '</td>' +
+        '</tr>';
+    }).join('');
+
+    appEl.innerHTML =
+      '<div class="pass-rates-page">' +
+      '<span class="section-eyebrow">Real numbers, not marketing copy</span>' +
+      '<h1>Pass Rate Transparency</h1>' +
+      '<p class="page-intro-text">Every pass-rate figure on PassExamHQ — here and everywhere else on the site — reflects practice ' +
+      'mock exams completed <em>on PassExamHQ itself</em>, computed live from our own database. It is not, and cannot be, a claim ' +
+      'about real official exam outcomes: no testing vendor or state licensing board shares that data with prep providers, so any ' +
+      'site claiming an official pass rate is estimating or making it up. What you see below is the one number we can actually ' +
+      'measure honestly, shown with the real sample sizes behind it.</p>' +
+      overallHtml +
+      '<h2 class="comparison-heading">By Category</h2>' +
+      '<p class="muted">Categories with fewer than ' + minSample + ' completed exams show "Not enough data yet" instead of a ' +
+      'percentage — a rate computed from a handful of attempts is too noisy to mean anything, regardless of which way it points. ' +
+      'We never hide a real rate just because it looks bad once there\'s enough data behind it.</p>' +
+      '<div class="guide-table-wrap">' +
+      '<table class="guide-table">' +
+      '<thead><tr><th>Category</th><th>Completed Exams</th><th>Pass Rate</th><th></th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+      '</table>' +
+      '</div>' +
+      '<p class="guide-source-note">Only fully completed (submitted) practice exams count. Each attempt is scored against the ' +
+      'passing threshold that applied to it at the time it was taken. See our <a href="#/guarantee">pass-or-refund guarantee</a> ' +
+      'for what this backs, or browse per-state exam mechanics on our <a href="/guides/notary-requirements-by-state">requirements-by-state guides</a>.</p>' +
+      '</div>';
+  });
 }
 
 // A code redeemed with no email ever provided (buyer_email null) has no way to look up referral
@@ -12816,6 +12886,7 @@ function route() {
   if (hashView === 'about') { renderAbout(); return; }
   if (hashView === 'faq') { renderFaq(); return; }
   if (hashView === 'guarantee') { renderGuarantee(); return; }
+  if (hashView === 'pass-rates') { renderPassRates(); return; }
   if (hashView === 'profile') { renderProfile(); return; }
   // redeem/refund are genuinely track-agnostic -- both just take a code + email and let the
   // server resolve which track it belongs to, so unlike refer/sample/buy (which really are
