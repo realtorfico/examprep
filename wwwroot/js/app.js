@@ -2167,6 +2167,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Licensing, Qualifications, Application & Commission Administration', '20%'], ['Definitions, Agency Relationships & Fiduciary Duties', '16%'], ['Continuing Education, Property Disclosure & Closing', '16%'], ['Trust Accounts, E&O Insurance & Advertising', '14%'], ['Brokerage Agreements, Listings & Broker-Salesperson Relationships', '13%'], ['Disciplinary Grounds, Investigations & Unlicensed Enforcement', '13%'], ['Property Management & Wholesaling', '8%']],
   },
   {
+    examType: 'ia_re_broker',
+    title: 'Iowa Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ia',
+    duration: '180 Minutes (3 Hours)', questions: '115 Multiple Choice (75 National + 40 Iowa State-Specific)', passScore: '90/120 Points Combined (60/80 National + 30/40 State)',
+    description: 'Practice questions covering PSI\'s national real estate broker content outline (property ownership, land use controls, valuation, financing, contracts, agency, property disclosures, property management, transfer of title, practice of real estate including broker-only supervisory responsibilities, and real estate calculations) plus the Iowa-specific portion administered on behalf of the Iowa Real Estate Commission: licensing requirements and continuing education, license maintenance, disciplinary actions, trust accounts (broker-weighted), contracts, agency (including Iowa\'s distinctive designated/"appointed agent" framework under Iowa Code 543B.59), property disclosure requirements, the Iowa Civil Rights Act, unlicensed assistants, broker responsibilities and supervision, and property management. Broker candidates must already hold an active Iowa salesperson license for at least 24 months. Item counts and the real points-based passing thresholds (not literal percent-correct) are confirmed directly against the Iowa Real Estate Commission/PSI Licensing Information Bulletin.',
+    breakdown: [['Contracts (National)', '19%'], ['Broker Responsibilities (IA)', '15%'], ['Agency (National)', '13%'], ['Practice of Real Estate incl. Supervisory Responsibilities (National)', '12%'], ['Property Ownership (National)', '10%'], ['Financing (National)', '9%'], ['Valuation (National)', '8%'], ['Property Disclosures (National)', '7%'], ['Contracts (IA)', '6%'], ['Transfer of Title (National)', '6%'], ['Real Estate Calculations (National)', '6%'], ['Agency (IA)', '5%'], ['Land Use Controls (National)', '5%'], ['Property Management (National)', '5%'], ['Trust Accounts (IA)', '4%'], ['License Maintenance (IA)', '4%'], ['Disciplinary Actions (IA)', '4%'], ['Property Disclosure Requirements & Civil Rights Act (IA)', '3%'], ['Property Management (IA)', '3%'], ['Licensing Requirements & Education (IA)', '2%'], ['Unlicensed Assistants (IA)', '2%']],
+  },
+  {
     examType: 'id_re_salesperson',
     title: 'Idaho Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/id',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (Scale of 0-100)',
@@ -4510,6 +4517,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-hour pre-license education requirement for an Iowa real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in Iowa Code Chapter 543B and Iowa Administrative Code 193E), not the separate 80-question national portion, and not every topic on the Commission's own content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Real Estate Commission, and pre-license education must be completed through a commission-approved school within the 12 months before testing. While we strive to align our content with the current Iowa Code and Administrative Code, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion — 28 of 40 correct (70%)",
+  },
+  ia_re_broker: {
+    orgLine: "the Iowa Real Estate Commission",
+    footerRequirement: "do not fulfill Iowa's 24-months-active-licensure prerequisite, the 60-hour broker prelicensure education requirement, or any other Iowa Real Estate Commission prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Iowa's broker-level pre-licensing education requirement, the 24-months-active-salesperson-licensure prerequisite, or any other Iowa Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering PSI's national real estate broker content outline plus Iowa-specific broker licensing, licensee practice, disciplinary, trust account, and supervisory-responsibility subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Iowa Real Estate Commission. While we strive to align our content with current Iowa Code Chapter 543B and PSI's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Iowa Real Estate Broker exam or the required broker education/experience prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 60/80 points on the national portion and 30/40 points on the state portion (90/120 combined), not literal percent-correct, confirmed via the Iowa Real Estate Commission/PSI Licensing Information Bulletin",
   },
   id_re_salesperson: {
     orgLine: "the Idaho Real Estate Commission",
@@ -10455,6 +10469,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Iowa Real Estate Commission\'s official licensing page for salesperson and broker applicants, under the Department of Inspections, Appeals & Licensing.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.psiexams.com/test-takers/iowa-real-estate/',
       desc: 'PSI\'s official Iowa real estate exam registration and scheduling page; PSI is Iowa\'s designated testing vendor.' },
+  ],
+  ia_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://dial.iowa.gov/licenses/other-professional-licensure/real-estate-licensees',
+      desc: 'The Iowa Real Estate Commission\'s official licensing page for broker and salesperson applicants, under the Department of Inspections, Appeals & Licensing.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://dial.iowa.gov/media/4323/download?inline',
+      desc: 'PSI\'s official Iowa Real Estate Commission Licensing Information Bulletin, confirming PSI as Iowa\'s contracted exam vendor and the real 115-item/120-point broker exam structure.' },
   ],
   id_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://dopl.idaho.gov/rec/',
