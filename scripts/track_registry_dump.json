@@ -9,8 +9,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "az_boating",
@@ -20,8 +19,7 @@
         "is_exam_required": 0,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ca_boating",
@@ -31,8 +29,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ct_boating",
@@ -42,8 +39,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "fl_boating",
@@ -53,8 +49,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ga_boating",
@@ -64,8 +59,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "il_boating",
@@ -75,8 +69,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "la_boating",
@@ -86,8 +79,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ma_boating",
@@ -97,8 +89,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "md_boating",
@@ -108,8 +99,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "mi_boating",
@@ -119,8 +109,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "mn_boating",
@@ -130,8 +119,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "mo_boating",
@@ -141,8 +129,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "nc_boating",
@@ -152,8 +139,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "nj_boating",
@@ -163,8 +149,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "nv_boating",
@@ -174,8 +159,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ny_boating",
@@ -185,8 +169,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "oh_boating",
@@ -196,8 +179,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "pa_boating",
@@ -207,8 +189,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "sc_boating",
@@ -218,8 +199,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "tn_boating",
@@ -229,8 +209,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "tx_boating",
@@ -240,8 +219,7 @@
         "is_exam_required": 1,
         "exam_question_count": 75,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 53
+        "pass_percent": 70
       },
       {
         "exam_type": "va_boating",
@@ -251,8 +229,7 @@
         "is_exam_required": 1,
         "exam_question_count": 75,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 60
+        "pass_percent": 80
       },
       {
         "exam_type": "wa_boating",
@@ -262,8 +239,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "wi_boating",
@@ -273,8 +249,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 48
+        "pass_percent": 80
       },
       {
         "exam_type": "ak_cdl",
@@ -284,8 +259,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "al_cdl",
@@ -295,8 +269,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ar_cdl",
@@ -306,8 +279,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "az_cdl",
@@ -317,8 +289,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ca_cdl",
@@ -328,8 +299,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "co_cdl",
@@ -339,8 +309,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ct_cdl",
@@ -350,8 +319,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "de_cdl",
@@ -361,8 +329,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "fl_cdl",
@@ -372,8 +339,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ga_cdl",
@@ -383,8 +349,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "hi_cdl",
@@ -394,8 +359,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ia_cdl",
@@ -405,8 +369,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "id_cdl",
@@ -416,8 +379,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "il_cdl",
@@ -427,8 +389,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "in_cdl",
@@ -438,8 +399,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ks_cdl",
@@ -449,8 +409,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ky_cdl",
@@ -460,8 +419,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "la_cdl",
@@ -471,8 +429,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ma_cdl",
@@ -482,8 +439,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "md_cdl",
@@ -493,8 +449,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "me_cdl",
@@ -504,8 +459,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "mi_cdl",
@@ -515,8 +469,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "mn_cdl",
@@ -526,8 +479,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "mo_cdl",
@@ -537,8 +489,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ms_cdl",
@@ -548,8 +499,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "mt_cdl",
@@ -559,8 +509,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nc_cdl",
@@ -570,8 +519,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nd_cdl",
@@ -581,8 +529,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ne_cdl",
@@ -592,8 +539,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nh_cdl",
@@ -603,8 +549,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nj_cdl",
@@ -614,8 +559,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nm_cdl",
@@ -625,8 +569,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nv_cdl",
@@ -636,8 +579,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ny_cdl",
@@ -647,8 +589,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "oh_cdl",
@@ -658,8 +599,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ok_cdl",
@@ -669,8 +609,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "or_cdl",
@@ -680,8 +619,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "pa_cdl",
@@ -691,8 +629,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ri_cdl",
@@ -702,8 +639,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "sc_cdl",
@@ -713,8 +649,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "sd_cdl",
@@ -724,8 +659,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "tn_cdl",
@@ -735,8 +669,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "tx_cdl",
@@ -746,8 +679,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ut_cdl",
@@ -757,8 +689,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "va_cdl",
@@ -768,8 +699,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "vt_cdl",
@@ -779,8 +709,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wa_cdl",
@@ -790,8 +719,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wi_cdl",
@@ -801,8 +729,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wv_cdl",
@@ -812,8 +739,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wy_cdl",
@@ -823,8 +749,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ak_driver",
@@ -834,8 +759,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 1500,
-        "pass_percent": 80,
-        "min_correct": 16
+        "pass_percent": 80
       },
       {
         "exam_type": "al_driver",
@@ -845,8 +769,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "ar_driver",
@@ -856,8 +779,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "az_driver",
@@ -867,8 +789,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ca_driver",
@@ -878,8 +799,7 @@
         "is_exam_required": 1,
         "exam_question_count": 36,
         "exam_duration_sec": 0,
-        "pass_percent": 83.3,
-        "min_correct": 30
+        "pass_percent": 83.3
       },
       {
         "exam_type": "co_driver",
@@ -889,8 +809,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ct_driver",
@@ -900,8 +819,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "de_driver",
@@ -911,8 +829,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "fl_driver",
@@ -922,8 +839,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ga_driver",
@@ -933,8 +849,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "hi_driver",
@@ -944,8 +859,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "ia_driver",
@@ -955,8 +869,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "id_driver",
@@ -966,8 +879,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 85,
-        "min_correct": 34
+        "pass_percent": 85
       },
       {
         "exam_type": "il_driver",
@@ -977,8 +889,7 @@
         "is_exam_required": 1,
         "exam_question_count": 35,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 28
+        "pass_percent": 80
       },
       {
         "exam_type": "in_driver",
@@ -988,8 +899,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ks_driver",
@@ -999,8 +909,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ky_driver",
@@ -1010,8 +919,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "la_driver",
@@ -1021,8 +929,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ma_driver",
@@ -1032,8 +939,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 1500,
-        "pass_percent": 72,
-        "min_correct": 18
+        "pass_percent": 72
       },
       {
         "exam_type": "md_driver",
@@ -1043,8 +949,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 1200,
-        "pass_percent": 88,
-        "min_correct": 22
+        "pass_percent": 88
       },
       {
         "exam_type": "me_driver",
@@ -1054,8 +959,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "mi_driver",
@@ -1065,8 +969,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "mn_driver",
@@ -1076,8 +979,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "mo_driver",
@@ -1087,8 +989,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ms_driver",
@@ -1098,8 +999,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "mt_driver",
@@ -1109,8 +1009,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "nc_driver",
@@ -1120,8 +1019,7 @@
         "is_exam_required": 1,
         "exam_question_count": 37,
         "exam_duration_sec": 3600,
-        "pass_percent": 78.4,
-        "min_correct": 29
+        "pass_percent": 78.4
       },
       {
         "exam_type": "nd_driver",
@@ -1131,8 +1029,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ne_driver",
@@ -1142,8 +1039,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "nh_driver",
@@ -1153,8 +1049,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 2400,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "nj_driver",
@@ -1164,8 +1059,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nm_driver",
@@ -1175,8 +1069,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "nv_driver",
@@ -1186,8 +1079,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ny_driver",
@@ -1197,8 +1089,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 14
+        "pass_percent": 70
       },
       {
         "exam_type": "oh_driver",
@@ -1208,8 +1099,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ok_driver",
@@ -1219,8 +1109,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 15
+        "pass_percent": 75
       },
       {
         "exam_type": "or_driver",
@@ -1230,8 +1119,7 @@
         "is_exam_required": 1,
         "exam_question_count": 35,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 28
+        "pass_percent": 80
       },
       {
         "exam_type": "pa_driver",
@@ -1241,8 +1129,7 @@
         "is_exam_required": 1,
         "exam_question_count": 18,
         "exam_duration_sec": 3600,
-        "pass_percent": 83.3,
-        "min_correct": 15
+        "pass_percent": 83.3
       },
       {
         "exam_type": "ri_driver",
@@ -1252,8 +1139,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "sc_driver",
@@ -1263,8 +1149,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "sd_driver",
@@ -1274,8 +1159,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "tn_driver",
@@ -1285,8 +1169,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 0,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "tx_driver",
@@ -1296,8 +1179,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 21
+        "pass_percent": 70
       },
       {
         "exam_type": "ut_driver",
@@ -1307,8 +1189,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "va_driver",
@@ -1318,8 +1199,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 85,
-        "min_correct": 34
+        "pass_percent": 85
       },
       {
         "exam_type": "vt_driver",
@@ -1329,8 +1209,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 16
+        "pass_percent": 80
       },
       {
         "exam_type": "wa_driver",
@@ -1340,8 +1219,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "wi_driver",
@@ -1351,8 +1229,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 2700,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wv_driver",
@@ -1362,8 +1239,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 0,
-        "pass_percent": 76,
-        "min_correct": 19
+        "pass_percent": 76
       },
       {
         "exam_type": "wy_driver",
@@ -1373,8 +1249,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "al_motorcycle",
@@ -1384,8 +1259,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "ar_motorcycle",
@@ -1395,8 +1269,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ca_motorcycle",
@@ -1406,8 +1279,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ct_motorcycle",
@@ -1417,8 +1289,7 @@
         "is_exam_required": 1,
         "exam_question_count": 16,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 13
+        "pass_percent": 80
       },
       {
         "exam_type": "ga_motorcycle",
@@ -1428,8 +1299,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 1800,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "mi_motorcycle",
@@ -1439,8 +1309,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "mn_motorcycle",
@@ -1450,8 +1319,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ms_motorcycle",
@@ -1461,8 +1329,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "nc_motorcycle",
@@ -1472,8 +1339,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ny_motorcycle",
@@ -1483,8 +1349,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 14
+        "pass_percent": 70
       },
       {
         "exam_type": "oh_motorcycle",
@@ -1494,8 +1359,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "pa_motorcycle",
@@ -1505,8 +1369,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 16
+        "pass_percent": 80
       },
       {
         "exam_type": "tx_motorcycle",
@@ -1516,8 +1379,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ut_motorcycle",
@@ -1527,8 +1389,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "va_motorcycle",
@@ -1538,8 +1399,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "wa_motorcycle",
@@ -1549,8 +1409,7 @@
         "is_exam_required": 1,
         "exam_question_count": 25,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 20
+        "pass_percent": 80
       },
       {
         "exam_type": "ak_notary",
@@ -1560,8 +1419,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "al_notary",
@@ -1571,8 +1429,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ar_notary",
@@ -1582,8 +1439,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "az_notary",
@@ -1593,8 +1449,7 @@
         "is_exam_required": 1,
         "exam_question_count": 45,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 36
+        "pass_percent": 80
       },
       {
         "exam_type": "ca_notary",
@@ -1604,8 +1459,7 @@
         "is_exam_required": 1,
         "exam_question_count": 45,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 32
+        "pass_percent": 70
       },
       {
         "exam_type": "co_notary",
@@ -1615,8 +1469,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 1800,
-        "pass_percent": 80,
-        "min_correct": 32
+        "pass_percent": 80
       },
       {
         "exam_type": "ct_notary",
@@ -1626,8 +1479,7 @@
         "is_exam_required": 1,
         "exam_question_count": 35,
         "exam_duration_sec": 3600,
-        "pass_percent": 100,
-        "min_correct": 35
+        "pass_percent": 100
       },
       {
         "exam_type": "de_notary",
@@ -1637,8 +1489,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "fl_notary",
@@ -1648,8 +1499,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ga_notary",
@@ -1659,8 +1509,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 4800,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "hi_notary",
@@ -1670,8 +1519,7 @@
         "is_exam_required": 1,
         "exam_question_count": 45,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 36
+        "pass_percent": 80
       },
       {
         "exam_type": "ia_notary",
@@ -1681,8 +1529,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "id_notary",
@@ -1692,8 +1539,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "il_notary",
@@ -1703,8 +1549,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 85,
-        "min_correct": 43
+        "pass_percent": 85
       },
       {
         "exam_type": "in_notary",
@@ -1714,8 +1559,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "ks_notary",
@@ -1725,8 +1569,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ky_notary",
@@ -1736,8 +1579,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "la_notary",
@@ -1747,8 +1589,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 35
+        "pass_percent": 70
       },
       {
         "exam_type": "ma_notary",
@@ -1758,8 +1599,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "md_notary",
@@ -1769,8 +1609,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 16
+        "pass_percent": 80
       },
       {
         "exam_type": "me_notary",
@@ -1780,8 +1619,7 @@
         "is_exam_required": 1,
         "exam_question_count": 15,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 12
+        "pass_percent": 80
       },
       {
         "exam_type": "mi_notary",
@@ -1791,8 +1629,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "mn_notary",
@@ -1802,8 +1639,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "mo_notary",
@@ -1813,8 +1649,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "ms_notary",
@@ -1824,8 +1659,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "mt_notary",
@@ -1835,8 +1669,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 24
+        "pass_percent": 80
       },
       {
         "exam_type": "nc_notary",
@@ -1846,8 +1679,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nd_notary",
@@ -1857,8 +1689,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ne_notary",
@@ -1868,8 +1699,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 5400,
-        "pass_percent": 85,
-        "min_correct": 17
+        "pass_percent": 85
       },
       {
         "exam_type": "nh_notary",
@@ -1879,8 +1709,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "nj_notary",
@@ -1890,8 +1719,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nm_notary",
@@ -1901,8 +1729,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "nv_notary",
@@ -1912,8 +1739,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ny_notary",
@@ -1923,8 +1749,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "oh_notary",
@@ -1934,8 +1759,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "ok_notary",
@@ -1945,8 +1769,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "or_notary",
@@ -1956,8 +1779,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "pa_notary",
@@ -1967,8 +1789,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 23
+        "pass_percent": 75
       },
       {
         "exam_type": "ri_notary",
@@ -1978,8 +1799,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "sc_notary",
@@ -1989,8 +1809,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "sd_notary",
@@ -2000,8 +1819,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "tn_notary",
@@ -2011,8 +1829,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "tx_notary",
@@ -2022,8 +1839,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ut_notary",
@@ -2033,8 +1849,7 @@
         "is_exam_required": 1,
         "exam_question_count": 35,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 28
+        "pass_percent": 80
       },
       {
         "exam_type": "va_notary",
@@ -2044,8 +1859,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "vt_notary",
@@ -2055,8 +1869,7 @@
         "is_exam_required": 0,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 80,
-        "min_correct": 40
+        "pass_percent": 80
       },
       {
         "exam_type": "wa_notary",
@@ -2066,8 +1879,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "wi_notary",
@@ -2077,8 +1889,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 90,
-        "min_correct": 27
+        "pass_percent": 90
       },
       {
         "exam_type": "wv_notary",
@@ -2088,8 +1899,7 @@
         "is_exam_required": 0,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "wy_notary",
@@ -2099,8 +1909,7 @@
         "is_exam_required": 1,
         "exam_question_count": 20,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 14
+        "pass_percent": 70
       },
       {
         "exam_type": "al_re_broker",
@@ -2110,8 +1919,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 12600,
-        "pass_percent": 70,
-        "min_correct": 84
+        "pass_percent": 70
       },
       {
         "exam_type": "ar_re_broker",
@@ -2121,8 +1929,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 84
+        "pass_percent": 70
       },
       {
         "exam_type": "az_re_broker",
@@ -2132,8 +1939,7 @@
         "is_exam_required": 1,
         "exam_question_count": 180,
         "exam_duration_sec": 18900,
-        "pass_percent": 75,
-        "min_correct": 135
+        "pass_percent": 75
       },
       {
         "exam_type": "ca_re_broker",
@@ -2143,8 +1949,7 @@
         "is_exam_required": 1,
         "exam_question_count": 200,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 150
+        "pass_percent": 75
       },
       {
         "exam_type": "ct_re_broker",
@@ -2154,8 +1959,17 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 10800,
-        "pass_percent": 75,
-        "min_correct": 90
+        "pass_percent": 75
+      },
+      {
+        "exam_type": "de_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "DE",
+        "short_name": "Delaware Real Estate Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 130,
+        "exam_duration_sec": 14400,
+        "pass_percent": 70
       },
       {
         "exam_type": "fl_re_broker",
@@ -2165,8 +1979,7 @@
         "is_exam_required": 1,
         "exam_question_count": 100,
         "exam_duration_sec": 12600,
-        "pass_percent": 75,
-        "min_correct": 75
+        "pass_percent": 75
       },
       {
         "exam_type": "ga_re_broker",
@@ -2176,8 +1989,7 @@
         "is_exam_required": 1,
         "exam_question_count": 148,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 111
+        "pass_percent": 75
       },
       {
         "exam_type": "hi_re_broker",
@@ -2187,8 +1999,7 @@
         "is_exam_required": 1,
         "exam_question_count": 125,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 94
+        "pass_percent": 75
       },
       {
         "exam_type": "ia_re_broker",
@@ -2198,8 +2009,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 10800,
-        "pass_percent": 75,
-        "min_correct": 86
+        "pass_percent": 75
       },
       {
         "exam_type": "id_re_broker",
@@ -2209,8 +2019,7 @@
         "is_exam_required": 1,
         "exam_question_count": 130,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 98
+        "pass_percent": 75
       },
       {
         "exam_type": "il_re_broker",
@@ -2220,8 +2029,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "ks_re_broker",
@@ -2231,8 +2039,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 84
+        "pass_percent": 70
       },
       {
         "exam_type": "ky_re_broker",
@@ -2242,8 +2049,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 90
+        "pass_percent": 75
       },
       {
         "exam_type": "la_re_broker",
@@ -2253,8 +2059,7 @@
         "is_exam_required": 1,
         "exam_question_count": 135,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 101
+        "pass_percent": 75
       },
       {
         "exam_type": "ma_re_broker",
@@ -2264,8 +2069,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 81
+        "pass_percent": 70
       },
       {
         "exam_type": "md_re_broker",
@@ -2275,8 +2079,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 7200,
-        "pass_percent": 70,
-        "min_correct": 81
+        "pass_percent": 70
       },
       {
         "exam_type": "mi_re_broker",
@@ -2286,8 +2089,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 12600,
-        "pass_percent": 75,
-        "min_correct": 87
+        "pass_percent": 75
       },
       {
         "exam_type": "mn_re_broker",
@@ -2297,8 +2099,7 @@
         "is_exam_required": 1,
         "exam_question_count": 135,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 101
+        "pass_percent": 75
       },
       {
         "exam_type": "mo_re_broker",
@@ -2308,8 +2109,7 @@
         "is_exam_required": 1,
         "exam_question_count": 165,
         "exam_duration_sec": 16200,
-        "pass_percent": 75,
-        "min_correct": 124
+        "pass_percent": 75
       },
       {
         "exam_type": "ms_re_broker",
@@ -2319,8 +2119,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 86
+        "pass_percent": 75
       },
       {
         "exam_type": "mt_re_broker",
@@ -2330,8 +2129,17 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 90
+        "pass_percent": 75
+      },
+      {
+        "exam_type": "nd_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "ND",
+        "short_name": "North Dakota Real Estate Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 130,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75
       },
       {
         "exam_type": "ne_re_broker",
@@ -2341,8 +2149,7 @@
         "is_exam_required": 1,
         "exam_question_count": 130,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 98
+        "pass_percent": 75
       },
       {
         "exam_type": "nh_re_broker",
@@ -2352,8 +2159,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 81
+        "pass_percent": 70
       },
       {
         "exam_type": "nj_re_broker",
@@ -2363,8 +2169,7 @@
         "is_exam_required": 1,
         "exam_question_count": 115,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 81
+        "pass_percent": 70
       },
       {
         "exam_type": "nv_re_broker",
@@ -2374,8 +2179,7 @@
         "is_exam_required": 1,
         "exam_question_count": 130,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 98
+        "pass_percent": 75
       },
       {
         "exam_type": "ny_re_broker",
@@ -2385,8 +2189,7 @@
         "is_exam_required": 1,
         "exam_question_count": 100,
         "exam_duration_sec": 9000,
-        "pass_percent": 70,
-        "min_correct": 70
+        "pass_percent": 70
       },
       {
         "exam_type": "oh_re_broker",
@@ -2396,8 +2199,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 10800,
-        "pass_percent": 75,
-        "min_correct": 90
+        "pass_percent": 75
       },
       {
         "exam_type": "ok_re_broker",
@@ -2407,8 +2209,7 @@
         "is_exam_required": 1,
         "exam_question_count": 135,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 105
+        "pass_percent": 75
       },
       {
         "exam_type": "or_re_broker",
@@ -2418,8 +2219,7 @@
         "is_exam_required": 1,
         "exam_question_count": 125,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 94
+        "pass_percent": 75
       },
       {
         "exam_type": "pa_re_broker",
@@ -2429,8 +2229,7 @@
         "is_exam_required": 1,
         "exam_question_count": 120,
         "exam_duration_sec": 12600,
-        "pass_percent": 75,
-        "min_correct": 90
+        "pass_percent": 75
       },
       {
         "exam_type": "ri_re_broker",
@@ -2440,8 +2239,7 @@
         "is_exam_required": 1,
         "exam_question_count": 140,
         "exam_duration_sec": 14400,
-        "pass_percent": 70,
-        "min_correct": 98
+        "pass_percent": 70
       },
       {
         "exam_type": "sc_re_broker",
@@ -2451,8 +2249,7 @@
         "is_exam_required": 1,
         "exam_question_count": 125,
         "exam_duration_sec": 12000,
-        "pass_percent": 76.8,
-        "min_correct": 96
+        "pass_percent": 76.8
       },
       {
         "exam_type": "tn_re_broker",
@@ -2462,8 +2259,7 @@
         "is_exam_required": 1,
         "exam_question_count": 125,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 94
+        "pass_percent": 75
       },
       {
         "exam_type": "tx_re_broker",
@@ -2473,8 +2269,7 @@
         "is_exam_required": 1,
         "exam_question_count": 145,
         "exam_duration_sec": 14400,
-        "pass_percent": 76,
-        "min_correct": 98
+        "pass_percent": 76
       },
       {
         "exam_type": "ut_re_broker",
@@ -2484,8 +2279,7 @@
         "is_exam_required": 1,
         "exam_question_count": 170,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 128
+        "pass_percent": 75
       },
       {
         "exam_type": "va_re_broker",
@@ -2495,8 +2289,7 @@
         "is_exam_required": 1,
         "exam_question_count": 125,
         "exam_duration_sec": 9600,
-        "pass_percent": 75,
-        "min_correct": 94
+        "pass_percent": 75
       },
       {
         "exam_type": "wa_re_broker",
@@ -2506,8 +2299,7 @@
         "is_exam_required": 1,
         "exam_question_count": 44,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 33
+        "pass_percent": 75
       },
       {
         "exam_type": "wi_re_broker",
@@ -2517,8 +2309,7 @@
         "is_exam_required": 1,
         "exam_question_count": 100,
         "exam_duration_sec": 11700,
-        "pass_percent": 75,
-        "min_correct": 75
+        "pass_percent": 75
       },
       {
         "exam_type": "wv_re_broker",
@@ -2528,8 +2319,7 @@
         "is_exam_required": 1,
         "exam_question_count": 140,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 105
+        "pass_percent": 75
       },
       {
         "exam_type": "ak_re_salesperson",
@@ -2539,8 +2329,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 4800,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "al_re_salesperson",
@@ -2550,8 +2339,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ar_re_salesperson",
@@ -2561,8 +2349,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 21
+        "pass_percent": 70
       },
       {
         "exam_type": "az_re_salesperson",
@@ -2572,8 +2359,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 45
+        "pass_percent": 75
       },
       {
         "exam_type": "ca_re_salesperson",
@@ -2583,8 +2369,7 @@
         "is_exam_required": 1,
         "exam_question_count": 150,
         "exam_duration_sec": 11700,
-        "pass_percent": 70,
-        "min_correct": 105
+        "pass_percent": 70
       },
       {
         "exam_type": "co_re_salesperson",
@@ -2594,8 +2379,7 @@
         "is_exam_required": 1,
         "exam_question_count": 74,
         "exam_duration_sec": 6600,
-        "pass_percent": 71.6,
-        "min_correct": 53
+        "pass_percent": 71.6
       },
       {
         "exam_type": "ct_re_salesperson",
@@ -2605,8 +2389,7 @@
         "is_exam_required": 1,
         "exam_question_count": 35,
         "exam_duration_sec": 2700,
-        "pass_percent": 70,
-        "min_correct": 25
+        "pass_percent": 70
       },
       {
         "exam_type": "de_re_salesperson",
@@ -2616,8 +2399,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 4800,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "fl_re_salesperson",
@@ -2627,8 +2409,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 2700,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ga_re_salesperson",
@@ -2638,8 +2419,7 @@
         "is_exam_required": 1,
         "exam_question_count": 52,
         "exam_duration_sec": 7200,
-        "pass_percent": 75,
-        "min_correct": 39
+        "pass_percent": 75
       },
       {
         "exam_type": "hi_re_salesperson",
@@ -2649,8 +2429,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 35
+        "pass_percent": 70
       },
       {
         "exam_type": "ia_re_salesperson",
@@ -2660,8 +2439,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "id_re_salesperson",
@@ -2671,8 +2449,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "il_re_salesperson",
@@ -2682,8 +2459,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "in_re_salesperson",
@@ -2693,8 +2469,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "ks_re_salesperson",
@@ -2704,8 +2479,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 23
+        "pass_percent": 75
       },
       {
         "exam_type": "ky_re_salesperson",
@@ -2715,8 +2489,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "la_re_salesperson",
@@ -2726,8 +2499,7 @@
         "is_exam_required": 1,
         "exam_question_count": 55,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 39
+        "pass_percent": 70
       },
       {
         "exam_type": "ma_re_salesperson",
@@ -2737,8 +2509,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "md_re_salesperson",
@@ -2748,8 +2519,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 1800,
-        "pass_percent": 70,
-        "min_correct": 21
+        "pass_percent": 70
       },
       {
         "exam_type": "me_re_salesperson",
@@ -2759,8 +2529,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "mi_re_salesperson",
@@ -2770,8 +2539,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 2700,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "mn_re_salesperson",
@@ -2781,8 +2549,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "mo_re_salesperson",
@@ -2792,8 +2559,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 7200,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ms_re_salesperson",
@@ -2803,8 +2569,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "mt_re_salesperson",
@@ -2814,8 +2579,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "nc_re_salesperson",
@@ -2825,8 +2589,7 @@
         "is_exam_required": 1,
         "exam_question_count": 60,
         "exam_duration_sec": 7200,
-        "pass_percent": 75,
-        "min_correct": 45
+        "pass_percent": 75
       },
       {
         "exam_type": "nd_re_salesperson",
@@ -2836,8 +2599,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ne_re_salesperson",
@@ -2847,8 +2609,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "nh_re_salesperson",
@@ -2858,8 +2619,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "nj_re_salesperson",
@@ -2869,8 +2629,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 21
+        "pass_percent": 70
       },
       {
         "exam_type": "nm_re_salesperson",
@@ -2880,8 +2639,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "nv_re_salesperson",
@@ -2891,8 +2649,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ny_re_salesperson",
@@ -2902,8 +2659,7 @@
         "is_exam_required": 1,
         "exam_question_count": 75,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 53
+        "pass_percent": 70
       },
       {
         "exam_type": "oh_re_salesperson",
@@ -2913,8 +2669,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ok_re_salesperson",
@@ -2924,8 +2679,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "or_re_salesperson",
@@ -2935,8 +2689,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 38
+        "pass_percent": 75
       },
       {
         "exam_type": "pa_re_salesperson",
@@ -2946,8 +2699,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 3600,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "ri_re_salesperson",
@@ -2957,8 +2709,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 35
+        "pass_percent": 70
       },
       {
         "exam_type": "sc_re_salesperson",
@@ -2968,8 +2719,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 4800,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "sd_re_salesperson",
@@ -2979,8 +2729,7 @@
         "is_exam_required": 1,
         "exam_question_count": 52,
         "exam_duration_sec": 7200,
-        "pass_percent": 75,
-        "min_correct": 39
+        "pass_percent": 75
       },
       {
         "exam_type": "tn_re_salesperson",
@@ -2990,8 +2739,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 4800,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "tx_re_salesperson",
@@ -3001,8 +2749,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 28
+        "pass_percent": 70
       },
       {
         "exam_type": "ut_re_salesperson",
@@ -3012,8 +2759,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 35
+        "pass_percent": 70
       },
       {
         "exam_type": "va_re_salesperson",
@@ -3023,8 +2769,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 2700,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "vt_re_salesperson",
@@ -3034,8 +2779,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 2700,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       },
       {
         "exam_type": "wa_re_salesperson",
@@ -3045,8 +2789,7 @@
         "is_exam_required": 1,
         "exam_question_count": 30,
         "exam_duration_sec": 5400,
-        "pass_percent": 70,
-        "min_correct": 21
+        "pass_percent": 70
       },
       {
         "exam_type": "wi_re_salesperson",
@@ -3056,8 +2799,7 @@
         "is_exam_required": 1,
         "exam_question_count": 140,
         "exam_duration_sec": 14400,
-        "pass_percent": 75,
-        "min_correct": 105
+        "pass_percent": 75
       },
       {
         "exam_type": "wv_re_salesperson",
@@ -3067,8 +2809,7 @@
         "is_exam_required": 1,
         "exam_question_count": 50,
         "exam_duration_sec": 3600,
-        "pass_percent": 70,
-        "min_correct": 35
+        "pass_percent": 70
       },
       {
         "exam_type": "wy_re_salesperson",
@@ -3078,8 +2819,7 @@
         "is_exam_required": 1,
         "exam_question_count": 40,
         "exam_duration_sec": 5400,
-        "pass_percent": 75,
-        "min_correct": 30
+        "pass_percent": 75
       }
     ],
     "success": true,
@@ -3089,14 +2829,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 6.0384
+        "sql_duration_ms": 2.0781
       },
-      "duration": 6.0384,
+      "duration": 2.0781,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 98930688,
-      "rows_read": 561,
+      "size_after": 100171776,
+      "rows_read": 565,
       "rows_written": 0,
       "total_attempts": 1
     }
