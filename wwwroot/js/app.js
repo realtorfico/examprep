@@ -7542,6 +7542,24 @@ var CA_RE_AGENCY_DISCLOSURE_TABLE = {
   sourceNote: 'Source: California Civil Code § 2079.14, as codified via leginfo.legislature.ca.gov.',
 };
 
+// First flashcard deck (2026-09-03), same track. Deliberately term-definition style, not another
+// numeric-fact quiz -- the tables above already own "what's the number," so these cards own "what
+// does this term of art actually mean," a genuinely different recall task. Scoped to real CA-
+// specific terms (not generic national real estate vocabulary already covered by the practice
+// question bank) -- same sourcing discipline as the tables, every fact traced to a real section.
+var CA_RE_KEY_TERMS_FLASHCARDS = [
+  { front: 'Neutral escrow depository', back: 'An independent third party that holds trust funds pending closing — a broker satisfies the trust-fund handling requirement by using one of these OR by maintaining their own trust fund account, but not both are required.', source: 'BPC § 10145(a)(1)' },
+  { front: 'Commingling', back: 'Mixing a broker\'s own money or property with money or property received and held for others. It\'s a standalone ground for discipline on its own — no separate proof of client harm is required.', source: 'BPC § 10176(e)' },
+  { front: 'Broker-officer', back: 'A person licensed as a real estate broker ONLY in their capacity as an officer of a corporate broker — not eligible for renewal in that capacity, or for an individual license, without completing continuing education first.', source: 'BPC § 10171.5' },
+  { front: 'Prepaid rental listing service', back: 'A distinct, separately-licensable CA real estate activity: providing lists of rental properties to prospective tenants for a fee paid in advance — not the same license category as brokering a sale.', source: 'BPC § 10167.2' },
+  { front: 'Monetary penalty in lieu of suspension', back: 'The Commissioner may let a licensee pay a fine instead of serving an actual suspension. But if the licensee fails to pay, the FULL stayed suspension can be ordered immediately — no hearing, and no credit for any money already paid.', source: 'BPC § 10175.2' },
+  { front: 'Transfer Disclosure Statement (TDS)', back: 'The seller\'s required written property-condition disclosure. Must be delivered "as soon as practicable before transfer of title" for a standard sale — a reasonably-prompt standard, not a fixed day-count.', source: 'Civil Code § 1102.3' },
+  { front: 'Natural Hazard Disclosure (NHD)', back: 'A separate required disclosure covering 6 specific hazard zone types: flood, dam inundation, very-high fire severity, state fire responsibility area, earthquake fault zone, and seismic hazard zone.', source: 'Civil Code § 1103.2(a)' },
+  { front: 'Designated agent', back: 'One of California\'s recognized agency relationship categories — a specific licensee at a firm formally designated to represent one party, distinct from the firm\'s other agents who may represent the other side.', source: 'Civil Code § 2079.13 et seq.' },
+  { front: 'Real Estate Recovery Program', back: 'The statutory chapter (BPC Ch. 6.5) creating and governing the Consumer Recovery Account — the fund that can pay defrauded clients when a judgment against a licensee goes uncollected, up to real statutory caps.', source: 'BPC § 10470 et seq.' },
+  { front: 'Diligent visual inspection duty (AVID)', back: 'A listing agent\'s duty to conduct a reasonably competent and diligent VISUAL inspection of the property and disclose material facts an investigation would reveal — applies specifically to 1-4 unit residential property or a manufactured home, not larger residential or commercial property.', source: 'Civil Code § 2079' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -7764,6 +7782,9 @@ var RESOURCES = {
     { title: 'Agency Relationship Disclosure Quick Facts', type: 'table', table: CA_RE_AGENCY_DISCLOSURE_TABLE,
       desc: 'The real, distinct deadlines for when a seller\'s agent vs. a buyer\'s agent must deliver the agency disclosure form.',
       topic: 'Agency & Fiduciary Duties' },
+    { title: 'Key CA Real Estate Terms', type: 'flashcards', flashcards: CA_RE_KEY_TERMS_FLASHCARDS,
+      desc: 'Real California-specific terms of art — flip through them to test your recall, not just recognition, of what each one actually means.',
+      topic: 'General Reference', free: true },
     { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
       desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the exam is based on.',
       topic: 'General Reference', free: true },
@@ -9384,7 +9405,7 @@ var RESOURCES = {
 var RESOURCE_TYPE_LABEL = {
   audio: { icon: '🎧', label: 'Audio' }, video: { icon: '🎥', label: 'Video' },
   pdf: { icon: '📄', label: 'PDF Guide' }, image: { icon: '🖼️', label: 'Quick Reference' },
-  table: { icon: '📊', label: 'Reference Table' },
+  table: { icon: '📊', label: 'Reference Table' }, flashcards: { icon: '🗂️', label: 'Flashcards' },
 };
 function resourceTypeCellHtml(type) {
   var t = RESOURCE_TYPE_LABEL[type];
@@ -9429,6 +9450,35 @@ function resourceTableInnerHtml(t) {
     (t.sourceNote ? '<p class="muted resource-table-note">' + t.sourceNote + '</p>' : '');
 }
 
+// New resource type (2026-09-03): an interactive flip-card deck, one card visible at a time.
+// `cards` is a plain [{front, back, source}] array -- deliberately simpler than the table shape
+// (no headers/columns needed) since each card is a single question/term -> answer pair. State
+// (which card, flipped or not) lives in the module-level `flashcardState` var, re-initialized
+// here whenever it's stale for the currently-open row (e.g. first open, or after a page reload
+// left it pointing at a different resource's card count).
+function flashcardDeckHtml(cards, resourceIndex) {
+  if (!cards || !cards.length) return '<p class="muted">No cards yet.</p>';
+  if (!flashcardState || flashcardState.resourceIndex !== resourceIndex || flashcardState.index >= cards.length) {
+    flashcardState = { resourceIndex: resourceIndex, index: 0, flipped: false };
+  }
+  var card = cards[flashcardState.index];
+  var isFirst = flashcardState.index === 0;
+  var isLast = flashcardState.index === cards.length - 1;
+  return '<div class="flashcard-deck">' +
+    '<p class="muted flashcard-progress">Card ' + (flashcardState.index + 1) + ' of ' + cards.length + ' — tap the card to flip it</p>' +
+    '<div class="flashcard' + (flashcardState.flipped ? ' is-flipped' : '') + '" data-act="flip-flashcard" role="button" tabindex="0" aria-label="Flip card">' +
+    '<div class="flashcard-inner">' +
+    '<div class="flashcard-face flashcard-front">' + escapeHtml(card.front) + '</div>' +
+    '<div class="flashcard-face flashcard-back">' + escapeHtml(card.back) +
+    (card.source ? '<div class="flashcard-source muted">' + escapeHtml(card.source) + '</div>' : '') + '</div>' +
+    '</div></div>' +
+    '<div class="flashcard-nav">' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="prev-flashcard"' + (isFirst ? ' disabled' : '') + '>← Prev</button>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="shuffle-flashcards" title="Shuffle the deck">🔀 Shuffle</button>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="next-flashcard"' + (isLast ? ' disabled' : '') + '>Next →</button>' +
+    '</div></div>';
+}
+
 function formatDuration(seconds) {
   if (seconds == null || isNaN(seconds)) return '—';
   seconds = Math.round(seconds);
@@ -9470,6 +9520,10 @@ var RESOURCES_PROMO_BANNER =
 var resourcesRowsCache = [];
 var resourcesSort = { key: 'status', dir: -1 }; // dir:-1 so unlocked/free rows (higher value) sort first
 var resourcesOpenIndex = null;
+// Which flashcard deck is open + current position/flip state within it -- reset to null whenever
+// the owning resource row closes or a different topic tab is selected (mirrors resourcesOpenIndex's
+// own reset discipline), and self-heals in flashcardDeckHtml if it's ever stale for the open row.
+var flashcardState = null;
 var currentResourcesTopic = null; // null = "All"
 var resourceProgressCache = {}; // resourceKey -> {percent, timesOpened}, logged-in users only
 
@@ -9648,8 +9702,8 @@ function renderResourcesTable() {
       actionCell = '<a class="resource-action-icon-btn" href="' + row.url + '" target="_blank" rel="noopener" title="Open" aria-label="Open">↗</a>';
     } else {
       var isOpen = resourcesOpenIndex === row.index;
-      var actionLabel = isOpen ? 'Hide' : row.type === 'table' ? 'Show' : row.type === 'image' ? 'View' : 'Play';
-      var actionIcon = isOpen ? '✕' : row.type === 'table' ? '📊' : row.type === 'image' ? '👁' : '▶';
+      var actionLabel = isOpen ? 'Hide' : row.type === 'table' ? 'Show' : row.type === 'image' ? 'View' : row.type === 'flashcards' ? 'Study' : 'Play';
+      var actionIcon = isOpen ? '✕' : row.type === 'table' ? '📊' : row.type === 'image' ? '👁' : row.type === 'flashcards' ? '🗂️' : '▶';
       actionCell = '<button class="resource-action-icon-btn" type="button" data-act="toggle-resource-media" data-index="' + row.index +
         '" title="' + actionLabel + '" aria-label="' + actionLabel + '">' + actionIcon + '</button>';
     }
@@ -9676,6 +9730,8 @@ function renderResourcesTable() {
       inner = '<img class="resource-thumb" src="' + row.url + '" alt="' + row.title + '" oncontextmenu="return false">';
     } else if (row.type === 'table') {
       inner = resourceTableInnerHtml(row.table);
+    } else if (row.type === 'flashcards') {
+      inner = flashcardDeckHtml(row.flashcards, row.index);
     } else if (row.type === 'pdf') {
       inner = '<iframe class="resource-pdf-frame" src="' + row.url + '#toolbar=0" title="' + row.title + '"></iframe>';
     }
@@ -14314,11 +14370,13 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'select-resource-topic-tab') {
     currentResourcesTopic = el.getAttribute('data-topic') || null;
     resourcesOpenIndex = null; // avoid a now-hidden row staying "expanded" behind the scenes
+    flashcardState = null;
     renderResourcesTable();
   } else if (act === 'toggle-resource-media') {
     var toggleIdx = Number(el.getAttribute('data-index'));
     var opening = resourcesOpenIndex !== toggleIdx;
     resourcesOpenIndex = opening ? toggleIdx : null;
+    if (!opening) flashcardState = null; // closing the row -- don't leave stale deck position behind
     if (opening) {
       var openedRow = resourcesRowsCache[toggleIdx];
       if (openedRow) {
@@ -14332,6 +14390,31 @@ document.addEventListener('click', async function (e) {
           resourceProgressCache[openedRow.resourceKey] = { percent: initialPercent, times_opened: 1 };
         }
       }
+    }
+    renderResourcesTable();
+  } else if (act === 'flip-flashcard') {
+    if (flashcardState) flashcardState.flipped = !flashcardState.flipped;
+    renderResourcesTable();
+  } else if (act === 'next-flashcard') {
+    if (flashcardState) { flashcardState.index++; flashcardState.flipped = false; }
+    renderResourcesTable();
+  } else if (act === 'prev-flashcard') {
+    if (flashcardState) { flashcardState.index = Math.max(0, flashcardState.index - 1); flashcardState.flipped = false; }
+    renderResourcesTable();
+  } else if (act === 'shuffle-flashcards') {
+    var shuffleIdx = flashcardState ? flashcardState.resourceIndex : null;
+    var shuffleRow = shuffleIdx != null ? resourcesRowsCache[shuffleIdx] : null;
+    if (shuffleRow && shuffleRow.flashcards) {
+      // Fisher-Yates, in place -- the underlying RESOURCES data is shared module state, so this
+      // reshuffles the deck for every future open too, not just this session (matches "shuffle"
+      // meaning "randomize study order," not "temporarily preview a random order").
+      var deck = shuffleRow.flashcards;
+      for (var si = deck.length - 1; si > 0; si--) {
+        var sj = Math.floor(Math.random() * (si + 1));
+        var tmp = deck[si]; deck[si] = deck[sj]; deck[sj] = tmp;
+      }
+      flashcardState.index = 0;
+      flashcardState.flipped = false;
     }
     renderResourcesTable();
   } else if (act === 'skip-resource-player') {

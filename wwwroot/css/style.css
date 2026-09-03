@@ -1728,6 +1728,32 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .resource-free-badge { background: color-mix(in srgb, var(--correct) 18%, transparent); color: var(--correct); border-color: color-mix(in srgb, var(--correct) 35%, transparent); }
 .resource-progress-note { font-size: 0.7rem; margin-top: 0.3rem; }
 
+/* Flashcard deck (2026-09-03) -- a genuinely new resource type, not a copy of the table renderer.
+   Standard 3D-flip pattern: .flashcard is the perspective container + click target, .flashcard-inner
+   is what actually rotates, and each .flashcard-face is backface-hidden so only one side is ever
+   visible/readable at a time. All colors use existing design tokens, so this is dark-mode-safe with
+   no separate override block needed. */
+.flashcard-deck { max-width: 32rem; margin: 0 auto; text-align: center; }
+.flashcard-progress { margin: 0 0 0.6rem; font-size: 0.8rem; }
+.flashcard {
+  perspective: 1200px; min-height: 11rem; cursor: pointer; outline: none;
+}
+.flashcard-inner {
+  position: relative; width: 100%; height: 100%; min-height: 11rem;
+  transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d;
+}
+.flashcard.is-flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-face {
+  position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem;
+  padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); font-size: 1rem; line-height: 1.5;
+}
+.flashcard-front { background: color-mix(in srgb, var(--accent-deep) 8%, var(--card)); font-weight: 600; }
+.flashcard-back { background: var(--surface-2); transform: rotateY(180deg); }
+.flashcard-source { font-size: 0.72rem; }
+.flashcard-nav { display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin-top: 0.9rem; }
+.flashcard-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .progress-tables-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; align-items: start; }
 @media (min-width: 900px) {
   .progress-tables-grid { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
