@@ -8604,6 +8604,134 @@ var NY_RE_BROKER_DISCIPLINE_CONCEPTS_FLASHCARDS = [
   { front: 'Judicial review path (RPL §§ 441-e, 441-f)', back: 'A licensee facing license denial or a DOS complaint has a defined statutory notice-and-hearing process (§ 441-e) followed by a defined path to court review of DOS\'s ultimate determination (§ 441-f) — discipline isn\'t just an internal DOS decision with no outside check.', source: 'RPL §§ 441-e, 441-f' },
 ];
 
+// ============================================================================
+// PA RE SALESPERSON -- Key Facts Digest, drafted 2026-09-03, sourced from
+// RELRA (63 P.S. §§ 455.101-455.902) and 49 Pa. Code Chapter 35.
+// ============================================================================
+var PA_RE_SALESPERSON_RECOVERY_FUND_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Fund cap -- per claim', '$20,000',
+      'The absolute ceiling on what one aggrieved person can recover from the Fund for a single claim, no matter how large the actual judgment -- anything above this is uncollectible if the licensee has no assets left.',
+      '63 P.S. § 455.803(d)'],
+    ['Recovery Fund cap -- per licensee, aggregate', '$100,000',
+      'Caps total Fund exposure across every claim against one licensee combined. If claims against one licensee exceed $100,000 in total, the $100,000 is split pro rata among the claimants rather than paid in full to each.',
+      '63 P.S. § 455.803(d)'],
+    ['Deadline to file a Recovery Fund claim', 'No more than 1 year after the underlying judgment proceedings (including all reviews and appeals) terminate',
+      'A real, specific filing clock -- miss it and the claim is barred outright regardless of how strong the underlying case is.',
+      '63 P.S. § 455.803(b)(4)'],
+    ['Interest on a claim stuck behind an underfunded Fund', '6% per year',
+      'If the Fund itself doesn\'t have enough money on hand to pay a valid claim immediately, the unpaid balance accrues at this rate until it can be paid -- a real number examiners can pair against the licensee-repayment rate below to build a trick question.',
+      '63 P.S. § 455.803(d)'],
+    ['Interest a licensee must repay before reinstatement', '10% per year',
+      'A DIFFERENT rate than the 6% above -- once the Fund pays out on a claim against you, your license is automatically suspended, and you cannot be reinstated until you\'ve repaid the Fund in full plus interest at this higher rate.',
+      '63 P.S. § 455.803(f)(1)-(2)'],
+    ['What the Fund does NOT cover', 'Campground membership sales/salespersons, and the preparation or issuance of a broker price opinion',
+      'Two narrow, real statutory carve-outs -- the Fund isn\'t a blanket guarantee against every kind of licensee misconduct.',
+      '63 P.S. § 455.801(b)'],
+  ],
+  journalNote: 'The Fund is financed by a $10 fee tacked onto every initial license and every biennial renewal -- and if the Fund\'s balance drops below $300,000 at the start of any biennial renewal period, the Commission can assess licensees up to an ADDITIONAL $10 to bring it back up to $500,000 (63 P.S. § 455.802).',
+  sourceNote: 'Source: Pennsylvania Real Estate Licensing and Registration Act (RELRA), Chapter 8 -- Real Estate Recovery Fund, 63 P.S. §§ 455.801-455.803, official text via the Pennsylvania General Assembly (palegis.us), Act 9 of 1980 as amended.',
+};
+
+var PA_RE_SALESPERSON_LICENSING_TABLE = {
+  headers: ['Fact', 'Requirement', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Pre-license education (current rule)', '75 hours of Commission-approved real estate instruction, which must include fair housing and professional ethics',
+      'A specific, real hour count -- not a vague "some coursework" -- and the fair housing/ethics content isn\'t optional filler, it\'s a statutory requirement of the curriculum itself.',
+      '63 P.S. § 455.521(2)(i)'],
+    ['Minimum age to sit for the salesperson exam', '18 years old', 'Lower than the broker exam\'s 21-year minimum -- a real, distinct age threshold for each license level.', '63 P.S. § 455.521(1)'],
+    ['Window to submit a license application after passing the exam', 'Within 3 years of the exam pass date', 'Pass the exam but wait too long to apply, and the passing score no longer counts -- you\'d have to retest.', '49 Pa. Code § 35.223(a)(1)'],
+    ['Continuing education for biennial renewal', '14 hours of Commission-approved CE, completed by the May 31 renewal deadline', 'A firm hour count AND a firm calendar deadline -- both parts are independently testable.', '49 Pa. Code § 35.382(a)'],
+    ['License fees (initial / biennial renewal)', '$72 initial standard license / $96 biennial renewal -- each ALSO stacks the separate $10 Real Estate Recovery Fund fee on top', 'Two real, distinct fee schedules that combine -- a common source of "which fee is it really" confusion.', '49 Pa. Code § 35.203(a); 63 P.S. § 455.802'],
+    ['Real estate transaction record retention', '3 years following consummation of the transaction', 'Applies to the BROKER (not directly the salesperson) -- and failing to preserve these records is itself an independent, statutorily-listed ground for discipline.', '63 P.S. § 455.604(a)(6); 49 Pa. Code § 35.286(a)'],
+  ],
+  journalNote: 'Watch for a trap pairing the WRONG hour count with the WRONG license level: salespersons need 75 hours of pre-license education (60 hours under a narrow transitional rule for people who started coursework before the current rule took effect, with a 5-year window to finish the full 75), while brokers need 240 hours PLUS 3 years of experience as a licensed salesperson first (63 P.S. § 455.511).',
+  sourceNote: 'Source: RELRA § 521 (63 P.S. § 455.521) and 49 Pa. Code §§ 35.203, 35.223, 35.286, 35.382, as published by the Pennsylvania Department of State / State Real Estate Commission.',
+};
+
+var PA_RE_SALESPERSON_AGENCY_DISCLOSURE_TABLE = {
+  headers: ['Who / What', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Consumer Notice -- in-person initial interview', 'Must be provided AT the initial interview, if that interview happens in person', 'A hard trigger tied to a single specific meeting, not a general "early in the relationship" standard.', '49 Pa. Code § 35.284(a)(1)'],
+    ['Consumer Notice -- initial interview NOT in person', 'The licensee must read a specific oral disclosure script at the initial interview, then deliver the WRITTEN Consumer Notice no later than the first in-person meeting OR the first time a property is shown -- whichever comes first', 'Two separate deadlines chained together, and the oral script itself must be read essentially verbatim.', '49 Pa. Code §§ 35.284(a)(2), 35.339'],
+    ['Dual agency', 'Requires the WRITTEN consent of BOTH parties before it may occur', 'Not implied consent, not verbal consent -- written, from both sides, before the dual agency actually happens.', '49 Pa. Code § 35.314(a)'],
+    ['Designated agency', 'A broker may designate separate licensees to represent each side of the same deal -- but because the broker supervises both designated agents, the BROKER automatically becomes a dual agent in that transaction', 'A frequently-missed consequence: choosing designated agency at the salesperson level doesn\'t escape dual-agency status at the broker level.', '49 Pa. Code § 35.315(e)(4)'],
+    ['Confidentiality carve-out (applies to every agency type)', 'Every licensee -- seller\'s agent, buyer\'s agent, dual agent, even a transaction licensee -- must still disclose KNOWN MATERIAL DEFECTS about the property, regardless of any duty of confidentiality otherwise owed', 'Confidentiality has a hard limit built in; it never overrides the disclosure duty on material defects.', '49 Pa. Code §§ 35.312(a)(2), 35.313(a)(2), 35.314(b)(3), 35.316(2)'],
+    ['Transaction licensee\'s limited confidentiality', 'Even with no fiduciary duty at all, a transaction licensee still may NOT reveal: that the seller will accept less than asking price, that the buyer will pay more than their written offer, or that either side would accept different financing terms', 'A distinct, narrower confidentiality obligation than a true agent\'s -- three specific negotiating facts, not a general duty.', '49 Pa. Code § 35.316(2)'],
+  ],
+  sourceNote: 'Source: 49 Pa. Code §§ 35.284, 35.312-35.316, 35.339, as published in the Pennsylvania Code (State Real Estate Commission regulations).',
+};
+
+var PA_RE_SALESPERSON_ESCROW_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Deadline to deposit money belonging to another', 'By the end of the business day following the broker\'s receipt of it', 'A same-day-or-next-day standard -- there is no multi-day grace period for ordinary deposits.', '63 P.S. § 455.608.5(e)'],
+    ['Holding an uncashed offer check', 'With WRITTEN OR ELECTRONIC consent of both buyer and seller (or lessee and lessor), a broker may hold a check pending acceptance of the offer rather than deposit it immediately; once accepted, it must go into escrow by the close of business the NEXT business day', 'A real, narrow exception with its own separate deadline once the offer is accepted -- not an open-ended delay.', '63 P.S. § 455.608.5(f)'],
+    ['Associate broker/salesperson receiving a deposit personally', 'Must PROMPTLY pay it over to their employing broker -- a salesperson may never personally hold client escrow funds', 'A common wrong-answer trap assumes any licensee can hold a deposit; only the broker\'s account is the actual destination.', '63 P.S. § 455.608.5(c), (k)'],
+    ['Commingling', 'Explicitly and absolutely prohibited -- advance payments belonging to others may NEVER be deposited into the broker\'s business or personal account, under any circumstances', 'The statute uses "under no circumstances" language -- stronger than a general prohibition, it forecloses any argument for an exception.', '63 P.S. § 455.608.5(d)-(e)'],
+    ['Maximum fine per Commission violation', '$1,000, in addition to (not instead of) possible license suspension or revocation', 'A real dollar ceiling the Commission can impose per violation -- often paired in test questions with the license-status consequence.', '63 P.S. § 455.604(a)'],
+    ['Escrow/transaction record retention (broker)', '3 years following consummation of the transaction', 'Failing to preserve these records for the full 3 years is independently listed as its own disciplinable offense.', '63 P.S. § 455.604(a)(6)'],
+  ],
+  journalNote: 'The 2009-added statute (§ 608.5) is the current, controlling rule on deposit timing -- it uses "end of the business day following receipt," a slightly tighter standard than the older regulatory language some study materials still quote ("end of the NEXT business day," 49 Pa. Code § 35.324). If you see both phrasings, go with the statute.',
+  sourceNote: 'Source: RELRA §§ 604(a), 608.5 (63 P.S. §§ 455.604(a), 455.608.5), as published by the Pennsylvania General Assembly.',
+};
+
+var PA_RE_SALESPERSON_MISCELLANEOUS_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Seller property disclosure statement -- delivery timing', 'Must be delivered to the buyer (or the buyer\'s licensee) BEFORE the agreement of sale is executed', 'A hard cutoff tied to contract execution, not a "sometime during the deal" standard.', '49 Pa. Code § 35.284a(a)(3)'],
+    ['Condominium/cooperative resale -- buyer\'s cancellation window', 'The buyer may cancel and get a full deposit refund until 5 days AFTER receiving the association\'s resale certificate, or until conveyance -- whichever happens first', 'A real, dual-trigger deadline (either event can end the window) drawn from the Uniform Condominium/Cooperative Acts.', '68 Pa.C.S. §§ 3407, 4409 (via 49 Pa. Code § 35.335a(15))'],
+    ['Time-share / campground membership cancellation right', 'The purchaser may cancel until midnight of the 5th day following the date of the transaction', 'A firm, calendar-based right that must appear in bold type directly above the buyer\'s signature line on the agreement itself.', '49 Pa. Code § 35.333(a)(11)'],
+    ['Discrimination complaints -- PHRA deferral rule', 'When a licensee faces an INITIAL discrimination complaint, the Real Estate Commission must give the Pennsylvania Human Relations Commission 90 days to act on it before the Real Estate Commission can proceed on its own', 'A real, specific waiting period tied to which agency acts first -- and it applies only to a first complaint, not later ones.', '63 P.S. § 455.604(a)(22)(iii)-(iv)'],
+    ['Zoning classification in an agreement of sale', 'Must be stated in the agreement UNLESS the property is zoned solely or primarily for single-family use; omitting it when required makes the agreement voidable at the buyer\'s option, with a full deposit refund and no court action required', 'A missing detail here doesn\'t just create liability -- it can unwind the whole contract at the buyer\'s unilateral choice.', '49 Pa. Code § 35.333(a)(6)'],
+  ],
+  sourceNote: 'Source: RELRA § 604(a)(22) (63 P.S. § 455.604(a)(22)), 49 Pa. Code §§ 35.284a, 35.333, 35.335a, and 68 Pa.C.S. §§ 3407, 4409, as published by the Pennsylvania Department of State and Pennsylvania General Assembly.',
+};
+
+var PA_RE_SALESPERSON_KEY_TERMS_FLASHCARDS = [
+  { front: 'Designated agent', back: 'One or more licensees designated by the employing broker, with the principal\'s consent, to act EXCLUSIVELY as agent for that principal -- to the exclusion of every other licensee in the broker\'s employ.', source: '49 Pa. Code § 35.201' },
+  { front: 'Dual agent', back: 'A licensee who acts as agent for BOTH the buyer/tenant and the seller/landlord in the same transaction.', source: '49 Pa. Code § 35.201' },
+  { front: 'Transaction licensee', back: 'A licensee who provides communication or document-preparation services (or performs broker/salesperson-type acts) WITHOUT entering into an agency relationship with the consumer at all.', source: '49 Pa. Code § 35.201' },
+  { front: 'Broker of record', back: 'The individual broker responsible for the real estate transactions of a partnership, association, or corporation that itself holds the broker\'s license.', source: '49 Pa. Code § 35.201' },
+  { front: 'Reciprocal license', back: 'A license issued to someone whose principal place of business is OUTSIDE Pennsylvania, who already holds a current license from a state with a reciprocal agreement or substantially comparable qualifications -- distinct from a "standard" license, which requires meeting PA\'s own education/exam requirements directly.', source: '49 Pa. Code § 35.201' },
+  { front: 'Subagent', back: 'A licensee NOT employed by the listing broker who cooperates with the listing broker in selling the property, and who is deemed to have an agency relationship with the SELLER as a result -- even though they work for a different brokerage.', source: '49 Pa. Code § 35.201' },
+  { front: 'Listing broker', back: 'A broker who has entered a written agreement with a seller/landlord to market the property as a seller\'s agent, dual agent, or transaction licensee.', source: '49 Pa. Code § 35.201' },
+  { front: 'Rental listing referral agent', back: 'A distinct, separately-licensable PA category: an individual or entity that owns/manages a business collecting rental information to refer prospective tenants to units -- explicitly NOT the same license as a broker or salesperson.', source: '49 Pa. Code § 35.201; 49 Pa. Code § 35.227' },
+  { front: 'Builder-owner salesperson', back: 'A full-time employee of a builder-owner of single-family/multi-family dwellings, authorized to list, sell, lease, or collect rent for that builder-owner\'s OWN properties only -- a narrow license category tied to one employer\'s inventory.', source: '49 Pa. Code § 35.201' },
+  { front: 'Comparative market analysis (CMA)', back: 'A written analysis/opinion of a property\'s probable sale or rental price, prepared by a broker, associate broker, or salesperson -- legally distinct from an appraisal, and every CMA must carry a disclaimer stating it wasn\'t performed under professional appraisal standards.', source: '49 Pa. Code §§ 35.201, 35.340' },
+];
+
+var PA_RE_SALESPERSON_AGENCY_DUTY_CONCEPTS_FLASHCARDS = [
+  { front: 'Duties owed to ALL consumers (non-waivable)', back: 'Every licensee -- regardless of agency relationship -- must exercise reasonable skill/care, deal honestly and in good faith, promptly present all offers/counteroffers in writing, account for escrow funds, and disclose conflicts of interest. These CANNOT be waived by agreement.', source: '49 Pa. Code § 35.292(a)' },
+  { front: 'Seller\'s agent -- extra duties', back: 'Beyond the general duties: loyalty to the seller/landlord, confidentiality (except known material defects), a continuous good-faith effort to find a buyer/tenant, and disclosure to other parties that the licensee is acting as the seller\'s agent.', source: '49 Pa. Code § 35.312(a)' },
+  { front: 'Buyer\'s agent represents the buyer even if the seller pays', back: 'A buyer\'s agent represents the buyer/tenant\'s interests EVEN IF compensated by the seller/landlord -- who pays the commission does not determine who the licensee legally represents.', source: '49 Pa. Code § 35.313(c)' },
+  { front: 'Dual agent\'s "no adverse action" standard', back: 'A dual agent may take NO action adverse or detrimental to either party\'s interest -- a distinct, narrower standard than the full loyalty duty a single-side agent owes to just one client.', source: '49 Pa. Code § 35.314(b)(1)' },
+  { front: 'Confidential information -- post-termination duty', back: 'A licensee may not reveal or use a former principal\'s confidential information after the agency relationship ends, EXCEPT in five specific situations: the principal consents, disclosure is to another licensee/third party acting for the same principal, it\'s required by subpoena/court order, it\'s needed to prevent a crime, or it\'s used to defend against an accusation of wrongdoing.', source: '49 Pa. Code § 35.311(d)' },
+  { front: 'Broker\'s duty when designating agents on both sides', back: 'Because the broker supervises both designated agents in the same deal, the broker is automatically a dual agent and must take reasonable care that confidential information isn\'t disclosed BETWEEN the two designated licensees within the same firm.', source: '49 Pa. Code § 35.315(f)(1)' },
+  { front: 'A licensee doesn\'t breach duty by showing competing properties', back: 'Showing OTHER properties to a buyer, or listing competing properties, is explicitly NOT a breach of the seller\'s agent\'s duty -- a common misconception that any competing activity is disloyal.', source: '49 Pa. Code § 35.312(b)' },
+];
+
+var PA_RE_SALESPERSON_LICENSING_PROCESS_FLASHCARDS = [
+  { front: 'Relicensure after revocation', back: 'The Commission will not authorize relicensure of anyone whose license was revoked until at least 5 years have passed since the revocation began -- and even after that, relicensure is entirely within the Commission\'s discretion, not automatic.', source: '49 Pa. Code § 35.251' },
+  { front: 'Panic selling', back: 'An attempt by a licensee to trigger panic selling in a neighborhood in order to profit from it is treated as BAD FAITH -- specifically defined as frequent solicitation efforts based on fear of declining values that ISN\'T grounded in the property\'s actual intrinsic value.', source: '49 Pa. Code § 35.303' },
+  { front: 'Harassment', back: 'Soliciting a property\'s sale or disposition -- by personal contact, phone, mail, or advertising -- with enough frequency to amount to CLEAR harassment of the owner, whether or not the licensee is acting for a prospective buyer.', source: '49 Pa. Code § 35.302' },
+  { front: 'Death of a sole-proprietor broker', back: 'The deceased broker\'s estate has 15 days to notify the Commission of a replacement supervising broker. During the termination period: no new listings may be taken, unexpired listings expire automatically after 90 days, and no new licensees may be hired.', source: '49 Pa. Code § 35.252' },
+  { front: 'Broker illness or injury -- substitution', back: 'If a sole-proprietor broker or broker of record can\'t act due to illness/injury, their attorney-in-fact, a corporate officer, or a partner must notify the Commission WITHIN 15 DAYS that an interim licensed broker has been appointed.', source: '49 Pa. Code § 35.254' },
+  { front: 'Hardship waiver of continuing education', back: 'The Commission may fully waive the 14-hour CE requirement for illness, emergency, or hardship -- with automatic-eligibility examples including a license issued within 6 months of the renewal period, or one reactivated from noncurrent status within that same 6-month window.', source: '49 Pa. Code § 35.383(a)' },
+  { front: 'CE instructor waiver', back: 'A qualified CE instructor can waive 1 hour of their OWN continuing education requirement for each hour they actually taught in an approved topic -- but duplicate teaching hours in the same topic during the same renewal period don\'t stack.', source: '49 Pa. Code § 35.383(a)(3)' },
+];
+
+var PA_RE_SALESPERSON_ADVERTISING_TRUST_FLASHCARDS = [
+  { front: 'Disclosing your own license when selling your own property', back: 'A licensee selling or leasing their OWN real estate must disclose in the ADVERTISEMENT that they\'re a licensed real estate agent -- unless the property is instead listed through a real estate company.', source: '49 Pa. Code § 35.304' },
+  { front: 'Business name on an associate\'s ad', back: 'An advertisement placed by an associate broker, salesperson, or cemetery associate broker/salesperson must include the EMPLOYING BROKER\'S business name and phone number, printed in the SAME size type as the licensee\'s own name/number.', source: '49 Pa. Code § 35.305(c)' },
+  { front: 'Sales volume / production advertising', back: 'An advertisement about a broker\'s "sales volume" or "production" may refer ONLY to CLOSED transactions -- defined as either a listing that sold, or a sale after a fully executed deed has actually been delivered.', source: '49 Pa. Code § 35.307(a)' },
+  { front: 'Prize/lottery advertising disclosures', back: 'An ad offering a prize, gift, or lottery to induce a real estate sale must state the fair market value of each prize AND the odds of winning it -- both required so that no purchaser is deceived about what they\'re actually likely to receive.', source: '49 Pa. Code § 35.306(a)' },
+  { front: 'Escrow dispute -- interpleader procedure', back: 'If parties dispute who\'s entitled to escrowed money, the broker must hold it until resolved. If resolution looks unlikely without legal action, the broker may -- after giving 30 days\' notice to the parties -- petition the county court to interplead the rival claimants.', source: '49 Pa. Code § 35.327' },
+  { front: 'Escrow interest -- who keeps it', back: 'If money is held in escrow more than 6 months, the broker is ENCOURAGED (not required) to use an interest-bearing account -- but any interest earned must be disbursed pro rata along with the principal; the broker can\'t keep it (with a narrow landlord exception under the Landlord and Tenant Act).', source: '49 Pa. Code § 35.325(c)' },
+  { front: 'Nonwaiver of the escrow duty', back: 'A broker\'s duty to hold funds in escrow can NEVER be waived or altered by agreement -- not between the transaction parties, not between the broker and the parties, and not between cooperating brokers.', source: '49 Pa. Code § 35.322' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -8792,6 +8920,33 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   pa_re_salesperson: [
+    { title: 'Real Estate Recovery Fund Quick Facts', type: 'table', table: PA_RE_SALESPERSON_RECOVERY_FUND_TABLE,
+      desc: 'Real Recovery Fund payout caps, filing deadlines, and the two different interest rates (6% vs. 10%) pulled directly from RELRA Chapter 8 -- the numbers most likely to trip you up on the Real Estate Commission portion of the exam.',
+      topic: 'Real Estate Commission & Licensure', free: true },
+    { title: 'Licensing & Renewal Quick Facts', type: 'table', table: PA_RE_SALESPERSON_LICENSING_TABLE,
+      desc: 'Real education-hour counts, exam-to-application deadlines, continuing education requirements, and license fee schedules -- the mechanics of getting and keeping a PA salesperson license.',
+      topic: 'Real Estate Commission & Licensure' },
+    { title: 'Agency Disclosure Timing Quick Facts', type: 'table', table: PA_RE_SALESPERSON_AGENCY_DISCLOSURE_TABLE,
+      desc: 'Real deadlines for the Consumer Notice, the written-consent requirement for dual agency, and the confidentiality carve-out every agency type shares.',
+      topic: 'Agency and Disclosure' },
+    { title: 'Escrow & Trust Fund Quick Facts', type: 'table', table: PA_RE_SALESPERSON_ESCROW_TABLE,
+      desc: 'Real deposit deadlines, the commingling prohibition, and the maximum fine the Commission can levy per violation -- straight from RELRA\'s own deposit-handling statute.',
+      topic: 'Regulations Governing the Activities of Licensees' },
+    { title: 'Property Disclosure & Miscellaneous Quick Facts', type: 'table', table: PA_RE_SALESPERSON_MISCELLANEOUS_TABLE,
+      desc: 'Real seller-disclosure timing, condo/co-op and time-share cancellation windows, the PHRA discrimination-complaint deferral rule, and the zoning-disclosure voidability trap.',
+      topic: 'Miscellaneous' },
+    { title: 'Key PA Real Estate Terms', type: 'flashcards', flashcards: PA_RE_SALESPERSON_KEY_TERMS_FLASHCARDS,
+      desc: 'Real Pennsylvania-specific terms of art -- flip through them to test your recall of what each one actually means, not just recognition.',
+      topic: 'Real Estate Commission & Licensure', free: true },
+    { title: 'Agency & Fiduciary Duty Concepts', type: 'flashcards', flashcards: PA_RE_SALESPERSON_AGENCY_DUTY_CONCEPTS_FLASHCARDS,
+      desc: 'The real duty language behind PA agency law -- what every licensee owes all consumers, and the extra duties layered on for each agency type.',
+      topic: 'Agency and Disclosure' },
+    { title: 'Licensing & Discipline Process Concepts', type: 'flashcards', flashcards: PA_RE_SALESPERSON_LICENSING_PROCESS_FLASHCARDS,
+      desc: 'What actually happens around a revocation, a broker\'s death or illness, and a continuing-education hardship waiver -- the process, not just the numbers.',
+      topic: 'Real Estate Commission & Licensure' },
+    { title: 'Advertising & Trust Fund Concepts', type: 'flashcards', flashcards: PA_RE_SALESPERSON_ADVERTISING_TRUST_FLASHCARDS,
+      desc: 'Real advertising disclosure rules, the escrow interpleader procedure, and who actually keeps escrow interest.',
+      topic: 'Regulations Governing the Activities of Licensees' },
     { title: '49 Pa. Code Chapter 35 (State Real Estate Commission)', type: 'pdf', url: 'https://www.pacodeandbulletin.gov/secure/pacode/data/049/chapter35/049_0035.pdf',
       desc: 'The official regulations published by the Pennsylvania Code and Bulletin — the authoritative source the state-specific portion of the exam is based on.',
       topic: 'General Reference', free: true },
