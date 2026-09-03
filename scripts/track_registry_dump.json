@@ -2268,6 +2268,17 @@
         "min_correct": 81
       },
       {
+        "exam_type": "nv_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "NV",
+        "short_name": "Nevada Real Estate Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 130,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 98
+      },
+      {
         "exam_type": "ny_re_broker",
         "kind": "Real Estate Broker",
         "state_code": "NY",
@@ -2343,6 +2354,17 @@
         "exam_duration_sec": 14400,
         "pass_percent": 76,
         "min_correct": 98
+      },
+      {
+        "exam_type": "ut_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "UT",
+        "short_name": "Utah Real Estate Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 170,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 128
       },
       {
         "exam_type": "va_re_broker",
@@ -2935,14 +2957,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 3.5078
+        "sql_duration_ms": 3.7127
       },
-      "duration": 3.5078,
+      "duration": 3.7127,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 89862144,
-      "rows_read": 533,
+      "size_after": 91189248,
+      "rows_read": 537,
       "rows_written": 0,
       "total_attempts": 1
     }

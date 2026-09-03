@@ -2335,6 +2335,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Duties & Powers of the Commission', '2%'], ['Licensing Requirements', '3%'], ['Agency & Duties Owed', '20%'], ['License Practice, Supervision & Advertising', '24%'], ['Residential, CIC & Environmental Disclosures', '20%'], ['Contracts, Brokerage Agreements & Earnest Money', '23%'], ['Record Keeping & Trust Accounts', '3%'], ['Subdivisions, Timeshares, Water Rights & Solar', '5%']],
   },
   {
+    examType: 'nv_re_broker',
+    title: 'Nevada Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/nv',
+    duration: '240 Minutes (150 Min National + 90 Min State)', questions: '130 Multiple Choice (80 National + 50 State-Specific)', passScore: '75% Correct on the Full Exam',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the Nevada-specific portion administered on behalf of the Nevada Real Estate Division: duties and powers of the Real Estate Commission, broker licensing requirements including branch offices and cooperative certificates, Nevada\'s statutory agency and duties-owed disclosure framework, license practice standards, Nevada\'s Seller\'s Real Property Disclosure and common-interest-community resale disclosure laws, brokerage agreements and trust/earnest-money handling, record keeping, and special topics including subdivisions, timeshares, water rights and solar-access law. Item counts, the literal 75%-correct passing score (not a scaled score), and the 240-minute time allowance are confirmed directly against Pearson VUE\'s official Nevada Candidate Handbook and Content Outline, including the handbook\'s own Examination Time Allotted table.',
+    breakdown: [['Contracts & Agency (National)', '12%'], ['Contracts (NV)', '9%'], ['Real Estate Practice (National)', '9%'], ['Agency & Duties Owed (NV)', '8%'], ['License Practice (NV)', '8%'], ['Property Value & Appraisal (National)', '8%'], ['Property Ownership (National)', '8%'], ['Property Disclosures & Environmental (National)', '7%'], ['Disclosures (NV)', '6%'], ['Financing & Settlement (National)', '6%'], ['Real Estate Math (National)', '6%'], ['Forms of Ownership & Title (National)', '6%'], ['Record Keeping (NV)', '3%'], ['Duties & Powers of the Commission (NV)', '2%'], ['Licensing Requirements (NV)', '2%'], ['Special Topics (NV)', '2%']],
+  },
+  {
     examType: 'ok_re_salesperson',
     title: 'Oklahoma Real Estate Provisional Sales Associate Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ok',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '70% Scaled Score (State-Specific Portion)',
@@ -2403,6 +2410,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '90 Minutes', questions: '50 Multiple Choice (Utah State-Specific Portion)', passScore: 'Scaled Score of 70 (0-100 Scale)',
     description: 'Practice questions covering the Utah Real Estate Licensing and Practices Act (Utah Code Title 61, Chapter 2f) and its implementing regulations, Utah Administrative Code R162-2f: licensee practice (advertising, handling money, agency relationships and disclosure, and approved forms), licensing and license maintenance, real estate office procedures and trust accounts, enforcement and disciplinary action, closing statements, and property management &mdash; the Utah state-law portion of the Pearson VUE-administered Sales Agent exam.',
     breakdown: [['Licensee Practice: Advertising, Money Handling, Agency & Approved Forms', '33%'], ['Licensing, Qualifications & License Maintenance', '16%'], ['Definitions, Property Management, Education/Recovery Fund & Additional State Topics', '19%'], ['Closing Statements', '14%'], ['Real Estate Office Procedures & Trust Accounts', '9%'], ['Enforcement & Disciplinary Action', '9%']],
+  },
+  {
+    examType: 'ut_re_broker',
+    title: 'Utah Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ut',
+    duration: '240 Minutes (4 Hours)', questions: '170 Multiple Choice (80 National + 90 Utah State-Specific)', passScore: 'Scaled Score of 75 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the Utah-specific portion administered on behalf of the Utah Division of Real Estate: real estate definitions and the Division\'s "one act for compensation" licensing trigger, broker licensing and continuing education, the large Licensee Practice section covering conduct, commissions, discharge/termination, administrative procedures and approved forms including the Real Estate Purchase Contract (REPC), disciplinary grounds and enforcement, the Real Estate Education, Research and Recovery Fund, a named grab-bag of additional Utah topics (fractionalized estates, the Timeshare and Camp Resort Act, water rights, mechanic\'s liens, the Residence Lien Restriction and Lien Recovery Fund, property taxes, foreclosure, the Sex Offender Registry Act and stigmatized-property law), property management, and closing statements. Item counts, the scaled passing score of 75 (not literal percent-correct), and the 4-hour time allowance are confirmed directly against Pearson VUE\'s official Utah Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['Licensee Practice (UT)', '20%'], ['Contracts & Agency (National)', '9%'], ['Licensing (UT)', '9%'], ['Real Estate Practice (National)', '7%'], ['Property Value & Appraisal (National)', '6%'], ['Property Ownership (National)', '6%'], ['Disciplinary Action (UT)', '6%'], ['Property Disclosures & Environmental (National)', '5%'], ['Additional Utah Topics', '5%'], ['Financing & Settlement (National)', '5%'], ['Real Estate Math (National)', '5%'], ['Forms of Ownership & Title (National)', '5%'], ['Closing Statements (UT)', '4%'], ['Definitions (UT)', '4%'], ['Property Management (UT)', '3%'], ['Recovery Fund (UT)', '2%']],
   },
   {
     examType: 'vt_re_salesperson',
@@ -4454,6 +4468,20 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Connecticut's broker-level education requirement, the requirement of 3 years of active licensed experience as a salesperson (1,500 supervised hours, 4+ transactions), or any other Connecticut Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering PSI's national real estate broker content outline plus Connecticut-specific broker licensing, license status, Real Estate Guaranty Fund, disciplinary, and agency-disclosure subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Connecticut DCP. While we strive to align our content with current Connecticut General Statutes Title 20, Chapter 392 and PSI's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Connecticut Real Estate Broker exam or the required broker experience/education prerequisites.",
     passScoreNote: "the same threshold required by the real exam — 75% on both the national and state portions, confirmed via Connecticut DCP sources",
+  },
+  ut_re_broker: {
+    orgLine: "the Utah Division of Real Estate (DRE)",
+    footerRequirement: "do not fulfill Utah's broker prelicensure education requirement or any other Utah Division of Real Estate prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Utah's broker-level pre-licensing education requirement or any other Utah Division of Real Estate prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus Utah-specific broker licensing, licensee practice, disciplinary, Recovery Fund, and additional-state-topics subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Utah Division of Real Estate. While we strive to align our content with current Utah Code Title 61, Chapter 2f and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Utah Real Estate Broker exam or the required broker education/experience prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 75 (not literal percent-correct), confirmed via Pearson VUE's official Utah Candidate Handbook",
+  },
+  nv_re_broker: {
+    orgLine: "the Nevada Real Estate Division",
+    footerRequirement: "do not fulfill Nevada's 2-years-of-active-licensed-experience prerequisite, the 64-semester-credit broker education requirement, or any other Nevada Real Estate Division prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Nevada's requirement of 2 years of active full-time licensed experience within the last 4 years, the 64-semester-credit broker education requirement (Real Estate Principles, Real Estate Law including 18 hours of Nevada law, Real Estate Appraisal, and a Nevada-specific Broker Management course), or any other Nevada Real Estate Division prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus Nevada-specific broker licensing, agency/duties-owed, disclosures, contracts, and record-keeping subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Nevada Real Estate Division. While we strive to align our content with current Nevada Revised Statutes Chapter 645 and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Nevada Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a literal 75% correct (not a scaled score), confirmed via Pearson VUE's official Nevada Candidate Handbook",
   },
   de_re_salesperson: {
     orgLine: "the Delaware Real Estate Commission",
@@ -10576,6 +10604,14 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/nv/realestate.html',
       desc: 'Pearson VUE\'s official Nevada real estate licensure exam page, with the candidate handbook and exam scheduling for the salesperson exam.' },
   ],
+  nv_re_broker: [
+    { title: 'Real Estate Division Site', url: 'https://red.nv.gov/',
+      desc: 'The Nevada Real Estate Division\'s official site for broker licensing, education/experience requirements, and regulation.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/nv/realestate.html',
+      desc: 'Pearson VUE\'s official Nevada real estate licensure exam page, with the candidate handbook and content outline covering the Broker exam.' },
+    { title: 'NRS Chapter 645 (Real Estate Brokers and Salespersons)', url: 'https://www.leg.state.nv.us/NRS/NRS-645.html',
+      desc: 'The Nevada Revised Statutes chapter governing real estate broker licensing, agency, disclosures, and disciplinary authority — the statutory basis for the Broker exam\'s state-specific portion.' },
+  ],
   ny_re_salesperson: [
     { title: 'Real Estate Salesperson Licensing Site', url: 'https://dos.ny.gov/real-estate-salesperson1',
       desc: 'The New York Department of State\'s official page covering real estate salesperson license requirements, education, and the state exam.' },
@@ -10683,6 +10719,14 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Utah Division of Real Estate\'s official licensing page, which links to Pearson VUE testing procedures and the candidate handbook.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ut/realestate.html',
       desc: 'Pearson VUE\'s official Utah real estate licensing exam page with the candidate handbook and scheduling.' },
+  ],
+  ut_re_broker: [
+    { title: 'Division of Real Estate Site', url: 'https://commerce.utah.gov/realestate/real-estate/licensing/',
+      desc: 'The Utah Division of Real Estate\'s official licensing site — the authoritative source for Utah\'s Principal Broker licensing requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ut/realestate.html',
+      desc: 'Pearson VUE\'s official Utah real estate licensing exam page with the candidate handbook and content outline covering the Broker exam.' },
+    { title: 'Utah Code Title 61, Chapter 2f (Real Estate Licensing and Practices Act)', url: 'https://le.utah.gov/xcode/Title61/Chapter2F/C61-2f_1800010118000101.pdf',
+      desc: 'The official codified Utah statute published by the Utah State Legislature — the statutory basis for broker licensing, licensee practice, and disciplinary rules.' },
   ],
   va_re_salesperson: [
     { title: 'Real Estate Board Site', url: 'https://www.dpor.virginia.gov/Boards/Real-Estate',
