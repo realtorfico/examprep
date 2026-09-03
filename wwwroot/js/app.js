@@ -2496,6 +2496,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['General Powers & Duties of the Commission (Audits, Complaints & Discipline)', '18%'], ['Licensing (Renewal, Transfer, CE & Exemptions)', '34%'], ['Real Estate Practice (Scope, Advertising & Trust Funds)', '30%'], ['Agency Relationships (Notice of Agency & Types of Agency)', '8%'], ['West Virginia Fair Housing', '10%']],
   },
   {
+    examType: 'wv_re_broker',
+    title: 'West Virginia Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/wv',
+    duration: '240 Minutes (4 Hours)', questions: '140 Multiple Choice (80 National + 60 West Virginia State-Specific)', passScore: 'Scaled Score of 75 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the West Virginia-specific portion administered on behalf of the West Virginia Real Estate Commission: General Powers and Duties of the Commission (audits, complaints, investigations, penalties -- no WV recovery fund exists), Licensing (renewal, CE, all real statutory exemptions), Real Estate Practice (scope of practice, fees, and real advertising rules under 174 CSR 1), Agency Relationships and West Virginia Fair Housing (recodified in 2024, with protected classes that add ancestry and blindness beyond federal law), and Broker Management (real broker-only content: trust funds, place of business, brokerage operations, and human resources management). Item counts, the scaled passing score of 75, and the 4-hour time allowance are confirmed directly against Pearson VUE\'s official West Virginia Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['Broker Management (WV)', '13%'], ['Licensing (WV)', '10%'], ['Real Estate Practice (WV)', '8%'], ['Contracts & Agency (National)', '9%'], ['Commission Powers & Duties (WV)', '6%'], ['Real Estate Practice (National)', '7%'], ['Property Value & Appraisal (National)', '6%'], ['Property Ownership (National)', '6%'], ['Property Disclosures & Environmental (National)', '5%'], ['Financing & Settlement (National)', '5%'], ['Real Estate Math (National)', '5%'], ['Forms of Ownership & Title (National)', '5%'], ['Agency Relationships (WV)', '3%'], ['West Virginia Fair Housing (WV)', '3%']],
+  },
+  {
     examType: 'wy_re_salesperson',
     title: 'Wyoming Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/wy',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '75% (Scaled Score 75+)',
@@ -4867,6 +4874,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-clock-hour pre-license education requirement (equivalent to six college semester credit hours) for a West Virginia real estate salesperson license, and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the West Virginia Real Estate License Act, W. Va. Code Chapter 30, Article 40, and the Real Estate Commission's Title 174 legislative rules), not the separate national/general portion, and not every topic on the Commission's official state-specific content outline -- our question bank does not include a dedicated West Virginia Fair Housing section, which the Commission's outline weights at 10% of the state-specific exam. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. West Virginia reports a scaled score (0-100), not the raw number or percentage of questions answered correctly, so our 70%-to-pass practice format models the Commission's published 70 passing score as a study benchmark, not a literal raw-score match. While we strive to align our content with the current West Virginia Real Estate License Act and Commission rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-clock-hour pre-license education.",
     passScoreNote: "the Real Estate Commission's published passing score of 70 for the state-specific portion -- though Pearson VUE reports a scaled score (0-100), not the raw number of questions correct",
+  },
+  wv_re_broker: {
+    orgLine: "the West Virginia Real Estate Commission",
+    footerRequirement: "do not fulfill West Virginia's broker experience requirement (2 years + 20 closed transactions, or 40 closed transactions), the 90/180-clock-hour broker pre-licensing education requirement, or any other Commission prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy West Virginia's broker-level experience requirement or its broker pre-licensing education requirement, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus West Virginia-specific broker licensing, licensee activity requirements, agency relationships, fair housing, and the real broker-only Broker Management section (trust funds, place of business, brokerage operations). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the West Virginia Real Estate Commission. While we strive to align our content with current West Virginia Code Chapter 30, Article 40, 174 CSR 1, and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered West Virginia Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 75 (not literal percent-correct), confirmed via Pearson VUE's official West Virginia Candidate Handbook",
   },
   wy_re_salesperson: {
     orgLine: "the Wyoming Real Estate Commission",
@@ -10909,6 +10923,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The West Virginia Real Estate Commission\'s official licensing page, which links directly to the Pearson VUE candidate handbook.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/wv/realestate.html',
       desc: 'Pearson VUE\'s official West Virginia real estate licensing exam page with the candidate handbook and scheduling.' },
+  ],
+  wv_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://rec.wv.gov/License-Info/Pages/Licensing.aspx',
+      desc: 'The West Virginia Real Estate Commission\'s official licensing page, covering broker licensing requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/wv/realestate.html',
+      desc: 'Pearson VUE\'s official West Virginia real estate licensing exam page, confirming the real 140-item broker exam structure and its scaled-75 passing score.' },
   ],
   wy_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://realestate.wyo.gov/real-estate-professionals/obtain-a-license',
