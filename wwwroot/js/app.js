@@ -8108,6 +8108,172 @@ var TX_RE_SALESPERSON_LICENSING_PROCESS_CONCEPTS_FLASHCARDS = [
   { front: 'Informal settlement conference / refund order', back: 'TREC may order a person it regulates to pay a consumer refund, as agreed at an informal settlement conference or as part of an enforcement order -- instead of, or in addition to, an administrative penalty or other sanction.', source: 'Occ. Code § 1101.659(a)' },
 ];
 
+// ============================================================================
+// TX RE BROKER (Texas Real Estate Broker, state-law portion) -- Key Facts
+// Digest, drafted 2026-09-03, sourced from TRELA and 22 TAC Ch. 531/533/535.
+// ============================================================================
+var TX_RE_BROKER_EDUCATION_EXPERIENCE_TABLE = {
+  headers: ['Requirement', 'Real Figure', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Total qualifying + related education hours', '900 classroom hours (270 base qualifying hours + an additional 630 related-education hours)',
+      'This is the real headline number that separates a broker license from a sales agent license -- not just "more CE," a specific 630-hour add-on layered on top of the sales agent\'s own 270-hour base.',
+      '22 TAC § 535.56(a)'],
+    ['Qualifying real estate brokerage course', 'The 30-hour course must be completed not more than 2 years before the broker application date',
+      'A trap for agents who took this course years ago as part of their original 270 hours -- it can go stale and need to be retaken even though the rest of the 270 hours doesn\'t expire the same way.',
+      '22 TAC § 535.56(a)(1)'],
+    ['Broker Responsibility Course', 'A mandatory 6 classroom hours, required as part of the 630-hour related-education total',
+      'This is the one course every broker must take regardless of how the rest of the 630 hours is assembled -- it cannot be substituted out.',
+      '22 TAC § 535.56(a)(1)(D); Tex. Occ. Code § 1101.458'],
+    ['Bachelor\'s degree credit', 'A bachelor\'s degree or higher from an accredited college/university satisfies 300 of the 630 related-education hours automatically',
+      'A real, specific hour-for-degree substitution -- but it still leaves 330 hours to account for some other way (courses or experience-point conversion), it doesn\'t wipe out the whole related-education requirement.',
+      '22 TAC § 535.56(a)(2)'],
+    ['Qualifying practical experience', 'At least 720 points, earned during 4 years of active licensed practice within the 5 years before the application date',
+      'A real points system (not just "years of experience") -- a closed purchase/sale of a residential property is worth 30 points, a residential lease 5 points, so hitting 720 usually takes many transactions, not just time served.',
+      '22 TAC § 535.56(b)-(c)'],
+    ['Experience-to-education conversion cap', 'Every 2 experience points earned ABOVE the 720-point minimum converts to 1 classroom hour of related-education credit, up to a maximum of 300 hours',
+      'A genuinely broker-specific mechanic -- a very active sales agent can effectively buy down part of the 630-hour classroom requirement with real transaction volume, but only up to this hard 300-hour ceiling.',
+      '22 TAC § 535.56(a)(1)(A)/(b)(1)'],
+  ],
+  journalNote: 'The statute (Tex. Occ. Code § 1101.356) caps the classroom-hour requirement at "60 semester hours or equivalent classroom hours" -- the 900-classroom-hour figure in TREC\'s own rule is the operative number tested, using the standard 15-classroom-hour-per-semester-hour conversion.',
+  sourceNote: 'Source: 22 Tex. Admin. Code § 535.56 (Education and Experience Requirements for a Broker License), and Tex. Occ. Code §§ 1101.356, 1101.458.',
+};
+
+var TX_RE_BROKER_TRUST_ACCOUNT_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Who may maintain a trust account', 'Only the broker -- a sales agent may NEVER maintain a trust account; any trust money they touch has to go straight to the sponsoring broker, immediately',
+      'A hard, absolute rule with zero exceptions for the sales agent side -- this alone is one of the clearest legal lines the exam draws between the two license levels.',
+      '22 TAC § 535.146(b)(2)'],
+    ['Deposit deadline', 'Absent a different written agreement among the principals, trust money must be deposited (or delivered to an authorized escrow agent) not later than the close of business on the 2nd working day after the broker receives it',
+      'A specific, short window -- easy to confuse with the 30-day figures elsewhere in the same rule that govern disbursement, not deposit.',
+      '22 TAC § 535.146(b)(3)'],
+    ['Disbursement on written demand', 'The broker must pay out trust money to the party entitled to it within a reasonable time, which TREC has fixed at not later than the 30th day after a written demand is made',
+      'Same 30-day figure recurs for a broker who acquires ownership of trust money (e.g., an earned commission) -- it must be removed from the trust account within 30 days of acquiring that ownership.',
+      '22 TAC § 535.146(d)(2), (c)(5)'],
+    ['Prima facie evidence of commingling', 'Placing trust money in the broker\'s personal or operating account, OR paying operating expenses/making withdrawals from a trust account for anything other than a proper trust disbursement',
+      'These two specific acts are automatically treated as commingling evidence -- the broker doesn\'t get the benefit of the doubt on intent for either one.',
+      '22 TAC § 535.146(c)(1)'],
+    ['Trust account records retention', 'A broker must keep all trust account documentation for 4 years from the date each document is received or created',
+      'Same 4-year figure recurs across several other broker recordkeeping duties (transaction files, sponsorship agreements) -- a consistent retention period worth anchoring in memory.',
+      '22 TAC § 535.146(f)'],
+  ],
+  journalNote: 'A broker MAY authorize another license holder to withdraw or transfer trust account money -- but the broker remains fully responsible and accountable for every deposit and disbursement regardless of who actually signed the check.',
+  sourceNote: 'Source: 22 Tex. Admin. Code § 535.146 (Maintaining Trust Money).',
+};
+
+var TX_RE_BROKER_SUPERVISION_TABLE = {
+  headers: ['Duty', 'Real Rule', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Responsibility for a sponsored agent\'s authorized acts', 'A broker is responsible for a sponsored sales agent\'s authorized acts even though the broker is NOT required to directly supervise the agent',
+      'A frequently-missed distinction -- "responsible for" and "must personally supervise" are NOT the same duty under this rule; the broker can be on the hook without watching over every transaction.',
+      '22 TAC § 535.2(a)'],
+    ['Delegated supervisor notice', 'A broker may delegate supervisory responsibility in writing to another license holder, but must report that delegation to TREC within 30 days if it has lasted (or is expected to last) more than 3 consecutive months',
+      'Delegating supervision does NOT let the broker off the hook for overall responsibility -- and the 30-day/3-month combination is a real, specific trigger, not a vague "promptly notify" standard.',
+      '22 TAC § 535.2(e)'],
+    ['Coaching requirement for a new activity type', 'The first 3 times a sponsored sales agent performs a particular TYPE of brokerage activity, the broker must require coaching and assistance from an experienced, competent license holder',
+      'A real numeric threshold (3 times) tied to each distinct activity type -- a sales agent doing their first commercial lease still needs this coaching even if they\'re experienced with residential sales.',
+      '22 TAC § 535.2(g)(6)'],
+    ['Response time to sponsored agents', 'A broker (or delegated supervisor) must respond to a sponsored sales agent\'s communications within 2 calendar days',
+      'A short, hard deadline distinct from the broker\'s general duty to respond timely to the Commission and to parties in a transaction.',
+      '22 TAC § 535.2(h)'],
+    ['Forwarding Commission mail', 'A sponsoring broker (or delegated supervisor) must deliver mail and other correspondence from TREC to sponsored sales agents within 3 calendar days of receiving it',
+      'A separate, distinct calendar-day figure from the 2-day agent-response rule directly above -- easy for exam questions to swap.',
+      '22 TAC § 535.2(i)'],
+  ],
+  journalNote: 'When the broker is a business entity, it is the DESIGNATED BROKER -- not the entity itself -- who is legally treated as the person responsible for all Broker Responsibility duties under this rule.',
+  sourceNote: 'Source: 22 Tex. Admin. Code § 535.2 (Broker Responsibility).',
+};
+
+var TX_RE_BROKER_DISCIPLINE_RECOVERY_TABLE = {
+  headers: ['Fact', 'Figure / Rule', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Real Estate Recovery Trust Account cap — per transaction', '$125,000, regardless of the number of claimants, for claims (including attorney\'s fees, interest, and court costs) arising out of a single transaction',
+      'A real, specific dollar ceiling per transaction -- and it explicitly includes attorney\'s fees and court costs inside that same cap, not on top of it.',
+      'Tex. Occ. Code § 1101.610(a)'],
+    ['Recovery Trust Account cap — per license holder, aggregate', '$250,000 in total payments against a single license or certificate holder, until that person fully reimburses the trust account',
+      'A business entity broker and its designated broker are treated as a SINGLE license holder for this cap -- claims against either one count against the same $250,000 aggregate ceiling.',
+      'Tex. Occ. Code § 1101.610(b), (e)'],
+    ['Repayment deadline before automatic revocation', '31 days after TREC provides notice of a Recovery Trust Account payment made on the license holder\'s behalf',
+      'Miss this window and revocation is mandatory, not discretionary -- and the person stays ineligible for any future license until the account is repaid in full, plus interest at the legal rate.',
+      'Tex. Occ. Code § 1101.655(a)-(c)'],
+    ['Administrative penalty ceiling', 'Up to $5,000 per violation, with each day a violation continues counted as a SEPARATE violation',
+      'The per-day multiplier is the real trap -- a single ongoing violation left uncorrected for a month can compound well past the $5,000 headline figure.',
+      'Tex. Occ. Code § 1101.702(a)'],
+    ['Criminal penalty — practicing without a license', 'A Class A misdemeanor for acting as a broker or sales agent without holding the required license',
+      'A genuinely criminal-law consequence layered on top of TREC\'s civil/administrative authority -- distinct from any administrative penalty or license discipline.',
+      'Tex. Occ. Code § 1101.758'],
+    ['Private civil penalty for unlicensed activity', 'A person who collects a commission while acting as a broker or sales agent without a license is liable to the aggrieved party for between 1x and 3x the amount collected',
+      'A real, treble-damages-style private right of action a consumer can bring directly -- separate from anything TREC itself does.',
+      'Tex. Occ. Code § 1101.754'],
+  ],
+  sourceNote: 'Source: Tex. Occ. Code §§ 1101.610, 1101.655, 1101.702, 1101.754, 1101.758 (TRELA Subchapters M, N, O).',
+};
+
+var TX_RE_BROKER_BUSINESS_ENTITY_TABLE = {
+  headers: ['Rule', 'Real Requirement', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Who may serve as a designated broker', 'An individual holding an ACTIVE Texas broker license who is also an officer of the corporation, a manager of the LLC, or a general partner of the partnership -- with managing authority regardless of entity type',
+      'Being a broker alone isn\'t enough -- the person also needs a real, specific management role inside that entity\'s own legal structure.',
+      '22 TAC § 535.50; § 535.53(b)(3)'],
+    ['Errors & omissions insurance trigger', 'If the designated broker owns LESS than 10% of the business entity, the entity must maintain E&O insurance with a minimum limit of $1 million per occurrence',
+      'A real ownership-percentage threshold that decides whether this insurance requirement even applies -- a designated broker who owns 10%+ of their own brokerage is exempt from it.',
+      'Tex. Occ. Code § 1101.355(a)(2); 22 TAC § 535.53(b)(5)'],
+    ['Entity cannot act as broker without one', 'A business entity may NOT act as a broker during any period in which it has no designated broker who meets the Act\'s requirements',
+      'The license doesn\'t just "pause" quietly -- operating without a qualifying designated broker in place is itself a violation.',
+      '22 TAC § 535.53(b)(4)'],
+    ['Grace period after a designated broker\'s death', 'If the business entity sponsors sales agents, the entity\'s license (and every sponsored agent\'s license) goes inactive 14 days after the designated broker dies -- unless a new, TREC-approved designated broker is named before that 14th day',
+      'A hard, short countdown with real consequences cascading down to every sponsored agent in the office, not just the entity itself.',
+      '22 TAC § 535.124'],
+    ['"Good standing" disqualifiers for a designated broker', 'A broker is NOT in good standing (and can\'t serve as designated broker) if their own license is revoked/suspended, OR if a business entity they previously headed had its license revoked/suspended within the past 2 years, OR if they have any unpaid Recovery Trust Account or administrative penalty obligation to TREC',
+      'A real look-back rule -- baggage from a PRIOR business entity a broker used to run can disqualify them from heading a NEW one, for up to 2 years after the fact.',
+      '22 TAC § 535.53(b)(2)'],
+  ],
+  journalNote: 'A complaint naming a business entity broker (without separately naming the designated broker) is legally treated as a complaint against the designated broker personally, for purposes of evaluating whether that individual fulfilled their own professional responsibilities.',
+  sourceNote: 'Source: 22 Tex. Admin. Code §§ 535.50, 535.53, 535.124, 535.141; Tex. Occ. Code § 1101.355.',
+};
+
+var TX_RE_BROKER_STRUCTURES_FLASHCARDS = [
+  { front: 'Designated broker', back: 'The individual actual broker who a business entity designates to act on its behalf. Must be an officer of a corporation, a manager of an LLC, or a general partner of a partnership -- with real managing authority, not just a licensed figurehead.', source: '22 TAC § 535.50' },
+  { front: 'Broker acting as intermediary', back: 'A broker may represent BOTH the buyer/tenant and seller/landlord in the same deal as a neutral intermediary, but only with each party\'s written consent disclosing the source of the broker\'s expected compensation. This is a power the broker holds -- a sales agent cannot independently create this arrangement.', source: 'Tex. Occ. Code § 1101.559' },
+  { front: 'Appointed license holder', back: 'When a broker is acting as an intermediary, the broker may APPOINT one associated license holder to advocate for the buyer and a different one for the seller -- each appointee may then give opinions and advice to their assigned party during negotiations.', source: 'Tex. Occ. Code § 1101.560' },
+  { front: 'Associated broker', back: 'A broker who associates with and is paid through ANOTHER broker under an intended-to-be-continuous relationship (employment or ongoing independent contractor) -- distinct from a sales agent, even though the associated broker is not the designated/sponsoring broker of that office.', source: '22 TAC § 535.154(a)' },
+  { front: 'Team name', back: 'An exclusive collective name used by a group of license holders sponsored by or associated with the same broker -- must end in "Team" or "Group," may not imply the team offers brokerage services independent of its sponsoring broker, and must be registered with TREC before use in any advertisement.', source: '22 TAC § 535.154(c)' },
+  { front: 'Assumed business name (DBA)', back: 'A trade name a broker uses in business, other than the broker\'s own licensed name, a team name, or an alternate name. Before anyone in the office advertises under it, the BROKER must register it with TREC and provide written evidence of legal authority to use it in Texas (e.g., Secretary of State or county clerk registration).', source: '22 TAC § 535.154(d)' },
+  { front: 'Broker\'s name size rule (advertising)', back: 'In any advertisement, the broker\'s name must appear at least half the size of the largest contact information shown for any sales agent, associated broker, or team name in that same ad -- a real, specific proportional rule, not just "must be visible."', source: '22 TAC § 535.155(a)(2)' },
+  { front: 'Delegated supervisor', back: 'A license holder a broker has delegated, in writing, to help administer compliance and supervise other license holders. Any license holder who leads, supervises, directs, or manages a team must be delegated as a supervisor -- but delegating supervision never relieves the broker of overall responsibility.', source: '22 TAC § 535.2(e)' },
+];
+
+var TX_RE_BROKER_LIABILITY_FLASHCARDS = [
+  { front: 'Vicarious responsibility (not direct supervision)', back: 'A broker is responsible for a sponsored sales agent\'s AUTHORIZED acts even without directly supervising that agent. But if the broker permits the agent to act beyond the written scope of authority the broker gave them, those beyond-scope acts are still ones the broker is responsible for.', source: '22 TAC § 535.2(a)' },
+  { front: 'Broker\'s highest fiduciary obligation', back: 'A broker owes the principal the HIGHEST fiduciary obligation -- including a duty to convey to the principal all information the broker knows that may affect the principal\'s decision, unless another law prohibits disclosure.', source: '22 TAC § 535.2(b)' },
+  { front: 'Broker Responsibility Advisory Committee', back: 'A standing TREC committee that examines industry-wide broker responsibility issues, recommends legislative changes, and reviews Commission rules in this area. It is automatically abolished on September 1, 2031 unless the Commission sets a later date.', source: '22 TAC § 535.46' },
+  { front: 'Complaint against an unnamed designated broker', back: 'A complaint naming a business entity broker (or one of its sponsored sales agents) but NOT specifically naming the designated broker is still legally treated as a complaint against that designated broker personally, for evaluating whether they fulfilled their own supervisory responsibilities.', source: '22 TAC § 535.141(b)' },
+  { front: 'Trust fund custodial responsibility (broker-level)', back: 'A broker who authorizes another license holder to withdraw or transfer trust account funds remains fully responsible and accountable for every deposit to, and disbursement from, that account -- delegating the physical signature never delegates the underlying liability.', source: '22 TAC § 535.146(e)(4)' },
+  { front: 'General criminal penalty (willful violation)', back: 'Willfully violating TRELA or a Commission order is itself a Class A misdemeanor -- a separate, standalone criminal exposure distinct from the specific unlicensed-practice and residential-locator criminal penalties elsewhere in the Act.', source: 'Tex. Occ. Code § 1101.756' },
+  { front: '"Good standing" look-back for a designated broker', back: 'A broker is disqualified from serving as a designated broker if a DIFFERENT business entity they previously headed had its license revoked or suspended within the past 2 years -- prior-entity history can follow a broker into a brand-new one.', source: '22 TAC § 535.53(b)(2)(B)' },
+  { front: 'Broker as intermediary — fair and impartial standard', back: 'When acting as an intermediary, a broker must act fairly and impartially to both sides. Appointing separate associated license holders to advocate for each party is itself expressly defined by statute as a fair and impartial act -- not a workaround of the impartiality duty.', source: 'Tex. Occ. Code § 1101.559(c)' },
+];
+
+var TX_RE_BROKER_LICENSE_MECHANICS_FLASHCARDS = [
+  { front: 'Active experience (broker qualification)', back: 'Experience is measured from the date a license is issued, and any inactive period -- for lack of sponsorship or any other reason -- CANNOT count toward the four years of active experience a broker applicant needs.', source: '22 TAC § 535.56(b)(1)(A)' },
+  { front: 'Business entity broker — inactive triggers', back: 'A business entity broker\'s license goes inactive if the entity is no longer qualified to transact business in Texas, OR if the designated broker\'s license expires, is suspended, is revoked, or the designated broker dies or resigns.', source: '22 TAC § 535.123(b)' },
+  { front: 'Business entity renewal — E&O insurance condition', back: 'TREC will not renew a business entity broker\'s license unless the entity maintains errors & omissions insurance with a minimum $1 million per-occurrence limit, when the designated broker owns less than 10% of the entity.', source: 'Tex. Occ. Code § 1101.453(a)(2)' },
+  { front: 'Franchise Tax Account Status page', back: 'A business entity can prove it\'s qualified to transact business in Texas (a licensing prerequisite) with a Franchise Tax Account Status page from the Texas Comptroller, issued within 21 days before the license or renewal application.', source: '22 TAC § 535.53(a)(2)' },
+  { front: 'Consent to service of legal process', back: 'A broker or sales agent who lives in or relocates to another state must file a consent to service of legal process with TREC -- unless their place of business remains in Texas.', source: '22 TAC § 535.133' },
+  { front: 'Broker on inactive status — sponsored agents', back: 'A broker applying for inactive status must first confirm they gave every sponsored sales agent written notice of the sponsorship termination at least 30 days BEFORE filing the inactive-status application.', source: '22 TAC § 535.123(c)' },
+  { front: 'Foreign (out-of-state) designated broker', back: 'A business entity chartered outside Texas can still hold a Texas broker license if it designates a qualifying designated broker -- who is NOT required to be a Texas resident -- and the entity is permitted to engage in business in Texas.', source: '22 TAC § 535.132(b)' },
+];
+
+var TX_RE_BROKER_TRUST_RECOVERY_FLASHCARDS = [
+  { front: 'Trust money — statutory definition', back: 'Client\'s money, earnest money, rent, unearned fees, security deposits, or any other money a broker holds on behalf of another person -- a deliberately broad definition covering far more than just earnest-money deposits.', source: '22 TAC § 535.146(a)(1)' },
+  { front: 'Interpleader (broker\'s escape valve)', back: 'If a broker genuinely cannot determine which party is entitled to disputed trust money, the broker may pay it into the registry of a court and interplead the parties -- letting the court decide, rather than the broker picking a side.', source: '22 TAC § 535.146(d)(4)' },
+  { front: 'Real Estate Recovery Trust Account', back: 'The TREC-maintained fund that reimburses aggrieved persons who suffer actual damages from certain violations by a license holder, certificate holder, or their unlicensed employee/agent -- funded partly by administrative penalties the Commission collects.', source: 'Tex. Occ. Code § 1101.601; § 1101.603(c)' },
+  { front: 'Deadline to sue before a Recovery Trust Account claim is possible', back: 'An action for a judgment that could later support a Recovery Trust Account claim must be brought within 2 years of when the cause of action accrues -- separate from the later, additional deadlines governing the claim against the account itself.', source: 'Tex. Occ. Code § 1101.605(a)' },
+  { front: 'Business entity + designated broker = single license holder', back: 'For Recovery Trust Account payment-cap purposes, a business entity broker and its designated broker are treated as ONE license holder -- claims paid against either one count against the same combined $250,000 aggregate ceiling.', source: 'Tex. Occ. Code § 1101.610(e)' },
+  { front: '20-day waiting period before applying for trust account payment', back: 'After giving TREC and the judgment debtor written notice of a claim, an aggrieved person must wait at least 20 days before applying to the court for an order paying the unsatisfied judgment from the Recovery Trust Account.', source: 'Tex. Occ. Code § 1101.606(b)' },
+  { front: 'Advertising misrepresentation — sales agent as owner/CEO', back: 'Using a title like "owner," "president," "CEO," or "COO," or an email/website address implying a SALES AGENT runs the brokerage, is expressly defined as a misleading advertisement -- a real, named example TREC calls out, not just a general "don\'t mislead" standard.', source: '22 TAC § 535.155(g)(4)' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9350,6 +9516,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   tx_re_broker: [
+    { title: 'Education & Experience Quick Facts', type: 'table', table: TX_RE_BROKER_EDUCATION_EXPERIENCE_TABLE,
+      desc: 'The real 900-classroom-hour path to a Texas broker license -- the 630-hour related-education add-on, the 720-point experience system, the bachelor\'s-degree credit, and the experience-to-education conversion cap.',
+      topic: 'Commission Duties, Powers & Licensing (State)', free: true },
+    { title: 'Trust Account Handling Quick Facts', type: 'table', table: TX_RE_BROKER_TRUST_ACCOUNT_TABLE,
+      desc: 'The broker\'s exclusive custodial duty under 22 TAC § 535.146 -- deposit deadlines, disbursement timing, what counts as commingling, and the 4-year records retention requirement.',
+      topic: 'Standards of Conduct, Trust Accounts & Advertising (State)' },
+    { title: 'Broker Responsibility & Supervision Quick Facts', type: 'table', table: TX_RE_BROKER_SUPERVISION_TABLE,
+      desc: 'Real supervision rules under 22 TAC § 535.2 -- responsibility for a sponsored agent\'s authorized acts, delegated-supervisor notice, the first-3-times coaching rule, and hard response-time deadlines.',
+      topic: 'Agency & Brokerage Relationships (State)' },
+    { title: 'Discipline & Recovery Trust Account Quick Facts', type: 'table', table: TX_RE_BROKER_DISCIPLINE_RECOVERY_TABLE,
+      desc: 'Real dollar figures a broker needs to know -- the $125,000 per-transaction and $250,000 aggregate Recovery Trust Account caps, the 31-day repayment deadline before automatic revocation, and administrative/criminal penalty exposure.',
+      topic: 'Commission Duties, Powers & Licensing (State)' },
+    { title: 'Business Entity & Designated Broker Quick Facts', type: 'table', table: TX_RE_BROKER_BUSINESS_ENTITY_TABLE,
+      desc: 'The real rules for running a brokerage as a business entity -- who can serve as designated broker, the E&O insurance ownership-percentage trigger, and the 14-day grace period after a designated broker\'s death.',
+      topic: 'Commission Duties, Powers & Licensing (State)' },
+    { title: 'Business Structures & Advertising Concepts', type: 'flashcards', flashcards: TX_RE_BROKER_STRUCTURES_FLASHCARDS,
+      desc: 'The real statutory concepts behind how a Texas broker\'s business is structured -- designated broker, intermediary practice, associated broker, team names, DBAs, and the advertising size rule.',
+      topic: 'Standards of Conduct, Trust Accounts & Advertising (State)', free: true },
+    { title: 'Broker Liability Concepts', type: 'flashcards', flashcards: TX_RE_BROKER_LIABILITY_FLASHCARDS,
+      desc: 'The concepts behind a broker\'s legal exposure -- vicarious responsibility for sponsored agents, fiduciary obligations, and the criminal and civil consequences that follow a serious violation.',
+      topic: 'Agency & Brokerage Relationships (State)' },
+    { title: 'License Mechanics Concepts', type: 'flashcards', flashcards: TX_RE_BROKER_LICENSE_MECHANICS_FLASHCARDS,
+      desc: 'How a broker license and a business entity broker license actually work day to day -- active experience rules, inactive-status triggers, E&O insurance conditions, and foreign entity requirements.',
+      topic: 'Commission Duties, Powers & Licensing (State)' },
+    { title: 'Trust & Recovery Concepts', type: 'flashcards', flashcards: TX_RE_BROKER_TRUST_RECOVERY_FLASHCARDS,
+      desc: 'The definitions and procedural concepts behind trust money custody and Recovery Trust Account claims -- interpleader, the statutory definition of trust money, and the deadlines that govern a claim.',
+      topic: 'Standards of Conduct, Trust Accounts & Advertising (State)' },
     { title: "Texas Real Estate Commission (TREC)", type: "pdf", url: "https://www.trec.texas.gov",
       desc: "The Texas Real Estate Commission's official site — the authoritative source the broker exam and its education/experience prerequisites are based on.",
       topic: "General Reference", free: true },
