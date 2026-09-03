@@ -7450,6 +7450,98 @@ var CA_RE_RECOVERY_LICENSING_TABLE = {
   sourceNote: 'Source: California Business and Professions Code, Division 4, Chapter 6.5 (Real Estate Recovery Program), as published by the California Department of Real Estate.',
 };
 
+// Second CA RE Salesperson table, same session (2026-09-03): trust fund handling. Deliberately
+// does NOT state a specific deposit-timing day-count (the commonly-cited "3 business days" figure
+// lives in 10 CCR § 2832, a Real Estate Commissioner regulation, not the Business & Professions
+// Code text this project has saved on disk -- and this session's WebSearch budget was exhausted
+// before an independent primary-source confirmation could be found). Everything below IS verified
+// directly against relaw.txt (BPC § 10145, § 10176(e)).
+var CA_RE_TRUST_FUND_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Who may withdraw from an individual broker\'s trust account', 'Only that broker\'s own signature — or a salesperson/broker/unlicensed employee the broker has specifically authorized IN WRITING',
+      'A common wrong-answer trap is assuming any licensed salesperson at the firm can sign trust checks by default — they can\'t, without that specific written authorization.',
+      'BPC § 10145(a)(2)'],
+    ['Unlicensed employee given trust-account access', 'Broker must carry fidelity bond/insurance coverage at least equal to the maximum trust funds that employee can access at any time',
+      'This is a REAL, dollar-linked requirement — the coverage amount has to track actual access, not just exist as a flat policy.',
+      'BPC § 10145(a)(2)(C)'],
+    ['Maximum deductible on that fidelity bond/insurance', '5% of the coverage amount',
+      'Above this, the broker needs separate evidence of financial responsibility to cover the gap — a real numeric cap, not "reasonable coverage."',
+      'BPC § 10145(a)(2)(C)'],
+    ['Commingling broker funds with client trust funds', 'An explicit, standalone ground for license suspension or revocation — no separate harm to a client needs to be proven',
+      'Commingling alone is enough to trigger discipline, even if no client actually lost money — a distinction people frequently get backwards.',
+      'BPC § 10176(e)'],
+    ['Out-of-state trust depositories', 'Allowed ONLY for a narrow list of institutional investors (Fannie Mae, Freddie Mac, Ginnie Mae, FHA, VA, FDIC-insured banks, pension funds with $15M+ net worth, etc.) and only for loans secured by a first lien on real property',
+      'A broker can\'t just pick an out-of-state bank for convenience — this exception is real but genuinely narrow.',
+      'BPC § 10145(a)(4)'],
+  ],
+  journalNote: 'This table intentionally omits the specific trust-fund deposit deadline (commonly cited as "3 business days") — that figure lives in a California Code of Regulations section this project could not independently verify against a primary source this session. Don\'t take that number from a third-party prep source either; verify it directly before relying on it.',
+  sourceNote: 'Source: California Business and Professions Code §§ 10145, 10176, as published by the California Department of Real Estate.',
+};
+
+// Third CA RE Salesperson table: disciplinary grounds and real penalty figures, same spirit as the
+// ca_notary NOTARY_FINES_TABLE precedent but curated to BPC § 10176's real enumerated grounds
+// rather than every penalty scattered across the whole code.
+var CA_RE_DISCIPLINE_TABLE = {
+  headers: ['Ground for Discipline', 'What It Actually Covers', 'Code Section'],
+  rows: [
+    ['Substantial misrepresentation', 'A material false statement, not just any inaccuracy — the word "substantial" is doing real legal work here.', 'BPC § 10176(a)'],
+    ['False promises likely to induce', 'A promise designed to persuade someone into a deal, whether or not the licensee could actually deliver on it.', 'BPC § 10176(b)'],
+    ['Undisclosed dual agency', 'Acting for more than one party in a transaction WITHOUT the knowledge and consent of all parties — consented dual agency is a separate, lawful thing.', 'BPC § 10176(d)'],
+    ['Commingling', 'Mixing the licensee\'s own money or property with money or property received and held for others.', 'BPC § 10176(e)'],
+    ['Secret or undisclosed compensation', 'Taking any hidden profit or failing to reveal the FULL amount of compensation to the client before or at signing — a partial disclosure doesn\'t satisfy this.', 'BPC § 10176(g)'],
+    ['Fraud or dishonest dealing (catch-all)', 'A deliberately broad residual category — conduct doesn\'t have to match any other listed ground to still be disciplinable under this one.', 'BPC § 10176(i)'],
+    ['Failure to disburse committed mortgage funds', 'A broker who represents themselves as the lender (or as authorized to commit on the lender\'s behalf) and then fails to disburse as promised.', 'BPC § 10176(k)'],
+    ['Real Estate Transfer Disclosure Statement (TDS) violation', 'A willful or repeated TDS violation is its own independent ground for suspension or revocation — separate from the general disclosure grounds above.', 'BPC § 10176.5'],
+  ],
+  journalNote: 'Monetary penalty in lieu of suspension: the Commissioner may let a licensee pay a fine instead of serving an actual suspension, on the condition of no further violations for a set period — but if the licensee fails to pay, the FULL stayed suspension can be ordered immediately, with no hearing and no credit for money already paid (BPC § 10175.2).',
+  sourceNote: 'Source: California Business and Professions Code § 10176 (Grounds for Revocation or Suspension) and § 10176.5, as published by the California Department of Real Estate.',
+};
+
+// Fourth CA RE Salesperson table: property disclosure requirements (TDS/NHD), grounded in Civil
+// Code sections not present in the locally-saved relaw.txt (that file is Business & Professions
+// Code only) -- verified instead via leginfo.legislature.ca.gov directly, this session.
+var CA_RE_PROPERTY_DISCLOSURE_TABLE = {
+  headers: ['Requirement', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Transfer Disclosure Statement (TDS) — delivery timing', '"As soon as practicable before transfer of title" for a standard sale; before contract execution for a lease-option',
+      'Not a fixed day-count — a "reasonably prompt" standard, which is itself a real, testable distinction from a hard deadline.',
+      'Civil Code § 1102.3'],
+    ['TDS delivered late — buyer\'s cancellation window', '3 days if hand-delivered, 5 days if delivered by mail or electronically',
+      'The window LENGTH depends on the delivery method — a real, specific detail that\'s easy to get backwards.',
+      'Civil Code § 1102.3'],
+    ['Natural Hazard Disclosure (NHD) — required hazard categories', 'Special Flood Hazard Area, Dam Inundation Area, Very High Fire Hazard Severity Zone, State Fire Responsibility Area, Earthquake Fault Zone, Seismic Hazard Zone (landslide/liquefaction)',
+      'Six distinct real zone types, not a generic "natural hazards" checkbox — each has its own government-maintained map the disclosure must be checked against.',
+      'Civil Code § 1103.2(a)'],
+    ['Agent\'s duty to inspect before allowing a TDS to go out', 'A reasonably competent and diligent VISUAL inspection of the property, for 1-4 unit residential property or a manufactured home',
+      'This duty applies only to that narrow property-type band — it does NOT extend to larger residential or commercial property the same way.',
+      'Civil Code § 2079'],
+    ['TDS violation as a licensing matter (not just a civil one)', 'A willful or repeated TDS violation is an independent, standalone ground for suspension or revocation of the LICENSE, separate from any buyer lawsuit',
+      'A licensee can face discipline over this even if the buyer never sues — it isn\'t just a private civil-remedy issue.',
+      'BPC § 10176.5'],
+  ],
+  sourceNote: 'Source: California Civil Code §§ 1102.3, 1103.2, 2079, and Business and Professions Code § 10176.5.',
+};
+
+// Fifth CA RE Salesperson table: agency relationship disclosure timing -- a genuinely distinct,
+// CA-specific procedural requirement (not the generic national "what is agency" concept already
+// covered by the practice-question bank's national/agency content).
+var CA_RE_AGENCY_DISCLOSURE_TABLE = {
+  headers: ['Who', 'When the Disclosure Form Is Due', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Seller\'s agent', 'BEFORE entering into the listing agreement with the seller',
+      'This is earlier than most people assume — before the listing agreement is signed, not at the first showing.',
+      'Civil Code § 2079.14(a)'],
+    ['Buyer\'s agent (when the agent prepares the offer)', 'As soon as practicable before the buyer-broker agreement is executed AND before the buyer\'s offer is executed',
+      'Two separate triggering events (the representation agreement AND the offer) — either one can start this clock.',
+      'Civil Code § 2079.14(a)'],
+    ['Buyer\'s agent (when the agent did NOT prepare the offer)', 'Not later than the NEXT BUSINESS DAY after receiving the offer from the buyer',
+      'A real, hard deadline (unlike the "as soon as practicable" standard elsewhere) — this specific scenario gets its own firm cutoff.',
+      'Civil Code § 2079.14(a)'],
+  ],
+  sourceNote: 'Source: California Civil Code § 2079.14, as codified via leginfo.legislature.ca.gov.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -7660,6 +7752,18 @@ var RESOURCES = {
     { title: 'Recovery Account & Licensing Quick Facts', type: 'table', table: CA_RE_RECOVERY_LICENSING_TABLE,
       desc: 'Real Consumer Recovery Account payout caps, license terms, and claim deadlines pulled directly from the Business and Professions Code — the facts most likely to trip you up that the raw statute buries in dense legal text.',
       topic: 'General Reference', free: true },
+    { title: 'Trust Fund Handling Quick Facts', type: 'table', table: CA_RE_TRUST_FUND_TABLE,
+      desc: 'Real rules on who may sign trust-account withdrawals, unlicensed-employee bonding requirements, commingling, and the narrow out-of-state-depository exception.',
+      topic: 'Practice of Real Estate, Disclosures & Contracts' },
+    { title: 'Disciplinary Grounds & Penalties Quick Facts', type: 'table', table: CA_RE_DISCIPLINE_TABLE,
+      desc: 'The real, enumerated grounds for license suspension or revocation under BPC § 10176, plus the monetary-penalty-in-lieu-of-suspension trap.',
+      topic: 'General Reference' },
+    { title: 'Property Disclosure (TDS/NHD) Quick Facts', type: 'table', table: CA_RE_PROPERTY_DISCLOSURE_TABLE,
+      desc: 'Real Transfer Disclosure Statement timing/rescission rules and the 6 required Natural Hazard Disclosure zone categories, from the Civil Code.',
+      topic: 'Practice of Real Estate, Disclosures & Contracts' },
+    { title: 'Agency Relationship Disclosure Quick Facts', type: 'table', table: CA_RE_AGENCY_DISCLOSURE_TABLE,
+      desc: 'The real, distinct deadlines for when a seller\'s agent vs. a buyer\'s agent must deliver the agency disclosure form.',
+      topic: 'Agency & Fiduciary Duties' },
     { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
       desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the exam is based on.',
       topic: 'General Reference', free: true },
