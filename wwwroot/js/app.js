@@ -8449,6 +8449,161 @@ var NY_RE_SALESPERSON_LICENSE_LAW_TERMS_FLASHCARDS = [
   { front: 'Commingling', back: 'Mixing a licensee\'s own funds with money held on behalf of a client -- listed among New York\'s own core License Law key terms as a fundamental violation concept, the same underlying idea California and most other states also treat as a standalone disciplinary ground.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
 ];
 
+// ============================================================================
+// NY RE BROKER -- Key Facts Digest, drafted 2026-09-03, sourced from RPL
+// Article 12-A at broker level and the DOS 2022 prelicensing syllabus.
+// ============================================================================
+var NY_RE_BROKER_SUPERVISION_LIABILITY_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Broker\'s liability for a salesperson\'s violation', 'NOT automatic. The broker\'s OWN license can be revoked/suspended over a salesperson\'s violation only if the broker had actual knowledge of it, or kept the benefits/profits/proceeds of a transaction after being notified of the salesperson\'s misconduct',
+      'A common wrong-answer trap is assuming a broker is automatically on the hook for anything a salesperson does — real liability turns on the broker\'s own knowledge or conduct after the fact, not strict vicarious liability.',
+      'RPL § 442-c'],
+    ['Employing an unlicensed salesperson', 'An independent MISDEMEANOR for the broker — a criminal charge, not just an administrative violation, and it applies regardless of whether any client was actually harmed',
+      'This is a real, standalone criminal exposure most people don\'t associate with a licensing statute.',
+      'RPL § 442-c'],
+    ['Broker\'s duty when a salesperson\'s association ends', 'Must notify the Department of State "forthwith" (immediately, without delay) in the manner DOS prescribes — the statute uses "forthwith," not a fixed day-count',
+      '"Forthwith" is itself the legally operative word tested here — there is no numeric grace period to memorize instead.',
+      'RPL § 442-b'],
+    ['New (successor) broker\'s matching duty', 'When a salesperson moves to a new broker, that NEW broker must ALSO "forthwith" notify DOS of the change, accompanied by a $1 fee',
+      'The reporting duty sits on BOTH the old and the new broker at once — a detail easy to assume only applies to the broker being left.',
+      'RPL § 442-b'],
+    ['Effect of a broker\'s own license being revoked or suspended', 'AUTOMATICALLY suspends the license of every real estate salesperson associated with that broker, until the salesperson changes association or the broker\'s suspension period ends — the salesperson\'s suspension is legally treated as a discontinuance of association',
+      'One broker\'s discipline doesn\'t stay contained to that one person — it instantly disables an entire team\'s ability to work until they each re-associate elsewhere.',
+      'RPL § 441-d'],
+    ['Who regulates trust funds, commingling, and transaction records', 'Reserved to the EXCLUSIVE regulatory authority of the Secretary of State (DOS) — the State Real Estate Board (which handles CE-school approval) has no rulemaking power over this area at all',
+      'Two different state bodies touch broker regulation, and the exam-relevant split is real: only DOS writes the trust-fund/recordkeeping rules.',
+      'RPL § 442-k'],
+  ],
+  journalNote: 'This table intentionally omits any specific escrow-deposit-timing day-count, fidelity-bond percentage, or exact records-retention period. Those numbers live in 19 NYCRR Part 175 (DOS\'s own regulations) -- this project confirmed those regulations EXIST and cover those topics via the DOS-approved syllabus, but could not reach the regulations\' full current text from a free primary source this session. Verify a specific number directly against 19 NYCRR Part 175 before relying on one.',
+  sourceNote: 'Source: New York Real Property Law Article 12-A, §§ 441-d, 442-b, 442-c, 442-k, as published by the New York State Senate (nysenate.gov/legislation/laws/RPP).',
+};
+
+var NY_RE_BROKER_LICENSING_DISCIPLINE_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Broker license term', '2 years',
+      'A real, DOS-confirmed figure — don\'t assume it matches the CE renewal cycle length just because both happen to also run on a 2-year clock.',
+      'DOS real estate broker licensing page (dos.ny.gov)'],
+    ['Broker pre-licensing education requirement', '152 hours of a DOS-approved real estate course (roughly double the salesperson requirement)',
+      'The broker bar is meaningfully higher than the 77-hour salesperson course — a real, testable gap between the two license levels.',
+      'RPL § 441'],
+    ['Broker experience requirement', 'At least 2 years actively working as a licensed real estate salesperson, OR at least 3 years of equivalent experience in the general real estate business',
+      'Two separate qualifying paths, each with its OWN clock — 2 years as a salesperson is not interchangeable with "2 years of equivalent experience," which requires 3.',
+      'RPL § 441'],
+    ['Continuing education requirement', '22.5 hours within the 2-year period immediately preceding renewal — the SAME figure applies to brokers and salespersons alike',
+      'A common trap is assuming brokers face a higher CE hour count because their pre-licensing hours are higher — CE hours are actually identical across both license levels.',
+      'RPL § 441(3)(a)'],
+    ['Maximum monetary fine DOS can impose', '$2,000, payable to the Department of State — with 50% of it specifically directed to the state\'s anti-discrimination in housing fund',
+      'A real, dollar-specific cap, and the 50% earmark to a housing fund is a distinctive, easy-to-forget detail tying discipline back to fair housing enforcement.',
+      'RPL § 441-c'],
+    ['Wait before reapplying after a revocation', '1 year of ineligibility before a revoked licensee may apply again',
+      'A real, fixed waiting period — revocation isn\'t automatically permanent, but it isn\'t immediately reversible either.',
+      'RPL § 441-c'],
+  ],
+  sourceNote: 'Source: New York Real Property Law Article 12-A §§ 441, 441-c (nysenate.gov/legislation/laws/RPP); New York Department of State real estate broker licensing page (dos.ny.gov/real-estate-broker). New York does NOT publish an exact exam item count or a numeric passing score.',
+};
+
+var NY_RE_BROKER_INDEPENDENT_CONTRACTOR_TABLE = {
+  headers: ['Requirement', 'What It Actually Requires', 'Consequence If Missed', 'Source'],
+  rows: [
+    ['Compensation structure', 'Commissions must be payable WITHOUT tax deductions and must be directly related to sales output — not paid for hours worked',
+      'If pay is tied to hours instead of output, that alone undercuts independent-contractor status.',
+      '1986 NY Labor Law / Workers\' Compensation Law amendments'],
+    ['Written contract', 'A written contract between broker and salesperson is required by BOTH federal and New York state law',
+      'An oral or informal arrangement doesn\'t satisfy either law\'s independent-contractor test, no matter how the parties actually behave day to day.',
+      '1986 NY Labor Law amendments / Internal Revenue Code § 3508'],
+    ['Contract execution', 'The written contract must NOT have been executed under duress',
+      'A technically-compliant contract signed under pressure can still fail to establish real independent-contractor status.',
+      '1986 NY Labor Law amendments'],
+    ['Broker\'s actual conduct ("substance over form")', 'The broker may SUPERVISE the salesperson but must not DIRECT AND CONTROL the salesperson\'s work the way an employer controls an employee',
+      'Written documentation alone will NOT overcome a broker\'s actual direction and control — courts and DOS look at real conduct, not just the paperwork on file.',
+      'DOS-approved 2022 prelicensing syllabus, Subject #1(2)'],
+    ['Consequence to the BROKER if the relationship fails this test', 'The salesperson is deemed an EMPLOYEE — making the broker liable for unemployment insurance premiums, federal unemployment insurance, workers\' compensation, disability insurance, and federal/state withholding (including Social Security)',
+      'This is real, direct financial exposure that lands specifically on the broker, not the salesperson, if the independent-contractor structure fails.',
+      '1986 NY Labor Law / Workers\' Compensation Law amendments'],
+  ],
+  journalNote: 'This table\'s figures come from the New York Department of State\'s own DOS-approved 2022 prelicensing course syllabus, which names the governing law but does not itself cite specific NY Labor Law section numbers -- treat the legal REQUIREMENTS above as reliable (they come from a state-approved course), but don\'t cite a specific Labor Law section number for them without verifying it first.',
+  sourceNote: 'Source: New York Department of State, "Real Estate Salesperson Syllabus" (2022), Subject #1 §2 (Independent Contractor Employee).',
+};
+
+var NY_RE_BROKER_COMPENSATION_RULES_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Who a broker MAY split a commission with', 'A duly licensed real estate salesperson regularly associated with that broker; a duly licensed real estate broker; or a person regularly engaged in the real estate brokerage business in a state outside New York',
+      'Three real, distinct categories — not just "any other broker" — and the out-of-state category has its own separate carve-out.',
+      'RPL § 442'],
+    ['Who a broker may NOT pay a commission to', 'Any person, firm, or corporation who is or is to be a PARTY to the transaction (i.e., the buyer, seller, landlord, or tenant) for performing any activity that requires a license',
+      'A broker can\'t route commission dollars to a transaction party to dodge the licensing requirement — this is a direct anti-evasion rule.',
+      'RPL § 442'],
+    ['Where a salesperson\'s compensation may come from', 'ONLY from the duly licensed real estate broker with whom that salesperson is associated — never from any other person, for real estate brokerage activity',
+      'This is the salesperson-side mirror of the broker-side rule above — money for licensed activity has to flow through the broker relationship on both ends.',
+      'RPL § 442-a'],
+    ['Prerequisite to sue for an unpaid commission', 'The person or firm must allege AND prove they were a duly licensed real estate broker or salesperson on the date the cause of action arose — no license at that moment, no lawsuit',
+      'A real, hard bar to recovery in a NY court — this is a genuinely different (and stricter) standard than "eventually got licensed" or "was licensed when the case was filed."',
+      'RPL § 442-d'],
+    ['After-the-fact referral fees', 'Banned once a bona fide listing agreement is signed, a bona fide purchase offer is accepted, or a bona fide buyer\'s agency agreement is signed — UNLESS reasonable cause for the payment actually exists',
+      'A narrow, real exception (reasonable cause) keeps this from being an absolute ban, but the default rule after those trigger events is no referral fee.',
+      'RPL § 442-l(1)'],
+    ['Legal classification of a violation of the referral-fee ban', 'An independent violation of Article 12-A AND, separately, a deceptive act or practice under General Business Law § 349',
+      'One violation triggers TWO distinct legal exposures at once — a real cross-reference between real estate license law and general consumer-protection law.',
+      'RPL § 442-l(2) / General Business Law § 349'],
+  ],
+  sourceNote: 'Source: New York Real Property Law Article 12-A §§ 442, 442-a, 442-d, 442-l, as published by the New York State Senate (nysenate.gov/legislation/laws/RPP).',
+};
+
+var NY_RE_BROKER_FAIR_HOUSING_DUTIES_TABLE = {
+  headers: ['Broker-Level Duty', 'What It Actually Requires', 'Source'],
+  rows: [
+    ['Maintain a Fair Housing Policy', 'Post Fair Housing signage and ensure advertising compliance with Fair Housing law — an office-wide, broker-owned obligation, not something delegated case-by-case to individual agents',
+      'DOS-approved 2022 prelicensing syllabus, Subject #9(B)'],
+    ['NY protected classes beyond federal law', 'New York\'s Human Rights Law (Executive Law, Article 15) adds AGE and MARITAL STATUS to the federally protected classes — categories the federal Fair Housing Act alone does not cover',
+      'DOS-approved 2022 prelicensing syllabus, Subject #9(E), citing Executive Law Article 15'],
+    ['Ongoing training and violation reporting', 'The broker (not just each individual salesperson) is responsible for the ongoing training and education of staff and agents on fair housing, and for reporting any fair housing violations that come to light',
+      'DOS-approved 2022 prelicensing syllabus, Subject #9(B)'],
+    ['Recordkeeping materials availability', 'The broker must have available ALL necessary fair-housing recordkeeping material for both the broker\'s own use and their agents\' use — including required disclosure forms',
+      'DOS-approved 2022 prelicensing syllabus, Subject #9(B)/(C)'],
+  ],
+  sourceNote: 'Source: New York Department of State, "Real Estate Salesperson Syllabus" (2022), Subject #9 (Human Rights and Fair Housing); New York Executive Law, Article 15 (NY Human Rights Law).',
+};
+
+var NY_RE_BROKER_LICENSING_STRUCTURE_FLASHCARDS = [
+  { front: 'Associate broker', back: 'A person who has qualified for and holds a real estate BROKER license, but who has chosen to work under the supervision of, and associated with, another broker — rather than operating independently as that broker\'s own principal. A distinct license category from both "broker" and "salesperson."', source: 'RPL Article 12-A; DOS 2022 prelicensing syllabus, Subject #1(1)(B)' },
+  { front: 'Irrevocable consent', back: 'A form every NONRESIDENT broker or salesperson applicant must file with their application, designating the New York Secretary of State as their agent to accept service of any summons, subpoena, or other legal process on their behalf. Service under this consent is complete 10 days after the papers are filed with the court clerk.', source: 'RPL § 442-g' },
+  { front: 'State Real Estate Board', back: 'A 15-member body (the Secretary of State, the Superintendent of Financial Services, plus 13 appointed members — at least 5 of whom must be NY real estate brokers with 10+ years\' experience). It meets at least 3 times a year and sets rules for CE-school approval — but it has NO authority over trust funds, commingling, or transaction records; that\'s reserved exclusively to DOS.', source: 'RPL §§ 442-i, 442-k' },
+  { front: 'Kickback', back: 'An illicit payment or rebate tied to a referral or transaction that does not qualify as a lawful, licensed-activity-based commission split under NY law — a classic wrong-answer trap dressed up as an ordinary referral fee.', source: 'DOS 2022 prelicensing syllabus, Subject #1 key terms' },
+  { front: 'Apartment information vendor', back: 'A separately, distinctly licensable New York real estate activity: providing prospective tenants with lists of rental apartments for a fee — a different license category from being a real estate broker or salesperson.', source: 'DOS 2022 prelicensing syllabus, Subject #1 key terms' },
+  { front: 'Blind ad', back: 'An advertisement for real estate placed by a licensee that fails to properly disclose it was placed by a licensed broker or salesperson — a real, named violation category under DOS advertising guidelines, not just a vague "misleading ad."', source: 'DOS 2022 prelicensing syllabus, Subject #1 key terms' },
+  { front: 'Nonresident licensee reciprocity', back: 'A broker who is already licensed and in good standing in another state (with reciprocal treatment for New York licensees) can become NY-licensed without having to maintain a physical office inside New York.', source: 'RPL § 442-g' },
+];
+
+var NY_RE_BROKER_SUPERVISION_CONCEPTS_FLASHCARDS = [
+  { front: '19 NYCRR § 175.21 — Supervision of salespersons by broker', back: 'The DOS regulation establishing a broker\'s affirmative DUTY to supervise their salespersons\' activities — a separate question from RPL § 442-c\'s rule about WHEN a broker can be disciplined over a salesperson\'s specific violation. One is the supervision duty itself; the other is the liability standard if supervision fails.', source: 'DOS 2022 prelicensing syllabus, Subject #1(2)(F)' },
+  { front: '19 NYCRR § 175.23 — Records of transactions to be maintained', back: 'The DOS regulation requiring a broker to keep records of transactions. New York statute independently confirms, at the RPL level, that "records of transactions to be maintained" is reserved to DOS\'s exclusive regulatory authority — not something the State Real Estate Board can set rules on.', source: 'DOS 2022 prelicensing syllabus, Subject #1(2)(F); RPL § 442-k' },
+  { front: 'Lawyer\'s Fund for Client Protection', back: 'A distinctly New York custom: contract down payments are customarily held in the SELLER\'S ATTORNEY\'s escrow account — not the broker\'s trust account — and this fund exists to protect clients if an attorney misappropriates escrowed funds. A broker asked to personally hold a down payment is taking on a less customary role in NY than in states where brokers routinely hold trust funds.', source: 'DOS 2022 prelicensing syllabus, Subject #3(3)(F)' },
+  { front: 'The 1986 Independent Contractor Law', back: 'New York\'s 1986 amendments to the state Labor Law and Workers\' Compensation Law, paired with Internal Revenue Code § 3508, that set the real conditions under which a broker may lawfully treat its affiliated salespersons as independent contractors rather than employees.', source: 'DOS 2022 prelicensing syllabus, Subject #1(2)(D)' },
+  { front: 'Substance over form', back: 'In the independent-contractor context: written documentation alone will NOT establish independent-contractor status if the broker\'s ACTUAL conduct amounts to directing and controlling how the salesperson does the work — real behavior controls over paperwork.', source: 'DOS 2022 prelicensing syllabus, Subject #1(2)(F)' },
+  { front: 'Nonsolicitation order / cease-and-desist zone', back: 'A DOS-designated geographic area where solicitation is restricted (an anti-blockbusting tool). A broker may NOT establish a NEW principal office or branch office inside such a zone without prior DOS approval.', source: 'RPL § 442-h' },
+];
+
+var NY_RE_BROKER_COMPENSATION_CONCEPTS_FLASHCARDS = [
+  { front: 'Net listing', back: 'A listing arrangement where the broker\'s compensation is whatever amount the sale price exceeds a seller-specified minimum acceptable price. Legal in New York, but it carries heightened fiduciary risk since the broker\'s and the seller\'s financial interests can diverge on getting the seller the best price.', source: 'DOS 2022 prelicensing syllabus, Subject #2(K)' },
+  { front: 'Exclusive right to sell', back: 'A listing type where the broker earns the agreed commission no matter WHO actually procures the buyer during the listing period — even the seller finding their own buyer doesn\'t avoid the commission, unlike an open listing.', source: 'DOS 2022 prelicensing syllabus, Subject #2(K)' },
+  { front: 'Open listing', back: 'A listing where the seller may list with multiple brokers at once, and owes a commission only to whichever broker (if any) actually produces a ready, willing, and able buyer — the direct contrast to an exclusive right to sell.', source: 'DOS 2022 prelicensing syllabus, Subject #2(K)' },
+  { front: 'Compensation source doesn\'t decide representation', back: 'In New York, who ultimately PAYS a broker\'s commission does not, by itself, determine who that broker legally represents. Agency is established by disclosure and the parties\' actual agreement — not by tracing which side\'s money the commission came from.', source: 'DOS 2022 prelicensing syllabus, Subject #2(I)' },
+  { front: 'Mortgage broker dual-agency disclosure', back: 'A real estate broker who ALSO acts as a mortgage broker in the same transaction must give a SEPARATE dual-agency disclosure required under the NY Banking Law — this is in addition to, and distinct from, the RPL § 443 real estate agency disclosure.', source: 'DOS 2022 prelicensing syllabus, Subject #18(B), Subject #2(H)' },
+  { front: 'Splitting commissions — the general rule', back: 'A broker may share a commission only with: a licensed salesperson regularly associated with that broker, another licensed real estate broker, or a person regularly engaged in the real estate brokerage business in a state outside New York — never with a party to the transaction for licensed-activity compensation.', source: 'RPL § 442' },
+];
+
+var NY_RE_BROKER_DISCIPLINE_CONCEPTS_FLASHCARDS = [
+  { front: 'Article 78 proceeding', back: 'The specific type of New York court proceeding used to seek judicial review of a Department of State licensing or disciplinary determination — the defined path a licensee has to challenge DOS\'s decision in court.', source: 'RPL § 441-f; DOS 2022 prelicensing syllabus, Subject #1 key terms' },
+  { front: 'Untrustworthiness or incompetency', back: 'One of RPL § 441-c\'s enumerated disciplinary standards — DOS can revoke or suspend a license for demonstrated untrustworthiness or incompetency ALONE, without having to prove intentional fraud or dishonesty.', source: 'RPL § 441-c' },
+  { front: 'Dishonest or misleading advertising', back: 'An INDEPENDENT, standalone ground for discipline under RPL § 441-c — separate from, and narrower than, the broader untrustworthiness/incompetency catch-all the statute also provides.', source: 'RPL § 441-c' },
+  { front: 'Executive Law Article 15 violation as a license-law ground', back: 'A violation of New York\'s Human Rights Law (Executive Law, Article 15) committed in a licensee\'s professional capacity is independently listed as its own disciplinary ground under RPL § 441-c — not merely a separate civil-rights matter handled elsewhere.', source: 'RPL § 441-c' },
+  { front: 'Reprimand', back: 'A distinct, lighter disciplinary sanction DOS can impose under RPL § 441-c — a real middle-ground tool that exists alongside (and short of) revocation, suspension, or a monetary fine.', source: 'RPL § 441-c' },
+  { front: 'Judicial review path (RPL §§ 441-e, 441-f)', back: 'A licensee facing license denial or a DOS complaint has a defined statutory notice-and-hearing process (§ 441-e) followed by a defined path to court review of DOS\'s ultimate determination (§ 441-f) — discipline isn\'t just an internal DOS decision with no outside check.', source: 'RPL §§ 441-e, 441-f' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9779,6 +9934,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   ny_re_broker: [
+    { title: 'Broker Supervision & Vicarious Liability Quick Facts', type: 'table', table: NY_RE_BROKER_SUPERVISION_LIABILITY_TABLE,
+      desc: 'Real rules on when a broker is actually liable for a salesperson\'s violation, the "forthwith" reporting duty when an agent leaves, and how one broker\'s discipline cascades to suspend their whole team\'s licenses.',
+      topic: 'Broker Supervision, Office Management & Escrow/Trust Funds' },
+    { title: 'Broker Licensing, CE & Discipline Quick Facts', type: 'table', table: NY_RE_BROKER_LICENSING_DISCIPLINE_TABLE,
+      desc: 'Real broker-level figures — the 152-hour education requirement, the 2-year/3-year experience paths, the 22.5-hour CE cycle, and the $2,000 disciplinary fine cap — straight from RPL Article 12-A and DOS\'s own licensing page.',
+      topic: 'License Law, Discipline, CE & General Business Law', free: true },
+    { title: 'Independent Contractor Status Quick Facts', type: 'table', table: NY_RE_BROKER_INDEPENDENT_CONTRACTOR_TABLE,
+      desc: 'The real requirements that keep a broker\'s affiliated salespersons classified as independent contractors instead of employees — and the direct financial exposure a broker faces if that structure fails.',
+      topic: 'License Law, Discipline, CE & General Business Law' },
+    { title: 'Broker Compensation & Referral Rules Quick Facts', type: 'table', table: NY_RE_BROKER_COMPENSATION_RULES_TABLE,
+      desc: 'Real rules on who a broker may split a commission with, the license prerequisite to sue for an unpaid commission, and the after-the-fact referral fee ban.',
+      topic: 'Commission/Compensation & Contracts' },
+    { title: 'Broker Fair Housing Duties Quick Facts', type: 'table', table: NY_RE_BROKER_FAIR_HOUSING_DUTIES_TABLE,
+      desc: 'The specific fair housing duties that sit with the BROKER, not just each individual agent — plus the two protected classes New York adds beyond federal law.',
+      topic: 'Agency Law, Disclosure & Fair Housing' },
+    { title: 'Broker Licensing & Structure Terms', type: 'flashcards', flashcards: NY_RE_BROKER_LICENSING_STRUCTURE_FLASHCARDS,
+      desc: 'Real New York broker-specific terms of art — associate broker, irrevocable consent, the State Real Estate Board, and more — flip through them to test recall, not just recognition.',
+      topic: 'License Law, Discipline, CE & General Business Law', free: true },
+    { title: 'Broker Supervision & Office Concepts', type: 'flashcards', flashcards: NY_RE_BROKER_SUPERVISION_CONCEPTS_FLASHCARDS,
+      desc: 'The named DOS regulations behind broker supervision and recordkeeping, New York\'s distinctive Lawyer\'s Fund escrow custom, and the substance-over-form independent-contractor doctrine.',
+      topic: 'Broker Supervision, Office Management & Escrow/Trust Funds' },
+    { title: 'Broker Compensation Concepts', type: 'flashcards', flashcards: NY_RE_BROKER_COMPENSATION_CONCEPTS_FLASHCARDS,
+      desc: 'Net listing vs. open listing vs. exclusive right to sell, why who pays a commission doesn\'t decide who\'s represented, and the separate mortgage-broker dual-agency disclosure.',
+      topic: 'Commission/Compensation & Contracts' },
+    { title: 'Broker Discipline & License Law Concepts', type: 'flashcards', flashcards: NY_RE_BROKER_DISCIPLINE_CONCEPTS_FLASHCARDS,
+      desc: 'The real disciplinary standards behind an RPL § 441-c case — untrustworthiness, dishonest advertising, an Executive Law Article 15 violation — plus the Article 78 judicial review path.',
+      topic: 'License Law, Discipline, CE & General Business Law' },
     { title: "New York Real Property Law Article 12-A (Real Estate Brokers and Real Estate Salespersons)", type: "pdf", url: "https://www.nysenate.gov/legislation/laws/RPP/A12-A",
       desc: "The official New York Real Property Law text published by the NY Senate — the statutory basis for broker licensing, discipline, and this practice content.",
       topic: "General Reference", free: true },
