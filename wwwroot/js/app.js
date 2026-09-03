@@ -7560,6 +7560,51 @@ var CA_RE_KEY_TERMS_FLASHCARDS = [
   { front: 'Diligent visual inspection duty (AVID)', back: 'A listing agent\'s duty to conduct a reasonably competent and diligent VISUAL inspection of the property and disclose material facts an investigation would reveal — applies specifically to 1-4 unit residential property or a manufactured home, not larger residential or commercial property.', source: 'Civil Code § 2079' },
 ];
 
+// Second flashcard deck (2026-09-03): Discipline & Enforcement Concepts. Deliberately NOT a
+// re-list of the Disciplinary Grounds table's own § 10176(a)-(m) items -- that table already owns
+// "which specific acts trigger discipline." These cards own the surrounding PROCESS: how the
+// Commissioner can act before a hearing, how long they have to act, and what happens after.
+var CA_RE_DISCIPLINE_CONCEPTS_FLASHCARDS = [
+  { front: 'Desist and refrain order', back: 'The Commissioner\'s power to order someone to immediately STOP an unlicensed or violating activity, without a hearing first. The recipient can request a hearing within 30 days after being served — the order itself takes effect right away.', source: 'BPC § 10086' },
+  { front: 'Statute of limitations — DRE accusations', back: 'Generally 3 years from the alleged violation. For fraud, misrepresentation, or a false promise specifically, the deadline extends to 1 year from the aggrieved party\'s discovery OR 3 years from the occurrence, whichever is LATER — but never more than 10 years after the occurrence, no matter what.', source: 'BPC § 10101' },
+  { front: 'Restricted license', back: 'A license issued (often after discipline) subject to specific terms, conditions, and limitations. Violating any of those terms is itself an independent, separate ground for further discipline — on top of whatever led to the restriction in the first place.', source: 'BPC § 10177(k)' },
+  { front: 'Negligence/incompetence as a discipline ground', back: 'A real estate license can be suspended or revoked for demonstrated negligence or incompetence alone — this is a lower bar than proving fraud or dishonest dealing, which the Commissioner can also pursue under a separate, broader catch-all clause.', source: 'BPC § 10177(g)' },
+  { front: 'Broker\'s duty to supervise', back: 'A broker who fails to reasonably supervise their salespersons\' activities can be disciplined for THAT failure alone — the broker doesn\'t need to have personally committed the underlying violation.', source: 'BPC § 10177(h)' },
+  { front: 'Summary suspension for fraud in procuring a license', back: 'The Commissioner can suspend a license WITHOUT a hearing if it was fraudulently procured — but this power expires 90 days after the license issued, and the respondent can demand a hearing within 30 days of being served the suspension order.', source: 'BPC § 10177.1' },
+  { front: 'Broker\'s duty to report a fired salesperson', back: 'If a broker fires a salesperson for conduct that\'s itself a disciplinary-action ground, the broker must file a certified written statement of the facts with the Commissioner. Skipping this can put the BROKER\'S own license at risk.', source: 'BPC § 10178' },
+  { front: 'Civil fraud judgment as a discipline ground', back: 'A final judgment against a licensee in a CIVIL lawsuit for fraud, misrepresentation, or deceit — separate from any DRE administrative case — is itself enough grounds for the Commissioner to suspend or revoke the license after a hearing.', source: 'BPC § 10177.5' },
+  { front: 'Voluntary surrender of license', back: 'A licensee under investigation or facing a filed accusation may petition to surrender their license rather than fight it. Once accepted, the ONLY path back is a formal reinstatement petition under the Government Code — not a routine relicensing application.', source: 'BPC § 10100.2' },
+  { front: 'Reinstatement after revocation', back: 'A revoked license can\'t be reinstated (nor a restricted license issued on a reinstatement petition) unless the applicant shows completion of continuing education — UNLESS they were instead required to pass a qualifying reinstatement exam.', source: 'BPC § 10171.3 / § 10182' },
+];
+
+// Third flashcard deck (2026-09-03): Agency & Fiduciary Duty Concepts. Civil Code territory (not
+// the Business & Professions Code file on disk) -- every fact here verified directly against
+// leginfo.legislature.ca.gov section text this session, same discipline as the Agency Disclosure
+// table. Distinct from that table's TIMING focus: these cards own the underlying legal concepts
+// (definitions, duty language, confidentiality) that the timing rules sit on top of.
+var CA_RE_AGENCY_CONCEPTS_FLASHCARDS = [
+  { front: 'Dual agent', back: 'An agent representing BOTH the seller and the buyer in the same transaction, whether directly or through a salesperson/associate broker acting under that agent\'s license.', source: 'Civil Code § 2079.13' },
+  { front: '"Agent" — statutory definition', back: 'A person acting under California\'s general principal/agent law (Civil Code Title 9) who is also licensed as a real estate broker, and under whose license the listing was taken or the offer to purchase was obtained.', source: 'Civil Code § 2079.13' },
+  { front: 'Statutory fiduciary duty language', back: 'The exact words California law requires on every agency disclosure form: "a fiduciary duty of utmost care, integrity, honesty, and loyalty" in dealings with the client(s) — worded to cover both parties equally when the agent is a dual agent.', source: 'Civil Code § 2079.16' },
+  { front: 'Written confirmation of agency', back: 'Beyond just disclosing WHO represents whom, the relationship must be separately CONFIRMED in writing — in the purchase contract itself or a standalone signed writing — no later than each party\'s own execution of that contract.', source: 'Civil Code § 2079.17' },
+  { front: 'Confidential information (dual agency)', back: 'Facts about a client\'s financial position, motivations, or bargaining position that could affect price — e.g., that a seller would actually accept less, or a buyer would actually pay more. A dual agent can\'t disclose this to the other side without express permission.', source: 'Civil Code § 2079.21' },
+  { front: 'Undisclosed dual agency (as a license-law violation)', back: 'Acting for more than one party to a transaction without the knowledge or consent of ALL parties isn\'t just an agency-law problem — it\'s independently listed as its own ground for license suspension or revocation.', source: 'BPC § 10176(d)' },
+];
+
+// Fourth flashcard deck (2026-09-03): Trust Fund & Records Concepts. Distinct from the Trust Fund
+// Handling table's focus (WHO can sign withdrawals, bonding math, the out-of-state exception) --
+// these cards cover the underlying custodial duty, what counts as an advance fee, and the separate
+// records-retention obligation, none of which the table addresses.
+var CA_RE_TRUST_RECORDS_FLASHCARDS = [
+  { front: 'Trust fund custodial duty', back: 'Funds a broker accepts on behalf of others -- if not placed immediately into a neutral escrow or handed straight to the broker\'s principal -- must go into a trust account and stay there until disbursed per the instructions of whoever is actually entitled to them. The broker never treats it as their own money.', source: 'BPC § 10145(a)(1)' },
+  { front: 'Trust account location (default rule)', back: 'Absent a narrow statutory exception (like the specific out-of-state institutional-investor carve-out), a broker\'s trust fund account must be maintained at a bank or recognized depository IN CALIFORNIA.', source: 'BPC § 10145(a)(1)' },
+  { front: 'Advance fee — statutory definition', back: 'Any fee a licensee charges for services requiring a license, or for a listing, BEFORE fully completing the contracted service. Splitting the fee or the service into pieces to dodge this rule doesn\'t work — the law explicitly blocks that workaround.', source: 'BPC § 10026' },
+  { front: 'Advance fees must go into trust', back: 'Money collected under an advance-fee agreement isn\'t just "income" the moment it\'s received -- it has to be deposited into a trust account like any other client funds, since the contracted service hasn\'t been completed yet.', source: 'BPC § 10146' },
+  { front: 'Record retention requirement', back: 'A broker must keep listings, deposit receipts, canceled checks, and trust records for 3 YEARS -- counted from the closing of the transaction, or from the date of the listing if the deal never closed.', source: 'BPC § 10148' },
+  { front: 'Listing agreement — statutory definition', back: 'A written contract between a seller and a broker authorizing the broker to sell the property or find/obtain a buyer, including any other licensed services the agreement covers.', source: 'BPC § 10018.14' },
+  { front: 'Exclusive right to sell listing', back: 'A listing type where the seller\'s agent earns the agreed commission no matter WHO actually finds the buyer during the listing period -- even the seller finding their own buyer doesn\'t avoid the commission, unlike an open listing.', source: 'BPC § 10018.15' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -7785,6 +7830,15 @@ var RESOURCES = {
     { title: 'Key CA Real Estate Terms', type: 'flashcards', flashcards: CA_RE_KEY_TERMS_FLASHCARDS,
       desc: 'Real California-specific terms of art — flip through them to test your recall, not just recognition, of what each one actually means.',
       topic: 'General Reference', free: true },
+    { title: 'Discipline & Enforcement Concepts', type: 'flashcards', flashcards: CA_RE_DISCIPLINE_CONCEPTS_FLASHCARDS,
+      desc: 'How the Commissioner can act before a hearing, how long they have to bring a case, and what happens after a license is surrendered or revoked — the process around discipline, not just the list of violations.',
+      topic: 'General Reference' },
+    { title: 'Agency & Fiduciary Duty Concepts', type: 'flashcards', flashcards: CA_RE_AGENCY_CONCEPTS_FLASHCARDS,
+      desc: 'The real statutory definitions and duty language behind California agency law — dual agent, the exact fiduciary duty wording, written confirmation, and confidentiality limits.',
+      topic: 'Agency & Fiduciary Duties' },
+    { title: 'Trust Fund & Records Concepts', type: 'flashcards', flashcards: CA_RE_TRUST_RECORDS_FLASHCARDS,
+      desc: 'The custodial duty behind trust fund handling, what counts as an advance fee, and the separate 3-year records retention requirement.',
+      topic: 'Practice of Real Estate, Disclosures & Contracts' },
     { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
       desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the exam is based on.',
       topic: 'General Reference', free: true },
