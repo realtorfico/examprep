@@ -6869,6 +6869,18 @@ var CATEGORY_POINTS = {
   ],
 };
 
+// States a category deliberately does NOT cover, and a short public-facing reason why -- shown as
+// a second, muted pill next to the state-count pill on each homepage category card. Counts/reasons
+// summarized from this project's own landscape research (kept intentionally brief here; the admin
+// panel has the full per-state breakdown). A category not listed here (e.g. Notary, Driver, CDL,
+// Real Estate Salesperson) has no deliberate exclusions -- every state is covered -- so it gets no
+// second pill at all.
+var CATEGORY_EXCLUDED_INFO = {
+  'Real Estate Broker': { count: 6, note: 'no separate broker-level exam in these states, or the entry-level license already covers it' },
+  'Motorcycle': { count: 34, note: 'exam is waived in most of these states, or this track isn’t offered here yet' },
+  'Boating': { count: 25, note: 'no mandatory boating-education requirement in these states, or this track isn’t offered here yet' },
+};
+
 // Homepage category-card display order, grouped with a visual break between the licensing-exam
 // categories (Notary, Real Estate) and the knowledge-test categories (Driver/CDL/Motorcycle/
 // Boating) -- explicit user-specified order (2026-08-31), not alphabetical. Any active category
@@ -6899,6 +6911,9 @@ function categoryCardsHtml() {
   function cardHtml(kind) {
     var stateCount = new Set(HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; }).map(function (t) { return t.stateCode; })).size;
     var points = CATEGORY_POINTS[kind] || [];
+    var excluded = CATEGORY_EXCLUDED_INFO[kind];
+    var excludedPill = excluded ? '<span class="category-nav-card-excludedcount" title="' + escapeHtml(excluded.note) + '">' +
+      excluded.count + ' N/A</span>' : '';
     return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
@@ -6906,7 +6921,7 @@ function categoryCardsHtml() {
       '<h3>' + escapeHtml(kind) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
-      '<span class="category-nav-card-statecount">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</span>' +
+      '<div class="category-nav-card-counts"><span class="category-nav-card-statecount">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</span>' + excludedPill + '</div>' +
       '</div>' +
       '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
       '</a>';

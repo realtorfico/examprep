@@ -1272,6 +1272,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.65rem; border-radius: 999px;
   background: color-mix(in srgb, var(--accent-deep) 12%, transparent); color: var(--accent-deep);
 }
+.category-nav-card-counts { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+/* Second, deliberately muted/neutral pill (not accent-colored like the state count) so a category
+   with excluded states doesn't read as an error or a second achievement -- just a quiet, honest
+   footnote. Title attribute carries the one-line "why" as a native tooltip. */
+.category-nav-card-excludedcount {
+  display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.65rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 15%, transparent); color: var(--muted);
+  cursor: help;
+}
 /* Footer CTA rendered as a solid full-width button rather than a plain text link -- same
    "browse dashboard cards end in a clear action bar" pattern, scoped to category cards only so
    every other .exam-track-card (state track cards elsewhere on the site) keeps its existing
