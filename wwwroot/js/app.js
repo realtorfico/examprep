@@ -7764,6 +7764,174 @@ var FL_RE_SALESPERSON_VIOLATIONS_CONCEPTS_FLASHCARDS = [
   { front: 'Letter of guidance', back: 'A lesser, non-disciplinary correction FREC can issue under Chapter 455 instead of formal discipline. It isn\'t a punishment by itself — but if a licensee later violates the SAME provision again, FREC\'s own disciplinary guidelines specifically flag the earlier letter of guidance as an aggravating factor.', source: 'F.S. § 455.225(4); 61J2-24.001, F.A.C.' },
 ];
 
+// ============================================================================
+// FL RE BROKER (Florida Real Estate Broker) -- Key Facts Digest, drafted
+// 2026-09-03 by a research subagent, sourced from Florida Statutes Ch. 475
+// Part I, F.A.C. 61J2, and DBPR's official Broker Examination CIB.
+// ============================================================================
+var FL_RE_BROKER_RECOVERY_FUND_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Fund payout cap — per claimant', '$50,000 or the unsatisfied portion of the judgment, whichever is LESS',
+      'Only actual/compensatory damages reflected in the judgment count — treble damages, court costs, attorney\'s fees, and interest are NOT recoverable from the fund.',
+      'Fla. Stat. § 475.484(1)(a)'],
+    ['Recovery Fund payout cap — per transaction, aggregate', '$50,000',
+      'This caps every claim arising out of the SAME transaction combined, no matter how many claimants or parcels are involved — it does not stack per claimant.',
+      'Fla. Stat. § 475.484(3)'],
+    ['Recovery Fund payout cap — per broker or sales associate, aggregate', '$150,000',
+      'This is the ceiling across every judgment against one licensee combined, regardless of transaction count — a real number distinct from the $50,000 per-claimant and per-transaction figures above.',
+      'Fla. Stat. § 475.484(4)'],
+    ['Deadline to file a Recovery Fund claim', '2 years from the act (or from discovery with due diligence) — but NEVER more than 4 years after the act, period',
+      'Two separate clocks stacked together: the "discovery" extension only ever buys time up to that hard 4-year outer limit, it does not reset it.',
+      'Fla. Stat. § 475.483(1)(c)'],
+    ['Annual Recovery Fund fee added to license — broker', '$3.50/year',
+      'More than DOUBLE the sales associate rate below — a real, license-level-specific number examiners can pair against the sales associate figure in the same question.',
+      'Fla. Stat. § 475.482(3)'],
+    ['Annual Recovery Fund fee added to license — sales associate', '$1.50/year',
+      'The lower, sales-associate-only rate — don\'t let this blend into "the broker fee" in your head.',
+      'Fla. Stat. § 475.482(3)'],
+  ],
+  journalNote: 'The reinstatement trap: once the fund pays out on a judgment against a broker or sales associate, that licensee\'s license is AUTOMATICALLY suspended the day payment is made — no separate administrative action needed. It cannot be reinstated until the licensee repays the fund in full, plus interest, and a bankruptcy discharge does NOT relieve that repayment obligation (Fla. Stat. § 475.484(7)). Separately, the special per-license fee collection itself pauses once the fund tops $1 million, and only restarts if a disbursement drops the balance below $500,000 (§ 475.482(3)).',
+  sourceNote: 'Source: Florida Statutes §§ 475.482-475.486 (Florida Real Estate Recovery Fund), Chapter 475, Part I.',
+};
+
+var FL_RE_BROKER_ESCROW_TRUST_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Timing to deposit entrusted funds', 'A broker must place any money, check, or draft entrusted to them IMMEDIATELY upon receipt into escrow',
+      '"Immediately" is the actual statutory word — not "within 3 business days" or any grace period. Failing this is an independent, standalone discipline ground.',
+      'Fla. Stat. § 475.25(1)(k)'],
+    ['Where a broker\'s escrow funds may be held', 'A title company, banking institution, credit union, or savings and loan association, all located and doing business IN FLORIDA (or the broker\'s own trust/escrow account at one of those)',
+      'No out-of-state depository exception exists for a Florida broker the way California\'s narrow institutional-investor carve-out does — this is a flatly in-state requirement.',
+      'Fla. Stat. § 475.25(1)(k)'],
+    ['Allowed personal/brokerage funds left in a PROPERTY MANAGEMENT escrow account', 'Up to $5,000',
+      'A real, specific dollar exception to the anti-commingling rule — this amount may stay in the account to cover bank fees/shortfalls without counting as improper commingling.',
+      'Fla. Stat. § 475.25(1)(k)'],
+    ['Allowed personal/brokerage funds left in a SALES escrow account', 'Up to $1,000',
+      'A DIFFERENT, lower cap than the property-management figure above — the two numbers are easy to swap by mistake and are a natural trick-question pairing.',
+      'Fla. Stat. § 475.25(1)(k)'],
+    ['Broker\'s good-faith escape options when entitlement to escrowed funds is disputed', 'Request an Escrow Disbursement Order (EDO) from FREC; submit to arbitration with all parties\' consent; seek court adjudication (interpleader); or, with all parties\' written consent, submit to mediation (which must conclude within 90 days of the last demand)',
+      'A broker who promptly uses ONE of these four paths and abides by the result cannot be disciplined for failing to account for or deliver the escrowed property — but sitting on a dispute and doing none of them is itself a violation.',
+      'Fla. Stat. § 475.25(1)(d)1'],
+    ['Broker\'s duty to review trust accounting procedures', 'A broker must review the brokerage\'s own trust accounting procedures to ensure compliance with Chapter 475',
+      'This is a SEPARATE, broker-only discipline ground from actually mishandling funds — a broker can be sanctioned for failing to review the procedures even if no money ever actually went missing.',
+      'Fla. Stat. § 475.25(1)(v)'],
+  ],
+  journalNote: 'A broker may place and maintain up to the $5,000/$1,000 figures above without it counting as commingling, AND the Legislature\'s stated intent is that a dispute over the broker\'s OWN money mixed into escrow should never delay disbursing what\'s actually owed to a client (§ 475.25(1)(k)) — but note the failure-to-deposit ground applies separately if the broker is themselves the buyer under a contract that requires an earnest-money deposit into escrow (§ 475.25(1)(d)2).',
+  sourceNote: 'Source: Florida Statutes § 475.25(1)(d), (k), (v), Chapter 475, Part I.',
+};
+
+var FL_RE_BROKER_SUPERVISION_OFFICE_TABLE = {
+  headers: ['Fact', 'Requirement', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Experience prerequisite to sit for the broker exam', '24 months of active real estate licensure (as a sales associate OR broker, in Florida or another state/jurisdiction) within the preceding 5 years',
+      'A real, specific lookback window — the 24 months don\'t have to be the most recent 24 months, just fall somewhere within the trailing 5 years.',
+      'Fla. Stat. § 475.17(2)(b)'],
+    ['Pre-license education — broker vs. sales associate', 'Broker: 72 classroom hours. Sales associate: 63 classroom hours.',
+      'A genuinely different number at each license level — an easy pairing for a trick question.',
+      'Fla. Stat. § 475.17(2)(a)1'],
+    ['Post-license education before FIRST broker renewal', 'Up to 60 classroom hours',
+      'Miss this before the first renewal and the broker license becomes null and void outright — the licensee can revert to sales associate status by completing a 14-hour CE course within 6 months, or must fully requalify (retake the broker prelicense course AND exam) to become a broker again.',
+      'Fla. Stat. § 475.17(4)'],
+    ['Brokerage entity registration', 'A partnership, LLP, LLC, or corporation acting as a broker must itself register with FREC — and the registration is AUTOMATICALLY CANCELED the moment the license of its one required active broker lapses',
+      'A firm doesn\'t just lose "a broker" when its sole licensed broker\'s license lapses — the ENTITY\'s own registration disappears with it, mid-registration-period, with no separate notice required.',
+      'Fla. Stat. § 475.15'],
+    ['Physical office & signage requirement', 'Each active broker must maintain a physical office (at least one enclosed room, stationary construction) and post a sign at the entrance of the PRINCIPAL office and EVERY branch office reading, at minimum, "licensed real estate broker" (or "lic. real estate broker")',
+      'A specific, minimum-wording requirement — a generic company sign without that exact phrase does not satisfy it. Applies separately to every branch office, not just headquarters.',
+      'Fla. Stat. § 475.22(1)'],
+    ['Branch office registration fee', 'Up to $50/year per branch office',
+      'Any location doing business under the broker\'s name in a way the public would reasonably believe is that broker\'s office must be registered as a branch — this is a real, capped statutory fee, not an arbitrary local charge.',
+      'Fla. Stat. § 475.24'],
+  ],
+  journalNote: 'The automatic-inactivation trap: an order revoking or suspending a BROKER\'s license automatically makes the licenses of EVERY sales associate and broker associate registered under that broker (and, for a partnership/corporation, every member/officer/director) involuntarily inactive at the same moment — they stay inactive until they secure a new broker connection. One broker\'s discipline case can instantly sideline an entire office of agents who did nothing wrong themselves. (Fla. Stat. § 475.31(1))',
+  sourceNote: 'Source: Florida Statutes §§ 475.15, 475.17(2)-(4), 475.22, 475.24, 475.31(1), Chapter 475, Part I.',
+};
+
+var FL_RE_BROKER_DISCIPLINE_TABLE = {
+  headers: ['Fact', 'Figure/Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Maximum administrative fine', '$5,000 per count or separate offense',
+      'This is PER COUNT — a licensee facing multiple separate charges in one case can face fines that are real multiples of $5,000, not a single flat $5,000 ceiling for the whole case.',
+      'Fla. Stat. § 475.25(1)'],
+    ['Maximum license suspension length', 'Not exceeding 10 years',
+      'A real ceiling distinct from outright revocation — FREC can suspend for up to a decade without permanently ending the license the way revocation does.',
+      'Fla. Stat. § 475.25(1)'],
+    ['Statute of limitations for an administrative complaint', '5 years from the act, OR 5 years from when the act was discovered/should have been discovered with due diligence',
+      'A materially longer window than some other states\' real estate discipline SOLs — don\'t assume a shorter figure carries over from other tracks.',
+      'Fla. Stat. § 475.25(5)'],
+    ['Broker\'s duty to direct, control, and manage sales associates', 'Failure to do so is itself an independent discipline ground — and DBPR registration records create a REBUTTABLE PRESUMPTION that a registered sales associate is "employed by" that broker',
+      'The broker doesn\'t need to have committed the underlying misconduct personally — failing to supervise is its own separate violation, and the registration record alone is enough to presume the employment relationship.',
+      'Fla. Stat. § 475.25(1)(u)'],
+    ['Broker business records retention', '5 years from the date of receiving entrusted funds — or, if no funds were entrusted, 5 years from execution of the listing/purchase/management/rental agreement; extended to 2 years past conclusion of any litigation the records were involved in (never less than 5 years total)',
+      'A different, longer figure than the property-disclosure or trust-fund retention windows tested in other real estate tracks — Florida specifically requires 5 years, not 3.',
+      'Fla. Stat. § 475.5015'],
+    ['Receivership disbursement cap from the Recovery Fund', 'Up to $100,000 per receivership',
+      'When a court appoints a receiver over a broker\'s business (in an injunctive action DBPR brings) and the brokerage\'s own assets can\'t cover the receiver\'s expenses, the court may order the shortfall paid from the Recovery Fund — capped at this figure per case.',
+      'Fla. Stat. § 475.5017(2)'],
+  ],
+  journalNote: 'DBPR/FREC also has independent authority to inspect and audit any broker or brokerage office "at all reasonable hours" without a complaint having been filed first (§ 475.5016) — recordkeeping and escrow compliance can be checked proactively, not just reactively after a client complains.',
+  sourceNote: 'Source: Florida Statutes §§ 475.25, 475.5015, 475.5016, 475.5017, Chapter 475, Part I.',
+};
+
+var FL_RE_BROKER_CLOSING_TAX_TABLE = {
+  headers: ['Tax', 'Rate', 'Who Typically Pays / Applies To', 'Code Section'],
+  rows: [
+    ['Documentary stamp tax on the DEED (most FL counties)', '$0.70 per $100 (or fraction thereof) of consideration',
+      'Customarily the SELLER\'s expense at closing — this is the tax DBPR\'s own sample broker exam problem uses to produce a $1,190 seller figure on a $170,000 sale.',
+      'Fla. Stat. § 201.02(1)(a)'],
+    ['Documentary stamp tax on the DEED (Miami-Dade County only)', '$0.60 per $100 base rate PLUS a $0.45 per $100 surtax on property that is not a single-family residence',
+      'A real county-specific exception — Miami-Dade\'s rate structure is genuinely different from the rest of the state, not a rounding quirk.',
+      'Fla. Stat. §§ 201.02(1)(a), 201.031'],
+    ['Documentary stamp tax on a new promissory note/mortgage', '$0.35 per $100 (or fraction thereof) of the obligation, capped at $2,450 per document',
+      'Customarily the BUYER\'s expense when financing the purchase — the cap means very large loans stop accruing additional doc stamp tax on the note past a certain point.',
+      'Fla. Stat. § 201.08'],
+    ['Nonrecurring intangible personal property tax on a new mortgage', '2 mills ($0.002) per dollar of the obligation\'s just valuation — i.e., 0.2%',
+      'Also customarily a BUYER closing cost on new financing — combined with the note doc stamp tax above, this is what produces DBPR\'s own sample answer of $748 buyer-side tax on a new $136,000 loan ($476 note stamps + $272 intangible tax).',
+      'Fla. Stat. § 199.133'],
+  ],
+  journalNote: 'DBPR\'s own Broker Exam Candidate Information Booklet states candidates "must be familiar with the Closing Disclosure documents" and directs candidates to the CFPB\'s own sample Closing Disclosure form — transfer taxes appear on Page 2 (Closing Cost Details) while the sale price, credits, and cash-to-close land on Page 3 (Calculating Cash to Close / Summary of Transactions). Don\'t confuse which page a given line item lands on.',
+  sourceNote: 'Source: Florida Statutes §§ 201.02(1)(a), 201.031, 201.08, 199.133, as published by the Florida Department of Revenue (floridarevenue.com), cross-verified against DBPR\'s official Real Estate Broker Examination Candidate Information Booklet (effective March 2024) sample closing problem and answer key.',
+};
+
+var FL_RE_BROKER_ESCROW_CONCEPTS_FLASHCARDS = [
+  { front: 'Escrow Disbursement Order (EDO)', back: 'FREC\'s own administrative ruling, requested by a broker who has a good-faith doubt about who is entitled to escrowed funds, determining who actually gets the money. It\'s one of four lawful "escape procedures" a broker can use instead of guessing and risking discipline.', source: 'Fla. Stat. § 475.25(1)(d)1.a' },
+  { front: 'Conversion (of trust funds)', back: 'Using a client\'s escrowed money as if it were the broker\'s own -- spending it, "borrowing" from it, or otherwise diverting it from the purpose it was entrusted for. This is treated far more seriously than a bookkeeping mistake.', source: 'FREC Broker Exam Content Outline, Escrow Management' },
+  { front: 'Commingling', back: 'Mixing a broker\'s own operating funds with money the broker is holding in trust for others. Florida allows narrow, specific dollar exceptions (up to $5,000 in a property management escrow account, up to $1,000 in a sales escrow account) -- anything beyond those caps is commingling.', source: 'Fla. Stat. § 475.25(1)(k)' },
+  { front: 'Earnest money / binder deposit', back: 'The buyer\'s good-faith deposit submitted with an offer, applied toward the purchase price at closing if the deal closes. On a Closing Disclosure, it shows up as a credit to the buyer, not a new expense.', source: 'FREC Broker Exam Content Outline, Escrow Management' },
+  { front: 'Broker-held vs. title company/attorney-held escrow', back: 'Florida brokers have a real choice for where transaction funds sit: hold them directly in the brokerage\'s own escrow account, OR route them to a neutral title company or closing attorney instead. Both are recognized paths under the broker exam\'s own Escrow Management outline.', source: 'FREC Broker Exam Content Outline, Escrow Management' },
+  { front: 'Interpleader', back: 'A court action a broker can file when parties have conflicting claims to escrowed funds, asking the court itself to decide who is entitled to the money -- one of the four lawful ways a broker can resolve an escrow dispute without personally deciding (and risking guessing wrong).', source: 'Fla. Stat. § 475.25(1)(d)1.c' },
+  { front: 'Property management escrow account vs. sales escrow account', back: 'Florida law treats these as two DIFFERENT accounts with two different allowed personal-funds cushions ($5,000 for property management, $1,000 for sales) -- a broker running both a sales and a property management business can\'t assume one number covers both.', source: 'Fla. Stat. § 475.25(1)(k)' },
+];
+
+var FL_RE_BROKER_COMPLIANCE_PROCESS_FLASHCARDS = [
+  { front: 'Probable cause panel', back: 'A panel that reviews a completed DBPR investigation and decides whether there\'s enough evidence to move forward with formal disciplinary charges. This step comes AFTER the investigation and BEFORE a formal complaint is filed -- it\'s a real gate, not a rubber stamp.', source: 'FREC Broker Exam Content Outline, Compliance Process' },
+  { front: 'Formal complaint', back: 'The actual charging document filed against a licensee once probable cause is found -- distinct from the initial complaint a consumer or another licensee files with DBPR, which merely triggers an investigation.', source: 'FREC Broker Exam Content Outline, Compliance Process' },
+  { front: 'Final order', back: 'The Commission\'s (or department\'s) conclusive written decision closing out a disciplinary case -- fine, suspension, revocation, dismissal, or another outcome. Once it becomes final, it can be published by FREC for the guidance of other registrants and the public.', source: 'Fla. Stat. § 475.31(2)' },
+  { front: 'Investigator authority to inspect and audit', back: 'DBPR\'s authorized agents can inspect and audit any broker or brokerage office "at all reasonable hours" to check compliance -- this authority does NOT require a complaint to already be pending. Proactive audits are real, not just complaint-driven.', source: 'Fla. Stat. § 475.5016' },
+  { front: 'Types of penalties (four tracks)', back: 'A single act can trigger up to four separate, independent consequences: administrative (fine/suspension/revocation by FREC), civil (a lawsuit for damages), criminal (prosecution under the license law), and a distinct unlicensed-activity penalty track. None of the four bars pursuing the others from the same facts.', source: 'Fla. Stat. § 475.42(2)' },
+  { front: 'Notice of noncompliance', back: 'A lower-stakes alternative disciplinary tool for certain minor rule violations -- notifies the licensee and gives an opportunity to correct the issue, distinct from filing a full formal disciplinary complaint over the same conduct.', source: 'FREC Broker Exam Content Outline, Compliance Process' },
+];
+
+var FL_RE_BROKER_ENTITY_OFFICE_FLASHCARDS = [
+  { front: 'Registered brokerage entity', back: 'A sole proprietorship, general partnership, limited partnership, limited liability partnership, limited liability company, or corporation through which a broker conducts business -- each must itself register with FREC, separately from the individual broker\'s own license.', source: 'Fla. Stat. § 475.15' },
+  { front: 'Trade name', back: 'A "doing business as" name a broker operates under instead of, or alongside, their own legal name or the entity\'s registered name. Operating under an unregistered, unnoted trade name is itself a violation.', source: 'Fla. Stat. § 475.42(1)(j)' },
+  { front: 'Multiple license vs. group license', back: 'A broker may hold more than one individual broker license (a "multiple license") when needed for separate brokerage operations, distinct from a "group license," which lets one license cover several related entities under common ownership -- they solve different structural problems.', source: 'Fla. Stat. § 475.215' },
+  { front: 'Broker associate', back: 'Someone who is qualified to hold a broker\'s license but chooses to operate under another broker\'s employ, functioning day-to-day like a sales associate rather than running their own brokerage.', source: 'Fla. Stat. § 475.01(1)(b)' },
+  { front: 'Policy and Procedures Manual', back: 'An internal document FREC exam content expects a broker/office manager to maintain, setting out the brokerage\'s own operating rules for supervision, escrow handling, and sales-associate conduct -- part of demonstrating a functioning, compliant office, not just a legal filing requirement.', source: 'FREC Broker Exam Content Outline, Brokerage Ownership, Management & Supervision' },
+  { front: 'Employment arrangement (broker/sales associate)', back: 'Florida law treats an independent-contractor relationship between a broker and a sales associate as legally equivalent to "employment" for purposes of Chapter 475 -- the label on the arrangement doesn\'t change either party\'s statutory duties and responsibilities.', source: 'Fla. Stat. § 475.01(2)' },
+];
+
+var FL_RE_BROKER_TAX_CONCEPTS_FLASHCARDS = [
+  { front: 'IRC § 121 principal residence exclusion', back: 'A homeowner who sells their main home can exclude up to $250,000 of gain from federal income tax (single filer), or up to $500,000 (married filing jointly) -- a real, verified federal number every broker should know cold, distinct from any Florida-specific figure.', source: 'IRS Publication 523' },
+  { front: 'Ownership-and-use test', back: 'To qualify for the § 121 exclusion, the seller must have OWNED the home for at least 24 months out of the 5 years before the sale, AND used it as their main residence for at least 24 months of that same 5-year window -- the 24 months of residence don\'t have to be one continuous stretch.', source: 'IRS Publication 523' },
+  { front: '§ 121 exclusion for married couples filing jointly', back: 'Only ONE spouse needs to satisfy the ownership requirement to qualify -- but EACH spouse must independently satisfy the residence (use) requirement for the couple to claim the full $500,000 exclusion.', source: 'IRS Publication 523' },
+  { front: 'IRC § 1031 like-kind exchange', back: 'Lets an owner of investment or business real property defer paying federal capital gains tax by exchanging it for other "like-kind" real property instead of selling for cash. This is the real mechanism behind the exam outline\'s "Deferring Taxes upon Disposition" topic.', source: 'IRC § 1031 / IRS Form 8824 instructions' },
+  { front: '45-day identification period (1031 exchange)', back: 'In a § 1031 exchange, the replacement property must be formally identified within 45 days after the relinquished property is transferred -- a hard deadline, not a target.', source: 'IRS Form 8824 instructions' },
+  { front: '180-day exchange period (1031 exchange)', back: 'The replacement property must actually be received within 180 days of transferring the relinquished property, OR by the due date (with extensions) of the taxpayer\'s return for that year -- whichever comes FIRST.', source: 'IRS Form 8824 instructions' },
+  { front: 'FIRPTA withholding', back: 'When a foreign person sells U.S. real property, the buyer is generally required to withhold 15% of the amount realized (the sales price) and remit it to the IRS -- a real federal withholding obligation that falls on the BUYER, not the seller.', source: 'IRS.gov, FIRPTA Withholding' },
+  { front: 'FIRPTA personal-residence exemption threshold', back: 'No FIRPTA withholding is required at all when the sales price is $300,000 or less AND the buyer intends to use the property as a personal residence (with residency-use requirements over the following two years) -- a real, specific dollar cutoff, not a rule of thumb.', source: 'IRS.gov, FIRPTA Withholding' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -8918,6 +9086,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   fl_re_broker: [
+    { title: 'Real Estate Recovery Fund Quick Facts (Broker-Level)', type: 'table', table: FL_RE_BROKER_RECOVERY_FUND_TABLE,
+      desc: 'Real Recovery Fund payout caps, the 2-year/4-year claim deadlines, and the broker-vs-sales-associate annual fee split, pulled directly from Florida Statutes §§ 475.482-475.486.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)', free: true },
+    { title: 'Escrow & Trust Account Management Quick Facts', type: 'table', table: FL_RE_BROKER_ESCROW_TRUST_TABLE,
+      desc: 'Real deposit-timing rules, the $5,000/$1,000 commingling exceptions, the four lawful escrow-dispute escape procedures, and the broker\'s own duty to review trust accounting procedures.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)' },
+    { title: 'Broker Supervision, Office & Entity Quick Facts', type: 'table', table: FL_RE_BROKER_SUPERVISION_OFFICE_TABLE,
+      desc: 'The real licensure prerequisite, education-hour requirements, brokerage entity registration rules, office/signage requirements, and the automatic-inactivation trap when a broker is disciplined.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)' },
+    { title: 'Discipline, Investigation & Penalties Quick Facts', type: 'table', table: FL_RE_BROKER_DISCIPLINE_TABLE,
+      desc: 'Real fine and suspension caps, the 5-year statute of limitations, the broker\'s supervision-failure discipline exposure, records retention, and the receivership disbursement cap.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)' },
+    { title: 'Documentary Stamp & Intangible Tax Quick Facts', type: 'table', table: FL_RE_BROKER_CLOSING_TAX_TABLE,
+      desc: 'Real Florida closing-cost tax rates on deeds and new mortgages, cross-verified against DBPR\'s own sample closing problem in the Broker Exam Candidate Information Booklet.',
+      topic: 'Closing Transactions & Disclosure' },
+    { title: 'Escrow & Trust Concepts', type: 'flashcards', flashcards: FL_RE_BROKER_ESCROW_CONCEPTS_FLASHCARDS,
+      desc: 'The real terms behind Florida escrow practice -- EDO, conversion, commingling, interpleader, and the broker-held vs. title-company-held choice.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)', free: true },
+    { title: 'Discipline & Compliance Process Concepts', type: 'flashcards', flashcards: FL_RE_BROKER_COMPLIANCE_PROCESS_FLASHCARDS,
+      desc: 'How a DBPR complaint actually moves -- probable cause panel, formal complaint, final order, proactive audit authority, and the four separate penalty tracks.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)' },
+    { title: 'Brokerage Entity & Office Concepts', type: 'flashcards', flashcards: FL_RE_BROKER_ENTITY_OFFICE_FLASHCARDS,
+      desc: 'The real structural vocabulary of running a Florida brokerage -- entity types, trade names, multiple vs. group licenses, broker associates, and the Policy and Procedures Manual.',
+      topic: 'Real Estate Brokerage Business (Licensure, Escrow, Supervision & Discipline)' },
+    { title: 'Federal Income Tax Concepts for Brokers', type: 'flashcards', flashcards: FL_RE_BROKER_TAX_CONCEPTS_FLASHCARDS,
+      desc: 'Real, IRS-verified federal tax rules a broker needs -- the § 121 principal residence exclusion, § 1031 like-kind exchange deadlines, and FIRPTA withholding basics.',
+      topic: 'Federal Income Tax Laws' },
     { title: "Florida Statutes Chapter 475, Part I (Real Estate Brokers, Sales Associates, and Schools)", type: "pdf", url: "https://www.flsenate.gov/Laws/Statutes/2025/Chapter475/All",
       desc: "The official Florida Statutes text published by the Florida Senate — the statutory basis for the broker exam and this practice content.",
       topic: "General Reference", free: true },
