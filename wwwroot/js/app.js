@@ -7416,6 +7416,40 @@ var NOTARY_SUBSCRIBING_WITNESS_TABLE = {
   sourceNote: 'Source: [1] California Civil Code, as compiled in the official CA Notary Public Handbook.',
 };
 
+// PILOT (2026-09-03): first "Key Facts" reference table built for a Real Estate track. Reuses the
+// NOTARY_*_TABLE rendering plumbing already proven live on ca_notary (no new UI needed), but the
+// content shape is deliberately different, not a copy: a "Why It Matters" column that teaches the
+// real-world/exam consequence of each figure (not just the number + citation), and a curated set
+// of 5 rows -- the figures actually worth testing -- rather than transcribing every historical
+// number the statute contains (the pre-2009 legacy Recovery Account caps exist in the real statute
+// too, but aren't what a 2026 exam tests, so they're a footnote here, not their own rows). Every
+// figure is pulled directly from the official CA Business and Professions Code text (relaw.txt),
+// not restated from this site's own specs card (duration/questions/pass score already shown
+// elsewhere on the track page) -- this table exists to surface real facts that don't show up
+// anywhere else on the site yet.
+var CA_RE_RECOVERY_LICENSING_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Account cap — per transaction', '$50,000',
+      'The absolute ceiling on what a defrauded client can recover from the state, no matter how large their actual loss — anything above this is uncollectible if the broker has no assets left.',
+      'BPC § 10474(b)'],
+    ['Recovery Account cap — per licensee, aggregate', '$250,000',
+      'Caps total exposure across every claim against one licensee combined — a broker who defrauds five different clients doesn\'t multiply the $50,000 per-transaction figure five times over.',
+      'BPC § 10474(b)'],
+    ['Interest on claims stuck in the payment queue', '4% per year',
+      'A real, specific number examiners can pair with the $50,000/$250,000 caps in the same question — don\'t let it blend into "some interest accrues."',
+      'BPC § 10476'],
+    ['License term — salesperson AND broker', '4 years',
+      'Same figure at both license levels, a common setup for a trick question pairing it with a DIFFERENT number for something else (like the CE hour count or the exam retake wait).',
+      'BPC § 10153.6 / § 10153.7'],
+    ['Deadline to file a Recovery Account claim', '1 year after judgment becomes final',
+      'Miss this window and the claim is barred outright — the strength of the underlying case stops mattering.',
+      'BPC § 10470(b)'],
+  ],
+  journalNote: 'The reinstatement trap: a broker or salesperson whose Recovery Account payout has been made cannot be reinstated until they repay the Account in full, plus interest at the prevailing legal judgment rate — and a bankruptcy discharge does NOT relieve this obligation. (For claims filed before 1/1/2009, the caps were lower — $20,000/transaction, $100,000/licensee — but current exams test the figures above.)',
+  sourceNote: 'Source: California Business and Professions Code, Division 4, Chapter 6.5 (Real Estate Recovery Program), as published by the California Department of Real Estate.',
+};
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -7623,6 +7657,9 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   ca_re_salesperson: [
+    { title: 'Recovery Account & Licensing Quick Facts', type: 'table', table: CA_RE_RECOVERY_LICENSING_TABLE,
+      desc: 'Real Consumer Recovery Account payout caps, license terms, and claim deadlines pulled directly from the Business and Professions Code — the facts most likely to trip you up that the raw statute buries in dense legal text.',
+      topic: 'General Reference', free: true },
     { title: 'California Real Estate Law', type: 'pdf', url: 'https://www.dre.ca.gov/files/pdf/relaw/relaw.pdf',
       desc: 'The official statute (Business and Professions Code, Division 4), published annually by the California Department of Real Estate — the authoritative source the exam is based on.',
       topic: 'General Reference', free: true },
