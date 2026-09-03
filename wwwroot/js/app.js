@@ -7932,6 +7932,182 @@ var FL_RE_BROKER_TAX_CONCEPTS_FLASHCARDS = [
   { front: 'FIRPTA personal-residence exemption threshold', back: 'No FIRPTA withholding is required at all when the sales price is $300,000 or less AND the buyer intends to use the property as a personal residence (with residency-use requirements over the following two years) -- a real, specific dollar cutoff, not a rule of thumb.', source: 'IRS.gov, FIRPTA Withholding' },
 ];
 
+// ============================================================================
+// TX RE SALESPERSON (Texas Real Estate Sales Agent, state-law portion) -- Key
+// Facts Digest, drafted 2026-09-03, sourced from TRELA (Tex. Occ. Code Ch.
+// 1101) and 22 TAC Chapters 531/533/534/535, current text effective 1/1/2026.
+// ============================================================================
+var TX_RE_SALESPERSON_INTERMEDIARY_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Mandatory intermediary trigger', 'A broker MUST agree to act as an intermediary if the broker agrees to represent both a buyer or tenant AND a seller or landlord in the same transaction',
+      'This isn\'t optional or a matter of picking a side after the fact -- once representation of both parties has been agreed to, intermediary status is the only lawful path forward.',
+      'Occ. Code § 1101.561(b)'],
+    ['Written consent + appointing separate license holders', 'The broker needs written consent from EACH party (stating the source of expected compensation), then may appoint one associated license holder to one party and a DIFFERENT associated license holder to the other party',
+      'Appointed license holders may give opinions and advice during negotiations to "their" party -- something the intermediary broker alone may not do without making an appointment.',
+      'Occ. Code § 1101.559(a)-(b), § 1101.560'],
+    ['What an intermediary can never disclose', 'Four specific things: that the seller will take less than the asking price, that the buyer will pay more than a written offer, any information a party wrote to keep confidential, or any other confidential information -- each unless separately authorized in writing',
+      'A real, enumerated list, not a vague "use good judgment" standard -- exam questions test the specific four items.',
+      'Occ. Code § 1101.651(d)'],
+    ['Written buyer agreement now required (new 1/1/2026)', 'A license holder performing any brokerage act for a prospective buyer of residential real property must have a WRITTEN agreement with that buyer before showing any residential property, or before presenting an offer if nothing is shown',
+      'This is Texas\'s real, current statutory answer to the 2024-2025 national shift toward mandatory buyer agreements -- as of this year it is a hard prerequisite to showing a house, not just best practice.',
+      'Occ. Code § 1101.563(b)'],
+    ['Showing without representation (new 1/1/2026)', 'A broker may show property without representing the party ONLY if there is no oral/written agreement to represent them, the broker isn\'t otherwise their agent, and the broker gives no opinions/advice and performs no other brokerage act -- though the broker may still confirm objective size/price/terms',
+      'The line between "just showing" and "representing" is the crux of the whole 2026 overhaul -- the narrow objective-facts carve-out is exactly the kind of detail exams test.',
+      'Occ. Code § 1101.562(a), (c)'],
+    ['The (b) vs. (b-1) disclosure -- two different triggers', '(b): oral-or-written "who do I represent" disclosure at first contact with another party or their license holder. (b-1): a fuller WRITTEN notice (min. 10-point font) at first SUBSTANTIVE communication about a specific property, covering how brokers can represent parties (incl. as intermediary), duties owed, and contact info',
+      'Easy to conflate -- one is a quick disclosure, the other is a formal written notice with its own separate trigger event and minimum font size.',
+      'Occ. Code § 1101.558(b), (b-1)'],
+  ],
+  journalNote: 'Texas does not use the term "dual agency." A broker representing both sides of one deal has exactly one lawful statutory path -- becoming an intermediary under Subchapter L -- not a general election to disclose and proceed as a dual agent the way some other states allow.',
+  sourceNote: 'Source: Texas Occupations Code (TRELA) §§ 1101.558-1101.563, 1101.651(d), current text effective January 1, 2026, per Acts 2025, 89th Leg., R.S., Ch. 1172 (S.B. 1968) -- local file archive/handbooks/tx/oc1101_stripped.txt.',
+};
+
+var TX_RE_SALESPERSON_RECOVERY_TRUST_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Trust Account cap -- per transaction', '$125,000',
+      'The ceiling on ALL claims arising from a single transaction combined (including attorney\'s fees, interest, and court costs), no matter how many separate claimants there are.',
+      'Occ. Code § 1101.610(a)'],
+    ['Recovery Trust Account cap -- per license/certificate holder, aggregate', '$250,000',
+      'Caps total exposure across every judgment against ONE license holder. A business entity and its designated broker count as a SINGLE license holder for this cap.',
+      'Occ. Code § 1101.610(b), (e)'],
+    ['Deadline to bring the underlying court action', '2 years from the date the cause of action accrues',
+      'Miss this window and there is no path to a Recovery Trust Account payment at all, no matter how strong the underlying case is.',
+      'Occ. Code § 1101.605(a)'],
+    ['Deadline to get a hearing scheduled after applying', '1 year after the date the payment application was filed',
+      'A second, separate deadline layered on top of the 2-year filing deadline -- missing it waives recovery even if the underlying claim was timely filed.',
+      'Occ. Code § 1101.606(b)'],
+    ['Consequence of not repaying the account', 'License/certificate REVOKED if the paid amount isn\'t repaid in full before the 31st day after TREC\'s notice; the person then stays ineligible for ANY future license until the amount is repaid in full, plus interest at the legal rate',
+      'A real, hard deadline (30 days) with a real, ongoing consequence -- ineligibility doesn\'t expire on its own.',
+      'Occ. Code § 1101.655(a)-(c)'],
+    ['Who is disqualified from recovering', 'The judgment debtor\'s spouse, a license/certificate holder seeking their OWN compensation in that same transaction, or anyone related to the judgment debtor within the first degree by consanguinity',
+      'A common trap: assuming any aggrieved person automatically qualifies -- these three categories are barred outright regardless of the merits.',
+      'Occ. Code § 1101.607(2)'],
+  ],
+  journalNote: 'Two separate clocks run at once, not one: the 2-year window to file the underlying court action (§ 1101.605), and a separate 1-year window to actually get a hearing scheduled once the Recovery Trust Account application itself is filed (§ 1101.606(b)).',
+  sourceNote: 'Source: Texas Occupations Code (TRELA), Subchapter M (Real Estate Recovery Trust Account), §§ 1101.601-1101.615, and § 1101.655 -- local file archive/handbooks/tx/oc1101_stripped.txt.',
+};
+
+var TX_RE_SALESPERSON_TRUST_ACCOUNT_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Rule'],
+  rows: [
+    ['Who may maintain a trust account', 'Only the BROKER. A sales agent may never maintain one -- any trust money a sales agent receives must be delivered to the sponsoring broker IMMEDIATELY',
+      'A common trap: assuming a licensed sales agent can hold earnest money directly. They can\'t, ever.',
+      '22 TAC § 535.146'],
+    ['Deadline to deposit trust money', 'Not later than the close of business on the 2nd working day after the broker receives it, unless the principals expressly agree in writing to a different timeline',
+      'A real, specific business-day count, not a vague "promptly" standard.',
+      '22 TAC § 535.146'],
+    ['What counts as commingling (prima facie)', 'Placing trust money in the broker\'s personal or operating account, OR paying operating expenses/making withdrawals from the trust account for anything other than a proper trust disbursement',
+      'Both are automatically treated as evidence of commingling -- the broker doesn\'t get the benefit of the doubt once either happens.',
+      '22 TAC § 535.146'],
+    ['Deadline to disburse on written demand', 'Not later than the 30th day after the date a written demand for payment is made (or after a subsequent written agreement authorizing a different disbursement)',
+      'A hard, specific day-count that applies even when the broker isn\'t sure who\'s ultimately entitled to the money -- the fallback then is interpleading the funds into a court registry.',
+      '22 TAC § 535.146'],
+    ['Broker\'s own money in the trust account', 'A broker MAY deposit and maintain a "reasonable amount" in the trust account just to cover bank service fees (like insufficient-funds charges) -- but must keep detailed records of it',
+      'One of the few situations where mixing funds is expressly allowed, not automatically commingling.',
+      '22 TAC § 535.146'],
+    ['Records retention', '4 years from the date each document is received or created',
+      'Longer than some other states\' shorter retention windows -- don\'t assume a smaller number carries over from another jurisdiction.',
+      '22 TAC § 535.146'],
+  ],
+  journalNote: 'If a broker acquires ownership of trust money already sitting in the account (for example, they\'ve now fully earned the commission), that money has to come OUT of the trust account within 30 days of acquiring ownership -- leaving earned funds sitting in a client trust account past that point is itself a rule violation.',
+  sourceNote: 'Source: 22 Texas Administrative Code § 535.146 (Maintaining Trust Money) -- local file archive/handbooks/tx/tac_531_533_534_535_stripped.txt. The locally-archived text preserves the rule\'s content but not its original lettered subsection structure (it is extracted as unlettered bullet points), so this table cites the rule as a whole rather than inventing specific subsection letters that couldn\'t be independently reconfirmed this session -- see sources.md.',
+};
+
+var TX_RE_SALESPERSON_CONTRACTS_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Statute of Frauds -- what it covers for real estate', 'A contract for the sale of real estate, and a lease of real estate for a term LONGER than one year, must be in writing and signed by the party to be charged',
+      'This is the general contract-enforceability rule -- it does NOT by itself require a broker\'s commission agreement to be in writing (see the next row).',
+      'Bus. & Com. Code § 26.01(a)-(b)'],
+    ['The real estate commission-in-writing rule -- a DIFFERENT statute', 'A person can\'t sue in Texas to recover a commission for the sale or purchase of real estate unless the promise (or a memorandum of it) is in writing and signed by the party being sued',
+      'A classic trap: assuming § 26.01\'s general Statute of Frauds is what requires a written commission agreement. It doesn\'t -- § 26.01 only names commissions tied to oil/gas/mineral transactions. The GENERAL real estate commission writing requirement is its own separate TRELA provision.',
+      'Occ. Code § 1101.806(c)'],
+    ['Seller\'s Disclosure Notice -- delivery timing', 'Must be delivered on or before the effective date of an executory contract for the sale',
+      'A defined trigger tied to contract formation, not a fixed number of days before closing.',
+      'Prop. Code § 5.008(b)'],
+    ['Buyer\'s remedy if disclosure delivered late', 'Buyer may terminate the contract for ANY reason within 7 days after actually receiving the notice',
+      'A hard, specific day-count remedy that exists independent of whatever the disclosed condition actually says.',
+      'Prop. Code § 5.008'],
+    ['Who is exempt from the Seller\'s Disclosure requirement', 'A specific, real list: court-ordered/foreclosure sales, bankruptcy trustee transfers, mortgagee-mortgagor transfers, fiduciary transfers (estates/guardianships/trusts), transfers between co-owners, to a spouse or lineal relative, divorce-decree transfers, governmental transfers, new/unoccupied residences, and transfers where the dwelling is worth less than 5% of the total property value',
+      'A long, specific list -- don\'t assume a plain "for sale by owner" or "as-is" sale is automatically exempt. It isn\'t, unless it independently fits one of these categories.',
+      'Prop. Code § 5.008(e)'],
+    ['Licensee completing a contract form ≠ practicing law', 'A license holder who fills out a contract form incidental to acting as a broker is NOT engaged in unauthorized practice of law -- but only if the form was adopted by TREC, prepared or approved by an attorney for that transaction type, or required by the property owner (or the owner\'s attorney)',
+      'A real, conditional safe harbor, not a blanket exemption for any form a licensee might fill out.',
+      'Occ. Code § 1101.654(b)'],
+  ],
+  journalNote: 'Three different "must be in writing" rules get confused constantly: the Statute of Frauds (Bus. & Com. Code § 26.01) covers the underlying real estate sale/lease contract itself; a separate TRELA provision (§ 1101.806(c)) is what actually requires a broker\'s COMMISSION agreement to be in writing before a court will enforce it; and the new § 1101.563 (see the Intermediary/Agency table) requires a written BUYER REPRESENTATION agreement before showing residential property. All three are real and current, and none of them substitutes for the other two.',
+  sourceNote: 'Source: Texas Occupations Code (TRELA) §§ 1101.654(b), 1101.806(b)-(c) -- local file archive/handbooks/tx/oc1101_stripped.txt. Texas Business and Commerce Code § 26.01 and Texas Property Code § 5.008 verified via texas.public.law, a statute-text mirror, because the official statutes.capitol.texas.gov site now renders through client-side JavaScript that this session\'s fetch tools could not execute -- see sources.md.',
+};
+
+var TX_RE_SALESPERSON_LICENSING_TABLE = {
+  headers: ['Fact', 'Requirement', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['License term', '24 months, for both sales agent and broker licenses',
+      'Same figure at both license levels -- a common setup for a trick question pairing it with a DIFFERENT number, like the CE-hour count.',
+      'Occ. Code § 1101.451(a)'],
+    ['Sales agent pre-license education', 'At least 12 semester hours (or equivalent classroom hours) of qualifying real estate courses required by commission rule',
+      'The bare minimum to get an original sales agent license -- separate from, and smaller than, the education required at first renewal (next row).',
+      'Occ. Code § 1101.358(a)'],
+    ['First sales agent license renewal (SAE)', 'At least 18 additional semester hours (or equivalent classroom hours) of qualifying real estate courses -- and the commission MAY NOT waive this requirement',
+      'New agents often assume the 12 pre-license hours are the whole requirement. This separate 18-hour hurdle at first renewal is real, mandatory, and non-waivable.',
+      'Occ. Code § 1101.454(a), (d)'],
+    ['Broker license eligibility', 'At least 4 years of active experience as a license holder during the preceding 60 months, PLUS up to 60 semester hours (or equivalent classroom hours) of qualifying courses set by commission rule',
+      'A real experience floor on top of the coursework -- education alone doesn\'t qualify someone for a broker license.',
+      'Occ. Code § 1101.356(a)(1)-(2)'],
+    ['Broker responsibility course (new 1/1/2026)', 'A broker applicant must also attend the commission-approved broker responsibility course, which may count toward the related-course hours above',
+      'A real, current addition to broker licensing that didn\'t exist under the old law -- don\'t assume the broker path is unchanged from a few years ago.',
+      'Occ. Code § 1101.356(a)(3)'],
+    ['Continuing education (CE) for renewal', 'At least 15 classroom hours per license term (the commission can\'t raise this by more than 3 hours total over the life of a license), with at least 8 of those hours on specific listed legal topics (fair housing, agency law, disclosures, promulgated forms, ethics, and more)',
+      'The 8-hour legal-topics carve-out inside the 15-hour total is the detail exams actually test, not just the headline 15-hour number.',
+      'Occ. Code § 1101.455(b), (e)'],
+  ],
+  journalNote: 'The commission may deny renewal outright if the applicant is in violation of a commission order -- with the same procedural protections as an original license denial (§ 1101.459). Renewal isn\'t just a paperwork-and-hours formality if there\'s an open compliance issue.',
+  sourceNote: 'Source: Texas Occupations Code (TRELA) §§ 1101.356, 1101.358, 1101.451, 1101.454, 1101.455, 1101.459, current text effective January 1, 2026 -- local file archive/handbooks/tx/oc1101_stripped.txt.',
+};
+
+var TX_RE_SALESPERSON_INTERMEDIARY_CONCEPTS_FLASHCARDS = [
+  { front: 'Intermediary (statutory definition)', back: 'A broker who is employed to negotiate a transaction between the parties to a transaction, and for that purpose may act as an agent of the parties.', source: 'Occ. Code § 1101.551(1)' },
+  { front: 'Party (statutory definition, Subchapter L)', back: 'A prospective buyer, seller, landlord, or tenant, or an authorized representative of one (trustee, guardian, executor, administrator, receiver, or attorney-in-fact). It does NOT include a license holder who represents a party.', source: 'Occ. Code § 1101.551(2)' },
+  { front: 'Appointed license holder', back: 'A specific associated license holder an intermediary broker designates to communicate with, carry out instructions of, and give opinions/advice to just ONE party -- while a different appointed license holder does the same for the other side.', source: 'Occ. Code § 1101.560(a), (c)' },
+  { front: 'Duties of intermediary prevail', back: 'Once a license holder is acting as an intermediary under Subchapter L, those duties SUPERSEDE whatever duties would otherwise apply under any other law, including common-law agency duties.', source: 'Occ. Code § 1101.561(a)' },
+  { front: 'Associated broker (statutory definition)', back: 'A broker who associates with and is paid through another broker under a relationship intended to be continuous -- whether as an employee or as an ongoing independent contractor.', source: 'Occ. Code § 1101.552(g)' },
+  { front: 'The (b-1) written notice', back: 'A required written notice, minimum 10-point font, given at a license holder\'s first SUBSTANTIVE communication with a party about a specific property -- distinct from the simpler oral-or-written (b) "who do I represent" disclosure at first contact.', source: 'Occ. Code § 1101.558(b-1)' },
+  { front: 'Showing without representation', back: 'A narrow status created in 2026: a broker can show property to someone without representing them, but only while giving no opinions or advice and performing no other brokerage act -- the moment any of that happens, the "just showing" status ends.', source: 'Occ. Code § 1101.562' },
+];
+
+var TX_RE_SALESPERSON_TRUST_RECOVERY_CONCEPTS_FLASHCARDS = [
+  { front: 'Trust account (statutory definition)', back: 'An account managed by one party for the benefit of another, in a banking institution authorized to do business in Texas.', source: '22 TAC § 535.146' },
+  { front: 'Trust money (statutory definition)', back: 'A client\'s money, earnest money, rent, unearned fees, security deposits, or any money held on behalf of another person.', source: '22 TAC § 535.146' },
+  { front: 'Subrogation (Recovery Trust Account)', back: 'When TREC pays a claim from the Recovery Trust Account, it steps into the judgment creditor\'s shoes for that amount -- the creditor must assign their rights in the judgment to the commission, which then has PRIORITY for repayment from any later recovery.', source: 'Occ. Code § 1101.612' },
+  { front: 'Claim precluded by bankruptcy', back: 'If a bankruptcy court blocks an aggrieved person from executing or perfecting a judgment lien the normal way, they can still pursue a Recovery Trust Account claim by instead verifying to TREC that they made a good-faith effort to protect the judgment from being discharged.', source: 'Occ. Code § 1101.606(c)' },
+  { front: 'Business entity = single license holder', back: 'For Recovery Trust Account payment-limit purposes, a business entity license holder and its designated broker are treated as ONE license holder -- and a claim against the entity is also treated as a claim against that broker.', source: 'Occ. Code § 1101.610(e), § 1101.6011' },
+  { front: 'Interest on trust money', back: 'If trust money is deposited in an interest-bearing account, the money still has to be available for disbursal when needed -- and any interest earned must go to the parties the money is disbursed to, unless the depositing party agreed in writing otherwise.', source: '22 TAC § 535.146' },
+  { front: 'Dishonored trust check', back: 'If a broker deposits trust money as a check and that check is dishonored by the bank, the broker must immediately notify ALL parties to the transaction in writing.', source: '22 TAC § 535.146' },
+];
+
+var TX_RE_SALESPERSON_CONTRACTS_CONCEPTS_FLASHCARDS = [
+  { front: 'Statute of Frauds (concept)', back: 'A promise or agreement is unenforceable in court unless it is in writing and signed by the party to be charged with it. For real estate, this covers a contract for the sale of real estate and a lease longer than one year.', source: 'Bus. & Com. Code § 26.01(a)-(b)' },
+  { front: 'Promulgated contract forms', back: 'TREC-adopted standard contract forms. A license holder who completes one incidental to acting as a broker is not engaged in the unauthorized practice of law -- but only if the form was adopted by TREC, prepared or approved by an attorney for that use, or required by the property owner or the owner\'s attorney.', source: 'Occ. Code § 1101.654(a)-(b)' },
+  { front: 'License required to sue for compensation', back: 'A person can\'t maintain an action in Texas to collect compensation for an act as a broker or sales agent unless they allege AND prove they were a license holder (or a licensed attorney) at the time the act was performed.', source: 'Occ. Code § 1101.806(b)' },
+  { front: 'Commission-sharing exception', back: 'The written-memorandum requirement for suing to recover a real estate commission does NOT apply to an agreement to share compensation among license holders -- e.g., a broker splitting a commission with a sponsored sales agent.', source: 'Occ. Code § 1101.806(a)(1)' },
+  { front: 'Seller\'s Disclosure -- good-faith standard', back: 'The disclosure notice only has to be completed to the best of the seller\'s belief and knowledge as of the date it is completed and signed -- it is a knowledge-based standard, not a guarantee that every fact stated turns out to be accurate.', source: 'Prop. Code § 5.008' },
+  { front: 'Seller\'s Disclosure -- de minimis dwelling exemption', back: 'A transfer is exempt from the Seller\'s Disclosure requirement if the value of any dwelling on the property is less than 5% of the total value of the property -- a narrow, easy-to-forget exemption most people don\'t expect.', source: 'Prop. Code § 5.008(e)' },
+];
+
+var TX_RE_SALESPERSON_LICENSING_PROCESS_CONCEPTS_FLASHCARDS = [
+  { front: 'Probationary license', back: 'TREC may issue a probationary license, subject to reasonable terms the commission adopts by rule.', source: 'Occ. Code § 1101.365' },
+  { front: 'Broker inactive status', back: 'TREC may place a broker\'s license on inactive status if the broker is not acting as a broker, is not sponsoring any sales agent, and submits a written application before the license\'s expiration date.', source: 'Occ. Code § 1101.366(a)' },
+  { front: 'Sales agent inactive status -- the automatic trigger', back: 'When a sales agent\'s relationship with their sponsoring broker ends, whoever ends it must immediately give written notice to both the other party AND the commission -- and TREC then automatically places the sales agent\'s license on inactive status.', source: 'Occ. Code § 1101.367(a)' },
+  { front: 'Returning an inactive sales agent to active status', back: 'A licensed broker must file a request assuming sponsorship of the inactive sales agent, before that sales agent\'s license expiration date, along with the required fee.', source: 'Occ. Code § 1101.367(b)' },
+  { front: 'Denial of license renewal for violating a commission order', back: 'TREC may deny a license renewal outright if the applicant is in violation of a commission order -- with the same procedural protections that apply to denying an original license application.', source: 'Occ. Code § 1101.459' },
+  { front: 'Cease and desist order', back: 'If it appears someone is violating TRELA or a commission rule, TREC may -- after notice and an opportunity for a hearing -- issue an order prohibiting that person from continuing the activity.', source: 'Occ. Code § 1101.759' },
+  { front: 'Administrative penalty cap', back: 'TREC can\'t impose more than $5,000 per violation as an administrative penalty -- but each day a violation continues can be treated as a SEPARATE violation, which can push the real total well past that per-violation figure.', source: 'Occ. Code § 1101.702(a)' },
+  { front: '20-day response window', back: 'After receiving a notice of violation, a person has until the 20th day after receiving it to either pay the proposed penalty or request a hearing.', source: 'Occ. Code § 1101.704(a)' },
+  { front: 'Informal settlement conference / refund order', back: 'TREC may order a person it regulates to pay a consumer refund, as agreed at an informal settlement conference or as part of an enforcement order -- instead of, or in addition to, an administrative penalty or other sanction.', source: 'Occ. Code § 1101.659(a)' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9130,6 +9306,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   tx_re_salesperson: [
+    { title: 'Intermediary Practice Quick Facts', type: 'table', table: TX_RE_SALESPERSON_INTERMEDIARY_TABLE,
+      desc: 'Real, current TRELA rules on when a broker must become an intermediary, how appointed license holders work, what can never be disclosed, and the brand-new 2026 written-buyer-agreement and showing-without-representation rules.',
+      topic: 'Agency/Brokerage (Disclosure, Intermediary Practice & Broker-Sales Agent Relationships)', free: true },
+    { title: 'Real Estate Recovery Trust Account Quick Facts', type: 'table', table: TX_RE_SALESPERSON_RECOVERY_TRUST_TABLE,
+      desc: 'Texas\'s real Recovery Trust Account payout caps, filing deadlines, and the automatic license revocation that follows if a licensee doesn\'t repay what was paid out on their behalf.',
+      topic: 'Standards of Conduct (Ethics, Discipline & Trust Accounts)' },
+    { title: 'Trust Account Handling Quick Facts', type: 'table', table: TX_RE_SALESPERSON_TRUST_ACCOUNT_TABLE,
+      desc: 'The real day-to-day custodial rules under 22 TAC § 535.146 -- deposit deadlines, what counts as commingling, disbursement timing, and the 4-year records retention requirement.',
+      topic: 'Standards of Conduct (Ethics, Discipline & Trust Accounts)' },
+    { title: 'Statute of Frauds & Seller Disclosure Quick Facts', type: 'table', table: TX_RE_SALESPERSON_CONTRACTS_TABLE,
+      desc: 'Three different "must be in writing" rules that get confused constantly, plus the real Seller\'s Disclosure Notice timing, buyer termination remedy, and exemption list.',
+      topic: 'Contracts (Promulgated Forms, Statute of Frauds & Seller Disclosure)' },
+    { title: 'Licensing, Education & Renewal Quick Facts', type: 'table', table: TX_RE_SALESPERSON_LICENSING_TABLE,
+      desc: 'Real license terms, pre-license and first-renewal (SAE) education hour counts, the broker experience/education path including the new broker responsibility course, and the CE legal-topics carve-out.',
+      topic: 'Licensing (Requirements, Education & Renewal)' },
+    { title: 'Intermediary & Agency Concepts', type: 'flashcards', flashcards: TX_RE_SALESPERSON_INTERMEDIARY_CONCEPTS_FLASHCARDS,
+      desc: 'The real statutory definitions and concepts behind Texas intermediary practice -- flip through them to test recall of what each term actually means, not just recognition.',
+      topic: 'Agency/Brokerage (Disclosure, Intermediary Practice & Broker-Sales Agent Relationships)', free: true },
+    { title: 'Trust & Recovery Concepts', type: 'flashcards', flashcards: TX_RE_SALESPERSON_TRUST_RECOVERY_CONCEPTS_FLASHCARDS,
+      desc: 'The definitions and procedural concepts behind trust money custody and Recovery Trust Account claims that the Quick Facts tables don\'t spell out -- subrogation, bankruptcy-blocked claims, interest handling, and more.',
+      topic: 'Standards of Conduct (Ethics, Discipline & Trust Accounts)' },
+    { title: 'Contracts & Commission Law Concepts', type: 'flashcards', flashcards: TX_RE_SALESPERSON_CONTRACTS_CONCEPTS_FLASHCARDS,
+      desc: 'The Statute of Frauds, promulgated contract forms, the license-to-sue requirement, and real Seller\'s Disclosure nuances -- the underlying concepts behind the Contracts table\'s specific facts.',
+      topic: 'Contracts (Promulgated Forms, Statute of Frauds & Seller Disclosure)' },
+    { title: 'Licensing & Commission Process Concepts', type: 'flashcards', flashcards: TX_RE_SALESPERSON_LICENSING_PROCESS_CONCEPTS_FLASHCARDS,
+      desc: 'How a license goes inactive (and comes back), and how TREC actually enforces the law -- cease and desist orders, administrative penalties, and informal settlement conferences.',
+      topic: 'Commission Duties & Powers (Complaints, Hearings & Penalties)' },
     { title: "Texas Real Estate Commission (TREC)", type: "pdf", url: "https://www.trec.texas.gov",
       desc: "The Texas Real Estate Commission's official site — the authoritative source the state law portion of the exam is based on.",
       topic: "General Reference", free: true },
