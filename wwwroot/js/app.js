@@ -1636,7 +1636,7 @@ var HUB_EXAMS_CONTENT = [
   },
   {
     examType: 'ca_re_salesperson',
-    title: 'California DRE Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ca',
+    title: 'California Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ca',
     duration: '3 Hours 15 Minutes', questions: '150 Multiple Choice', passScore: '70% (105/150 Correct)',
     description: 'Practice questions covering the California Real Estate Law (Business and Professions Code, Division 4), scoped to DRE\'s own official RE 425 exam content outline: property ownership and land use, agency and fiduciary duties, valuation, financing, transfer of property, practice/disclosures, and contracts.',
     breakdown: [['Property Ownership & Land Use Controls', '15%'], ['Agency & Fiduciary Duties', '17%'], ['Valuation, Financing & Transfer of Property', '31%'], ['Practice of Real Estate, Disclosures & Contracts', '37%']],
