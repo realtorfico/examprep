@@ -2532,6 +2532,17 @@
         "min_correct": 94
       },
       {
+        "exam_type": "vt_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "VT",
+        "short_name": "Vermont Real Estate Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 140,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 105
+      },
+      {
         "exam_type": "wa_re_broker",
         "kind": "Real Estate Broker",
         "state_code": "WA",
@@ -3133,14 +3144,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 2.5875
+        "sql_duration_ms": 3.4844
       },
-      "duration": 2.5875,
+      "duration": 3.4844,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 101494784,
-      "rows_read": 569,
+      "size_after": 102137856,
+      "rows_read": 571,
       "rows_written": 0,
       "total_attempts": 1
     }
