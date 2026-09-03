@@ -3836,6 +3836,20 @@
         "min_correct": 98,
         "mechanics_note": "Pearson VUE-administered. 80 national (identical bank/weights as UT/NV/KS) + 50 Idaho state = 130 items, 4 hours. Passing is a proprietary SCALED score of 75 (Broker; Salesperson uses 70) on EACH section independently. Idaho Broker actually has three tiers (Salesperson/Associate Broker/Designated Broker); Idaho has NO default agency relationship absent a written agreement (unlike Kansas). Confirmed via Pearson VUE Candidate Handbook #091300. See scripts/tracks/id_re_broker.json handbookNote for full sourcing.",
         "updated_at": 1788413468
+      },
+      {
+        "exam_type": "ne_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "NE",
+        "short_name": "Nebraska Real Estate Broker",
+        "active": 1,
+        "is_exam_required": 1,
+        "exam_question_count": 130,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 98,
+        "mechanics_note": "Pearson VUE-administered. 80 national (identical bank/weights as UT/NV/KS/ID) + 50 Nebraska state = 130 items, 4 hours. Passing is LITERAL 75%-correct on EACH section independently (a faithful model here, not an approximation) -- but unlike KS/ID, a Nebraska broker who fails either section must retake the ENTIRE exam. No Nebraska Recovery Fund exists. Nebraska agency/brokerage-relationship law lives in a separate statute (Neb. Rev. Stat. 76-2401-2430), not the License Act, incl. a real 2025 mandatory written buyer-representation-agreement rule. Confirmed via Pearson VUE Candidate Handbook #092800. See scripts/tracks/ne_re_broker.json handbookNote for full sourcing.",
+        "updated_at": 1788414110
       }
     ],
     "success": true,
@@ -3845,14 +3859,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 3.9534
+        "sql_duration_ms": 5.3398
       },
-      "duration": 3.9534,
+      "duration": 5.3398,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 94969856,
-      "rows_read": 275,
+      "size_after": 95674368,
+      "rows_read": 276,
       "rows_written": 0,
       "total_attempts": 1
     }

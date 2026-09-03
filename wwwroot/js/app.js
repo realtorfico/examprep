@@ -2342,6 +2342,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Duties & Powers of the Real Estate Commission', '10%'], ['Licensing Requirements & Activities', '15%'], ['Statutory Requirements Governing Licensee Activities', '30%'], ['Agency: Duties, Disclosures & Transactions', '35%'], ['Additional Topics: Subdivided Land, Fair Housing & Equitable Interest', '10%']],
   },
   {
+    examType: 'ne_re_broker',
+    title: 'Nebraska Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ne',
+    duration: '240 Minutes (4 Hours)', questions: '130 Multiple Choice (80 National + 50 Nebraska State-Specific)', passScore: '75% Correct on Each Portion',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the Nebraska-specific portion administered on behalf of the Nebraska Real Estate Commission (NREC): the Commission\'s duties and powers (Nebraska has no Recovery Fund), licensing (including the real 2-year salesperson-experience broker requirement), Statutory Requirements Governing the Activities of Licensees (including the real 72-hour trust-deposit rule), Agency (governed by a wholly separate statute, Neb. Rev. Stat. &sect;&sect; 76-2401 to 76-2430, including Nebraska\'s real 2025 mandatory written buyer-representation-agreement rule), and additional topics including landlord-tenant law and property condition disclosure. Unlike some peer states, a Nebraska broker candidate who fails EITHER portion must retake the entire exam, not just the failed section. Item counts and the real literal 75% passing threshold on each portion are confirmed directly against Pearson VUE\'s official Nebraska Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['Statutory Requirements Governing Licensee Activities (NE)', '14%'], ['Agency (NE)', '12%'], ['Contracts & Agency (National)', '9%'], ['Real Estate Practice (National)', '7%'], ['Licensing (NE)', '5%'], ['Property Value & Appraisal (National)', '6%'], ['Property Ownership (National)', '6%'], ['Duties & Powers of the Commission (NE)', '4%'], ['Property Disclosures & Environmental (National)', '5%'], ['Financing & Settlement (National)', '5%'], ['Real Estate Math (National)', '5%'], ['Forms of Ownership & Title (National)', '5%'], ['Additional Topics (NE)', '4%']],
+  },
+  {
     examType: 'nh_re_salesperson',
     title: 'New Hampshire Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/nh',
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
@@ -4720,6 +4727,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 90-hour pre-license education requirement for a Nebraska real estate salesperson license (or the separate 12-hour post-licensure course required within 180 days of license issuance), and does not issue any official course-completion certificate -- our content is a supplementary study aid only, and covers only the state-specific portion of the exam (grounded in the Nebraska Real Estate License Act, Neb. Rev. Stat. &sect;&sect; 81-885 to 81-885.56, the agency relationships statute at &sect;&sect; 76-2401 to 76-2430, and the Real Estate Commission's implementing rules at NAC Titles 299, 301 and 305) -- not the separate national/general portion, and not every topic on the Commission's official state-portion content outline. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. While we strive to align our content with the current Nebraska Real Estate License Act and Commission rules, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion -- 75% correct (Pearson VUE scores against a flat 75%-or-higher bar; since 50 items don't divide evenly at 75%, the practical minimum passing raw score is 38 of 50, since 37/50 falls just under the line)",
+  },
+  ne_re_broker: {
+    orgLine: "the Nebraska Real Estate Commission (NREC)",
+    footerRequirement: "do not fulfill Nebraska's 2-year salesperson-experience-plus-60-hour broker education requirement or any other NREC prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Nebraska's broker-level experience requirement (2 years of full-time salesperson experience plus 60 additional clock hours of pre-license education), or any other Nebraska Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus Nebraska-specific broker licensing, licensee activity requirements, and agency law (governed by a separate statute, Neb. Rev. Stat. &sect;&sect; 76-2401 to 76-2430, distinct from the Real Estate License Act). Unlike some other states, Nebraska requires a broker who fails EITHER exam portion to retake the entire exam. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Nebraska Real Estate Commission. While we strive to align our content with current Nebraska statutes and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Nebraska Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — 75% correct on each portion independently, confirmed via Pearson VUE's official Nebraska Candidate Handbook (a literal percentage, not a scaled score)",
   },
   nh_re_salesperson: {
     orgLine: "the New Hampshire Real Estate Commission",
@@ -10693,6 +10707,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Nebraska Real Estate Commission\'s official page detailing salesperson license requirements and the exam process.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ne/realestate.html',
       desc: 'Pearson VUE\'s official Nebraska real estate licensure exam scheduling and candidate information page.' },
+  ],
+  ne_re_broker: [
+    { title: 'Real Estate Commission Licensing Information', url: 'https://nrec.nebraska.gov/licensing-forms/licenseinformation',
+      desc: 'The Nebraska Real Estate Commission\'s official page detailing broker license requirements and the exam process.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ne/realestate.html',
+      desc: 'Pearson VUE\'s official Nebraska real estate licensure exam page, confirming the real 130-item broker exam structure and its literal 75% passing threshold.' },
   ],
   nh_re_salesperson: [
     { title: 'Real Estate Commission Exam Information', url: 'https://www.oplc.nh.gov/find-board/nh-real-estate-commission/real-estate-examination-information',
