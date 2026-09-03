@@ -2957,13 +2957,13 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 3.7127
+        "sql_duration_ms": 3.6116
       },
-      "duration": 3.7127,
+      "duration": 3.6116,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 91189248,
+      "size_after": 91193344,
       "rows_read": 537,
       "rows_written": 0,
       "total_attempts": 1

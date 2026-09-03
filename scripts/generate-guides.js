@@ -116,6 +116,7 @@ function renderPage(category, rows) {
           <td class="guide-na">&mdash;</td>
           <td class="guide-na">&mdash;</td>
           <td class="guide-table-cta"><a href="${href}">Optional practice test &rarr;</a></td>
+          <td class="guide-na">&mdash;</td>
         </tr>`;
     }
     const time = formatMinutes(r.exam_duration_sec) || '—';
@@ -127,6 +128,7 @@ function renderPage(category, rows) {
           <td>${escapeHtml(time)}</td>
           <td>${escapeHtml(pass)}</td>
           <td class="guide-table-cta"><a href="${href}">Practice ${escapeHtml(stateName)} &rarr;</a></td>
+          <td class="guide-table-cta"><a href="/share-cards/${r.exam_type}.jpg" download>Share card &rarr;</a></td>
         </tr>`;
   }).join('\n');
 
@@ -165,6 +167,7 @@ function renderPage(category, rows) {
           <th>Time Allowed</th>
           <th>Passing Score</th>
           <th>Practice</th>
+          <th>Share</th>
         </tr>
       </thead>
       <tbody>
