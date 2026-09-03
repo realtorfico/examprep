@@ -7605,6 +7605,165 @@ var CA_RE_TRUST_RECORDS_FLASHCARDS = [
   { front: 'Exclusive right to sell listing', back: 'A listing type where the seller\'s agent earns the agreed commission no matter WHO actually finds the buyer during the listing period -- even the seller finding their own buyer doesn\'t avoid the commission, unlike an open listing.', source: 'BPC § 10018.15' },
 ];
 
+// ============================================================================
+// FL RE SALESPERSON (Florida Real Estate Sales Associate) -- Key Facts Digest,
+// drafted 2026-09-03 by a research subagent, sourced from Florida Statutes Ch.
+// 475 Part I, F.A.C. 61J2, and the official DBPR/Pearson VUE Candidate
+// Information Booklet. See the CA_RE_* consts above for the shape reference.
+// ============================================================================
+var FL_RE_SALESPERSON_RECOVERY_FUND_LICENSING_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Fund cap — per judgment/claim', '$50,000',
+      'The claimant recovers the lesser of the unsatisfied judgment or $50,000 — actual/compensatory damages only. Treble damages, court costs, attorney\'s fees, and interest are NOT paid from the fund (except in the narrow escrow-disbursement-order reimbursement track).',
+      'F.S. § 475.484(1)'],
+    ['Recovery Fund cap — aggregate per broker or sales associate', '$150,000',
+      'Caps total fund exposure to any ONE licensee across every claim combined, regardless of how many claimants or parcels were involved in the underlying transaction(s).',
+      'F.S. § 475.484(4)'],
+    ['Claim filing deadline', 'Within 2 years of the act (or of discovery, if later) — but never more than 4 years after the act, no matter what',
+      'Two clocks run at once: a rolling 2-year discovery window AND a hard 4-year outer limit from the act itself. Miss either one and the claim is barred.',
+      'F.S. § 475.483(1)(c)'],
+    ['Recovery Fund surcharge added to every license fee', '$3.50/year for brokers, $1.50/year for sales associates',
+      'A real, licensee-funded surcharge on top of the regular license fee — collection stops once the fund tops $1 million, and only restarts if the fund later drops below $500,000.',
+      'F.S. § 475.482(3)'],
+    ['Prelicense course length', '63 classroom hours for a sales associate, 72 classroom hours for a broker',
+      'A classic paired-numbers trap: DIFFERENT hour counts at the two license levels (unlike some other states\' figures, which repeat the same number at both levels) — don\'t let 63 and 72 blur together.',
+      'F.S. § 475.17(2)(a)1.'],
+  ],
+  journalNote: 'The reinstatement trap: once the Recovery Fund pays out on a judgment against a broker or sales associate, that licensee\'s license is AUTOMATICALLY suspended the day payment is made — no hearing needed. It can\'t be reinstated until the licensee repays the fund in full, plus interest. A bankruptcy discharge does NOT erase this obligation, except to the narrow extent federal law (11 U.S.C. § 525) requires otherwise.',
+  sourceNote: 'Source: Florida Statutes §§ 475.482-475.486 and § 475.17(2), Chapter 475, Part I, as compiled from the official Florida Senate statutes site (flsenate.gov), retrieved 2026-08-15.',
+};
+
+var FL_RE_SALESPERSON_ESCROW_DEPOSIT_HANDLING_TABLE = {
+  headers: ['Fact', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['"Immediately" — statutory deposit deadline for a broker', 'No later than the end of the 3rd business day following receipt of the item (Saturdays, Sundays, and legal holidays don\'t count)',
+      'The word "immediately" in the statute sounds instant, but the actual rule gives a real 3-business-day window — a common wrong-answer trap for anyone reading the word literally.',
+      '61J2-14.008(3), F.A.C.'],
+    ['Sales associate\'s deadline to hand off a deposit to the broker', 'No later than the end of the NEXT business day after receipt',
+      'A shorter, separate clock from the broker\'s own 3-day deposit window — the associate doesn\'t get 3 days, just 1.',
+      '61J2-14.009, F.A.C.'],
+    ['Broker\'s personal/brokerage funds allowed in a SALES escrow account', 'Up to $1,000',
+      'A real, specific dollar ceiling — not "a reasonable buffer." Mixing more than this in is a compliance problem even without any client harm.',
+      '61J2-14.010(2), F.A.C.'],
+    ['Broker\'s personal/brokerage funds allowed in a PROPERTY MANAGEMENT escrow account', 'Up to $5,000 (also the hard per-account cap)',
+      'A genuinely different, higher figure than the sales-account cap — the two account types are not interchangeable, and mixing up which cap applies to which account is a classic trap.',
+      '61J2-14.010(2), F.A.C.'],
+    ['Time allowed to correct an escrow error (no shortage, no public harm)', '30 days from the date the last reconciliation was performed or should have been performed',
+      'A real grace period exists — but only when there\'s no actual shortage and no meaningful risk of harm to the public; it isn\'t a blanket 30-day pass.',
+      '61J2-14.010(2), F.A.C.'],
+    ['Where the trust/escrow account itself must be located', 'A bank, savings and loan, credit union, or title company with trust powers — located and doing business IN FLORIDA',
+      'Florida requires an in-state depository as the default rule, with the broker as a required signatory on the account.',
+      '61J2-14.008(2)(a) / 61J2-14.010(1), F.A.C.'],
+  ],
+  journalNote: 'This isn\'t just a "best practice" figure — it has a real, current dollar penalty attached: FREC\'s own citation schedule fines a broker $400 for failing to immediately deposit trust funds, PROVIDED the deposit is not more than 3 days late (i.e., a first-offense, minor delay beyond the 3-business-day rule above). A citation is a low-severity administrative shortcut FREC uses instead of a full disciplinary hearing.',
+  sourceNote: 'Source: Florida Administrative Code 61J2-14.008 through 61J2-14.012 (Funds Entrusted to Brokers — Deposits and Escrows) and F.S. § 475.25(1)(k), as compiled from the flrules.org official chapter export in real_estate.txt.',
+};
+
+var FL_RE_SALESPERSON_ESCROW_DISPUTE_PROCEDURES_TABLE = {
+  headers: ['Step', 'Deadline / Requirement', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Notify the Commission of conflicting demands (or a good-faith doubt)', 'Within 15 business days of the last demand (or of first having the doubt)',
+      'The clock starts from the LAST demand received, not the first — a broker juggling multiple back-and-forth demands has to track the most recent one.',
+      '61J2-10.032(1), F.A.C.'],
+    ['Institute one of the settlement procedures', 'Within 30 business days of the last demand (or doubt)',
+      'A separate, longer deadline than the 15-day notice above — missing either one independently exposes the broker to discipline for failing to account for escrowed property.',
+      '61J2-10.032(1)-(2), F.A.C.'],
+    ['The 4 authorized settlement procedures', '(1) Request an Escrow Disbursement Order (EDO) from the Commission; (2) submit to arbitration with all parties\' consent; (3) seek adjudication by a court (interpleader or otherwise); or (4) submit to mediation with all parties\' written consent, completed within 90 days',
+      'Four real, distinct paths — a broker only has to pick ONE, not all four, and each has its own separate procedural rules.',
+      'F.S. § 475.25(1)(d)1.'],
+    ['Non-responding party notice window', '7 business days after the certified notice is dispatched',
+      'A party who ignores the notice entirely is treated as having AUTHORIZED release of the funds to the other party — silence isn\'t neutral here.',
+      '61J2-10.032(1)(c), F.A.C.'],
+    ['The real payoff for doing this correctly', 'No administrative complaint may be filed against the broker for failure to account/deliver/maintain escrowed property',
+      'Properly following one of the 4 procedures and abiding by its outcome is a genuine safe harbor — the broker isn\'t exposed to discipline just because a dispute happened.',
+      'F.S. § 475.25(1)(d)1.'],
+  ],
+  journalNote: 'A real, narrow carve-out: brokers holding an earnest money deposit (EMD) under a HUD residential sales contract follow HUD\'s own EMD requirements instead — none of this notice/settlement procedure applies to those transactions.',
+  sourceNote: 'Source: Florida Statutes § 475.25(1)(d)1. and Florida Administrative Code 61J2-10.032 (Notice Requirements), as compiled from real_estate.txt (flsenate.gov / flrules.org, retrieved 2026-08-15).',
+};
+
+var FL_RE_SALESPERSON_BROKERAGE_RELATIONSHIPS_TABLE = {
+  headers: ['Relationship / Rule', 'What Florida Law Requires', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Default relationship (the presumption)', 'EVERY licensee is presumed to be a transaction broker unless a single agent or no-brokerage relationship is established with a customer IN WRITING',
+      'Transaction brokerage isn\'t just one option among several — it\'s the automatic legal default the moment nothing else has been put in writing.',
+      'F.S. § 475.278(1)(b)'],
+    ['Dual agency', 'FLAT-OUT PROHIBITED — a Florida licensee may not operate as a disclosed OR nondisclosed dual agent, period',
+      'Unlike states that allow dual agency with informed consent, Florida doesn\'t offer that option at all — this is a genuinely distinctive Florida rule, not just a disclosure requirement.',
+      'F.S. § 475.278(1)(a)'],
+    ['Single agent disclosure — timing', 'Before, or at the time of, entering the listing/representation agreement — OR before the showing of property — WHICHEVER occurs FIRST',
+      'Two possible trigger events, and the EARLIER one controls — a common source of wrong "just pick one" answers.',
+      'F.S. § 475.278(3)(b)1.'],
+    ['No brokerage relationship — disclosure timing', 'Before the showing of property',
+      'A single, simpler trigger than the single-agent rule\'s two-event test — don\'t apply the "whichever is first" language here by mistake.',
+      'F.S. § 475.278(4)(b)'],
+    ['Changing from single agent to transaction broker mid-relationship', 'Requires the principal\'s PRIOR WRITTEN CONSENT before the change takes effect',
+      'A licensee can\'t just quietly start acting as a transaction broker — the switch itself has its own separate, mandatory disclosure and consent step.',
+      'F.S. § 475.278(3)(b)2.'],
+    ['Who these disclosure requirements even apply to', 'Only "residential sales": improved residential property of 4 units or fewer, unimproved residential property intended for 4 units or fewer, or agricultural property of 10 acres or fewer',
+      'A real scope limit — commercial and larger deals aren\'t covered by these specific disclosure-timing rules at all.',
+      'F.S. § 475.278(5)(a)'],
+  ],
+  journalNote: 'A genuinely odd, testable formatting rule: the FIRST SENTENCE of both the single-agent notice and the transition-to-transaction-broker consent form must be printed in UPPERCASE, BOLD type — the statute spells out the exact required wording, not just the substance.',
+  sourceNote: 'Source: Florida Statutes § 475.278 (Authorized brokerage relationships; presumption of transaction brokerage; required disclosures), as compiled from real_estate.txt (flsenate.gov, retrieved 2026-08-15).',
+};
+
+var FL_RE_SALESPERSON_CLOSING_COMPUTATIONS_TABLE = {
+  headers: ['Tax / Fact', 'Rate', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Documentary stamp tax on a DEED (statewide base rate)', '$0.70 per $100 of consideration, or fractional part thereof',
+      'This is the tax on the DEED itself — a completely separate tax, at a completely separate rate, from the note/mortgage tax below. Don\'t let the two blend together.',
+      'F.S. § 201.02(1)(a)'],
+    ['Documentary stamp tax on a NOTE or MORTGAGE', '$0.35 per $100 (or fraction) of the indebtedness/obligation, capped at a maximum of $2,450 per document',
+      'Exactly half the deed\'s per-$100 rate — and this one has a hard dollar CAP that the deed tax does not.',
+      'F.S. § 201.08(1)(a)'],
+    ['Nonrecurring intangible tax on a NEW mortgage', '2 mills (0.2%) of the just valuation of the note/obligation, one time only',
+      'A THIRD, entirely separate tax from the two documentary stamp taxes above — applies only to the mortgage, calculated as a percentage rather than per-$100 increments.',
+      'F.S. § 199.133(1)'],
+    ['County discretionary surtax on deeds — single-family exemption', 'Does NOT apply to a deed where the interest conveyed involves only a single-family residence',
+      'Counties can add a local surtax on top of the base deed stamp rate, but Florida law carves out single-family residential transfers from that surtax entirely.',
+      'F.S. § 201.031'],
+  ],
+  journalNote: 'Three separate, easily-confused Florida closing taxes in one transaction: documentary stamps on the DEED (70¢/$100), documentary stamps on the NOTE (35¢/$100, capped at $2,450), and the nonrecurring intangible tax on the MORTGAGE (2 mills/0.2%, one-time). A single closing can involve all three at once, each computed a different way.',
+  sourceNote: 'Source: Florida Statutes §§ 201.02(1)(a), 201.08(1)(a), 199.133(1), and 201.031, verified directly against the Florida Senate\'s official statutes site (flsenate.gov/Laws/Statutes/2025/), retrieved 2026-09-03.',
+};
+
+var FL_RE_SALESPERSON_FREC_DBPR_FLASHCARDS = [
+  { front: 'Florida Real Estate Commission (FREC)', back: 'The 7-member body within DBPR that regulates Florida real estate licensees: 4 members must be brokers with 5+ years of active licensure, 1 must be a broker or sales associate with 2+ years, 2 must be public members who have never been licensed, and at least 1 member must be age 60 or older. Members are appointed by the Governor, confirmed by the Senate, for 4-year terms.', source: 'F.S. § 475.02' },
+  { front: 'Division of Real Estate', back: 'The DBPR division that actually performs FREC\'s day-to-day work — recordkeeping, licensing exams, legal services, and investigations. FREC can delegate duties to it (or take them back) by majority vote, and the Division is funded entirely by real estate licensing fees and assessments.', source: 'F.S. § 475.021' },
+  { front: 'Citation (FREC\'s minor-violation shortcut)', back: 'An administrative tool FREC uses for violations that pose no substantial threat to public health/safety, disposing of the matter with a preset fine instead of a full disciplinary hearing — for example, a $400 citation for a trust deposit that\'s late but not more than 3 days late.', source: '61J2-24.002, F.A.C. / F.S. § 455.224' },
+  { front: 'Notice of Noncompliance', back: 'A preliminary, lower-severity notice FREC can issue for certain rule violations before escalating to a citation or a full complaint — e.g., a school\'s first failure to retain a course-completion certificate can draw a Notice of Noncompliance; a SECOND such failure is what triggers an actual citation fine.', source: '61J2-14.008(2)(b) / 61J2-24.002, F.A.C.' },
+  { front: 'Florida Real Estate Commission Education and Research Foundation', back: 'A state-invested ($3 million, Chief Financial Officer-managed) foundation administered by FREC to fund real estate education and research projects. It may NOT fund prelicense or license-renewal courses, and may NOT spend any money employing staff.', source: 'F.S. § 475.045' },
+  { front: 'Delegation of FREC\'s powers', back: 'The commission chair may exercise FREC\'s duties and powers without a formal resolution, and other duties may be delegated to individual members by resolution — but disciplinary powers and the power to adopt rules can NEVER be delegated away.', source: 'F.S. § 475.03(1)' },
+];
+
+var FL_RE_SALESPERSON_LICENSE_LAW_CONCEPTS_FLASHCARDS = [
+  { front: 'Broker associate', back: 'A person who is fully qualified to hold a broker\'s license but who chooses to operate as a sales associate in the employ of another broker instead — a distinct license category from a plain sales associate.', source: 'F.S. § 475.01(1)(b)' },
+  { front: 'Involuntarily inactive status', back: 'What happens automatically when a license simply isn\'t renewed by the end of its license period — it doesn\'t require any misconduct, just a missed renewal.', source: 'F.S. § 475.01(1)(g)' },
+  { front: 'Postlicense education vs. continuing education', back: 'Two DIFFERENT requirements: postlicense education (up to 45 hours for a sales associate, 60 for a broker) is due before the FIRST renewal after initial licensure; ordinary continuing education (14 hours) applies to every renewal after that. Miss the postlicense requirement and the license becomes null and void — not just late.', source: 'F.S. § 475.17(3)(c)' },
+  { front: 'Nonresident license reciprocity', back: 'FREC may enter written agreements with other states\' licensing authorities for comparable nonresident licensure — but if a state doesn\'t offer Florida licensees comparable treatment, FREC can require that state\'s applicants to meet Florida\'s full education/experience/exam requirements instead.', source: 'F.S. § 475.180' },
+  { front: 'Multiple licenses rule', back: 'A broker may hold more than one broker license if needed for the brokerage business — but never an additional sales associate or broker associate license. A sales associate or broker associate, meanwhile, may have no more than ONE registered employer at a time.', source: 'F.S. § 475.215' },
+  { front: 'Reactivating an involuntarily inactive license', back: 'The longer a license sits inactive, the more it costs to bring back: 14 hours of continuing education if inactive 12 months or less, 28 hours if inactive more than 12 but fewer than 24 months — and if it stays inactive more than 2 years, the license automatically expires and becomes null and void.', source: 'F.S. § 475.183(2)' },
+];
+
+var FL_RE_SALESPERSON_RELATIONSHIP_CONCEPTS_FLASHCARDS = [
+  { front: 'Fiduciary (statutory definition)', back: 'A broker in a relationship of trust and confidence with a seller or buyer as principal. The duties spelled out by statute are loyalty, confidentiality, obedience, full disclosure, accounting, and the use of skill, care, and diligence — the exact six duties a SINGLE AGENT owes.', source: 'F.S. § 475.01(1)(f)' },
+  { front: 'Customer vs. principal', back: 'A "customer" is a member of the public who may buy or sell property and may or may not be represented in an authorized brokerage relationship. A "principal" is specifically the party with whom a licensee has entered into a SINGLE AGENT relationship — not every party a licensee deals with is a principal.', source: 'F.S. § 475.01(1)(d), (h)' },
+  { front: 'Determination of agency or transactional brokerage', back: 'The mere payment, or promise to pay, compensation to a licensee does NOT by itself determine whether an agency or transaction-broker relationship exists — the actual facts and circumstances control, not who\'s writing the check.', source: 'F.S. § 475.255' },
+  { front: 'Designated sales associate', back: 'A narrow exception outside residential sales: when both buyer and seller have $1 million or more in assets, a broker may designate different sales associates at the SAME firm to each act as a single agent for opposing customers in the same deal — with its own required confidentiality disclosure language.', source: 'F.S. § 475.2755' },
+  { front: 'Residential loan alternative agreement', back: 'A 2023-added category of agreement granting someone an exclusive right to broker a residential property\'s disposition in exchange for a payment obligation. It can\'t exceed a 2-year effective duration, can\'t be assigned, can\'t be recorded, and is void if listing services don\'t begin within 90 days of signing.', source: 'F.S. § 475.279' },
+];
+
+var FL_RE_SALESPERSON_VIOLATIONS_CONCEPTS_FLASHCARDS = [
+  { front: 'Unlicensed practice — the felony trap', back: 'Operating as a broker or sales associate WITHOUT a valid, current, active license is a THIRD-DEGREE FELONY. Most other Chapter 475 violations, by contrast, are only a second-degree misdemeanor — practicing unlicensed sits in a different, much more serious category entirely.', source: 'F.S. § 475.42(1)(a), (2)' },
+  { front: 'FREC\'s discipline ceiling', back: 'For a proven violation, FREC may suspend a license for up to 10 years, revoke it outright, and/or impose an administrative fine of up to $5,000 PER COUNT or separate offense — each of these can be paired with probation or a reprimand.', source: 'F.S. § 475.25(1)' },
+  { front: 'Statute of limitations — administrative complaints', back: 'An administrative complaint against a broker, broker associate, or sales associate must be filed within 5 years of the act giving rise to it, OR within 5 years of when the act was (or should have been) discovered — whichever gives the longer runway.', source: 'F.S. § 475.25(5)' },
+  { front: 'Notifying the licensee\'s broker/employer', back: 'When a formal complaint is filed, DBPR must notify the licensee\'s broker or employer in writing — but not until at least 10 days AFTER a probable cause panel (or the department) has actually found probable cause, or until the licensee waives confidentiality, whichever comes first.', source: 'F.S. § 475.25(6)' },
+  { front: 'Automatic involuntary-inactive cascade', back: 'When a BROKER\'s license is revoked or suspended, every sales associate and broker associate registered under that broker automatically becomes involuntarily inactive too — even though they personally did nothing wrong — until they secure new employment or the broker\'s license becomes active again.', source: 'F.S. § 475.31(1)' },
+  { front: 'Letter of guidance', back: 'A lesser, non-disciplinary correction FREC can issue under Chapter 455 instead of formal discipline. It isn\'t a punishment by itself — but if a licensee later violates the SAME provision again, FREC\'s own disciplinary guidelines specifically flag the earlier letter of guidance as an aggravating factor.', source: 'F.S. § 455.225(4); 61J2-24.001, F.A.C.' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -8712,6 +8871,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   fl_re_salesperson: [
+    { title: 'Real Estate Recovery Fund & Licensing Quick Facts', type: 'table', table: FL_RE_SALESPERSON_RECOVERY_FUND_LICENSING_TABLE,
+      desc: 'Real Florida Real Estate Recovery Fund payout caps, claim deadlines, and licensing-hour figures pulled directly from Chapter 475 — the facts most likely to trip you up that a raw statute skim buries.',
+      topic: 'License Law & Qualifications for Licensure', free: true },
+    { title: 'Escrow Deposit Handling & Timing Quick Facts', type: 'table', table: FL_RE_SALESPERSON_ESCROW_DEPOSIT_HANDLING_TABLE,
+      desc: 'Real deposit-timing deadlines for brokers and sales associates, the personal-funds dollar caps for each escrow account type, and where the account itself must be located — from F.A.C. 61J2-14.',
+      topic: 'Real Estate Brokerage Activities & Procedures (Trust Accounts, Advertising, Commission)' },
+    { title: 'Conflicting Demands & Escrow Dispute Quick Facts', type: 'table', table: FL_RE_SALESPERSON_ESCROW_DISPUTE_PROCEDURES_TABLE,
+      desc: 'The real notice deadlines and 4 authorized settlement procedures a broker must follow the moment two parties both claim the same escrowed funds.',
+      topic: 'Real Estate Brokerage Activities & Procedures (Trust Accounts, Advertising, Commission)' },
+    { title: 'Brokerage Relationship Duties & Disclosure Quick Facts', type: 'table', table: FL_RE_SALESPERSON_BROKERAGE_RELATIONSHIPS_TABLE,
+      desc: 'Florida\'s real transaction-broker default, its flat ban on dual agency, and the exact disclosure-timing rules for single agent and no-brokerage relationships.',
+      topic: 'Authorized Relationships, Duties & Disclosures' },
+    { title: 'Closing Computations: Documentary Stamps & Intangible Tax Quick Facts', type: 'table', table: FL_RE_SALESPERSON_CLOSING_COMPUTATIONS_TABLE,
+      desc: 'The three real, separate Florida closing taxes — deed stamps, note/mortgage stamps, and the nonrecurring intangible tax — with their actual current rates and caps.',
+      topic: 'Real Estate Related Computations & Closing of Transactions' },
+    { title: 'FREC & DBPR Structure Concepts', type: 'flashcards', flashcards: FL_RE_SALESPERSON_FREC_DBPR_FLASHCARDS,
+      desc: 'How the Florida Real Estate Commission is actually built, and the low-severity citation/notice tools it uses before a case ever becomes a full disciplinary hearing.',
+      topic: 'Real Estate License Law & Commission Rules (FREC/DBPR)', free: true },
+    { title: 'License Law & Qualifications Concepts', type: 'flashcards', flashcards: FL_RE_SALESPERSON_LICENSE_LAW_CONCEPTS_FLASHCARDS,
+      desc: 'Real license-status terms and lifecycle traps — broker associate, involuntarily inactive, the postlicense-education null-and-void rule, reciprocity, and reactivation.',
+      topic: 'License Law & Qualifications for Licensure' },
+    { title: 'Brokerage Relationship & Fiduciary Concepts', type: 'flashcards', flashcards: FL_RE_SALESPERSON_RELATIONSHIP_CONCEPTS_FLASHCARDS,
+      desc: 'The real statutory definitions behind Florida agency law — fiduciary, customer vs. principal, agency-by-compensation, and the narrow designated-sales-associate and loan-alternative-agreement wrinkles.',
+      topic: 'Authorized Relationships, Duties & Disclosures' },
+    { title: 'Violations & Enforcement Process Concepts', type: 'flashcards', flashcards: FL_RE_SALESPERSON_VIOLATIONS_CONCEPTS_FLASHCARDS,
+      desc: 'The real felony/misdemeanor split for unlicensed practice, FREC\'s fine and suspension ceilings, the 5-year statute of limitations, and the automatic cascade when a broker gets disciplined.',
+      topic: 'Violations of License Law, Penalties & Procedures' },
     { title: "Florida Statutes Chapter 475, Part I (Real Estate Brokers, Sales Associates, and Schools)", type: "pdf", url: "https://www.flsenate.gov/Laws/Statutes/2025/Chapter475/All",
       desc: "The official Florida Statutes text published by the Florida Senate — the statutory basis for the Sales Associate exam and this practice content.",
       topic: "General Reference", free: true },
