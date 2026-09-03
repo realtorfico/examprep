@@ -8274,6 +8274,181 @@ var TX_RE_BROKER_TRUST_RECOVERY_FLASHCARDS = [
   { front: 'Advertising misrepresentation — sales agent as owner/CEO', back: 'Using a title like "owner," "president," "CEO," or "COO," or an email/website address implying a SALES AGENT runs the brokerage, is expressly defined as a misleading advertisement -- a real, named example TREC calls out, not just a general "don\'t mislead" standard.', source: '22 TAC § 535.155(g)(4)' },
 ];
 
+// ============================================================================
+// NY RE SALESPERSON -- Key Facts Digest, drafted 2026-09-03, sourced from NY RPL
+// Article 12-A/14, NY Tax Law, and the DOS's own 77-hour qualifying syllabus.
+// ============================================================================
+var NY_RE_SALESPERSON_AGENCY_DISCLOSURE_TIMING_TABLE = {
+  headers: ['Who', 'When the Disclosure Form Is Due', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Seller\'s/landlord\'s agent -- to their OWN client', 'Prior to entering into the listing agreement',
+      'The clock starts before the listing is even signed -- not at the first showing or when an offer comes in.',
+      'RPL § 443'],
+    ['Seller\'s/landlord\'s agent -- to a buyer or tenant', 'At the "first substantive contact" with that buyer or tenant',
+      'A distinct, separate trigger from the listing-agreement deadline above -- this one runs on the OTHER side of the deal.',
+      'RPL § 443'],
+    ['Buyer\'s/tenant\'s agent -- to their OWN client', 'Prior to entering into the buyer\'s/tenant\'s representation agreement',
+      'Mirrors the seller\'s-agent-to-client rule: disclosure to your own client comes before you formally take them on.',
+      'RPL § 443'],
+    ['Buyer\'s/tenant\'s agent -- to the seller or landlord', 'At the "first substantive contact" with the seller or landlord',
+      'Same "first substantive contact" standard as above, just running in the opposite direction across the transaction.',
+      'RPL § 443'],
+    ['Any party who refuses to sign the acknowledgment', 'Agent must prepare a written declaration of the facts of the refusal',
+      'Refusing to sign doesn\'t excuse the agent from disclosure -- it just changes what paperwork the agent has to create and keep.',
+      'RPL § 443'],
+    ['Agency-disclosure records generally', 'Must be retained for a minimum of three years',
+      'A real, specific retention floor -- not just "keep it a while."',
+      'RPL § 443'],
+  ],
+  journalNote: 'The trap here is assuming there\'s ONE disclosure deadline. There are really two separate clocks running on each side of a dual-representation setup -- one for your own client (tied to a contract event: the listing agreement or the buyer\'s representation agreement) and a completely different one, "first substantive contact," for the other side\'s principal. Mixing those two triggers up is the single most common way this gets missed on the exam.',
+  sourceNote: 'Source: New York Real Property Law Article 12-A, § 443 (Disclosure regarding real estate agency relationships; form), as published on the New York State Senate\'s official legislation site (nysenate.gov).',
+};
+
+var NY_RE_SALESPERSON_PCDA_TABLE = {
+  headers: ['Requirement', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Who must comply', 'Every seller of residential real property under a real estate purchase contract, unless a § 463 exemption applies',
+      'The obligation runs on the SELLER, not the listing broker -- the broker\'s job is making sure it actually gets delivered.',
+      'RPL § 462(1)'],
+    ['Delivery deadline', 'The completed, signed statement (or a copy) must be delivered to the buyer or the buyer\'s agent BEFORE the buyer signs a binding contract of sale',
+      'A hard, "before signing" cutoff -- not a "reasonably prompt" standard like some other states use for their disclosure laws.',
+      'RPL § 462(1)'],
+    ['Attachment requirement', 'A copy bearing BOTH the seller\'s and buyer\'s signatures must be attached to the actual real estate purchase contract',
+      'The disclosure isn\'t just handed over once and forgotten -- it becomes part of the contract file itself.',
+      'RPL § 462(1)'],
+    ['Seller\'s duty to investigate', 'Nothing in the article requires the seller to undertake or provide for any investigation or inspection of the property, or to check public records, before answering',
+      'A real, testable limit -- the seller discloses actual KNOWLEDGE, not the results of an inspection they were never required to perform.',
+      'RPL § 462(3)'],
+    ['Exempt transfer types', '14 enumerated categories are exempt, including newly constructed residential property never previously inhabited, foreclosure and deed-in-lieu transfers, court-ordered/fiduciary transfers, and transfers between co-owners, spouses, or lineal relatives',
+      'A long, specific list -- "brand new construction" and "transfer between family members" are both real, named exemptions, not exam distractors.',
+      'RPL § 463'],
+    ['Seller\'s liability for a willful violation', 'Limited to the buyer\'s ACTUAL damages, in addition to any other existing equitable or statutory remedy -- there is no separate statutory penalty amount stated in this section',
+      'The liability standard is willfulness, not mere negligence, and the recoverable damages are tied to actual harm, not a fixed statutory figure.',
+      'RPL § 465'],
+  ],
+  journalNote: 'Do not rely on the commonly-repeated idea that a New York seller can just skip the disclosure statement entirely by handing the buyer a flat $500 credit at closing. That figure could NOT be independently confirmed against the current text of RPL §§ 462, 463, or 465 -- it does not appear in any of them. If you\'ve seen that number in an older prep source, treat it as unverified rather than current law.',
+  sourceNote: 'Source: New York Real Property Law Article 14 (Property Condition Disclosure Act), §§ 462, 463, 465, as published on the New York State Senate\'s official legislation site (nysenate.gov).',
+};
+
+var NY_RE_SALESPERSON_TRANSFER_TAXES_TABLE = {
+  headers: ['Tax', 'Rate / Threshold', 'Who Typically Pays', 'Code Section'],
+  rows: [
+    ['NYS Real Estate Transfer Tax (base rate)', '$2.00 per $500 of consideration (0.4%), on conveyances where consideration exceeds $500',
+      'The grantor (seller), as the general rule',
+      'Tax Law § 1402'],
+    ['NYS Transfer Tax -- high-value surcharge', 'An ADDITIONAL $1.25 per $500 (0.25%) on residential conveyances of $3,000,000+, or other property conveyances of $2,000,000+, specifically in cities with a population of 1,000,000+ (i.e., New York City)',
+      'The grantor (seller), stacked on top of the base rate above',
+      'Tax Law § 1402'],
+    ['"Mansion tax" (additional tax on residential conveyances)', '1% flat additional tax where the consideration for the ENTIRE conveyance is $1,000,000 or more; covers a 1-3 family house, an individual condominium unit, or a cooperative apartment unit',
+      'The grantee (buyer) -- though the grantor becomes liable if the grantee fails to pay or is exempt',
+      'Tax Law § 1402-a'],
+    ['Mortgage recording tax -- basic tax', '$0.50 per $100 of mortgage principal (0.50%)',
+      'The mortgagor (borrower)',
+      'Tax Law § 253(1)'],
+    ['Mortgage recording tax -- special additional tax', 'An ADDITIONAL $0.25 per $100 (0.25%), EXCEPT when the mortgagee is a natural person or credit union and the property has 6 or fewer residential units',
+      'The mortgagor (borrower), unless the natural-person/credit-union exception applies',
+      'Tax Law § 253(1-a)'],
+    ['Mortgage recording tax -- 1-2 family dwelling exemption', 'The FIRST $10,000 of mortgage principal is exempt from the additional tax under subdivision 2 when the mortgage covers a one- or two-family residence',
+      'A real, specific carve-out that lowers the effective rate on smaller residential loans',
+      'Tax Law § 253(2)'],
+  ],
+  journalNote: 'These are three genuinely separate, stacking taxes on the same high-value NYC transaction -- the base transfer tax, the transfer tax\'s own high-value surcharge, AND the separate 1% mansion tax -- each with its own section, its own threshold, and (notably) different payors. A question can isolate any one of these five figures on its own; don\'t let them blur into a single "NY closing costs are expensive" impression.',
+  sourceNote: 'Source: New York Tax Law § 1402 and § 1402-a (Article 31, Real Estate Transfer Tax) and § 253 (Article 11, Mortgage Recording Tax), as published on the New York State Senate\'s official legislation site (nysenate.gov).',
+};
+
+var NY_RE_SALESPERSON_CONDO_COOP_TABLE = {
+  headers: ['Ownership Form', 'What Is Actually Owned', 'Why It Matters', 'Code Section / Source'],
+  rows: [
+    ['Condominium unit', 'A REAL property interest -- the unit owner\'s "common interest" is defined as a proportionate, undivided interest in fee simple absolute (or, less commonly, a leasehold interest) in the common elements',
+      'A condo unit is deeded, real property, full stop -- financed and taxed the way any other piece of real estate is.',
+      'RPL § 339-e'],
+    ['Condominium unit owner\'s rights', 'Entitled to the exclusive ownership and possession of their own unit',
+      'A statutory floor on what "owning a condo" actually guarantees the individual owner, separate from the common-element sharing.',
+      'RPL § 339-h'],
+    ['Condominium common charges', 'A unit owner CANNOT escape liability for common charges just by not using the common elements or abandoning the unit -- the only statutory way out is conveying the unit AND the common interest to the board, which relieves the owner only of common charges accruing AFTER that conveyance',
+      'A real, narrow escape hatch -- it doesn\'t erase past-due charges, only future ones.',
+      'RPL § 339-x'],
+    ['Cooperative apartment', 'NOT real property -- the "owner" actually holds shares of stock in the co-op corporation, paired with a proprietary lease granting the right to occupy one specific unit',
+      'This is the single biggest structural difference from a condo: a co-op purchase is legally a securities-plus-lease transaction, not a real estate deed transaction.',
+      'General NY co-op legal structure (see sourceNote)'],
+    ['Cooperative purchase financing', 'Secured by a "share loan" -- a personal-property (UCC) security interest in the stock and proprietary lease, not a real property mortgage',
+      'Because it isn\'t a mortgage, a co-op share loan doesn\'t go through the same mortgage-recording-tax machinery a condo purchase-money mortgage does.',
+      'General NY co-op legal structure (see sourceNote)'],
+  ],
+  journalNote: 'This real-property-vs-personal-property split isn\'t a technicality -- it\'s WHY co-op boards can reject a buyer for almost any non-discriminatory reason (courts generally defer to the board\'s business judgment over what amounts to admission into a private corporation), while a condominium unit owner\'s right to sell to a willing, qualified buyer is much harder for a board to block outright.',
+  sourceNote: 'Source: New York Real Property Law Article 9-B (Condominium Act), §§ 339-e, 339-h, 339-x, as published on the New York State Senate\'s official legislation site (nysenate.gov). Cooperative ownership structure (shares + proprietary lease, treated as personal rather than real property) reflects longstanding NY legal characterization, consistent with State Tax Commission v. Shor, 43 N.Y.2d 151 (1977).',
+};
+
+var NY_RE_SALESPERSON_LICENSE_DISCIPLINE_TABLE = {
+  headers: ['Fact', 'Figure / Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Pre-licensing qualifying course', '77 hours of DOS-approved coursework, required before applying',
+      'The exact hour count the whole qualifying curriculum -- and this Key Facts Digest\'s own topic weighting -- is built on.',
+      'RPL § 441; DOS 77-hour qualifying syllabus'],
+    ['License term', '2 years from issuance or reissuance',
+      'A real, specific renewal cycle -- not an indefinite license.',
+      'RPL § 441-a(7)'],
+    ['Continuing education (per 2-year renewal cycle)', '22.5 hours total, including 2 hrs cultural competency, 3 hrs fair housing, 2 hrs implicit bias, 2.5 hrs ethical business practices, and 1 hr recent legal matters (first-term salespersons additionally need 1 hr of agency instruction)',
+      'A specific, itemized breakdown -- not just "some CE hours" -- with fair housing and implicit bias called out as their own separate required blocks.',
+      'RPL § 441(3)(a)'],
+    ['Exam scoring', 'Reported as pass/fail ONLY -- no numeric score is given to the candidate; the exam is multiple choice, based on the 77-hour curriculum, with 1.5 hours to complete it',
+      'Unlike some states, New York never tells you your actual score -- a real, distinctive fact about how DOS reports results.',
+      'NY DOS official real estate salesperson licensing page (dos.ny.gov/real-estate-agent)'],
+    ['Maximum administrative discipline fine', 'Up to $2,000, payable to the Department of State, with 50% of that amount directed to the anti-discrimination in housing fund',
+      'A real dollar ceiling AND a real, specific earmark for half of it -- both testable details.',
+      'RPL § 441-c'],
+    ['Suing to recover a commission', 'A person must have been a duly licensed real estate broker or salesperson on the date the cause of action arose -- an unlicensed person has an absolute bar to recovering compensation for real estate services',
+      'Being licensed NOW doesn\'t fix it -- the license has to have existed AT THE TIME the commission-earning services were performed.',
+      'RPL § 442-d'],
+  ],
+  journalNote: 'Don\'t confuse the $2,000 administrative fine cap under § 441-c (a Department of State disciplinary penalty) with a court-awarded civil recovery in a separate lawsuit over unlicensed brokering -- they are different remedies, in different forums.',
+  sourceNote: 'Source: New York Real Property Law §§ 441, 441-a, 441-c, 442-d, as published on the New York State Senate\'s official legislation site (nysenate.gov); qualifying-course and exam details cross-verified against the NY DOS 2022 Real Estate Salesperson Syllabus and the NY DOS\'s own real estate salesperson licensing page (dos.ny.gov/real-estate-agent).',
+};
+
+var NY_RE_SALESPERSON_AGENCY_TERMS_FLASHCARDS = [
+  { front: 'Dual agent', back: 'A broker representing BOTH the seller/landlord and the buyer/tenant in the same transaction, whether directly or through a salesperson/associate acting under that broker\'s license.', source: 'RPL § 443' },
+  { front: 'Designated sales agent', back: 'Within a consensual dual agency, a specific licensee formally designated to represent just ONE side of the deal, while a different licensee at the same firm represents the other side -- a distinct company-policy option under New York\'s agency rules.', source: 'RPL § 443; DOS 2022 syllabus, Subject 2' },
+  { front: 'Broker\'s agent', back: 'A cooperating broker who works with a buyer or seller on a transaction WITHOUT forming a full agency (client) relationship with that party directly -- one of New York\'s recognized "Agency Alternatives," distinct from a subagent or a full buyer\'s/seller\'s agent.', source: 'DOS 2022 syllabus, Subject 2' },
+  { front: 'Undisclosed dual agency', back: 'Acting for more than one party to a transaction without the knowledge and consent of all parties involved -- a serious, independently actionable problem distinct from ordinary disclosed dual agency, which New York law affirmatively permits with consent.', source: 'RPL § 443' },
+  { front: 'First substantive contact', back: 'The specific triggering event -- not just any conversation -- that starts a seller\'s/landlord\'s agent\'s or a buyer\'s/tenant\'s agent\'s disclosure clock running toward the OTHER side of the transaction under § 443.', source: 'RPL § 443' },
+  { front: 'Advance consent to dual agency', back: 'A recognized New York mechanism letting a client consent to dual agency representation (with or without designated sales agents) up front, at the start of the relationship, rather than only when an actual dual-agency situation arises.', source: 'DOS 2022 syllabus, Subject 2' },
+  { front: 'Regulation 175.7', back: 'A Department of State regulation governing a broker\'s receipt of compensation for services rendered to another party in a transaction (including mortgage brokerage referral fees) -- studied alongside RPL § 443 for how the two interact.', source: '19 NYCRR § 175.7; DOS 2022 syllabus, Subject 2' },
+  { front: 'Written declaration of refusal', back: 'The document a licensee must prepare -- and keep for at least three years -- when a buyer, tenant, seller, or landlord refuses to sign the required agency-disclosure acknowledgment. Refusal doesn\'t excuse the disclosure duty; it just changes the paperwork.', source: 'RPL § 443' },
+];
+
+var NY_RE_SALESPERSON_CONTRACTS_FINANCE_TERMS_FLASHCARDS = [
+  { front: 'NY Statute of Frauds (real estate)', back: 'A contract for the sale of real property, or a lease for a term of more than one year, must be in writing and signed to be enforceable in New York -- the general contract-law Statute of Frauds applied specifically to real estate.', source: 'General Obligations Law § 5-703(2); DOS 2022 syllabus, Subject 4' },
+  { front: 'Mortgage contingency clause', back: 'A contract clause protecting the buyer\'s deposit and ability to cancel if they cannot secure financing by a stated date -- one of the most heavily tested "who bears the risk if the loan falls through" provisions in a NY sales contract.', source: 'DOS 2022 syllabus, Subject 4' },
+  { front: 'Comparative Market Analysis (CMA)', back: 'An opinion of value a licensee prepares to help price a property. By New York practice and law, a CMA may NEVER be presented or referred to as an "appraisal" -- that word is reserved for a licensed appraiser\'s unbiased estimate of value.', source: 'DOS 2022 syllabus, Subject 8' },
+  { front: 'Like-kind (1031) exchange', back: 'A federal capital-gains tax deferral for qualifying investment/business real property traded for other qualifying real property. Requires identifying replacement property within 45 days, and closing on it by the earlier of 180 days or the taxpayer\'s tax-return due date.', source: 'Internal Revenue Code § 1031; DOS 2022 syllabus, Subject 17' },
+  { front: 'Purchase money mortgage', back: 'A mortgage the SELLER extends to the buyer as part of financing that same sale -- the seller effectively acts as the lender -- rather than a mortgage from an outside institutional lender.', source: 'DOS 2022 syllabus, Subject 5' },
+  { front: 'Attorney review clause', back: 'A New York contract-of-sale custom letting either party\'s attorney cancel or modify an already-signed contract within a specified period -- reflecting the New York practice norm where attorneys, not just brokers, are heavily involved in contract signing.', source: 'DOS 2022 syllabus, Subject 4' },
+  { front: 'Lawyers\' Fund for Client Protection', back: 'The reason New York custom favors an ATTORNEY (rather than a broker) holding a buyer\'s down payment in escrow: the Fund reimburses clients whose lawyer misappropriates entrusted funds -- there is no equivalent fund protecting money held by a broker or an unrepresented escrow arrangement.', source: 'DOS 2022 syllabus, Subject 4' },
+  { front: 'Binder', back: 'A preliminary document showing a buyer\'s intent to purchase, used before a formal contract of sale is signed. It is not itself the enforceable sales contract and does not substitute for one.', source: 'DOS 2022 syllabus, Subject 4' },
+];
+
+var NY_RE_SALESPERSON_CONDO_COOP_COMMERCIAL_TERMS_FLASHCARDS = [
+  { front: 'Proprietary lease', back: 'The lease a cooperative corporation grants to its own shareholder-tenant, spelling out what that owner may and may not do with their unit. It is a SEPARATE document from the stock certificate -- a co-op owner needs both to have a complete, sellable interest.', source: 'DOS 2022 syllabus, Subject 15' },
+  { front: 'Flip tax', back: 'A transfer fee some co-ops (and occasionally condos) charge when a unit resells, payable to the BUILDING itself under its own governing documents -- not a government transfer tax, and not required by any state statute.', source: 'DOS 2022 syllabus, Subject 15' },
+  { front: 'Condop', back: 'A hybrid structure: the building is legally organized as a condominium at the floor or unit level, but one of those condominium units is internally operated as its own cooperative -- distinct from a straightforward condo or a straightforward co-op.', source: 'DOS 2022 syllabus, Subject 15' },
+  { front: 'Net operating income (NOI)', back: 'Gross income minus operating expenses, calculated BEFORE debt service -- the figure that gets capitalized (via the Income/Rate/Value formula) to estimate a commercial property\'s value.', source: 'DOS 2022 syllabus, Subject 16' },
+  { front: 'Capitalization rate', back: 'The rate used to convert a property\'s net operating income into an estimate of value (or vice versa) -- the "R" in the IRV (Income/Rate/Value) formula central to commercial property valuation.', source: 'DOS 2022 syllabus, Subject 16' },
+  { front: 'Rentable vs. usable square footage', back: 'Rentable square footage includes the tenant\'s pro-rata share of a building\'s common areas (the "loss factor" or "add-on factor"); usable square footage is just the space within the tenant\'s own walls. The gap between the two numbers is real money in a commercial lease.', source: 'DOS 2022 syllabus, Subject 16' },
+  { front: 'Board package', back: 'The full financial, reference, and tax-return submission a cooperative purchaser must assemble for board review before an interview. Unlike a condominium sale, a co-op board can generally reject a prospective buyer for almost any non-discriminatory reason.', source: 'DOS 2022 syllabus, Subject 15' },
+  { front: '80/20 rule', back: 'The passive-income guideline relevant to a cooperative\'s tax treatment and to why a "condop" structure sometimes gets created in the first place -- broadly, a co-op corporation\'s income from sources OTHER than its own tenant-shareholders needs to stay under roughly 20% of total income.', source: 'DOS 2022 syllabus, Subject 15' },
+];
+
+var NY_RE_SALESPERSON_LICENSE_LAW_TERMS_FLASHCARDS = [
+  { front: 'Pocket card', back: 'The physical proof-of-licensure card a real estate licensee must be able to produce on demand -- a separate document from the license itself, and separately fee-bearing to replace if lost or destroyed.', source: 'RPL § 441-a' },
+  { front: 'Blind ad', back: 'An advertisement that fails to disclose that the advertiser is a licensed real estate broker, or omits the sponsoring broker\'s identity -- a recurring type of License Law advertising violation.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
+  { front: 'Net listing', back: 'A listing arrangement where the broker\'s entire compensation is whatever the eventual sale price exceeds a seller-specified minimum -- disfavored because it can incentivize the broker to work against, rather than for, the seller\'s actual interest in getting the best price.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
+  { front: 'Kickback', back: 'An undisclosed payment or benefit exchanged for a referral or for directing business to someone -- a core license-law violation concept distinct from an ordinary, properly disclosed referral fee.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
+  { front: 'Irrevocable consent', back: 'A required element of maintaining a New York real estate license: the licensee\'s consent to service of legal process within the state, ensuring they remain answerable to New York courts and DOS proceedings regardless of where they later reside.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
+  { front: 'Article 78 proceeding', back: 'The specific type of New York court proceeding used to challenge a Department of State administrative determination -- such as a license denial, suspension, or revocation -- rather than an ordinary civil lawsuit.', source: 'CPLR Article 78; DOS 2022 syllabus, Subject 1 (Key Terms)' },
+  { front: 'Change of association', back: 'The formal notification/reporting process required whenever a salesperson moves from one sponsoring broker to another -- a licensee cannot simply switch firms without this being properly reported to DOS.', source: 'RPL § 442-b' },
+  { front: 'Commingling', back: 'Mixing a licensee\'s own funds with money held on behalf of a client -- listed among New York\'s own core License Law key terms as a fundamental violation concept, the same underlying idea California and most other states also treat as a standalone disciplinary ground.', source: 'DOS 2022 syllabus, Subject 1 (Key Terms)' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9560,6 +9735,33 @@ var RESOURCES = {
       topic: "General Reference", free: true },
   ],
   ny_re_salesperson: [
+    { title: 'License, Exam & Discipline Quick Facts', type: 'table', table: NY_RE_SALESPERSON_LICENSE_DISCIPLINE_TABLE,
+      desc: 'Real NY DOS licensing figures -- the 77-hour qualifying course, the 2-year license term, the itemized 22.5-hour CE breakdown, pass/fail-only exam scoring, and the real $2,000 discipline fine cap -- all pulled directly from the Real Property Law and the DOS\'s own licensing page.',
+      topic: 'License Law and Regulations', free: true },
+    { title: 'Property Condition Disclosure Act Quick Facts', type: 'table', table: NY_RE_SALESPERSON_PCDA_TABLE,
+      desc: 'The real delivery deadline, the 14 exempt transfer types, and the actual (not the commonly-repeated $500-credit) liability standard for New York\'s seller disclosure law, straight from RPL Article 14.',
+      topic: 'License Law and Regulations' },
+    { title: 'Agency Disclosure Timing & Duties Quick Facts', type: 'table', table: NY_RE_SALESPERSON_AGENCY_DISCLOSURE_TIMING_TABLE,
+      desc: 'The real, genuinely different disclosure-timing triggers RPL § 443 sets for a seller\'s agent vs. a buyer\'s agent, on both sides of the transaction.',
+      topic: 'Law of Agency' },
+    { title: 'Transfer & Mortgage Recording Taxes Quick Facts', type: 'table', table: NY_RE_SALESPERSON_TRANSFER_TAXES_TABLE,
+      desc: 'The real, stacking NY Tax Law figures on a high-value sale -- base transfer tax, the transfer tax\'s own high-value surcharge, the separate 1% mansion tax, and the mortgage recording tax\'s layered rates.',
+      topic: 'Contracts, Financing, Valuation & Real Estate Math' },
+    { title: 'Condominium vs. Cooperative Ownership Quick Facts', type: 'table', table: NY_RE_SALESPERSON_CONDO_COOP_TABLE,
+      desc: 'The real, structural real-property-vs-personal-property split between owning a condo unit and owning co-op shares, and why it changes financing, taxation, and board approval power.',
+      topic: 'Condominiums/Cooperatives, Commercial/Investment Properties & Property Management' },
+    { title: 'License Law Key Terms', type: 'flashcards', flashcards: NY_RE_SALESPERSON_LICENSE_LAW_TERMS_FLASHCARDS,
+      desc: 'Real New York license-law vocabulary pulled straight from the DOS\'s own course syllabus -- pocket cards, blind ads, net listings, kickbacks, and more.',
+      topic: 'License Law and Regulations', free: true },
+    { title: 'Agency & Fiduciary Terms of Art', type: 'flashcards', flashcards: NY_RE_SALESPERSON_AGENCY_TERMS_FLASHCARDS,
+      desc: 'The real statutory and regulatory concepts behind New York agency law -- dual agents, designated sales agents, broker\'s agents, and the "first substantive contact" standard.',
+      topic: 'Law of Agency' },
+    { title: 'Contracts, Financing & Valuation Terms', type: 'flashcards', flashcards: NY_RE_SALESPERSON_CONTRACTS_FINANCE_TERMS_FLASHCARDS,
+      desc: 'Real New York contract-practice and valuation vocabulary -- the Statute of Frauds, mortgage contingencies, CMAs vs. appraisals, 1031 exchanges, and the Lawyers\' Fund for Client Protection.',
+      topic: 'Contracts, Financing, Valuation & Real Estate Math' },
+    { title: 'Condo, Co-op & Commercial Property Terms', type: 'flashcards', flashcards: NY_RE_SALESPERSON_CONDO_COOP_COMMERCIAL_TERMS_FLASHCARDS,
+      desc: 'Real terms of art from New York\'s largest single exam area -- proprietary leases, flip taxes, condops, NOI, cap rates, and the co-op board package process.',
+      topic: 'Condominiums/Cooperatives, Commercial/Investment Properties & Property Management' },
     { title: "New York Real Property Law Article 12-A (Real Estate Brokers and Real Estate Salespersons)", type: "pdf", url: "https://www.nysenate.gov/legislation/laws/RPP/A12-A",
       desc: "The official New York Real Property Law text published by the NY Senate — the statutory basis for licensing, discipline, and this practice content.",
       topic: "General Reference", free: true },
