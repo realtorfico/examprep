@@ -2188,6 +2188,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['License Law & Rules of the Real Estate Commission', '40%'], ['Brokerage Representation (Agency Law)', '25%'], ['Idaho Principles & Practices', '15%'], ['Licensing Requirements', '10%'], ['Duties & Powers of the Real Estate Commission', '5%'], ['Calculations & Closing Costs', '5%']],
   },
   {
+    examType: 'id_re_broker',
+    title: 'Idaho Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/id',
+    duration: '240 Minutes (4 Hours)', questions: '130 Multiple Choice (80 National + 50 Idaho State-Specific)', passScore: 'Scaled Score of 75 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the Idaho-specific portion administered on behalf of the Idaho Real Estate Commission (IREC): the Commission\'s duties and powers (including the Recovery Fund\'s real $10,000-per-licensee-per-year cap), licensing requirements across Idaho\'s three real license tiers (Salesperson, Associate Broker, and Designated Broker), License Law and Rules including trust account rules, Idaho\'s real Brokerage Representation Act (which has NO default agency relationship absent a written agreement, unlike some states), calculations and closing costs, Idaho Principles and Practices (including Idaho\'s community property law and prior-appropriation water rights doctrine), and the real broker-only Brokerage Management section covering designated-broker supervision and trust account fund caps. Item counts, the scaled passing score of 75, and the 4-hour time allowance are confirmed directly against Pearson VUE\'s official Idaho Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['License Law & Rules of IREC (ID)', '18%'], ['Brokerage Management (ID)', '12%'], ['Brokerage Representation/Agency (ID)', '12%'], ['Contracts & Agency (National)', '9%'], ['Idaho Principles & Practices (ID)', '7%'], ['Real Estate Practice (National)', '7%'], ['Calculations & Closing Costs (ID)', '6%'], ['Property Value & Appraisal (National)', '6%'], ['Property Ownership (National)', '6%'], ['Property Disclosures & Environmental (National)', '5%'], ['Financing & Settlement (National)', '5%'], ['Real Estate Math (National)', '5%'], ['Forms of Ownership & Title (National)', '5%'], ['Licensing Requirements (ID)', '2%'], ['Duties & Powers of the Commission (ID)', '2%']],
+  },
+  {
     examType: 'in_re_salesperson',
     title: 'Indiana Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/in',
     duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 75 on a 0-100 Scale (Not a Raw Percentage)',
@@ -2200,6 +2207,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '90 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (0-100 Scale, Not a Raw Percentage)',
     description: 'Practice questions covering the Kansas Real Estate Brokers\' and Salespersons\' License Act (K.S.A. 58-3034 et seq.), the Brokerage Relationships in Real Estate Transactions Act (BRRETA), and Kansas Administrative Regulations, Agency 86: agency relationships, fiduciary duties and brokerage agreements; licensing, qualifications, renewal and continuing education; trust accounts, the Recovery Fund and advertising; disciplinary grounds, prohibited practices and unlicensed-activity enforcement; and Commission administration and statutory definitions -- our question bank spans the full License Act and its implementing regulations (including broker-only subject matter such as trust accounts and exam qualifications), which is broader than the narrower 30-item state-specific content outline published for the standard Pearson VUE-administered Salesperson exam.',
     breakdown: [['Agency Relationships, Fiduciary Duties & Brokerage Agreements', '27%'], ['Licensing, Qualifications, Renewal & Continuing Education', '27%'], ['Trust Accounts, Recovery Fund & Advertising', '19%'], ['Disciplinary Grounds, Prohibited Practices & Enforcement', '16%'], ['Commission Administration & Definitions', '11%']],
+  },
+  {
+    examType: 'ks_re_broker',
+    title: 'Kansas Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ks',
+    duration: '240 Minutes (4 Hours)', questions: '120 Multiple Choice (80 National + 40 Kansas State-Specific)', passScore: 'Scaled Score of 70 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s national real estate broker content outline (property ownership, forms of ownership and title, valuation and appraisal, contracts and agency, real estate practice, property disclosures and environmental issues, financing and settlement, and real estate math) plus the Kansas-specific portion administered on behalf of the Kansas Real Estate Commission (KREC): the Commission\'s duties and powers (including the real Recovery Revolving Fund), licensing requirements (including Kansas\'s real transaction-points broker-experience system), requirements governing licensee activities, prohibited acts and disciplinary process, the Brokerage Relationships in Real Estate Transactions Act (BRRETA) -- Kansas\'s real, distinctive statutory framework that defaults to transaction-broker status absent a written agreement and FLATLY PROHIBITS dual agency in favor of a designated-agency mechanism -- and real broker-only topics (licensure exemptions, trust fund handling, supervision of primary/branch offices, and out-of-state fee-sharing). Item counts, the scaled passing score of 70, and the 4-hour time allowance are confirmed directly against Pearson VUE\'s official Kansas Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['BRRETA (Brokerage Relationships) (KS)', '23%'], ['Requirements Governing Licensee Activities (KS)', '12%'], ['Prohibited Acts (KS)', '12%'], ['Contracts & Agency (National)', '9%'], ['Broker-Only Topics (KS)', '6%'], ['Real Estate Practice (National)', '7%'], ['Property Value & Appraisal (National)', '6%'], ['Property Ownership (National)', '6%'], ['Property Disclosures & Environmental (National)', '5%'], ['Financing & Settlement (National)', '5%'], ['Real Estate Math (National)', '5%'], ['Forms of Ownership & Title (National)', '5%'], ['Licensing Requirements (KS)', '2%'], ['Duties & Powers of the Commission (KS)', '2%']],
   },
   {
     examType: 'ky_re_salesperson',
@@ -4553,6 +4567,13 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 90-hour pre-license education.",
     passScoreNote: "a practice-sizing convention — 30 of 40 correct (75%) — the real state-specific portion is graded on a scaled score of 0-100 with a passing score of 70, not a raw percentage of questions correct",
   },
+  id_re_broker: {
+    orgLine: "the Idaho Real Estate Commission",
+    footerRequirement: "do not fulfill Idaho's Associate Broker or Designated Broker education/experience prerequisites, the BCOO course requirement for Designated Brokers, or any other Idaho Real Estate Commission prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Idaho's broker-level pre-licensing education requirements, the Designated Broker's additional BCOO (Business Conduct and Office Operations) course and company/trust-account registration, or any other Idaho Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus Idaho-specific broker licensing, License Law and Rules, Brokerage Representation (agency law), and real broker-only Brokerage Management subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Idaho Real Estate Commission. While we strive to align our content with current Idaho Code Title 54, Chapter 20 and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Idaho Real Estate Broker exam or the required broker education/experience prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 75 (not literal percent-correct), confirmed via Pearson VUE's official Idaho Candidate Handbook",
+  },
   in_re_salesperson: {
     orgLine: "the Indiana Real Estate Commission",
     footerRequirement: "do not fulfill the 90-hour pre-license education requirement or any Indiana real estate broker training requirement",
@@ -4566,6 +4587,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Kansas's 60-hour pre-license education requirement for a real estate salesperson license (a 30-hour Principles of Real Estate course plus a separate 30-hour Kansas Practice Course, both approved by the Real Estate Commission), and does not issue any official course-completion certificate — our content is a supplementary study aid only, grounded in the Kansas Real Estate Brokers' and Salespersons' License Act (K.S.A. 58-3034 et seq.), the Brokerage Relationships in Real Estate Transactions Act (BRRETA), and Kansas Administrative Regulations, Agency 86. Our question bank spans the full License Act and its implementing regulations — including broker-only subject matter such as trust accounts and license-qualification standards — rather than only the narrower 30-item Kansas state-specific content outline published for the standard Salesperson exam, so it does not correspond one-to-one with that outline or its item weighting; it also does not cover the separate national/general portion. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Real Estate Commission, and pre-license education must be completed through a Commission-approved school. The real Kansas state-portion exam is scored on a scaled 0-to-100 basis with a passing score of 70 — not a literal count or percentage of questions answered correctly — so the practice pass threshold used on this site is a study-sizing convention, not a transcription of the real scoring method. While we strive to align our content with the current Commission regulations and Kansas statute, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "a study-sizing convention — the real Kansas state-specific portion is scored on a scaled 0-to-100 basis with a passing score of 70, not a raw percentage or fixed correct-answer count",
+  },
+  ks_re_broker: {
+    orgLine: "the Kansas Real Estate Commission (KREC)",
+    footerRequirement: "do not fulfill Kansas's 2-of-3-years/transaction-points broker experience requirement or any other KREC prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Kansas's broker-level experience requirement (2 years of licensed activity within the preceding 3 years, measured via a real transaction-points system), or any other Kansas Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering Pearson VUE's national real estate broker content outline plus Kansas-specific broker licensing, licensee activity requirements, prohibited acts, and the Brokerage Relationships in Real Estate Transactions Act (BRRETA) -- Kansas's real, distinctive statutory framework that prohibits dual agency and defaults to transaction-broker status absent a written agreement. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Kansas Real Estate Commission. While we strive to align our content with current K.S.A. 58-3034 et seq., BRRETA, and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Kansas Real Estate Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 70 (not literal percent-correct), confirmed via Pearson VUE's official Kansas Candidate Handbook",
   },
   ky_re_salesperson: {
     orgLine: "the Kentucky Real Estate Commission (KREC)",
@@ -10516,6 +10544,12 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/id/realestate.html',
       desc: 'Pearson VUE\'s official Idaho real estate licensure exam page, including the candidate handbook and exam scheduling; Pearson VUE is Idaho\'s designated testing vendor.' },
   ],
+  id_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://dopl.idaho.gov/rec/',
+      desc: 'The Idaho Real Estate Commission (IREC) page under the Division of Occupational and Professional Licenses (DOPL), covering Associate Broker and Designated Broker requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/id/realestate.html',
+      desc: 'Pearson VUE\'s official Idaho real estate licensure exam page, confirming the real 130-item broker exam structure and its scaled-75 passing score.' },
+  ],
   il_re_salesperson: [
     { title: 'Division of Real Estate Site', url: 'https://idfpr.illinois.gov/dre.html',
       desc: 'The Illinois Department of Financial and Professional Regulation\'s Division of Real Estate official licensing page.' },
@@ -10533,6 +10567,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Kansas Real Estate Commission\'s official licensee and exam information page.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ks/realestate.html',
       desc: 'Pearson VUE\'s official Kansas real estate licensure exam page, including the candidate handbook and exam scheduling; Pearson VUE is Kansas\'s designated testing vendor.' },
+  ],
+  ks_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.krec.ks.gov/licensees/licensee-and-exam-information',
+      desc: 'The Kansas Real Estate Commission\'s official licensee and exam information page, covering broker licensing and BRRETA.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ks/realestate.html',
+      desc: 'Pearson VUE\'s official Kansas real estate licensure exam page, confirming the real 120-item broker exam structure and its scaled-70 passing score.' },
   ],
   ky_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://krec.ky.gov/newstatic_info.aspx?static_id=205',

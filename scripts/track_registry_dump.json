@@ -3808,6 +3808,34 @@
         "min_correct": 84,
         "mechanics_note": "Pearson VUE-administered UNIFIED exam (national+state content combined into one exam, unlike most other states split sections). 120 scored items (+10 unscored pretest), 4 hours (handbook only states a general 2-4hr range for all AR real estate exams; modeled at the top of that range). Passing score is a proprietary SCALED score of 70, not literal percent-correct. A failure requires retaking the entire exam, no partial retake. Confirmed via Pearson VUE Candidate Handbook #090400 (June 2026) and Content Outline #090402 (effective 12/1/2025). See scripts/tracks/ar_re_broker.json handbookNote for full sourcing.",
         "updated_at": 1788412292
+      },
+      {
+        "exam_type": "ks_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "KS",
+        "short_name": "Kansas Real Estate Broker",
+        "active": 1,
+        "is_exam_required": 1,
+        "exam_question_count": 120,
+        "exam_duration_sec": 14400,
+        "pass_percent": 70,
+        "min_correct": 84,
+        "mechanics_note": "Pearson VUE-administered. 80 national (identical bank/weights as UT/NV) + 40 Kansas state = 120 items, 4 hours. Passing is a proprietary SCALED score of 70 on EACH section independently (not literal percent-correct); a failed section can be retaken alone within 6 months. Kansas BRRETA flatly prohibits dual agency, defaulting to transaction-broker status absent a written agreement. Confirmed via Pearson VUE Candidate Handbook #091700 (April 2025). See scripts/tracks/ks_re_broker.json handbookNote for full sourcing.",
+        "updated_at": 1788413386
+      },
+      {
+        "exam_type": "id_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "ID",
+        "short_name": "Idaho Real Estate Broker",
+        "active": 1,
+        "is_exam_required": 1,
+        "exam_question_count": 130,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 98,
+        "mechanics_note": "Pearson VUE-administered. 80 national (identical bank/weights as UT/NV/KS) + 50 Idaho state = 130 items, 4 hours. Passing is a proprietary SCALED score of 75 (Broker; Salesperson uses 70) on EACH section independently. Idaho Broker actually has three tiers (Salesperson/Associate Broker/Designated Broker); Idaho has NO default agency relationship absent a written agreement (unlike Kansas). Confirmed via Pearson VUE Candidate Handbook #091300. See scripts/tracks/id_re_broker.json handbookNote for full sourcing.",
+        "updated_at": 1788413468
       }
     ],
     "success": true,
@@ -3817,14 +3845,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 8.4199
+        "sql_duration_ms": 3.9534
       },
-      "duration": 8.4199,
+      "duration": 3.9534,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 93601792,
-      "rows_read": 273,
+      "size_after": 94969856,
+      "rows_read": 275,
       "rows_written": 0,
       "total_attempts": 1
     }
