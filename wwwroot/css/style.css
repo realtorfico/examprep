@@ -1754,7 +1754,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent-deep) 12%, transparent), 0 16px 28px -20px color-mix(in srgb, var(--accent-deep) 35%, transparent);
 }
 .flashcard-front { background: color-mix(in srgb, var(--accent-deep) 10%, var(--surface-2)); font-weight: 600; }
-.flashcard-back { background: var(--surface-2); transform: rotateY(180deg); }
+/* Plain var(--surface-2) here read as "sunken" once flipped -- the front's accent tint is what
+   actually reads as "raised" (color contrast against the page, not just a small lightness delta),
+   and the back was missing it entirely. Gives the back a lighter version of the same tint so it's
+   still visually distinct from the front (the "question" side) but no longer blends into --bg. */
+.flashcard-back { background: color-mix(in srgb, var(--accent-deep) 5%, var(--surface-2)); transform: rotateY(180deg); }
 .flashcard-source { font-size: 0.72rem; }
 .flashcard-nav { display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin-top: 0.9rem; }
 .flashcard-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
