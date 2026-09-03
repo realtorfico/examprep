@@ -1747,8 +1747,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
   display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem;
   padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); font-size: 1rem; line-height: 1.5;
+  /* Same elevation formula as .card -- background: var(--surface-2) is deliberately a different
+     tone from the page's own --bg (unlike --card, which in light mode is nearly the same lightness
+     as --bg and made the first version of this card visually sink into its surroundings), plus a
+     real box-shadow so the card reads as raised, not flat-printed onto the page. */
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent-deep) 12%, transparent), 0 16px 28px -20px color-mix(in srgb, var(--accent-deep) 35%, transparent);
 }
-.flashcard-front { background: color-mix(in srgb, var(--accent-deep) 8%, var(--card)); font-weight: 600; }
+.flashcard-front { background: color-mix(in srgb, var(--accent-deep) 10%, var(--surface-2)); font-weight: 600; }
 .flashcard-back { background: var(--surface-2); transform: rotateY(180deg); }
 .flashcard-source { font-size: 0.72rem; }
 .flashcard-nav { display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin-top: 0.9rem; }
