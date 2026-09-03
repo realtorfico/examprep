@@ -9581,6 +9581,7 @@ async function renderResources() {
     return {
       index: i, title: r.title, type: r.type, topic: r.topic || 'General Reference', desc: r.desc,
       unlocked: unlocked, downloadable: !!r.url, url: url, table: r.table || null,
+      flashcards: r.flashcards || null,
       resourceKey: r.file || r.url, // stable identifier for progress tracking, regardless of R2 vs external
       lengthSeconds: null, estimatedLengthSeconds: estimateDurationSeconds(r.type, r.sizeBytes),
     };
