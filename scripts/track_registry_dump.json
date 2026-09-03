@@ -2312,6 +2312,17 @@
         "min_correct": 105
       },
       {
+        "exam_type": "or_re_broker",
+        "kind": "Real Estate Broker",
+        "state_code": "OR",
+        "short_name": "Oregon Principal Broker",
+        "is_exam_required": 1,
+        "exam_question_count": 125,
+        "exam_duration_sec": 14400,
+        "pass_percent": 75,
+        "min_correct": 94
+      },
+      {
         "exam_type": "pa_re_broker",
         "kind": "Real Estate Broker",
         "state_code": "PA",
@@ -2802,7 +2813,7 @@
         "short_name": "Oregon Real Estate",
         "is_exam_required": 1,
         "exam_question_count": 50,
-        "exam_duration_sec": 4500,
+        "exam_duration_sec": 5400,
         "pass_percent": 75,
         "min_correct": 38
       },
@@ -2957,14 +2968,14 @@
       "served_by_colo": "LAX",
       "served_by_primary": true,
       "timings": {
-        "sql_duration_ms": 3.6116
+        "sql_duration_ms": 2.4797
       },
-      "duration": 3.6116,
+      "duration": 2.4797,
       "changes": 0,
       "last_row_id": 0,
       "changed_db": false,
-      "size_after": 91193344,
-      "rows_read": 537,
+      "size_after": 91656192,
+      "rows_read": 539,
       "rows_written": 0,
       "total_attempts": 1
     }

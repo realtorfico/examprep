@@ -2358,9 +2358,16 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'or_re_salesperson',
     title: 'Oregon Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/or',
-    duration: '75 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (76%)',
+    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (76%)',
     description: 'Practice questions covering Oregon Revised Statutes Chapter 696 (Real Estate and Escrow Activities) and Oregon Administrative Rules Chapter 863 (Real Estate Agency) -- the state-specific portion of the PSI-administered Broker license exam: Oregon real estate related statutes, regulation of broker activities and broker/principal broker relationships, license law and disciplinary measures, agency law and rules, document handling and recordkeeping, property management, and handling of clients\' funds. Oregon\'s entry-level license is titled "Real Estate Broker" (the supervisory tier is a separate "Principal Broker" license); this track also draws on broader ORS 696/OAR 863 subject matter -- escrow agent licensing, real estate property manager licensing, and marketing organization/wholesaling regulation -- that goes beyond PSI\'s official 50-item Broker State Section outline.',
     breakdown: [['Oregon Real Estate Related Statutes', '30%'], ['Regulation of Broker Activities', '24%'], ['License Law & Disciplinary Measures', '12%'], ['Agency Law & Rules', '10%'], ['Document Handling & Recordkeeping', '10%'], ['Property Management', '8%'], ['Handling of Clients\' Funds', '6%']],
+  },
+  {
+    examType: 'or_re_broker',
+    title: 'Oregon Principal Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/or',
+    duration: '240 Minutes (150 Min National + 90 Min State)', questions: '125 Multiple Choice (75 National + 50 State-Specific)', passScore: '75% on Each Section',
+    description: 'Practice questions covering PSI\'s national principal broker content outline (property ownership, encumbrances and land use controls, contracts/agency/disclosure, financing and settlement, real estate calculations, valuation and appraisal, practice of real estate and fair housing, and property management and leasing) plus the Oregon-specific portion administered on behalf of the Oregon Real Estate Agency (REA): licensing requirements, license law and disciplinary measures, handling of clients\' funds and the recovery fund, regulation of broker activities, agency law and rules, and Oregon real estate related statutes. Oregon\'s entry-level real estate license is itself called "Broker" (see this site\'s own Oregon Real Estate track); this exam is for the supervisory "Principal Broker" tier above it. Item counts, the 75%-on-each-section passing standard, and the 240-minute time allowance are confirmed directly from PSI\'s official Oregon candidate bulletin. Note: PSI scores some Principal Broker national items at up to 2 points each (75 items are worth 80 total points) -- this site\'s practice mock exam uses a straightforward percent-correct-of-125-items approximation, since that real point-weighting can\'t be replicated in a simple correct-count score.',
+    breakdown: [['Regulation of Broker Activities (OR)', '10%'], ['Oregon Real Estate Related Statutes (OR)', '12%'], ['Contracts, Agency & Disclosure (National)', '10%'], ['Financing & Settlement (National)', '9%'], ['Practice of Real Estate & Fair Housing (National)', '9%'], ['Property Valuation & Appraisal (National)', '8%'], ['Property Ownership (National)', '8%'], ['Property Management & Leasing (National)', '8%'], ['Encumbrances & Land Use Controls (National)', '7%'], ['Real Estate Calculations (National)', '7%'], ['License Law & Disciplinary Measures (OR)', '5%'], ['Handling of Clients\' Funds & Recovery Fund (OR)', '4%'], ['Agency Law & Rules (OR)', '3%']],
   },
   {
     examType: 'ri_re_salesperson',
@@ -4685,6 +4692,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Oklahoma's 90-hour advanced broker education requirement, the requirement of 2 years of active experience as a Provisional Sales Associate or Sales Associate within the preceding 5 years, or any other Oklahoma Real Estate Commission prerequisite for broker licensure — and does not issue any official course-completion certificate. Our content is a supplementary study aid only, grounded in PSI's official Oklahoma Real Estate Licensure Applicant Information Bulletin: a 75-item national/general portion and a 60-item Oklahoma state portion covering the Oklahoma Real Estate License Code and the distinctive Oklahoma Broker Relationships Act (Oklahoma brokers do not practice under the common law of agency with consumers). Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of OREC. While we strive to align our content with OREC's current Code and Rules Book, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Oklahoma Real Estate Broker exam or the required broker experience/education prerequisites.",
     passScoreNote: "the same threshold required by the real exam — 75% (105 of 140 scored points) on the combined 135-item exam, confirmed via PSI's official Oklahoma bulletin",
+  },
+  or_re_broker: {
+    orgLine: "the Oregon Real Estate Agency (OREA)",
+    footerRequirement: "do not fulfill any Oregon Real Estate Agency prerequisite for the Principal Broker license (which requires an active Oregon broker license plus additional experience/education) or any Oregon principal broker training requirement",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy any Oregon Real Estate Agency prerequisite for Principal Broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering PSI's national principal broker content outline plus Oregon-specific licensing, license law, trust account, and agency-rules subject matter. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Oregon Real Estate Agency. While we strive to align our content with current Oregon Revised Statutes Chapter 696, Oregon Administrative Rules Chapter 863, and PSI's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Oregon Principal Broker exam or the required broker experience/education prerequisites.",
+    passScoreNote: "the same threshold required by the real exam -- 75% correct on each section separately, confirmed via PSI's official Oregon candidate bulletin",
   },
   or_re_salesperson: {
     orgLine: "the Oregon Real Estate Agency (OREA)",
@@ -10653,6 +10667,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Oregon Real Estate Agency\'s official homepage covering broker licensing requirements and exam eligibility.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/orre',
       desc: 'PSI\'s official Oregon real estate candidate portal for registering and scheduling the state licensing exam.' },
+  ],
+  or_re_broker: [
+    { title: 'Real Estate Agency Site', url: 'https://www.oregon.gov/rea/licensing/get-license/Pages/broker.aspx',
+      desc: 'The Oregon Real Estate Agency\'s official broker-license page, linking to the real PSI candidate bulletin and Principal Broker eligibility requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://test-takers.psiexams.com/orre',
+      desc: 'PSI\'s official Oregon real estate candidate portal for registering and scheduling the Principal Broker licensing exam.' },
   ],
   pa_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/real-estate-commission',
