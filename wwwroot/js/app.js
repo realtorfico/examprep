@@ -2111,6 +2111,13 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Statutory Requirements Governing Licensee Activities', '47%'], ['Agency Relationships & Disclosures', '27%'], ['Duties & Powers of the Real Estate Commission', '13%'], ['Licensing Requirements', '7%'], ['Other Statutory Requirements', '6%']],
   },
   {
+    examType: 'ar_re_broker',
+    title: 'Arkansas Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ar',
+    duration: '240 Minutes (4 Hours)', questions: '120 Multiple Choice (Unified National + Arkansas State Content)', passScore: 'Scaled Score of 70 (0-100 Scale)',
+    description: 'Practice questions covering Pearson VUE\'s Arkansas Unified Real Estate Broker Examination -- a single comprehensive exam combining national and Arkansas-specific content rather than separately-timed sections: Duties and Authority of the Arkansas Real Estate Commission (including the Recovery Fund), Arkansas statutory licensure requirements, other Arkansas statutes (including the Time-Share Act and auction licensing), federal laws governing real estate (RESPA, TILA, fair housing, environmental disclosure), Broker Operations and Responsibilities (supervision, trust accounts, recordkeeping, advertising, compensation), Client and Customer Relationships and Agency Disclosures, real property characteristics and legal descriptions, valuation and appraisal, contracts/financing/settlement (including Arkansas\'s predominantly non-judicial foreclosure process), and property management (including Arkansas\'s distinctive absence of an implied warranty of habitability). Unlike most states, a failure on Arkansas\'s unified exam requires retaking the entire exam, not just the failed portion. Item counts, the scaled passing score of 70, and the unified exam structure are confirmed directly against Pearson VUE\'s official Arkansas Candidate Handbook and Content Outline PDFs.',
+    breakdown: [['Broker Operations & Responsibilities', '18%'], ['Contracts, Financing & Settlement', '15%'], ['Client & Customer Relationships & Agency Disclosures', '12%'], ['Arkansas Statutory Requirements Governing Licensure', '10%'], ['Federal Laws Governing Real Estate', '10%'], ['Property Management', '10%'], ['Real Property Characteristics & Legal Descriptions', '10%'], ['Other Arkansas Statutory Requirements', '6%'], ['Property Valuation & Appraisal', '5%'], ['Duties & Authority of the Real Estate Commission', '4%']],
+  },
+  {
     examType: 'az_re_salesperson',
     title: 'Arizona Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/az',
     duration: '90 Minutes', questions: '60 Multiple Choice (State-Specific Portion)', passScore: '45/60 Correct (75%)',
@@ -2291,6 +2298,13 @@ var HUB_EXAMS_CONTENT = [
     duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
     description: 'Practice questions covering the Mississippi Real Estate Brokers License Law of 1954 (Miss. Code Ann. §§ 73-35-1 to 73-35-105) and the Mississippi Real Estate Commission Rules and Regulations (Title 30, Miss. Admin. Code, Parts 1601-1603): out-of-state brokers/developers, recordkeeping and advertising/marketing rules, the Commission\'s powers and duties, licensing requirements and license maintenance, agency disclosure and duties to parties, property condition disclosures and trust accounts, and broker responsibilities including supervision of sales associates -- the state-specific portion of the PSI-administered Salesperson exam.',
     breakdown: [['Out-of-State Brokers/Developers, Records & Advertising', '25%'], ['Commission Powers, Licensing Requirements & License Maintenance', '20%'], ['Agency Disclosure & Duties to Parties', '20%'], ['Property Condition Disclosures & Trust Accounts', '20%'], ['Broker Responsibilities & Supervision of Sales Associates', '15%']],
+  },
+  {
+    examType: 'ms_re_broker',
+    title: 'Mississippi Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/ms',
+    duration: '240 Minutes (4 Hours)', questions: '115 Multiple Choice (75 National + 40 Mississippi State-Specific)', passScore: '75% National / 80% State (Scored Separately)',
+    description: 'Practice questions covering PSI\'s national real estate broker content outline (property ownership, land use controls, valuation, financing, contracts, agency including broker-only supervisory responsibilities, property disclosures, broker-level property management, transfer of title, practice of real estate/fair housing, and real estate calculations) plus the Mississippi-specific portion administered on behalf of the Mississippi Real Estate Commission (MREC): the Commission\'s powers and duties (Mississippi has no Recovery Fund -- only an internal License Fund), licensing requirements including the 2026-revised 120-classroom-hour broker coursework rule, property condition disclosures, agency disclosure and duties (Mississippi notably does not recognize designated/appointed agency -- every salesperson is a subagent of the broker), advertising/marketing/internet rules, out-of-state brokers and developers, trust accounts, broker responsibilities and supervision, and records/documents. Mississippi uniquely scores its two portions at DIFFERENT literal percent-correct thresholds -- 75% national, 80% state -- both confirmed directly against MREC\'s official PSI Candidate Information Bulletin and the current License Law.',
+    breakdown: [['Contracts (National)', '19%'], ['Broker Operations (National)', '13%'], ['Agency Disclosure & Duties (MS)', '7%'], ['Practice of Real Estate & Fair Housing (National)', '10%'], ['Property Ownership (National)', '9%'], ['Financing (National)', '8%'], ['Valuation (National)', '7%'], ['Property Condition Disclosures (MS)', '5%'], ['Property Disclosures (National)', '6%'], ['Transfer of Title (National)', '5%'], ['Real Estate Calculations (National)', '5%'], ['Broker Responsibilities & Supervision (MS)', '4%'], ['Land Use Controls (National)', '4%'], ['Property Management (National)', '4%'], ['Records & Documents (MS)', '3%'], ['Licensing Requirements & Maintenance (MS)', '3%'], ['Commission Powers & Duties (MS)', '3%'], ['Advertising, Marketing & Internet (MS)', '3%'], ['Out-of-State Brokers & Developers (MS)', '3%'], ['Trust Accounts (MS)', '2%']],
   },
   {
     examType: 'mt_re_salesperson',
@@ -4448,6 +4462,13 @@ var TRACK_COMPLIANCE = {
     examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "a practice-sizing convention modeled on the state-law portion's official 30-item scored count and Arkansas's real passing scaled score of 70 — not a literal reproduction of Pearson VUE's scaled-scoring/equating method, since Arkansas's actual passing standard isn't a raw percentage of questions correct",
   },
+  ar_re_broker: {
+    orgLine: "the Arkansas Real Estate Commission (AREC)",
+    footerRequirement: "do not fulfill Arkansas's 24-of-48-months active licensure prerequisite, the 60-hour broker education requirement (45 hours of which must be AREC's Broker Pre-License course), or any other AREC prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Arkansas's broker-level pre-licensing education requirement, the 24-of-the-preceding-48-months active licensure prerequisite, or any other Arkansas Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, modeled on Pearson VUE's real Arkansas Unified Real Estate Broker Examination content outline, which combines national and Arkansas-specific subject matter into a single 120-item exam rather than separately-timed sections. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by Pearson VUE on behalf of the Arkansas Real Estate Commission, and unlike most other states, a failure on the real Arkansas exam requires retaking the ENTIRE exam, not just a failed section. While we strive to align our content with current Arkansas Code Annotated Title 17, Chapter 42 and Pearson VUE's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real Pearson VUE-administered Arkansas Unified Real Estate Broker exam or the required broker education/experience prerequisites.",
+    passScoreNote: "the same threshold required by the real exam — a scaled score of 70 (not literal percent-correct), confirmed via Pearson VUE's official Arkansas Candidate Handbook",
+  },
   az_re_salesperson: {
     orgLine: "the Arizona Department of Real Estate (ADRE)",
     footerRequirement: "do not fulfill the 90-hour pre-license education requirement (or the separate 6-hour Arizona Contract Writing Course required before licensure) or any Arizona real estate salesperson training requirement",
@@ -4643,6 +4664,13 @@ var TRACK_COMPLIANCE = {
     termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy the 60-classroom-hour pre-license education requirement for a Mississippi real estate salesperson license, and does not issue any official course-completion certificate — our content is a supplementary study aid only, and covers only the state-specific licensing/regulatory subject matter (grounded in the Real Estate Brokers License Law of 1954 and the Commission's own Rules and Regulations) — not the separate 80-question national/general portion of the exam, and organized more broadly than PSI's official 40-item State Portion content outline, which groups the same subject matter into 9 categories. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI Services LLC on behalf of the Real Estate Commission, and the 60 classroom hours of pre-license education must be completed through a college/community college course or a Commission-approved pre-license provider. While we strive to align our content with the current Commission License Law and Rules and Regulations, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
     examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Real Estate Commission exam or the required 60-hour pre-license education.",
     passScoreNote: "the same threshold as the real state-specific portion — 30 of 40 correct (75%)",
+  },
+  ms_re_broker: {
+    orgLine: "the Mississippi Real Estate Commission (MREC)",
+    footerRequirement: "do not fulfill Mississippi's active-salesperson-experience prerequisite, the 120-classroom-hour broker coursework requirement (per the July 2026 License Law revision), or any other MREC prerequisite for broker licensure",
+    termsParagraph2: "<p class=\"muted\">Using this site's practice questions or mock exams does not satisfy Mississippi's broker-level pre-licensing education requirement, the salesperson-experience prerequisite, or any other Mississippi Real Estate Commission prerequisite for broker licensure, and does not issue any official course-completion certificate. Our content is a supplementary study aid only, covering PSI's national real estate broker content outline plus Mississippi-specific broker licensing, agency disclosure, trust account, and supervisory-responsibility subject matter. Mississippi uniquely requires different literal percent-correct passing scores on its two exam portions -- 75% national, 80% state -- scored separately. Completing practice exams here also does not register you for, or schedule, the official licensing exam; official testing is administered by PSI on behalf of the Mississippi Real Estate Commission. While we strive to align our content with current Mississippi Code Annotated Title 73, Chapter 35 and PSI's official content outline, it is provided \"as-is\" for self-study and does not constitute legal advice or a guaranteed exam outcome.</p>",
+    examIntroDisclaimer: "register you for, or count toward, the real PSI-administered Mississippi Real Estate Broker exam or the required broker education/experience prerequisites.",
+    passScoreNote: "the same thresholds required by the real exam — 75% correct on the national portion and 80% correct on the state portion, scored separately, confirmed via MREC's official PSI Candidate Information Bulletin",
   },
   mt_re_salesperson: {
     orgLine: "the Montana Board of Realty Regulation",
@@ -10374,6 +10402,12 @@ var ADDITIONAL_INFO_LINKS = {
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ar/realestate.html',
       desc: 'Pearson VUE\'s Arkansas real estate licensure exam page, offering the candidate handbook download and salesperson/broker exam registration for the state\'s official testing vendor.' },
   ],
+  ar_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://arec.arkansas.gov/licensing/exam-information/',
+      desc: 'Official Arkansas Real Estate Commission exam information page describing Pearson VUE administration of the salesperson and broker exams.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.pearsonvue.com/us/en/ar/realestate.html',
+      desc: 'Pearson VUE\'s Arkansas real estate licensure exam page, confirming the real Unified Broker Examination structure (120 items, one combined exam, no separate national/state sections).' },
+  ],
   az_re_salesperson: [
     { title: 'Real Estate Commission Site', url: 'https://azre.gov/',
       desc: 'Official homepage of the Arizona Department of Real Estate (ADRE), the state agency that regulates real estate salesperson and broker licensing.' },
@@ -10589,6 +10623,12 @@ var ADDITIONAL_INFO_LINKS = {
       desc: 'The Mississippi Real Estate Commission\'s official applicants page covering licensing and exam requirements.' },
     { title: 'Candidate Handbook / Exam Registration', url: 'https://www.mrec.ms.gov/wp-content/uploads/2024/12/MREC_PSI_Candidate_Information_Bulletin_10-01-2023.pdf',
       desc: 'PSI Services\' official Mississippi real estate salesperson exam candidate information bulletin, hosted by MREC.' },
+  ],
+  ms_re_broker: [
+    { title: 'Real Estate Commission Site', url: 'https://www.mrec.ms.gov/applicants-2/',
+      desc: 'The Mississippi Real Estate Commission\'s official applicants page covering broker licensing and exam requirements.' },
+    { title: 'Candidate Handbook / Exam Registration', url: 'https://www.mrec.ms.gov/wp-content/uploads/2024/12/MREC_PSI_Candidate_Information_Bulletin_10-01-2023.pdf',
+      desc: 'PSI Services\' official Mississippi real estate exam candidate information bulletin, confirming the real 115-item broker exam structure and its two different section-passing percentages (75% national, 80% state).' },
   ],
   mt_re_salesperson: [
     { title: 'Board of Realty Regulation Site', url: 'https://boards.bsd.dli.mt.gov/realty-regulation/',
