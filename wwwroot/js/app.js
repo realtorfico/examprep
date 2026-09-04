@@ -9072,6 +9072,177 @@ var IL_RE_SALESPERSON_AGENCY_LIABILITY_FLASHCARDS = [
   { front: 'Attorney-licensee dual-role conflict', back: 'A licensee who is ALSO an attorney may not act as the attorney for either the buyer or the seller in a transaction where that same person is acting (or has acted) as the managing broker or broker — a specific, standalone discipline ground.', source: '225 ILCS 454/20-20(a)(34)' },
 ];
 
+// ============================================================================
+// IL RE BROKER (Illinois "Managing Broker" exam, upgrade tier) -- Key Facts
+// Digest, drafted 2026-09-03, sourced from 225 ILCS 454 at managing-broker level.
+// ============================================================================
+var IL_RE_BROKER_SUPERVISION_TABLE = {
+  headers: ['Duty', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Written company policy', 'Every brokerage company or entity (other than a sole proprietorship with no other sponsored licensees) must adopt a written company/office policy covering topics including agency, fair housing, confidentiality, advertising, training/supervision of sponsored licensees, required disclosures, risk management, and the handling of earnest money and escrows.',
+      'Eight specific topics are named in the statute itself, not left to the broker\'s discretion -- and having no written policy at all is independently disciplinable.',
+      '225 ILCS 454/10-40'],
+    ['Supervision of special accounts', 'The designated managing broker is responsible for, and must supervise, ALL of the company\'s special accounts -- not just the ones tied to transactions the DMB personally worked.',
+      'This duty attaches to the DMB\'s TITLE, not to personal involvement in a given deal -- a DMB can be on the hook for an account they never personally touched.',
+      '225 ILCS 454/10-55(a)'],
+    ['Direct handling before 45 hours of post-license education', 'The designated managing broker must personally handle all earnest money, escrows, and contract negotiations for any transaction where the designated agent has NOT yet completed the 45 hours of broker post-license education -- and must personally approve that agent\'s advertisements too.',
+      'A newly licensed broker who hasn\'t finished the 45-hour post-license curriculum has NO authority to bind the sponsoring broker at all -- a real legal capacity limit, not just a training recommendation.',
+      '225 ILCS 454/10-55(b)'],
+    ['Sponsorship notice window', 'The sponsoring broker must notify the Department within 24 hours after establishing a new sponsorship, and within 24 hours after a sponsorship terminates (whichever side initiates the termination).',
+      'Missing the termination notice is its own separate discipline ground under Section 20-20 -- independent of whatever caused the licensee to leave.',
+      '225 ILCS 454/5-40(a)-(b)'],
+    ['Temporary practice authorization', 'If an office loses its designated managing broker and isn\'t replaced, a written request for authorization to keep operating must go to the Department within 15 days of the loss. Any authorization granted is valid for no more than 60 days, unless extended by the Department for good cause.',
+      'A real, tight timeline -- an office can\'t just keep running indefinitely on autopilot after losing its DMB.',
+      '225 ILCS 454/5-29'],
+    ['Discipline exposure for the DMB personally', 'A designated managing broker\'s failure to provide an appropriate written company policy, or failure to perform any of the Section 10-55 supervisory duties, is itself listed as an independent ground for discipline against the DMB.',
+      'This is a violation the DMB commits just by NOT supervising -- no underlying fraud, misrepresentation, or client harm has to be proven separately.',
+      '225 ILCS 454/20-20(a)(46)'],
+  ],
+  journalNote: 'Notice the split: Section 10-55 creates the supervisory DUTY, but it\'s Section 20-20(a)(46) that turns failing that duty into a listed, independently disciplinable violation. Exam questions can test either section in isolation -- know both citations, not just the underlying rule.',
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000, 225 ILCS 454, Sections 5-29, 5-40, 10-40, 10-55, and 20-20(a)(46), as published by the Illinois General Assembly (ilga.gov).',
+};
+
+var IL_RE_BROKER_ESCROW_TABLE = {
+  headers: ['Rule', 'Real Requirement', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Where escrow money must sit', 'All escrow moneys belonging to others must be deposited in a special account, separate and apart from personal and other business accounts, and kept there until the transaction is consummated or terminated.',
+      'This is a standalone, listed discipline ground on its own -- failing to maintain the separate account is enough, whether or not the money was ever actually misused.',
+      '225 ILCS 454/20-20(a)(17)'],
+    ['Interest on the account', 'The account must be noninterest-bearing UNLESS the character of the deposit legally requires interest, or the principals to the transaction specifically require in writing that it be placed in an interest-bearing account.',
+      'The default is NO interest -- interest-bearing is the exception, and it takes an affirmative written request to get there.',
+      '225 ILCS 454/20-20(a)(17)'],
+    ['Lawful ways to release funds before closing', 'Before the deal is consummated or terminated, escrow money may only be disbursed (i) per the principals\' written direction, (ii) per release/payment terms already written into a signed contract, or (iii) pursuant to a court order.',
+      'Only three lawful paths exist -- a broker "using their judgment" to release funds early on their own authority isn\'t one of them.',
+      '225 ILCS 454/20-20(a)(17)(A)'],
+    ['When escrow money can be treated as abandoned', 'Escrow money can be deemed abandoned and transferred to the State Treasurer as unclaimed property only if: no lawful disbursement has occurred, no court claim has been filed, AND 6 months have passed since a written demand for the money from one of the principals.',
+      'All three conditions have to be true together -- a broker can\'t sweep disputed funds to the Treasurer just because a deal has been sitting stale for a while.',
+      '225 ILCS 454/20-20(a)(17)(B)'],
+    ['Producing escrow records to the Department', 'All escrow records and related documents connected to the practice of real estate must be made available to Department personnel within 24 hours of a request.',
+      'A genuinely short window compared to most other Department deadlines in this Act -- don\'t confuse it with the separate 30-day window for general information requests.',
+      '225 ILCS 454/20-20(a)(18)'],
+    ['Commingling', 'Mixing the money or property of others with the licensee\'s own money or property is its own listed, standalone ground for discipline.',
+      'No separate proof of client harm is required -- the act of commingling alone is enough to trigger discipline.',
+      '225 ILCS 454/20-20(a)(22)'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000, 225 ILCS 454, Section 20-20(a)(17), (18), and (22), as published by the Illinois General Assembly (ilga.gov).',
+};
+
+var IL_RE_BROKER_LICENSING_RENEWAL_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Managing broker education, Category A-2 path', 'An applicant who already holds an active Illinois broker license, held for at least 2 of the preceding 3 years, must complete 45 additional class hours (30 hours Managing Broker Pre-License Topics + 15 hours Applied Management and Supervision) within the year immediately before applying.',
+      'The 45-hour figure is what most people mean by "managing broker education," but it only applies on TOP OF an active broker license already held 2 of the last 3 years -- it isn\'t the whole requirement by itself.',
+      '225 ILCS 454/5-28(a)(3)-(5)'],
+    ['Total hours without an active broker license (Category A-1)', 'An applicant who is NOT currently an active Illinois broker must complete 165 total class hours: the 120 broker pre/post-license hours PLUS the same 45 managing-broker-specific hours.',
+      'Two very different real hour-counts (45 vs. 165) depending on whether the applicant already holds an active broker license -- a classic trap for mixing these up.',
+      '225 ILCS 454/5-28(a)(5); PSI Candidate Information Booklet'],
+    ['Exam retake limit', 'Candidates get up to 4 attempts to pass the Managing Broker exam within their 2-year eligibility period. After a 4th failure, the candidate must repeat the required pre-license education before a 5th attempt (treated as a brand-new application).',
+      'The number is the SAME 4-attempt structure used for the broker and residential leasing agent exams -- but the required re-education differs depending on which exam it is.',
+      '225 ILCS 454/5-35(c); PSI Candidate Information Booklet'],
+    ['Licensure by endorsement (managing broker)', 'Requires an active managing-broker license (or equivalent) held in another state, at least 2 years of active practice there immediately before applying, an official good-standing statement from that state\'s licensing authority, passing an Illinois-law-specific test, and completing a 30-hour Department-approved endorsement course.',
+      'Endorsement candidates skip the 165/45-hour Illinois curriculum entirely -- but the 2-years-active and Illinois-law-test requirements are not waived for anyone.',
+      '225 ILCS 454/5-60.5(a)'],
+    ['Continuing education per renewal term', 'Renewing managing brokers must complete 12 hours of general real estate CE PLUS a separate 12-hour broker management CE course (24 hours total) -- with at least 2 of the 6 core-curriculum hours specifically devoted to fair housing training.',
+      'The 12-hour broker management course is IN ADDITION to the general 12 hours, not a subset of it -- managing brokers carry a real CE load brokers alone don\'t.',
+      '225 ILCS 454/5-70(b), (e)'],
+    ['Reinstating an expired license', 'Expired less than 2 years: ordinary renewal (fees + CE). Expired 2-5 years: formal restoration (fee, CE for the most recent completed term, and proof of fitness). Expired more than 5 years: must meet the requirements for an entirely new license.',
+      'Three genuinely different real tiers based on how long the license has been lapsed -- not a single uniform "reinstatement" process.',
+      '225 ILCS 454/5-50(c)'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000, 225 ILCS 454, Sections 5-28, 5-35, 5-50, 5-60.5, and 5-70, as published by the Illinois General Assembly (ilga.gov); PSI Services LLC Candidate Information Booklet for the IDFPR Division of Real Estate.',
+};
+
+var IL_RE_BROKER_RECOVERY_FUND_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Fund target balance', 'The Real Estate Recovery Fund is maintained at a $1,000,000 balance: whenever the balance drops below $900,000, the State Treasurer transfers money in from the Real Estate License Administration Fund to bring it back to $1,000,000. Any balance above $1,000,000 gets swept back out to the Administration Fund.',
+      'This is a real, current statutory dollar figure -- the Fund\'s TARGET size -- which is different from (and shouldn\'t be confused with) any individual claimant\'s payout cap.',
+      '225 ILCS 454/25-35'],
+    ['Deadline to start a recovery action', 'An action for a judgment that could lead to Fund collection must be started no later than 2 years after the aggrieved person knew, or through reasonable diligence should have known, of the violation.',
+      'The clock runs from DISCOVERY (actual or constructive), not necessarily from the date of the underlying act itself.',
+      '225 ILCS 454/20-90(a)'],
+    ['Must name every responsible party as a defendant', 'The aggrieved person must name as defendants ALL licensees, employees, or independent contractors allegedly responsible for the loss. Failing to name any of them precludes recovery from the Fund on that judgment entirely.',
+      'A real, harsh all-or-nothing consequence -- leaving out even one responsible party can wipe out the entire Fund claim, regardless of how strong the case is against the others.',
+      '225 ILCS 454/20-90(b)'],
+    ['No interest on the recovered amount', 'The post-judgment order paid from the Fund does not include interest on the underlying judgment.',
+      'A claimant collects the principal loss amount only from the Fund -- any interest that accrued on the judgment itself isn\'t part of what the Fund pays.',
+      '225 ILCS 454/20-85'],
+    ['Post-judgment notice window', 'The aggrieved person must give the Department written notice within 30 days of the judgment being entered, and must give the Department 20 days\' prior written notice of any supplementary proceedings.',
+      'Two separate real deadlines in the same process -- 30 days after judgment, 20 days before supplementary proceedings -- easy to transpose on an exam.',
+      '225 ILCS 454/20-90(f)'],
+    ['Per-claim dollar caps are set by rule, not by the statute', 'The statute caps recovery at "an amount... as adopted by rule" both per act/transaction and per licensee -- 225 ILCS 454 itself does not state a specific dollar figure for either cap.',
+      'Unlike some other states, where the recovery-fund payout caps are written directly into the statute\'s own text, Illinois delegates that specific number to Department rule (68 Ill. Admin. Code 1450) -- know that the number lives in rule, not in the Act itself.',
+      '225 ILCS 454/20-85'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000, 225 ILCS 454, Sections 20-85, 20-90, and 25-35, as published by the Illinois General Assembly (ilga.gov).',
+};
+
+var IL_RE_BROKER_DISCIPLINE_PENALTIES_TABLE = {
+  headers: ['Penalty', 'Real Figure/Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Fine ceiling per violation', 'The Department may impose a fine of up to $25,000 for EACH violation, in addition to refusing/suspending/revoking the license, probation, reprimand, or other disciplinary action -- across the Act\'s full list of 47+ enumerated discipline grounds.',
+      'It\'s PER violation, not a single flat cap -- multiple grounds found in one case can each carry their own $25,000 exposure.',
+      '225 ILCS 454/20-20(a)'],
+    ['Unlicensed practice civil penalty', 'A civil penalty of up to $25,000 per offense for practicing (or holding oneself out to practice) as a managing broker, broker, or residential leasing agent without a license -- due within 60 days of the order, which is itself enforceable as a court judgment.',
+      'Same $25,000 ceiling as the general discipline fine, but this is a SEPARATE penalty aimed specifically at unlicensed activity, with its own 60-day payment deadline.',
+      '225 ILCS 454/20-10'],
+    ['Guaranteed sales plan default fine', 'A licensee who fails to perform a guaranteed sales plan in strict accordance with its terms is subject to a civil fine of up to $25,000 -- payable directly to the party injured by the default, not to the Department.',
+      'A third distinct $25,000 figure with a different recipient (the injured party, not the state) -- don\'t assume every discipline-adjacent fine in this Act goes to the Department.',
+      '225 ILCS 454/10-50(g)'],
+    ['Returned payment fee', 'A $50 fee applies when a check or credit card payment made to the Department is returned or dishonored.',
+      'A small, specific, real number that\'s easy to overlook next to the larger discipline fines -- but a real, separately testable figure.',
+      '225 ILCS 454/20-25'],
+    ['Renewal blocked by unpaid fines', 'The Department will not issue or renew ANY license if the applicant/licensee has an unpaid disciplinary fine, non-disciplinary fee, or unlicensed-practice civil penalty -- unless it\'s paid in full or the licensee is current on an approved payment plan.',
+      'This blocks renewal categorically, regardless of how minor the underlying fine was or how long ago it was imposed.',
+      '225 ILCS 454/5-50(h)-(i)'],
+    ['Exam cheating as a discipline ground', 'Cheating on (or attempting to subvert) the license exam or a CE course/exam, AND separately aiding or abetting another applicant\'s cheating, are each independently listed grounds for discipline.',
+      'Two separate listed violations, not one -- a licensee who helps someone else cheat is disciplinable on that ground alone, even without personally cheating.',
+      '225 ILCS 454/20-20(a)(7)-(8)'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000, 225 ILCS 454, Sections 5-50, 10-50(g), 20-10, 20-20(a), and 20-25, as published by the Illinois General Assembly (ilga.gov).',
+};
+
+var IL_RE_BROKER_SUPERVISION_TERMS_FLASHCARDS = [
+  { front: 'Designated managing broker', back: 'A managing broker who has supervisory responsibilities for licensees in one office (or, at a multi-office company, more than one office) and has been formally appointed as such by the sponsoring broker, registered with the Department.', source: '225 ILCS 454/1-10' },
+  { front: 'Managing broker (self-sponsorship)', back: 'A managing broker license lets the holder act as their OWN sponsor -- a real distinction from a plain broker license, which cannot self-sponsor.', source: '225 ILCS 454/1-10' },
+  { front: 'Sponsoring broker', back: 'The broker who certifies to the Department that they sponsor a given managing broker, broker, or residential leasing agent -- the certification itself, once registered, is what creates the "sponsorship."', source: '225 ILCS 454/1-10' },
+  { front: 'Team', back: 'Two or more licensees who work together under a team name DIFFERENT from their sponsoring broker\'s name, present themselves publicly as a team, and are all supervised by the same managing broker and sponsored by the same sponsoring broker. A "team" is explicitly NOT a separate legal entity.', source: '225 ILCS 454/1-10' },
+  { front: '"Designated managing broker" title restriction', back: 'Only the specific individual appointed and registered as the designated managing broker of an office may identify themselves to the public as a "designated managing broker" in advertising. Other managing-broker license holders may call themselves "managing broker" -- but not "designated managing broker."', source: '225 ILCS 454/10-30(g)' },
+  { front: 'Escrow moneys (statutory definition)', back: 'All moneys, promissory notes, or other financial consideration deposited for the benefit of the transaction\'s parties -- includes earnest money and security deposits, EXCEPT a security deposit held by a landlord who is also the sole owner of the leased property.', source: '225 ILCS 454/1-10' },
+  { front: 'When a "transaction" legally begins', back: 'For escrow-money purposes, a transaction exists once an agreement has been reached and an accepted real estate contract is signed, or a lease is agreed to, by the parties -- that\'s the specific trigger point escrow obligations attach to.', source: '225 ILCS 454/1-10' },
+  { front: 'Inactive license status', back: 'A license that still exists but can\'t be used because the licensee is unsponsored, or because the sponsoring broker\'s own license has become expired, revoked, or suspended. The licensee is prohibited from practicing until a valid new sponsorship is registered.', source: '225 ILCS 454/1-10' },
+];
+
+var IL_RE_BROKER_AGENCY_CONCEPTS_FLASHCARDS = [
+  { front: 'Material facts (statutory scope)', back: 'Facts about the transaction the licensee actually knows, which the licensee must disclose to their own client -- but the definition EXCLUDES physical conditions on unrelated property that don\'t substantially hurt value, and unrelated fact-situations or occurrences at the property.', source: '225 ILCS 454/15-15(a)(2)(C)' },
+  { front: 'Stigmatized property (Illinois\'s specific carve-out)', back: 'No cause of action arises against a licensee for failing to disclose that an occupant had HIV or another medical condition, or that the property was the site of an act/occurrence with no effect on its physical condition -- a specific statutory protection, not just general practice.', source: '225 ILCS 454/15-20' },
+  { front: 'Duties after termination of a brokerage agreement', back: 'Once a brokerage agreement ends, a licensee\'s remaining duties shrink to exactly two things: accounting for all money/property related to the transaction, and keeping confidential information confidential. Everything else ends with the agreement.', source: '225 ILCS 454/15-30' },
+  { front: 'Compensation does not determine agency', back: 'Who pays a licensee -- or promises to pay them -- is NOT what decides whether an agency relationship exists between that licensee and a consumer. A common wrong-answer trap on agency questions.', source: '225 ILCS 454/15-40' },
+  { front: 'Dual agency informed consent', back: 'Requires the INFORMED WRITTEN consent of every client. That consent is only presumed given when the client signs a specific statutory-form disclosure document laying out the conflict-of-interest risks -- not just any general written notice.', source: '225 ILCS 454/15-45(a)' },
+  { front: 'What a dual agent cannot disclose', back: 'The price or terms a seller/landlord would actually accept, or a buyer/tenant would actually pay, beyond the listed price -- and no recommended or suggested price/terms to either side -- without that specific party\'s permission.', source: '225 ILCS 454/15-45' },
+  { front: 'A seller\'s agent\'s duty to a buyer-customer', back: 'Even representing only the seller, a licensee must still timely disclose latent material adverse facts about the property\'s PHYSICAL condition to a buyer-customer, if the licensee actually knows them and a reasonably diligent inspection wouldn\'t reveal them.', source: '225 ILCS 454/15-25' },
+  { front: 'Contemporaneous offers', back: 'Showing the same property to multiple prospective buyers, or preparing competing contemporaneous offers, is NOT itself a breach of duty -- but the licensee must give written disclosure to every affected client, and must refer any client who requests it to a different designated agent.', source: '225 ILCS 454/15-15(b)' },
+];
+
+var IL_RE_BROKER_ENFORCEMENT_CONCEPTS_FLASHCARDS = [
+  { front: 'Out-of-state discipline as an Illinois ground', back: 'Being disciplined by another state, D.C., a territory, a foreign nation, or another authorized agency is itself a valid Illinois discipline ground -- as long as at least one of the grounds for that other discipline matches or equals an Illinois ground. A certified copy of the other jurisdiction\'s record is enough proof.', source: '225 ILCS 454/20-20(a)(5)' },
+  { front: 'Cheating on the exam -- two separate grounds', back: 'A licensee who personally cheats (or tries to subvert) the license exam or a CE exam is disciplinable on that ground alone. Separately, anyone who AIDS or ABETS another applicant\'s cheating is independently disciplinable too -- even without cheating themselves.', source: '225 ILCS 454/20-20(a)(7)-(8)' },
+  { front: 'Automatic inactivation on sponsorship loss', back: 'The moment a licensee\'s sponsorship with their sponsoring broker terminates, the license automatically becomes inactive -- no separate Department action is required -- and stays inactive until a new valid sponsorship is registered.', source: '225 ILCS 454/5-40(b)' },
+  { front: 'Blind advertisement (statutory definition)', back: 'Any real estate ad that doesn\'t include the sponsoring broker\'s complete business name -- or, for electronic ads, doesn\'t provide a direct link to the required disclosures. A franchise\'s ads must include BOTH the franchise affiliation AND the individual firm\'s own name.', source: '225 ILCS 454/1-10' },
+  { front: 'Purely temporary employment as commission evasion', back: 'Employing someone on a purely temporary or single-deal basis specifically as a way to dodge the rule against paying commissions to nonlicensees is its own listed, independent discipline ground.', source: '225 ILCS 454/20-20(a)(23)' },
+  { front: 'Child-support delinquency as license leverage', back: 'The Department can refuse, revoke, or suspend a license based SOLELY on a certification from the Department of Healthcare and Family Services that the licensee is more than 30 days delinquent on child support -- no separate real-estate misconduct has to be shown.', source: '225 ILCS 454/20-20(d)' },
+  { front: 'Reciprocal-agreement licensing phase-out', back: 'Applications for licensure based on reciprocal agreements with other states stopped being accepted after January 1, 2026. Licenses already granted that way before that date remain valid and renew the same as any other broker or managing broker license.', source: '225 ILCS 454/5-60.1' },
+];
+
+var IL_RE_BROKER_FUNDS_RECORDS_FLASHCARDS = [
+  { front: 'Real Estate License Administration Fund', back: 'The Department\'s main operating fund under this Act -- ALL fines, penalties, and fees collected under the Act get deposited here first. It funds the Department\'s administration of the Act, including maintaining the separate Recovery Fund, and can transfer money INTO the Recovery Fund as needed.', source: '225 ILCS 454/25-30' },
+  { front: 'Real Estate Research and Education Fund', back: 'A THIRD special fund, separate from both the License Administration Fund and the Recovery Fund. Every September 15th it receives a $125,000 transfer, with $15,000 of that specifically earmarked for a real estate scholarship program for historically marginalized classes.', source: '225 ILCS 454/25-25' },
+  { front: 'Department staffing minimums', back: 'The Department must employ at least 1 investigator per 10,000 licensees and 1 prosecutor per 20,000 licensees -- a real, statutory enforcement-capacity floor written directly into the Act, not left entirely to budget discretion.', source: '225 ILCS 454/25-20' },
+  { front: 'Confidential information (statutory definition)', back: 'Information made confidential by the client\'s written request or instruction, or information about the client\'s negotiating position whose disclosure could materially hurt them. It does NOT include material facts about the property\'s physical condition -- those still have to be disclosed.', source: '225 ILCS 454/1-10' },
+  { front: 'Compensation (statutory definition)', back: 'Deliberately broad: commissions, referral fees, bonuses, prizes, merchandise, finder fees, performance of services, coupons/gift certificates, discounts, rebates, a chance to win a raffle/drawing, a retainer fee, or salary. Not just a cash commission at closing.', source: '225 ILCS 454/1-10' },
+  { front: 'Recovery Fund investment authority', back: 'Recovery Fund money may be invested and reinvested the same way Illinois PENSION funds are invested under the Illinois Pension Code. Any earnings, interest, or dividends flow back into the License Administration Fund -- not back into the Recovery Fund itself.', source: '225 ILCS 454/25-35' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9278,6 +9449,33 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   il_re_broker: [
+    { title: 'Managing Broker Supervisory Duties Quick Facts', type: 'table', table: IL_RE_BROKER_SUPERVISION_TABLE,
+      desc: 'Real supervisory duties a designated managing broker owes under the Act -- company policy, special-account oversight, the 45-hour post-license trigger, and the discipline exposure that attaches to the DMB personally.',
+      topic: 'Managing Broker Supervisory Duties, Special Accounts, Records & Calculations', free: true },
+    { title: 'Special/Escrow Account Handling Quick Facts', type: 'table', table: IL_RE_BROKER_ESCROW_TABLE,
+      desc: 'Real rules on where escrow money must sit, the only 3 lawful ways to release it early, the 6-month abandoned-funds rule, and the 24-hour records-production deadline.',
+      topic: 'Managing Broker Supervisory Duties, Special Accounts, Records & Calculations' },
+    { title: 'Managing Broker Licensing, Renewal & CE Quick Facts', type: 'table', table: IL_RE_BROKER_LICENSING_RENEWAL_TABLE,
+      desc: 'Real hour-counts for the two education paths, the 4-attempt exam retake limit, licensure-by-endorsement requirements, and the split CE load (12 + 12 hours) managing brokers carry.',
+      topic: 'Licensing Requirements' },
+    { title: 'Real Estate Recovery Fund Quick Facts', type: 'table', table: IL_RE_BROKER_RECOVERY_FUND_TABLE,
+      desc: 'The Fund\'s real $1,000,000 target balance, the 2-year filing clock, the all-defendants-or-nothing naming requirement, and why the per-claim dollar cap itself lives in Department rule, not the statute.',
+      topic: 'Managing Broker Supervisory Duties, Special Accounts, Records & Calculations' },
+    { title: 'Discipline & Civil Penalty Quick Facts', type: 'table', table: IL_RE_BROKER_DISCIPLINE_PENALTIES_TABLE,
+      desc: 'Three separate real $25,000 penalty figures (general discipline, unlicensed practice, guaranteed sales plan default) plus the $50 returned-payment fee and the renewal-blocking effect of unpaid fines.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Managing Broker & Supervision Terms', type: 'flashcards', flashcards: IL_RE_BROKER_SUPERVISION_TERMS_FLASHCARDS,
+      desc: 'Real Illinois-specific terms of art at the managing-broker level -- designated managing broker, team, self-sponsorship, and the escrow-moneys definition -- flip through them to test recall, not just recognition.',
+      topic: 'Managing Broker Supervisory Duties, Special Accounts, Records & Calculations', free: true },
+    { title: 'Agency & Fiduciary Duty Concepts', type: 'flashcards', flashcards: IL_RE_BROKER_AGENCY_CONCEPTS_FLASHCARDS,
+      desc: 'The real statutory language behind Illinois agency law -- material facts, the stigmatized-property carve-out, dual-agency consent, and what a dual agent legally cannot reveal to either side.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Discipline & Enforcement Concepts', type: 'flashcards', flashcards: IL_RE_BROKER_ENFORCEMENT_CONCEPTS_FLASHCARDS,
+      desc: 'How out-of-state discipline carries over, what automatically happens the moment a sponsorship ends, and a few discipline grounds that have nothing to do with money.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Recovery Fund, Records & Special-Fund Concepts', type: 'flashcards', flashcards: IL_RE_BROKER_FUNDS_RECORDS_FLASHCARDS,
+      desc: 'The Act actually funds three separate special funds, not one -- plus the statutory definitions of confidential information and compensation that sit behind several other tables and cards.',
+      topic: 'Managing Broker Supervisory Duties, Special Accounts, Records & Calculations' },
     { title: 'Illinois Real Estate License Act of 2000', type: 'pdf', url: 'https://www.ilga.gov/legislation/ILCS/details?MajorTopic=&Chapter=&ActName=Real+Estate+License+Act+of+2000.&ActID=1364&ChapterID=24&SeqStart=&ChapAct=FullText',
       desc: 'The official statute (225 ILCS 454) published by the Illinois General Assembly — the authoritative source the state-specific exam is based on.',
       topic: 'General Reference', free: true },
