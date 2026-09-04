@@ -8732,6 +8732,175 @@ var PA_RE_SALESPERSON_ADVERTISING_TRUST_FLASHCARDS = [
   { front: 'Nonwaiver of the escrow duty', back: 'A broker\'s duty to hold funds in escrow can NEVER be waived or altered by agreement -- not between the transaction parties, not between the broker and the parties, and not between cooperating brokers.', source: '49 Pa. Code § 35.322' },
 ];
 
+// ============================================================================
+// PA RE BROKER -- Key Facts Digest, drafted 2026-09-03, sourced from RELRA
+// (63 P.S. §§ 455.101-455.902) and 49 Pa. Code Chapter 35 at broker level.
+// ============================================================================
+var PA_RE_BROKER_LICENSURE_TABLE = {
+  headers: ['Requirement', 'PA Broker Standard', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Minimum age to sit for the broker exam', '21 years old',
+      'A real, higher threshold than the salesperson exam\'s 18-year minimum -- a classic pairing for a trick question that swaps the two ages.',
+      'RELRA § 511(1) (63 P.S. § 455.511)'],
+    ['Prior licensure requirement', 'At least 3 years as a licensed real estate salesperson -- or education/experience qualifications the Commission deems equivalent',
+      'This is a genuine broker-specific gate: nobody walks straight into a broker license without first having been a working salesperson (or an equivalent the Commission itself has to approve).',
+      'RELRA § 511(4) (63 P.S. § 455.511)'],
+    ['Pre-license education', '240 hours (16 credits): a mandatory 2-credit real estate law course, a mandatory 2-credit office management course, at least 6 of the remaining 12 credits from Commission-enumerated subjects, and 6 free-elective real estate credits',
+      'The two mandatory 2-credit courses (law + office management) are non-negotiable -- a candidate can\'t substitute elective credit for either one.',
+      'RELRA § 511(3); 49 Pa. Code § 35.271'],
+    ['Standard license application fee', '$75 for a broker, cemetery broker, or rental listing referral agent -- vs. $25 for an associate broker or salesperson',
+      'The broker-tier application fee is 3x the associate-broker/salesperson fee -- a real, testable dollar gap between license levels.',
+      '49 Pa. Code § 35.203(a)'],
+    ['Biennial renewal fee', '$126 for a broker, branch office, rental listing referral agent, or broker of record/partner/officer -- vs. $96 for an associate broker or salesperson',
+      'Same pattern as the application fee: broker-tier renewal costs more than the associate/salesperson tier, and the two numbers are close enough ($126 vs. $96) to be a real trap.',
+      '49 Pa. Code § 35.203(a)'],
+    ['Continuing education to renew', '14 hours of Commission-approved CE per license period, due by the May 31 renewal deadline',
+      'Identical requirement at BOTH the broker and salesperson level -- unlike the fees above, this is one place broker and salesperson are treated the same, which is itself a common trick-question setup.',
+      '49 Pa. Code § 35.382(a)'],
+  ],
+  journalNote: 'A broker whose license is revoked cannot be relicensed for at least 5 years after the revocation begins -- and even after that 5-year floor passes, relicensure is entirely within the Commission\'s discretion, not automatic (49 Pa. Code § 35.251).',
+  sourceNote: 'Source: RELRA § 511 (63 P.S. § 455.511), fetched from the PA General Assembly\'s official unconsolidated-statutes site (legis.state.pa.us), and 49 Pa. Code §§ 35.203, 35.271, 35.382, from the PA Code and Bulletin.',
+};
+
+var PA_RE_BROKER_ESCROW_OFFICE_TABLE = {
+  headers: ['Requirement', 'Rule', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Deadline to deposit money into escrow', 'By the end of the NEXT BUSINESS DAY following receipt at the office where escrow records are kept',
+      'A firm, one-business-day clock -- not "promptly" or "as soon as practicable" like some other PA disclosure deadlines.',
+      '49 Pa. Code § 35.324(a)'],
+    ['Exception: an uncashed earnest-money check', 'With WRITTEN permission of both buyer and seller (or lessee and lessor), the broker may hold the check pending the seller\'s/lessor\'s acceptance -- then must deposit it within 1 business day of that acceptance',
+      'A real, narrow exception to the next-business-day rule above -- it requires written permission from BOTH sides, not just an internal office policy.',
+      '49 Pa. Code § 35.324(b)'],
+    ['Escrow account structure', 'Must be at a federally- or state-insured bank/depository, designate the BROKER as trustee, allow withdrawal without prior notice, and be used EXCLUSIVELY for escrow purposes',
+      'Four separate structural requirements bundled into one rule -- an exam item can test any one of them in isolation.',
+      '49 Pa. Code § 35.325(a)'],
+    ['Additional office (beyond the main office)', 'Requires its own separate branch office license from the Commission -- the main office does not need one',
+      'A broker CAN run more than one PA office, but every office past the first needs its own license application and fee.',
+      '49 Pa. Code § 35.243(a)'],
+    ['Routine Commission office inspection', 'No more than 4 times per year, during regular business hours',
+      'A real numeric cap on how often the Commission can show up unannounced for a routine (non-complaint-driven) inspection.',
+      '49 Pa. Code § 35.246(a)'],
+    ['Commingling prohibition', 'Broker may NOT mix escrow-required money with business/personal funds -- EXCEPT depositing personal or business funds specifically to cover bank service charges or maintain a required minimum balance',
+      'The exception is narrow and purpose-limited: it does not open the door to any other blending of funds.',
+      '49 Pa. Code § 35.326'],
+  ],
+  journalNote: 'A broker may not claim interest earned on an escrow account for themselves -- UNLESS the broker is also acting as a lessor under Section 511.2 of the Landlord and Tenant Act, a narrow carve-out that\'s easy to overgeneralize into "brokers never get escrow interest."',
+  sourceNote: 'Source: 49 Pa. Code §§ 35.243, 35.246, 35.324, 35.325, 35.326, implementing RELRA § 608.5 (63 P.S. § 455.608e), as published by the PA Code and Bulletin.',
+};
+
+var PA_RE_BROKER_SUPERVISION_SUCCESSION_TABLE = {
+  headers: ['Situation', 'Rule', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Broker\'s duty to supervise salespersons', 'Failing to exercise ADEQUATE supervision over the activities of the broker\'s own licensed salespersons is an independent, standalone ground for discipline against the BROKER',
+      'The broker doesn\'t have to have personally committed the underlying violation -- the failure to supervise is enough on its own.',
+      'RELRA § 604 (63 P.S. § 455.604)'],
+    ['Office must be supervised by a broker or associate broker', 'The main or branch office must be under the direction and supervision of a broker or associate broker holding a standard or reciprocal license',
+      'Unlicensed staff or a salesperson alone cannot be left in charge of supervising an office.',
+      '49 Pa. Code § 35.244(a)'],
+    ['Sole-proprietor broker dies', 'Estate must notify the Commission within 15 days of appointing another licensed broker to supervise termination of the business; no NEW listing agreements may be entered, and unexpired listings expire automatically 90 days after the broker\'s death',
+      'The 90-day automatic-expiration clock is specific to THIS scenario -- it doesn\'t apply the same way to a broker-of-record death at a partnership/corporation.',
+      '49 Pa. Code § 35.252'],
+    ['Broker of record dies (partnership/corp)', 'A partner or corporate officer must file an application with the Commission designating a replacement broker of record within 15 days',
+      'Same 15-day window as the sole-proprietor scenario, but no automatic listing-expiration rule attaches here.',
+      '49 Pa. Code § 35.253'],
+    ['Broker incapacitated by illness or injury', 'The broker\'s attorney-in-fact, a corporate officer, or a partner must notify the Commission within 15 days of appointing an interim broker/broker of record',
+      'A third, parallel 15-day-notice scenario -- illness/injury, not death -- that\'s easy to conflate with the two above.',
+      '49 Pa. Code § 35.254'],
+    ['Posting a suspension notice', 'A broker whose license is suspended must return the license to the Commission AND post the Commission\'s notice prominently near the public entrance at BOTH the main office and every branch office; failing to post is itself independent grounds for further discipline',
+      'Not posting the notice isn\'t just a paperwork miss -- it can trigger its own separate disciplinary action on top of the original suspension.',
+      '49 Pa. Code § 35.291'],
+  ],
+  sourceNote: 'Source: RELRA § 604 (63 P.S. § 455.604), fetched from the PA General Assembly\'s official unconsolidated-statutes site, and 49 Pa. Code §§ 35.244, 35.251-35.254, 35.291.',
+};
+
+var PA_RE_BROKER_REQUIRED_DISCLOSURES_TABLE = {
+  headers: ['Required Disclosure', 'Where It Must Appear', 'Why It Matters', 'Citation'],
+  rows: [
+    ['Real Estate Recovery Fund notice', 'In the broker\'s written agreement with a principal/consumer, in EVERY agreement of sale, AND in the Consumer Notice -- three separate required appearances, not one',
+      'A single fact (the Fund exists) is required to be repeated across three genuinely different documents -- an exam item can test any one of the three triggers.',
+      '49 Pa. Code §§ 35.331(a)(1), 35.333(a)(9), 35.336'],
+    ['Escrow handling notice', 'Broker\'s written agreement must notify that payments received on account of a sale are held in escrow pending consummation, regardless of the form of payment or who is named as payee on the instrument',
+      'The "regardless of payee" language matters -- a check made out to someone other than the broker still has to go into escrow if the broker receives it.',
+      '49 Pa. Code § 35.331(a)(2)'],
+    ['Possibility of representing multiple parties', 'Broker\'s written agreement must notify of the POSSIBILITY that the broker or any licensee employed by the broker may serve more than one party in the same transaction, and explain the resulting duties/fees',
+      'This is disclosed as a possibility up front -- separate from the specific written CONSENT required if dual agency actually happens.',
+      '49 Pa. Code § 35.331(a)(5)'],
+    ['Zoning classification in an agreement of sale', 'Required UNLESS the property is zoned solely or primarily for single-family dwellings; if required and omitted, the agreement is VOIDABLE at the buyer\'s option, with deposits returned WITHOUT court action',
+      'The remedy for omitting it is unusually strong -- voidable at the buyer\'s sole option, no lawsuit needed to get the deposit back.',
+      '49 Pa. Code § 35.333(a)(6)'],
+    ['Designated agency disclosure', 'A designated agent must disclose to their OWN principal, before writing or presenting an offer, that the other party is represented by a DIFFERENT designated agent employed by the SAME broker',
+      'Because the broker supervises both designated agents, the broker automatically becomes the dual agent in that transaction -- a structurally different setup from ordinary dual agency.',
+      '49 Pa. Code § 35.315(a), (e)(3)'],
+    ['Confidentiality between designated agents', 'The broker and the designated agents must use reasonable care to ensure confidential information is not disclosed or used between the two designated agents at the same firm',
+      'The duty runs to the BROKER specifically, on top of whatever duty each individual designated agent already owes their own principal.',
+      '49 Pa. Code § 35.315(c)'],
+  ],
+  journalNote: 'Designated agency is a genuinely broker-level structure -- it only exists because a broker is supervising multiple licensees representing opposite sides of the same deal. It isn\'t just a timing variant of the disclosure rules the salesperson exam already covers.',
+  sourceNote: 'Source: 49 Pa. Code §§ 35.315, 35.331, 35.333, 35.336, implementing RELRA §§ 606.5, 608, 608.1-608.2, as published by the PA Code and Bulletin.',
+};
+
+var PA_RE_BROKER_COMMISSION_DISCIPLINE_TABLE = {
+  headers: ['Fact', 'Detail', 'Why It Matters', 'Citation'],
+  rows: [
+    ['What actually triggers a Recovery Fund claim', 'A FINAL CIVIL JUDGMENT against a PA real estate licensee for fraud, misrepresentation, or deceit in a real estate transaction, where the claimant has been unable to collect after exhausting ALL legal and equitable remedies',
+      'Two separate conditions have to both be true: a final judgment on one of those three specific grounds, AND proof the judgment is genuinely uncollectible.',
+      '49 Pa. Code § 35.336 (Consumer Notice text); RELRA Chapter 8 (63 P.S. §§ 455.801-455.803)'],
+    ['Commission\'s Recovery Fund information line', '(717) 783-3658 -- written directly into three separate mandatory consumer disclosures',
+      'A real, specific phone number the exam can quote directly rather than a generic "contact the Commission" instruction.',
+      '49 Pa. Code §§ 35.331(a)(1), 35.333(a)(9), 35.336'],
+    ['Self-reporting a crime', 'A licensee must notify the Commission of being convicted of, or pleading guilty or nolo contendere to, a felony or misdemeanor, within 30 DAYS of the verdict or plea',
+      'The clock starts at the verdict/plea, not at sentencing or at license renewal time.',
+      '49 Pa. Code § 35.290(a)'],
+    ['Self-reporting out-of-state discipline', 'A licensee must notify the Commission of disciplinary action taken by another jurisdiction\'s real estate licensing authority within 30 DAYS of receiving notice of that action',
+      'Same 30-day window as the criminal self-reporting duty above, but triggered by an entirely different event.',
+      '49 Pa. Code § 35.290(b)'],
+    ['Relicensure after revocation', 'The Commission will not authorize relicensure for at least 5 years after a revocation begins; after that floor, relicensure is entirely within the Commission\'s discretion, not automatic',
+      'Five years is a hard floor, not a target -- and even clearing it doesn\'t guarantee relicensure.',
+      '49 Pa. Code § 35.251'],
+  ],
+  journalNote: 'This table deliberately omits the specific Recovery Fund payout caps (the per-claim and per-licensee dollar limits) -- those figures live in RELRA Sections 801-803 (63 P.S. §§ 455.801-455.803), and this project could not retrieve their verbatim statutory text from a primary source. Don\'t take that number from a third-party prep source either -- verify it directly against 63 P.S. §§ 455.801-455.803 before relying on it.',
+  sourceNote: 'Source: 49 Pa. Code §§ 35.251, 35.290, 35.331, 35.333, 35.336, as published by the PA Code and Bulletin; RELRA Chapter 8 heading structure (63 P.S. §§ 455.801-455.803) confirmed via the PA General Assembly\'s official unconsolidated-statutes index, but its dollar-figure body text could not be independently retrieved.',
+};
+
+var PA_RE_BROKER_ROLES_FLASHCARDS = [
+  { front: 'Broker of record', back: 'The individual broker responsible for the real estate transactions of a partnership, association, or corporation that holds a broker\'s license -- the specific licensed person the Commission holds accountable when the "broker" is really a business entity.', source: '49 Pa. Code § 35.201' },
+  { front: 'Associate broker', back: 'An individual who holds a broker\'s license but works AS an employee of another broker, rather than running their own brokerage -- a distinct category from both "broker" and "salesperson."', source: '49 Pa. Code § 35.201' },
+  { front: 'Branch office', back: 'Any fixed location in Pennsylvania, other than the main office, that a broker or cemetery broker maintains and devotes to real estate business -- each one requires its own separate branch office license.', source: '49 Pa. Code § 35.201, § 35.243' },
+  { front: 'Main office (private-residence rule)', back: 'If a broker\'s or cemetery broker\'s main office is located in a private residence, the entrance to the office must be SEPARATE from the entrance to the residence.', source: '49 Pa. Code § 35.242(b)' },
+  { front: 'Manager of record', back: 'The rental-listing-referral-agent equivalent of a broker of record: the individual rental listing referral agent responsible for the rental listing transactions of a partnership, association, or corporation holding that license.', source: '49 Pa. Code § 35.201' },
+  { front: 'Reciprocal-to-standard conversion trigger', back: 'A reciprocal licensee who moves their principal place of business into Pennsylvania (or loses their standard license in their home state) must notify the Commission within 30 days and obtain a standard PA license by the end of the renewal period.', source: '49 Pa. Code § 35.255(c)' },
+  { front: 'Broker price opinion', back: 'An estimate prepared by a broker, associate broker, or salesperson detailing a property\'s probable selling price and condition/market/comparable-sales information -- explicitly does NOT include an automated valuation model.', source: '49 Pa. Code § 35.201' },
+  { front: 'Transaction licensee', back: 'A licensee who provides communication or document-preparation services (or performs other broker/salesperson acts) WITHOUT entering into an agency relationship with the consumer -- no loyalty or general confidentiality duty, but still must disclose known material defects.', source: '49 Pa. Code § 35.201, § 35.316' },
+];
+
+var PA_RE_BROKER_ESCROW_CONCEPTS_FLASHCARDS = [
+  { front: 'Escrow duty in a cobrokerage deal', back: 'If a buyer\'s deposit goes to the SELLING broker rather than the listing broker, the listing broker still generally assumes the escrow duty -- UNLESS the buyer never had proper written prior notice that the selling broker would forward the deposit as the listing broker\'s subagent, in which case the selling broker keeps the duty.', source: '49 Pa. Code § 35.323' },
+  { front: 'Nonwaiver of escrow duty', back: 'A broker\'s escrow duty cannot be waived or altered by ANY agreement -- not between the transaction parties, not between the broker and the parties, and not between the broker and any other broker involved in the deal.', source: '49 Pa. Code § 35.322' },
+  { front: 'Escrow dispute -- interpleader', back: 'If the parties dispute who\'s entitled to escrowed money, the broker holds the funds until it\'s resolved. If resolution looks unlikely without legal action, the broker may -- after giving 30 days\' notice to the parties -- petition the county court to interplead the rival claimants.', source: '49 Pa. Code § 35.327' },
+  { front: 'Rental management account', back: 'A broker acting as a property manager for a lessor is NOT required to hold collected rents in the regular escrow account -- instead, rents go into a SEPARATE rental management account, kept apart from both escrow and general business accounts.', source: '49 Pa. Code § 35.321(b)' },
+  { front: 'Escrow records requirement', back: 'A broker must keep records of every escrow-required money receipt -- who it came from, who it belongs to, whose account it\'s deposited for, and the exact dates of receipt, deposit, and withdrawal -- producible to the Commission on request.', source: '49 Pa. Code § 35.328' },
+  { front: 'Cemetery-property escrow trigger', back: 'For a cemetery lot/plot sale, the transaction counts as "consummated" for escrow-payout purposes once the buyer receives a COPY of the agreement of sale -- a different, simpler trigger than the recording-opportunity rule that applies to an installment land purchase agreement.', source: '49 Pa. Code § 35.321(c)-(d)' },
+];
+
+var PA_RE_BROKER_AGENCY_SUPERVISION_FLASHCARDS = [
+  { front: 'Dual agent by supervision (designated agency)', back: 'When a broker designates one licensee to represent the seller/landlord exclusively and a different licensee to represent the buyer/tenant exclusively in the SAME transaction, the broker automatically becomes the dual agent -- simply because the broker supervises both designated agents.', source: '49 Pa. Code § 35.315(e)-(f)' },
+  { front: 'Broker\'s duty when supervising designated agents', back: 'On top of the general dual-agent duties, a supervising broker must take reasonable care to protect confidential information disclosed to the designated licensees AND take responsibility for directing/supervising their business activities -- without taking any action adverse to either party.', source: '49 Pa. Code § 35.315(f)' },
+  { front: 'Subagent', back: 'A licensee NOT employed by the listing broker who cooperates with the listing broker in selling the property as a seller\'s/landlord\'s agent -- and is deemed, by that cooperation, to have an agency relationship with the SELLER, not a neutral role.', source: '49 Pa. Code § 35.201' },
+  { front: 'Extending or delegating an agency relationship', back: 'A broker may NOT extend or delegate the broker\'s own agency relationship to someone else without the principal\'s WRITTEN consent -- the agency doesn\'t automatically transfer just because a different licensee at the firm takes over the file.', source: '49 Pa. Code § 35.311(b)' },
+  { front: 'Compensating a cooperating broker', back: 'A broker paying a commission split to another broker who helped market or sell a consumer\'s property does NOT, by itself, create an agency relationship between the consumer and that other (cooperating) broker.', source: '49 Pa. Code § 35.311(c)' },
+  { front: 'Seller\'s agent compensating a buyer\'s agent', back: 'A seller\'s agent may compensate a buyer\'s agent (or a transaction licensee) even though that buyer\'s agent does NOT owe the same duties and obligations to the seller/landlord that the seller\'s agent and any subagents do.', source: '49 Pa. Code § 35.312(d)' },
+];
+
+var PA_RE_BROKER_DISCIPLINE_CONTINUITY_FLASHCARDS = [
+  { front: 'Real Estate Recovery Fund (purpose)', back: 'A fund that exists to reimburse a person who obtained a final civil judgment against a Pennsylvania real estate licensee for fraud, misrepresentation, or deceit in a real estate transaction, and who has been unable to collect the judgment after exhausting all legal and equitable remedies.', source: 'RELRA Chapter 8 (63 P.S. §§ 455.801-455.803); 49 Pa. Code § 35.336' },
+  { front: 'Posting a suspension notice', back: 'A broker or cemetery broker whose license is suspended must return the license to the Commission AND post the Commission\'s notice prominently near the public entrance of BOTH the main office and every branch office -- failing to post is itself grounds for further discipline.', source: '49 Pa. Code § 35.291' },
+  { front: 'Termination period after a sole-proprietor broker\'s death', back: 'During the termination period, the appointed successor broker may NOT enter new listing agreements and may NOT hire new licensees -- but pending agreements of sale or lease MAY still proceed to consummation, and unexpired listings may be promoted until they expire automatically 90 days after the death.', source: '49 Pa. Code § 35.252(b)' },
+  { front: 'Broker\'s failure-to-supervise as its own violation', back: 'A broker who fails to exercise adequate supervision over their licensed salespersons\' activities can be disciplined for that failure ALONE -- the broker doesn\'t need to have personally committed the underlying violation.', source: 'RELRA § 604 (63 P.S. § 455.604)' },
+  { front: 'Education-provider approval withdrawal -- hearing procedure', back: 'Before withdrawing a real estate education provider\'s (or director\'s) approval, the Commission must give notice and a hearing under 2 Pa.C.S. §§ 501-508 (Commonwealth agency practice and procedure) -- the Chapter 35 text\'s clearest illustration of the Commission\'s general notice-and-hearing model.', source: '49 Pa. Code § 35.344' },
+  { front: 'Office inspection scope', back: 'During a routine or special Commission inspection, the Commission may examine transaction records, inspect all areas of the office, interview licensed and unlicensed employees, AND obtain the broker\'s written authorization letter to the bank so escrow-account records can be released to the Commission.', source: '49 Pa. Code § 35.246(d)' },
+  { front: 'Relicensure after revocation', back: 'A revoked licensee cannot be relicensed for at least 5 years after the revocation begins. Even after that floor passes, granting relicensure is entirely within the Commission\'s discretion, and the applicant must still meet CURRENT licensure requirements.', source: '49 Pa. Code § 35.251' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -8964,6 +9133,33 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   pa_re_broker: [
+    { title: 'Broker Licensure Requirements & Fees', type: 'table', table: PA_RE_BROKER_LICENSURE_TABLE,
+      desc: 'The real age, experience, education-hour, and fee figures for becoming a Pennsylvania broker -- pulled directly from RELRA Section 511 and the Commission\'s own fee schedule.',
+      topic: 'Licensure (PA State)', free: true },
+    { title: 'Broker Office & Escrow Account Management', type: 'table', table: PA_RE_BROKER_ESCROW_OFFICE_TABLE,
+      desc: 'Deposit deadlines, escrow account structure, branch-office licensing, and the Commission\'s inspection powers -- the real mechanics behind RELRA Section 608.5\'s broker escrow duty.',
+      topic: 'Brokerage Management (PA State)' },
+    { title: 'Broker Supervision & Business Succession Rules', type: 'table', table: PA_RE_BROKER_SUPERVISION_SUCCESSION_TABLE,
+      desc: 'What a broker is legally on the hook for when supervising salespersons -- and the real 15-day/90-day rules that kick in if the broker dies, gets hurt, or gets disciplined.',
+      topic: 'Regulations Governing Licensee Activities (PA State)' },
+    { title: 'Required Disclosures in Broker-Level Agreements', type: 'table', table: PA_RE_BROKER_REQUIRED_DISCLOSURES_TABLE,
+      desc: 'The specific Recovery Fund, escrow, zoning, and designated-agency disclosures a broker\'s own paperwork is legally required to contain -- and where each one has to appear.',
+      topic: 'Agency & Disclosure (PA State)' },
+    { title: 'Real Estate Commission: Discipline & Recovery Fund Facts', type: 'table', table: PA_RE_BROKER_COMMISSION_DISCIPLINE_TABLE,
+      desc: 'Real self-reporting deadlines, the Commission\'s Recovery Fund info line, and the 5-year relicensure bar after revocation -- with an honest flag on the one figure this project couldn\'t verify.',
+      topic: 'Real Estate Commission (PA State)' },
+    { title: 'Broker Roles & Office Structures', type: 'flashcards', flashcards: PA_RE_BROKER_ROLES_FLASHCARDS,
+      desc: 'Broker of record, associate broker, branch office, and the other broker-specific vocabulary the exam expects you to distinguish on sight.',
+      topic: 'Licensure (PA State)', free: true },
+    { title: 'Broker Escrow & Trust Fund Concepts', type: 'flashcards', flashcards: PA_RE_BROKER_ESCROW_CONCEPTS_FLASHCARDS,
+      desc: 'Who holds the escrow duty in a cobrokerage deal, how disputed funds get resolved, and other real trust-account concepts beyond the deposit deadlines.',
+      topic: 'Brokerage Management (PA State)' },
+    { title: 'Broker Agency & Supervision Concepts', type: 'flashcards', flashcards: PA_RE_BROKER_AGENCY_SUPERVISION_FLASHCARDS,
+      desc: 'How a broker becomes a dual agent through designated agency, and the supervisory duties that only exist because a broker runs a multi-licensee office.',
+      topic: 'Agency & Disclosure (PA State)' },
+    { title: 'Broker Discipline & Business Continuity Concepts', type: 'flashcards', flashcards: PA_RE_BROKER_DISCIPLINE_CONTINUITY_FLASHCARDS,
+      desc: 'The Recovery Fund\'s real purpose, what happens when a broker\'s license is suspended, and the succession rules that keep a brokerage running if the broker can\'t.',
+      topic: 'Real Estate Commission (PA State)' },
     { title: 'RELRA — Real Estate Licensing and Registration Act (63 P.S. Sections 455.101-455.902)', type: 'pdf', url: 'https://www.legis.state.pa.us/cfdocs/legis/LI/uconsCheck.cfm?txtType=HTM&yr=1980&sessInd=0&smthLwInd=0&act=9',
       desc: 'The full official statutory text of Pennsylvania\'s real estate licensing law, published by the PA General Assembly — the statutory basis for broker licensure, escrow duties, and discipline.',
       topic: 'General Reference', free: true },
