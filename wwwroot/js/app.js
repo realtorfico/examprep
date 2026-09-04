@@ -8901,6 +8901,177 @@ var PA_RE_BROKER_DISCIPLINE_CONTINUITY_FLASHCARDS = [
   { front: 'Relicensure after revocation', back: 'A revoked licensee cannot be relicensed for at least 5 years after the revocation begins. Even after that floor passes, granting relicensure is entirely within the Commission\'s discretion, and the applicant must still meet CURRENT licensure requirements.', source: '49 Pa. Code § 35.251' },
 ];
 
+// ============================================================================
+// IL RE SALESPERSON (Illinois "Broker" exam, entry-level) -- Key Facts Digest,
+// drafted 2026-09-03, sourced from the Real Estate License Act of 2000
+// (225 ILCS 454) and the PSI Candidate Information Booklet.
+// ============================================================================
+var IL_RE_SALESPERSON_LICENSING_RENEWAL_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Category A pre-license education', '75 total class hours: 60 hours of Broker Pre-License Topics + 15 hours of Applied Real Estate Principles-Interactive. Valid for 2 years after satisfactory completion.',
+      'The 15-hour "interactive" component is a separate, mandatory piece — completing only the 60-hour topics course doesn\'t satisfy Category A on its own.',
+      'PSI Candidate Information Booklet, Illinois License Requirements and Qualifications'],
+    ['Post-license education (first broker term)', '45 hours, structured as three separate 15-hour courses — applied brokerage principles, risk management/discipline, and transactional issues — each requiring its OWN 50-question final exam administered by the education provider.',
+      'This is on top of the 75-hour pre-license education, not a substitute for it — and each of the three courses has to be separately passed, not just "attended."',
+      '225 ILCS 454/5-50(b)'],
+    ['Renewal window', 'A license may be renewed within the 90 days preceding its expiration date, by completing continuing education and paying the required fees.',
+      'The statute\'s own defined term "renewal period" is literally "the 90 days prior to the expiration date" — a specific, testable window, not "any time before it expires."',
+      '225 ILCS 454/5-50(a); definition at 225 ILCS 454/1-10'],
+    ['Expired-license ladder', 'Expired ≤2 years: renew normally with fees + continuing education. Expired 2–5 years: must apply, pay the fee, complete CE for the most recently ended license term, AND file proof of fitness. Expired 5+ years: must meet the requirements for a brand-new license.',
+      'These are three genuinely different tracks with different requirements — the "just pay a late fee" assumption only holds for the first 2 years.',
+      '225 ILCS 454/5-50(c)'],
+    ['Continuing education per license term', '12 hours total: a 6-hour core curriculum (which must include at least 2 hours of fair housing training) plus an elective curriculum. Managing brokers must ALSO complete a separate 12-hour broker management CE course.',
+      'The 2-hour fair housing minimum is carved out of the 6-hour core specifically — it can\'t be swapped out for a different core subject.',
+      '225 ILCS 454/5-70(b), (e)'],
+    ['Resident-lessee referral exemption', 'A tenant may refer prospective co-tenants to their landlord WITHOUT a license, but only if: no more than 3 referrals in any 12-month period, compensation capped at the LESSER of $5,000 or 2 months\' rent per 12 months, and the tenant never shows the unit or negotiates lease terms.',
+      'All three limits have to hold at once — exceeding any one of them (the referral count, the dollar/rent cap, or the no-showing/no-negotiating line) forfeits the exemption entirely.',
+      '225 ILCS 454/5-20(10)'],
+  ],
+  journalNote: 'The Act itself never states a fixed license "term length" (e.g., "2 years") — Section 5-50(a) explicitly leaves the expiration date and renewal period to be "set by rule," not the statute text. Don\'t treat an assumed term length as a statute-sourced fact; only the 90-day renewal window and the 2/2-5/5-year expired-license ladder above are directly confirmed in the Act\'s own text.',
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000 (225 ILCS 454), Sections 1-10, 5-20, 5-50, 5-70, as published by the Illinois General Assembly; PSI Candidate Information Booklet (Illinois Division of Real Estate).',
+};
+
+var IL_RE_SALESPERSON_ESCROW_HANDLING_TABLE = {
+  headers: ['Fact', 'Real Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Special account requirement', 'ALL escrow moneys entrusted to a licensee while acting as a broker, escrow agent, or temporary custodian must be deposited into a special account kept SEPARATE from personal and other business accounts.',
+      'Failure to maintain this separation is a standalone, independently listed ground for discipline — not just "best practice."',
+      '225 ILCS 454/20-20(a)(17)'],
+    ['Interest on the escrow account', 'Noninterest-bearing by DEFAULT — unless the character of the deposit legally requires interest, or the principals to the transaction specifically request, IN WRITING, that it be placed in an interest-bearing account.',
+      'A common trap: assuming escrow accounts are always noninterest-bearing. They\'re only required to be, absent one of the two listed exceptions.',
+      '225 ILCS 454/20-20(a)(17)'],
+    ['Permitted early disbursement', 'Escrow money may be disbursed before the deal is consummated or terminated ONLY: (i) per the principals\' (or their authorized agents\') written direction, (ii) per release/payment terms already written into a contract the principals signed, or (iii) under a court order.',
+      'Three specific, exhaustive triggers — a broker can\'t release escrow money early just because it seems reasonable in the moment.',
+      '225 ILCS 454/20-20(a)(17)(A)'],
+    ['Escrow "abandonment" to the State', 'Escrow money can be deemed abandoned and transferred to the State Treasurer as unclaimed property, but only if: no disbursement under the rule above has happened, no claim has been filed in court, AND 6 months have passed since a principal\'s written demand for the funds.',
+      'All three conditions have to be true together — a broker can\'t treat unresolved escrow money as "abandoned" just because a deal fell apart.',
+      '225 ILCS 454/20-20(a)(17)(B); Revised Uniform Unclaimed Property Act'],
+    ['24-hour document production', 'A licensee must make all escrow records and related documents available to the Department within 24 HOURS of a request by Department personnel.',
+      'A real, short, specific deadline — much tighter than the 30-day response window that applies to most other Department information requests.',
+      '225 ILCS 454/20-20(a)(18)'],
+    ['Special-account record retention', 'Any record relating to a special-account transaction must be kept for a MINIMUM of 5 years; electronic records must be backed up at least monthly.',
+      'This 5-year figure applies specifically to special-account/escrow records — don\'t confuse it with other, shorter retention periods elsewhere in real estate practice.',
+      '225 ILCS 454/5-45(d)'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000 (225 ILCS 454), Sections 5-45(d) and 20-20(a)(17)-(18), as published by the Illinois General Assembly.',
+};
+
+var IL_RE_SALESPERSON_DISCIPLINE_PENALTIES_TABLE = {
+  headers: ['Ground / Penalty', 'Real Figure or Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['General discipline fine', 'Up to $25,000 PER VIOLATION, on top of (or instead of) probation, suspension, revocation, or reprimand.',
+      'This cap applies per violation, not per case — multiple violations in one matter can each carry their own $25,000 exposure.',
+      '225 ILCS 454/20-20(a)'],
+    ['Unlicensed-practice civil penalty', 'A SEPARATE civil penalty of up to $25,000 per offense for practicing (or holding oneself out as practicing) without a license — assessed after a hearing, due within 60 days of the order\'s effective date.',
+      'A common trap: assuming this is the same $25,000 cap as the general discipline fine above. It is a distinct penalty under a distinct section, aimed specifically at unlicensed activity.',
+      '225 ILCS 454/20-10'],
+    ['Guaranteed sales plan default', 'A licensee who fails to perform on a guaranteed sales plan exactly per its terms faces all normal Act penalties PLUS a civil fine of up to $25,000 — paid to the INJURED PARTY, not the State.',
+      'Unlike the two $25,000 figures above (which go to the Department/State), this one is a private-party payout — a real, distinct type of exposure.',
+      '225 ILCS 454/10-50(g)'],
+    ['Commingling', 'Mixing the money or property of others with the licensee\'s own money or property is its own standalone discipline ground.',
+      'No separate proof that a client was actually harmed is required — commingling alone is enough to trigger discipline.',
+      '225 ILCS 454/20-20(a)(22)'],
+    ['Interstate reciprocal discipline', 'Being disciplined by ANY other state, the District of Columbia, a territory, a foreign nation, or another authorized government agency is itself an independent Illinois discipline ground — as long as at least one of that discipline\'s grounds matches an Illinois ground.',
+      'A licensee can\'t treat out-of-state discipline as "not Illinois\'s problem" — it travels, and a certified copy of the other jurisdiction\'s record is treated as prima facie evidence here.',
+      '225 ILCS 454/20-20(a)(5)'],
+    ['Cheating on an exam', 'Cheating on (or helping someone else cheat on) the Real Estate License Exam OR a continuing education course/exam is its own standalone discipline ground.',
+      'This covers CE exams too, not just the original licensing exam — a distinction that\'s easy to miss.',
+      '225 ILCS 454/20-20(a)(7)-(8)'],
+  ],
+  journalNote: 'Two different $25,000 figures show up in this table for two different reasons (general discipline vs. unlicensed practice) and a THIRD $25,000 figure shows up for a completely different reason (guaranteed sales plan default, paid to a private party). Exam questions love pairing similar-looking dollar figures with different legal triggers — read for WHICH rule produced the number, not just the number itself.',
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000 (225 ILCS 454), Sections 10-50(g), 20-10, and 20-20(a), as published by the Illinois General Assembly.',
+};
+
+var IL_RE_SALESPERSON_ADDITIONAL_LAWS_TABLE = {
+  headers: ['Additional Law', 'How It Reaches a Real Estate Licensee', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Illinois Human Rights Act, Article 3', 'Violating ANY provision of Article 3 (real property transactions) is, by itself, an independent License Act discipline ground — regardless of whether the Human Rights Commission has filed or decided a complaint on it.',
+      'A licensee can face IDFPR discipline over an Article 3 violation even if no separate Human Rights Commission case ever happens.',
+      '225 ILCS 454/20-20(a)(31)'],
+    ['Fair housing / anti-steering (License Act\'s own text)', 'Separately from the Human Rights Act cross-reference above, the License Act independently makes it a discipline ground to influence a prospective party, "by any words or acts," so as to promote/maintain racially or religiously segregated housing, or to obstruct racially integrated housing.',
+      'This is a SECOND, independent ground covering the same conduct — a licensee could be charged either way, or both.',
+      '225 ILCS 454/20-20(a)(30)'],
+    ['Sex Offender Registration Act', 'A conviction of, or guilty/nolo contendere plea to, a crime that subjects a licensee to Sex Offender Registration Act compliance is its own independent discipline ground.',
+      'Grouped in the same subsection as ordinary felony/misdemeanor convictions, but the statute calls it out separately by name.',
+      '225 ILCS 454/20-20(a)(2)(C)'],
+    ['Auction License Act', 'Selling or leasing real estate at auction requires EITHER a broker\'s/managing broker\'s license, OR a valid Auction License Act license plus a real estate auction certification under Section 5-32. Even then, the auctioneer\'s own role is limited to setting the time/place/method, advertising, and "crying" the auction — any other brokerage activity (negotiating, closing, etc.) still requires a real estate license.',
+      'Holding an auctioneer\'s license does NOT by itself authorize full brokerage activity at a real estate auction — the certification only covers a narrow slice of it.',
+      '225 ILCS 454/5-20(13)-(14), 5-32'],
+  ],
+  journalNote: 'The PSI outline also lists the Illinois Landlord Tenant Act, the Commercial Broker Lien Act, the Radon Resistant Construction Act, and the Illinois Assistance Animal Integrity Act as Additional-Laws exam topics. This project could not locate the text of those specific Acts in a verified primary source -- only the cross-references actually confirmed inside 225 ILCS 454\'s own text are used above.',
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000 (225 ILCS 454), Sections 5-20(13)-(14), 5-32, and 20-20(a)(2)(C), (30), (31), as published by the Illinois General Assembly.',
+};
+
+var IL_RE_SALESPERSON_DISCLOSURES_TABLE = {
+  headers: ['Disclosure', 'When / How It\'s Required', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Designated agency disclosure', 'A licensee acting as a designated agent must advise the consumer, IN WRITING, no later than the point they BEGIN working as that consumer\'s designated agent.',
+      'The trigger is the start of the working relationship, not the signing of a brokerage agreement — those can be two different moments.',
+      '225 ILCS 454/15-35(a)'],
+    ['Dual agency consent', 'A licensee (or a sponsoring broker permitting sponsored licensees) may act as a dual agent in the same transaction ONLY with the INFORMED WRITTEN CONSENT of every client involved. The statute spells out specific presumption-of-consent language a signed document can use to satisfy this.',
+      'Verbal consent, or consent from only one side, doesn\'t satisfy this — and Illinois law provides an actual model disclosure paragraph, not just a general "get consent" instruction.',
+      '225 ILCS 454/15-45(a)'],
+    ['Contemporaneous offers', 'Preparing or making contemporaneous competing offers on the same property for different clients does NOT by itself breach a licensee\'s duty — but the licensee must give WRITTEN disclosure to every client involved, and must refer any client who requests it to a different designated agent.',
+      'The protection is conditional — skip the written disclosure step and the "no breach" protection doesn\'t apply.',
+      '225 ILCS 454/15-15(b)'],
+    ['Licensee\'s own-interest disclosure', 'A licensee must disclose, IN WRITING, to ALL parties in a transaction: their status as a licensee, and any interest — direct or indirect — they have or may have in the real estate itself, whenever they\'re buying, selling, leasing, or purchasing any interest in that property.',
+      'This applies even to indirect interests, not just outright ownership — a broader trigger than most people assume.',
+      '225 ILCS 454/10-27'],
+    ['Compensation-source disclosure', 'A licensee must disclose to their client the sponsoring broker\'s compensation policy (including terms, and any amounts offered to cooperating brokers) AND all sources of transaction-related compensation the licensee receives from any third party.',
+      'Two separate disclosure duties bundled into one rule — the broker\'s own comp structure, and any outside money flowing to the licensee specifically.',
+      '225 ILCS 454/10-10(a)-(b)'],
+    ['Dual-side compensation & referral-interest disclosure', 'If a sponsoring broker is compensated by BOTH sides of one transaction, that fact must be disclosed in writing to the client. Separately, if a licensee refers a client to a service provider in which the licensee holds more than a 1% ownership interest (or from which they get profit-sharing), that must be disclosed AT THE TIME of the referral.',
+      'The 1% threshold is a real, specific figure — a small ownership stake still triggers the disclosure duty, it doesn\'t take a controlling interest.',
+      '225 ILCS 454/10-10(c)-(d)'],
+  ],
+  sourceNote: 'Source: Illinois Real Estate License Act of 2000 (225 ILCS 454), Sections 10-10, 10-27, 15-15(b), 15-35, and 15-45, as published by the Illinois General Assembly.',
+};
+
+var IL_RE_SALESPERSON_KEY_TERMS_FLASHCARDS = [
+  { front: 'Client vs. Customer', back: 'Two distinct statutory categories: a "client" is a person being REPRESENTED by a licensee; a "customer" is a consumer who is NOT being represented. The duties owed differ sharply between the two.', source: '225 ILCS 454/1-10' },
+  { front: 'Designated agency / designated agent', back: 'A "designated agency" is the contractual relationship between a sponsoring broker and a client where one or more of the broker\'s licensees are named as that client\'s legal agent. The "designated agent" is that specifically-named sponsored licensee — not every licensee at the firm.', source: '225 ILCS 454/1-10, 15-50' },
+  { front: 'Dual agency (Illinois-specific twist)', back: 'A licensee representing both buyer and seller (or landlord and tenant) in one deal. When the relationship is a designated agency, whether dual agency exists is judged by the DESIGNATED AGENT\'s own relationships — not by the sponsoring broker\'s overall relationships with both sides.', source: '225 ILCS 454/1-10' },
+  { front: 'Escrow moneys — statutory definition', back: 'Includes earnest money and most security deposits — but specifically EXCLUDES a security deposit where the person holding it is also the SOLE OWNER of the property being leased. A landlord holding their own tenant\'s deposit on their own solely-owned property isn\'t handling "escrow moneys" in the Act\'s technical sense.', source: '225 ILCS 454/1-10' },
+  { front: 'Managing broker — self-sponsorship', back: 'A managing broker "may act as one\'s own sponsor" — a managing broker doesn\'t necessarily need a separate sponsoring broker over them the way a broker does.', source: '225 ILCS 454/1-10' },
+  { front: '"Team" — statutory definition', back: 'Two or more licensees who work together, hold themselves out publicly as a team/group under a team name DIFFERENT from their sponsoring broker\'s name, and are all supervised by the same managing broker and sponsored by the same sponsoring broker. A "team" is explicitly NOT a separately organized or incorporated legal entity.', source: '225 ILCS 454/1-10' },
+  { front: 'Residential leasing agent — 120-day provisional window', back: 'A person can engage in residential leasing activity for up to 120 CONSECUTIVE DAYS without yet holding the license — but only if a sponsoring broker is supervising, the Department has been notified the person is pursuing licensure, and the person enrolls in the pre-license education course within 60 days of starting.', source: '225 ILCS 454/5-5(d)' },
+  { front: 'Broker — the statutory "pattern of business" test', back: 'Beyond the obvious sale/lease/negotiate activities, a person also counts as acting as a "broker" if they engage in a PATTERN of buying, selling, or dealing in real estate contracts — defined as 2 or more such occasions in any 12-month period, alone or with others.', source: '225 ILCS 454/1-10(5)' },
+];
+
+var IL_RE_SALESPERSON_LICENSE_EXEMPTIONS_FLASHCARDS = [
+  { front: 'Owner/lessor exemption', back: 'An owner or lessor of real property (or their regular employee, acting within the scope of managing/selling/investing that property) doesn\'t need a license — but ONLY for property they actually own or lease. The exemption evaporates the moment they perform licensed activity for property they don\'t own or lease.', source: '225 ILCS 454/5-20(1)' },
+  { front: 'Attorney-in-fact / attorney-at-law exemption', back: 'Two distinct exemptions bundled together: (1) an attorney-in-fact acting under a duly executed and RECORDED power of attorney to convey real estate, and (2) an attorney at law performing the actual duties of an attorney at law.', source: '225 ILCS 454/5-20(2)' },
+  { front: 'Fiduciary/court-authority exemption', back: 'A person acting as a receiver, bankruptcy trustee, administrator, executor, or guardian — or otherwise acting under a court order or the authority of a will/testamentary trust — doesn\'t need a real estate license to handle the property involved.', source: '225 ILCS 454/5-20(3)' },
+  { front: 'On-site resident manager exemption', back: 'A resident manager of an apartment building, duplex, or apartment complex is exempt from licensure for leasing that property — but only if the unit they manage is genuinely their own PRIMARY RESIDENCE, and they actually live on the premises.', source: '225 ILCS 454/5-20(4)' },
+  { front: 'Government-officer exemption', back: 'Officers and employees of a federal agency, or of Illinois state government or any of its political subdivisions, are exempt from licensure while performing their OFFICIAL duties — the exemption is tied to acting in that official capacity, not to the person generally.', source: '225 ILCS 454/5-20(5)-(6)' },
+  { front: 'MLS exemption', back: 'A multiple listing service (or similar information exchange) is exempt from licensure for collecting/disseminating real estate listing information to licensees — but ONLY if no OTHER licensed activity is bundled in alongside that information-sharing function.', source: '225 ILCS 454/5-20(7)' },
+  { front: 'Advertising-medium exemption', back: 'A medium of advertising (a publisher, platform, etc.) is exempt from licensure for routinely selling or publishing real estate ads — again, ONLY as long as no other licensed activity comes bundled with the advertising.', source: '225 ILCS 454/5-20(9)' },
+  { front: 'Short-term/hotel-tax rental exemption', back: 'A person renting out a room (or all/part of their residence via an online marketplace) is exempt from real estate licensure if they\'re registered with the Illinois Department of Revenue and pay Hotel Operators\' Occupation Tax — capped at NOT MORE THAN 30 consecutive days AND not more than 60 days total in a calendar year.', source: '225 ILCS 454/5-20(15)' },
+];
+
+var IL_RE_SALESPERSON_BUSINESS_PRACTICES_FLASHCARDS = [
+  { front: 'Payment-of-compensation chain', back: 'A licensee generally cannot pay compensation directly to another sponsoring broker\'s sponsored licensee, and a sponsored licensee generally cannot accept compensation from anyone but their OWN sponsoring broker — compensation is supposed to flow through the sponsoring-broker relationship, with only narrow listed exceptions.', source: '225 ILCS 454/10-5' },
+  { front: 'One-sponsoring-broker rule', back: 'A licensee may perform licensed activities only for their OWN sponsoring broker, and may have only ONE sponsoring broker at any given time — no splitting activity across two sponsoring brokers simultaneously.', source: '225 ILCS 454/10-20(a)' },
+  { front: 'Business-entity compensation exception', back: 'A sponsoring broker may pay compensation directly to a business entity the licensee solely owns (formed just to receive that compensation) without that entity itself needing to be licensed — as long as it\'s owned solely by the licensee, or by the licensee and their spouse if both are licensed and sponsored by the same broker.', source: '225 ILCS 454/10-20(e)' },
+  { front: 'No compensation to unlicensed persons', back: 'No compensation may be paid to an unlicensed person in exchange for that person performing activities that require a license under the Act — a flat rule with no "just this once" exception for licensed activity performed by someone unlicensed.', source: '225 ILCS 454/10-15(a)' },
+  { front: 'Out-of-state/foreign broker cooperation exception', back: 'Nothing in the Act prohibits cooperating with, or paying compensation to, a broker licensed and domiciled in another state or country — as long as that person is properly licensed (or exempt) where THEY practice and complies with their own jurisdiction\'s law.', source: '225 ILCS 454/10-10(e)' },
+  { front: 'Brokerage agreement auto-expiration rule', back: 'Every written brokerage agreement must either auto-expire within a definite period, OR — if longer than one year — give the client an annual right to terminate on no more than 30 days\' written notice. An agreement missing BOTH of those features is VOID outright, not just unenforceable in part.', source: '225 ILCS 454/10-25' },
+  { front: '"Solely owned" / "By Owner" advertising', back: 'A sponsored or inactive licensee may advertise "By Owner" only for property they SOLELY own — meaning: 100% ownership alone, OR ownership as a joint tenant/tenant by the entirety, OR a 100% beneficial interest in a land trust. Even then, "broker owned"/"agent owned" disclosure is still required.', source: '225 ILCS 454/10-30(c)(2)' },
+  { front: 'CMA/BPO required written elements', back: 'A broker price opinion or comparative market analysis must be written and must include: its intended purpose, a description of the property, the methodology used, any assumptions/limiting conditions, disclosure of the broker\'s own interest (if any), and the broker\'s name/license number/signature — plus a required statement that it is NOT an appraisal.', source: '225 ILCS 454/10-45(b)' },
+];
+
+var IL_RE_SALESPERSON_AGENCY_LIABILITY_FLASHCARDS = [
+  { front: 'Vicarious liability shield', back: 'A consumer is NOT vicariously liable for the acts or omissions of the licensee providing services for or on their behalf — a client can\'t be dragged into legal responsibility just because their own agent did something wrong.', source: '225 ILCS 454/15-60' },
+  { front: 'No subagency through an MLS', back: 'A broker is not automatically a subagent of another broker\'s client merely by being a member of the same MLS or similar information exchange — and an offer of subagency can\'t even be MADE through an MLS in the first place.', source: '225 ILCS 454/15-55' },
+  { front: 'Article 15 statute of limitations', back: 'A private lawsuit under the Agency Relationships article is barred unless brought within 2 years of when the person knew (or reasonably should have known) of the act or omission — and in no event more than 5 YEARS after the act or omission itself, though the clock pauses for a minor or someone under legal disability.', source: '225 ILCS 454/15-70(b)' },
+  { front: 'Exclusive brokerage agreement — minimum services', back: 'Every exclusive brokerage agreement must be in writing and guarantee, at minimum: accepting and presenting offers/counteroffers, helping negotiate and communicate through to a signed deal with contingencies resolved, and answering the client\'s questions about all of that.', source: '225 ILCS 454/15-75' },
+  { front: 'Duties after termination', back: 'Once a brokerage agreement ends, a sponsoring broker and their licensees owe NO further duties to that former client — EXCEPT accounting for all money/property tied to the transaction, and keeping any confidential information confidential.', source: '225 ILCS 454/15-30' },
+  { front: 'Compensation does not determine agency', back: 'The mere fact that a licensee is paid, or promised payment, by a particular party does NOT by itself establish (or rule out) an agency relationship with that party — compensation and representation are legally separate questions.', source: '225 ILCS 454/15-40' },
+  { front: 'Index of decisions', back: 'The Department is required to keep a PUBLIC index of every formal decision on license issuance, refusal to issue, renewal, refusal to renew, revocation, suspension, and other disciplinary/probationary action — available during regular business hours.', source: '225 ILCS 454/20-5' },
+  { front: 'Attorney-licensee dual-role conflict', back: 'A licensee who is ALSO an attorney may not act as the attorney for either the buyer or the seller in a transaction where that same person is acting (or has acted) as the managing broker or broker — a specific, standalone discipline ground.', source: '225 ILCS 454/20-20(a)(34)' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9063,6 +9234,33 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   il_re_salesperson: [
+    { title: 'Licensing, Renewal & Exemptions Quick Facts', type: 'table', table: IL_RE_SALESPERSON_LICENSING_RENEWAL_TABLE,
+      desc: 'Real pre-license/post-license education hours, the 90-day renewal window, the expired-license ladder, and a genuinely surprising unlicensed-referral exemption — all pulled directly from the Real Estate License Act.',
+      topic: 'Licensing Requirements', free: true },
+    { title: 'Escrow & Special Account Handling Quick Facts', type: 'table', table: IL_RE_SALESPERSON_ESCROW_HANDLING_TABLE,
+      desc: 'Real rules on special-account deposits, when an escrow account can earn interest, the narrow early-disbursement triggers, the 6-month abandonment rule, and the 24-hour document-production deadline.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Disciplinary Grounds & Real Penalty Figures', type: 'table', table: IL_RE_SALESPERSON_DISCIPLINE_PENALTIES_TABLE,
+      desc: 'Three different real $25,000 figures tied to three different triggers, plus commingling, interstate discipline, and exam-cheating as standalone disciplinary grounds.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Additional Illinois Laws Cross-Referenced in the License Act', type: 'table', table: IL_RE_SALESPERSON_ADDITIONAL_LAWS_TABLE,
+      desc: 'How the Human Rights Act, the Sex Offender Registration Act, and the Auction License Act actually reach a real estate licensee — sourced directly from the License Act\'s own cross-references.',
+      topic: 'Additional Illinois Laws & Regulations' },
+    { title: 'Disclosures: Agency, Interest & Compensation Quick Facts', type: 'table', table: IL_RE_SALESPERSON_DISCLOSURES_TABLE,
+      desc: 'Real disclosure timing for designated agency and dual agency, contemporaneous-offer protections, and the specific written disclosures compensation and ownership-interest rules require.',
+      topic: 'Disclosures' },
+    { title: 'Key Terms & Roles', type: 'flashcards', flashcards: IL_RE_SALESPERSON_KEY_TERMS_FLASHCARDS,
+      desc: 'The statutory definitions the exam actually tests — client vs. customer, designated agency, dual agency\'s Illinois-specific twist, and more, straight from Section 1-10.',
+      topic: 'Illinois Real Estate License Act', free: true },
+    { title: 'License Exemption Concepts', type: 'flashcards', flashcards: IL_RE_SALESPERSON_LICENSE_EXEMPTIONS_FLASHCARDS,
+      desc: 'Eight real, distinct license exemptions — attorneys-in-fact, resident managers, MLS services, short-term rentals, and more — each with its own real limiting conditions.',
+      topic: 'Licensing Requirements' },
+    { title: 'Business Practices & Compensation Concepts', type: 'flashcards', flashcards: IL_RE_SALESPERSON_BUSINESS_PRACTICES_FLASHCARDS,
+      desc: 'How compensation is legally allowed to flow, the brokerage-agreement void trap, "By Owner" advertising rules, and required CMA/BPO elements.',
+      topic: 'Illinois Real Estate License Act' },
+    { title: 'Agency Liability, Duties & Enforcement Concepts', type: 'flashcards', flashcards: IL_RE_SALESPERSON_AGENCY_LIABILITY_FLASHCARDS,
+      desc: 'Vicarious liability, the Article 15 statute of limitations, exclusive-agreement minimum services, and other agency and enforcement concepts beyond the raw numbers.',
+      topic: 'Illinois Real Estate License Act' },
     { title: 'Illinois Real Estate License Act of 2000', type: 'pdf', url: 'https://www.ilga.gov/legislation/ILCS/details?MajorTopic=&Chapter=&ActName=Real+Estate+License+Act+of+2000.&ActID=1364&ChapterID=24&SeqStart=&ChapAct=FullText',
       desc: 'The official statute (225 ILCS 454) published by the Illinois General Assembly — the authoritative source the state-specific portion of the exam is based on.',
       topic: 'General Reference', free: true },
