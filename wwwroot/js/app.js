@@ -7303,6 +7303,14 @@ var RESOURCE_TYPE_LABEL = {
   audio: { icon: '🎧', label: 'Audio' }, video: { icon: '🎥', label: 'Video' },
   pdf: { icon: '📄', label: 'PDF Guide' }, image: { icon: '🖼️', label: 'Quick Reference' },
   table: { icon: '📊', label: 'Reference Table' }, flashcards: { icon: '🗂️', label: 'Flashcards' },
+  // 'link'/'web'/'webpage' are external (non-file) reference URLs -- distinct historical type
+  // names for the same underlying resource shape (a plain external link), all still present in
+  // the D1 resources table across ~42 tracks (notary/driver/boating/motorcycle/RE-broker
+  // official-site links). Previously MISSING from this map entirely, which crashed
+  // resourceTypeCellHtml() (t.icon on undefined) for every track containing one of these rows --
+  // a real, live bug predating the 2026-09-03 D1 migration, just carried forward unnoticed.
+  link: { icon: '🔗', label: 'Official Link' }, web: { icon: '🔗', label: 'Official Link' },
+  webpage: { icon: '🔗', label: 'Official Link' },
 };
 function resourceTypeCellHtml(type) {
   var t = RESOURCE_TYPE_LABEL[type];
