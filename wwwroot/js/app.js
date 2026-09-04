@@ -9243,6 +9243,173 @@ var IL_RE_BROKER_FUNDS_RECORDS_FLASHCARDS = [
   { front: 'Recovery Fund investment authority', back: 'Recovery Fund money may be invested and reinvested the same way Illinois PENSION funds are invested under the Illinois Pension Code. Any earnings, interest, or dividends flow back into the License Administration Fund -- not back into the Recovery Fund itself.', source: '225 ILCS 454/25-35' },
 ];
 
+// ============================================================================
+// OH RE SALESPERSON -- Key Facts Digest, drafted 2026-09-03, sourced from ORC
+// Chapter 4735 and OAC Chapter 1301:5.
+// ============================================================================
+var OH_RE_SALESPERSON_RECOVERY_FUND_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Recovery Fund cap per licensee', '$40,000 -- the ONLY cap Ohio imposes',
+      'Unlike states that layer a separate per-transaction limit on top of a per-licensee limit, Ohio caps total fund exposure to one single number per licensee -- there is no second, smaller per-transaction ceiling to also memorize.',
+      'ORC § 4735.12(D)'],
+    ['Special assessment trigger', 'Up to $10 per year of the licensing period on every licensee -- but ONLY if the fund balance is under $250,000 as of the July 1 before the renewal filing',
+      'If the fund is healthy (over $250,000), the commission cannot impose the assessment at all that renewal cycle -- a real conditional trigger, not an automatic annual fee everyone always pays.',
+      'ORC § 4735.12(A)'],
+    ['Deadline to apply for fund payment', 'Not more than 1 year after ALL proceedings on the underlying judgment -- including any appeals -- have ended',
+      'The clock starts at the end of the appeals process, not at the original judgment date or the date the claim first arose -- an easy detail to misplace on a timeline question.',
+      'ORC § 4735.12(B)(4)(e)'],
+    ['What the fund will NOT pay', 'Punitive damages, attorney fees, and interest on the underlying judgment are excluded outright; court costs are recoverable only at the superintendent\'s discretion',
+      'A claimant who wins big on punitive damages at trial still only recovers their actual, direct losses from the fund -- the rest of the judgment stays uncollectible from the state.',
+      'ORC § 4735.12(B)(2)'],
+    ['Interest rate on a licensee\'s repayment obligation', 'The variable statutory judgment-interest rate set under ORC § 1343.03(A) -- not a flat percentage',
+      'Don\'t import a fixed number like "4% per year" from another state\'s recovery-fund table -- Ohio\'s rate floats with the statutory judgment rate and changes over time.',
+      'ORC § 4735.12(E)'],
+  ],
+  journalNote: 'A discharge in bankruptcy does NOT automatically restore a licensee\'s suspended license -- reactivation still requires full repayment to the fund, unless the underlying judgment itself was included in the discharge and never reaffirmed by the debtor.',
+  sourceNote: 'Source: Ohio Revised Code § 4735.12 (Real Estate Recovery Fund), as published via the Ohio Legislative Service Commission (codes.ohio.gov).',
+};
+
+var OH_RE_SALESPERSON_ADVERTISING_TABLE = {
+  headers: ['Requirement', 'Real Rule', 'Why It Matters', 'Code/Rule Section'],
+  rows: [
+    ['Name identification in any ad', 'The licensee\'s name AND the brokerage name must both appear, with the brokerage name in EQUAL prominence to the salesperson\'s name',
+      'It\'s not enough to put the brokerage name in fine print -- Ohio requires equal visual prominence, a specific and checkable standard, not just "somewhere on the ad."',
+      'ORC § 4735.16(B)(1),(3); OAC 1301:5-1-02(B)'],
+    ['Advertising property the licensee personally owns', 'Must identify the licensee by name AND state the property is "agent owned"; if it\'s also listed with a brokerage, that brokerage\'s name must appear too',
+      'A licensee can\'t quietly advertise their own listing without disclosing the conflict created by their ownership interest.',
+      'ORC § 4735.16(B)(2)'],
+    ['"For sale by owner" language on an exclusively-listed property', 'Prohibited -- a broker representing a seller under an exclusive right-to-sell or exclusive right-to-lease agreement cannot advertise it as "for sale by owner" or otherwise imply the seller isn\'t represented',
+      'A classic trap: some assume FSBO-style ads attract buyers who avoid agents, but doing this on an exclusively-listed property is flatly illegal in Ohio.',
+      'ORC § 4735.16(B)(4)'],
+    ['Website content going stale', 'Must be updated within 14 days of becoming outdated or expired, and the site must display the date it was last updated',
+      'A specific day-count deadline, not a vague "keep it current" standard -- 14 days is the real, testable number.',
+      'OAC 1301:5-1-02(E)'],
+    ['Team advertising', 'The team name must include the word "group" or "team," may NOT use "realty" or "associates," and must name at least one licensed team member plus the brokerage at equal or greater prominence',
+      'Ohio regulates team names as their own distinct category, layered on top of the general individual/brokerage advertising rules.',
+      'OAC 1301:5-1-21'],
+    ['Citation penalty for an advertising violation', '$200 per violation, capped at $2,500 per citation; a 3rd citation within 12 consecutive months forces full disciplinary proceedings instead of just another citation',
+      'The citation-vs-formal-discipline distinction is real: a first or minor violation gets a fine-only citation, but repeat offenders escalate automatically into the formal process.',
+      'ORC § 4735.16(C)'],
+  ],
+  journalNote: 'Advertising violations are treated as PRIMA-FACIE evidence of misconduct under § 4735.18(A)(21) -- the superintendent doesn\'t have to separately prove intent to mislead once a rule violation is shown.',
+  sourceNote: 'Source: Ohio Revised Code § 4735.16 and Ohio Administrative Code 1301:5-1-02, 1301:5-1-21, as published via the Ohio Legislative Service Commission.',
+};
+
+var OH_RE_SALESPERSON_TRUST_EARNEST_MONEY_TABLE = {
+  headers: ['Requirement', 'Real Rule', 'Why It Matters', 'Code/Rule Section'],
+  rows: [
+    ['General trust/special account', 'Must be non-interest-bearing, kept at an Ohio-chartered depository, separate from the broker\'s personal funds, and labeled "trust account" or "special account" on every check and deposit ticket',
+      'The exact-wording labeling requirement is a real, checkable detail -- not just an internal bookkeeping preference.',
+      'ORC § 4735.18(A)(26); OAC 1301:5-5-08(B)'],
+    ['Broker\'s own money in the trust account', 'Allowed ONLY to cover a bank-required minimum balance or a service charge -- nothing else',
+      'A narrow, two-item exception -- any other mixing of broker funds with client funds is a straight § 4735.18(A)(26) commingling violation.',
+      'OAC 1301:5-5-08(C)'],
+    ['Property management trust account interest', 'CAN earn interest (unlike the general trust account), and if it does, that interest must be paid to the property owner(s) on a pro rata basis at least quarterly',
+      'A genuine exception to the "trust accounts don\'t earn interest" rule that examinees often overgeneralize from the general-account rule above.',
+      'OAC 1301:5-5-11(B)(1)'],
+    ['Earnest money stuck in a dispute', 'If the purchase agreement contains the statutory default clause, the broker must return the earnest money to the purchaser by September 1 following the 2-year anniversary of the deposit, unless signed joint instructions or notice of a court filing arrive first',
+      'A distinctly Ohio, recently updated mechanic (effective March 2026) -- don\'t assume every state uses this same 2-year/September 1 formula.',
+      'ORC § 4735.24(B),(C)'],
+    ['Transaction and trust records retention', '3 years from the date of the transaction',
+      'One uniform retention window applies to listing forms, earnest money receipts, offers/acceptances, and all trust-account receipt/disbursement records alike.',
+      'ORC § 4735.18(A)(24)'],
+  ],
+  sourceNote: 'Source: Ohio Revised Code §§ 4735.18, 4735.24 and Ohio Administrative Code 1301:5-5-08, 1301:5-5-11, as published via the Ohio Legislative Service Commission.',
+};
+
+var OH_RE_SALESPERSON_AGENCY_DISCLOSURE_TABLE = {
+  headers: ['Who / Situation', 'Rule', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Purchaser\'s agent (or seller\'s subagent working with a purchaser)', 'Must present the agency disclosure statement and request the purchaser\'s signature no later than the PREPARATION of a purchase or lease offer',
+      'The trigger is the act of preparing an offer, not submitting it or closing -- an easy detail to misplace in the transaction timeline.',
+      'ORC § 4735.58(A)(1)'],
+    ['Seller', 'The seller\'s agent (or the purchaser\'s agent, if the seller has none) must present the disclosure statement and get it signed BEFORE presenting the seller with a written offer',
+      'Notice the asymmetry: the purchaser-side trigger is "preparing" an offer, but the seller-side trigger is "presenting" one -- different verbs, different moments.',
+      'ORC § 4735.58(A)(1)'],
+    ['Management-level licensee in an in-company transaction', 'Automatically a dual agent UNLESS that specific licensee personally represents only one side of the deal (or is a principal in it)',
+      'A default-dual-agent rule that surprises people -- simply being "just a supervisor" doesn\'t exempt someone from dual agency status.',
+      'ORC § 4735.70(C)'],
+    ['Dual agency generally', 'Requires FULL knowledge and WRITTEN consent from both the seller and purchaser on the agency disclosure statement -- and any material change afterward triggers a fresh disclosure and a chance to revoke consent',
+      'Consent isn\'t a one-time checkbox; it has to be re-earned if the underlying facts materially change mid-transaction.',
+      'ORC § 4735.71(A)'],
+    ['Confidential information leaked to the "wrong" side in a dual agency deal', 'The brokerage must immediately notify both clients IN WRITING and offer to resign representation of both',
+      'A mandatory, immediate, dual-notice-plus-resignation-offer response -- not a discretionary internal fix left to the brokerage\'s judgment.',
+      'ORC § 4735.72(E)(1)'],
+  ],
+  journalNote: 'Auction sales get their own disclosure rule: the licensee must verbally tell the audience they represent the seller before the auction starts, then hand the winning bidder the written disclosure statement before any purchase contract is signed.',
+  sourceNote: 'Source: Ohio Revised Code §§ 4735.58, 4735.70, 4735.71, 4735.72, as published via the Ohio Legislative Service Commission.',
+};
+
+var OH_RE_SALESPERSON_CE_RENEWAL_TABLE = {
+  headers: ['Fact', 'Figure', 'Why It Matters', 'Code Section'],
+  rows: [
+    ['Standard continuing education requirement', '30 hours every 3 years, due on the licensee\'s birthday 3 years after initial licensure and every 3 years after that',
+      'The clock is tied to the licensee\'s own birthday and license anniversary -- not one fixed calendar date shared by every licensee statewide.',
+      'ORC § 4735.141(A)'],
+    ['Principal broker duties course', '3 hours, required WITHIN the 30-hour total for anyone licensed as a broker, broker-on-deposit, or acting as a management-level licensee',
+      'It\'s not an extra 3 hours on top of 30 -- it\'s a mandatory subset that people who move from salesperson to broker often overlook.',
+      'ORC § 4735.141(A)'],
+    ['Reduced CE for licensees age 70+', '9 hours total (Ohio real estate law, recent state/federal law changes, civil rights law, and canons of ethics) -- plus the 3-hour broker/management course if applicable',
+      'A real, lower carve-out for older licensees, not just a vague "reasonable accommodation" left to the superintendent\'s discretion.',
+      'ORC § 4735.141(A)(1),(2)'],
+    ['Post-licensure education for NEW brokers', '10 hours, due within 12 months of the broker license being issued -- separate from and in addition to the normal 30-hour CE cycle',
+      'A common source of confusion: this is a one-time new-broker requirement, distinct from the recurring CE cycle every licensee faces.',
+      'ORC § 4735.07(G)(1)'],
+    ['3-year license renewal fee', '$182 for a salesperson license, $243 for a broker license -- plus a 50% late penalty if filed after the deadline (within 12 months)',
+      'Real dollar figures examinees are expected to know precisely, not just "there\'s a renewal fee."',
+      'ORC § 4735.15(B)(2),(3),(4)'],
+    ['Consequence of missing a CE or renewal deadline', 'License is suspended automatically (no superintendent action needed); if not cured within 12 months, it\'s then automatically REVOKED',
+      'Two distinct automatic stages -- suspension first, then revocation -- each running on its own 12-month clock.',
+      'ORC § 4735.141(C); § 4735.14(C)'],
+  ],
+  sourceNote: 'Source: Ohio Revised Code §§ 4735.07(G), 4735.14, 4735.141, 4735.15, as published via the Ohio Legislative Service Commission.',
+};
+
+var OH_RE_SALESPERSON_GOVERNANCE_DISCIPLINE_FLASHCARDS = [
+  { front: 'Ohio real estate commission', back: 'Five members appointed by the governor: four must have been licensed real estate brokers in Ohio for at least 10 years immediately before appointment, and one represents the public. Terms run 5 years, and no member may serve more than two consecutive full terms.', source: 'ORC § 4735.03' },
+  { front: 'Superintendent of real estate', back: 'The state official who actually administers Chapter 4735 day-to-day -- investigates complaints, issues orders, and administers the Real Estate Recovery Fund -- while the five-member Commission handles ethics, appeals, and recovery-fund hearings.', source: 'ORC § 4735.05(B)' },
+  { front: 'Informal mediation meeting', back: 'A voluntary meeting between the complainant, the licensee, and a division investigator, available only if BOTH sides request it within 10 business days of the superintendent\'s notice. Reaching an accommodation closes the complaint file without a formal investigation.', source: 'ORC § 4735.051(A),(B)' },
+  { front: 'Investigation statute of limitations', back: 'The commission or superintendent generally must commence an investigation within 3 years of the alleged violation, or it\'s barred permanently -- no suspension, revocation, or other discipline can follow from a barred investigation.', source: 'ORC § 4735.32(A)(1)' },
+  { front: 'Civil penalty for unlicensed activity', back: 'A person practicing real estate without a license can be assessed a civil penalty of up to $1,000 PER violation -- and each day the unlicensed activity continues counts as its own separate violation.', source: 'ORC § 4735.052(C)(4)' },
+  { front: 'Citation vs. formal disciplinary action', back: 'Minor or first-time violations (like an advertising slip-up) can be resolved with a citation and a capped fine. But a licensee cited 3 times within 12 consecutive months automatically triggers full disciplinary proceedings for the next violation in that window.', source: 'ORC § 4735.16(C); § 4735.181(D)' },
+  { front: 'Ancillary trustee', back: 'A qualified person the superintendent can recommend or appoint to wind down -- or temporarily continue -- a sole broker\'s business transactions after that broker dies, has their license revoked, or becomes incapacitated, suspended, or incarcerated.', source: 'ORC § 4735.05(C)(3); OAC 1301:5-3-02' },
+  { front: 'Settlement agreement', back: 'A licensee facing a disciplinary hearing can admit the violation, waive the right to a Chapter 119 hearing, and propose a sanction -- but it only becomes final if the full Commission accepts it at a regular meeting; the Commission can also reduce the sanction or reject the deal entirely.', source: 'OAC 1301:5-3-14' },
+];
+
+var OH_RE_SALESPERSON_LICENSE_STATUS_FLASHCARDS = [
+  { front: 'Broker\'s license on deposit', back: 'The status a broker\'s license enters when the broker chooses to work as a salesperson under another broker, or simply deposits it with the division. It can stay on deposit indefinitely as long as the broker keeps meeting CE and renewal requirements.', source: 'ORC § 4735.01(N); OAC 1301:5-1-07' },
+  { front: 'Inactive license', back: 'A salesperson license held by the division, properly renewed, but not currently associated with any broker. It can remain inactive indefinitely -- unlike a suspended license, which carries hard reactivation deadlines.', source: 'ORC § 4735.01(M)' },
+  { front: 'Permanently resigned status', back: 'A voluntary, FINAL surrender of a license -- available to a licensee any time before their renewal is due, or while under a qualifying suspension. Once resigned, the only way back is a brand-new application, not a simple reactivation.', source: 'ORC § 4735.01(Y); § 4735.142' },
+  { front: 'Principal broker vs. management level licensee vs. associate broker', back: 'The principal broker oversees and directs the whole brokerage and is personally on the hook for supervision duties. A management level licensee has been assigned supervisory duties over other licensees but isn\'t the principal broker. An associate broker holds a broker license but functions as neither.', source: 'ORC § 4735.081; § 4735.01(HH),(FF),(AA)' },
+  { front: 'Right-to-list home sale agreement', back: 'An agreement where a homeowner grants someone the exclusive right to list the home for sale at a FUTURE date, in exchange for money now -- especially one that purports to run with the land or act as a lien. Entering into one is an outright disciplinary violation for a licensee, not just a bad business practice.', source: 'ORC § 4735.01(II); § 4735.18(A)(39)' },
+  { front: 'Out-of-state commercial broker', back: 'A broker licensed in another state who may work on Ohio COMMERCIAL real estate deals without an Ohio license -- but only by cooperating with an Ohio broker, filing consent to Ohio jurisdiction, and routing all escrow funds through the Ohio broker\'s trust account.', source: 'ORC § 4735.01(S); § 4735.022' },
+  { front: 'Post-licensure education (new brokers)', back: 'A one-time, 10-hour requirement due within 12 months of a broker\'s license being issued -- separate from and in addition to the recurring 30-hour continuing education cycle every licensee faces.', source: 'ORC § 4735.07(G)(1)' },
+  { front: 'Definite place of business', back: 'Every licensed broker must maintain an actual physical business location in Ohio -- a P.O. box does not satisfy this requirement, whether for the main office or any branch office.', source: 'ORC § 4735.13(A)' },
+];
+
+var OH_RE_SALESPERSON_PRACTICE_RULES_FLASHCARDS = [
+  { front: 'Trust/special account labeling', back: 'Every check and deposit ticket drawn on a broker\'s trust or special account must physically bear the words "trust account" or "special account" -- a bare-bones bookkeeping label the rule makes mandatory, not optional.', source: 'OAC 1301:5-5-08(B)' },
+  { front: 'Property management trust account', back: 'A SEPARATE trust account brokerages managing rental property must maintain, distinct from the general trust account -- used for security deposits, rents, and owner-related expenses, with its own per-owner ledger sheet requirement.', source: 'OAC 1301:5-5-11(A),(C)' },
+  { front: 'Use of name or license for benefit of others', back: 'No licensee may lend their name or license to another person, firm, or corporation to get around licensing law -- including a principal broker who fails to personally oversee the brokerage they\'re licensed to run.', source: 'OAC 1301:5-1-14' },
+  { front: 'Blockbusting', back: 'Illegally inducing someone to sell or rent a home, for profit, by suggesting that people from a protected class are moving into the neighborhood. Every agency agreement and brokerage disclosure statement must state that this practice is illegal.', source: 'OAC 1301:5-6-04(B); ORC § 4735.55(C)(3)' },
+  { front: 'Home inspector referrals', back: 'If a licensee gives a client the name of a home inspector at all, they must provide at least THREE licensed inspector names -- giving just one creates the appearance of an improper steering relationship.', source: 'ORC § 4735.22' },
+  { front: 'Team advertising rules', back: 'A group of licensees advertising together as a "team" must include the word "group" or "team" in the team name, may NOT use "realty" or "associates," and must still name at least one licensed member plus the brokerage at equal or greater prominence.', source: 'OAC 1301:5-1-21' },
+  { front: 'Branch office licensing', back: 'A broker with more than one place of business must obtain a separate duplicate license for each branch office, and each branch must be headed by a licensed broker or salesperson in charge.', source: 'ORC § 4735.13(A)' },
+  { front: 'Earnest money default-return clause', back: 'A purchase agreement can include a clause letting the broker return disputed earnest money to the purchaser without further notice -- but only if, within 2 years of the deposit, the broker never received signed joint instructions or notice of a filed court action.', source: 'ORC § 4735.24(B)' },
+];
+
+var OH_RE_SALESPERSON_AGENCY_FIDUCIARY_FLASHCARDS = [
+  { front: 'Fiduciary duties (non-waivable core)', back: 'Every agent owes their client reasonable skill and care, loyalty, compliance with fair housing and other applicable law, disclosure of material facts, and a timely accounting of money and property -- and these specific duties can NEVER be waived by the client.', source: 'ORC § 4735.62; § 4735.621(A)' },
+  { front: 'Waivable duties', back: 'Unlike the core fiduciary duties, the specific "promote the client\'s interests" duties spelled out for representing a seller or a purchaser CAN be waived -- but only if the client signs a formal waiver-of-duties statement.', source: 'ORC § 4735.621(B),(C)' },
+  { front: 'Subagency relationship', back: 'One of only four agency relationship types Ohio permits: a licensee acting for another licensee in performing duties for that other licensee\'s client -- distinct from representing the client directly.', source: 'ORC § 4735.51(L); § 4735.53(A)(4)' },
+  { front: 'Confidential information -- statutory definition', back: 'Any information a client asks to be kept confidential, or that would hurt the client\'s position in the deal if disclosed -- plus anything the law independently requires to stay confidential. This obligation survives even after the agency relationship or the transaction ends.', source: 'ORC § 4735.51(F); § 4735.74(B)' },
+  { front: 'Contemporaneous offers', back: 'Two or more offers on the SAME property, from clients the SAME licensee represents, that the licensee knows will be considered by the owner around the same time. Representing both doesn\'t breach any duty -- but the licensee must disclose the fact of contemporaneous offers, even while keeping each purchaser\'s identity and offer terms confidential from the other.', source: 'ORC § 4735.51(G); § 4735.65(B)' },
+  { front: 'In-company transaction', back: 'A deal where the purchaser and seller are BOTH represented by licensees from the same brokerage -- the specific scenario that can trigger automatic dual agency for a supervising management-level licensee.', source: 'ORC § 4735.51(I); § 4735.70(C)' },
+  { front: 'Material relationship (dual agency disclosure)', back: 'Any actually-known personal, family, or business relationship between the brokerage (or an affiliated licensee) and a client that could compromise independent judgment toward the OTHER client -- it must be disclosed on the dual agency statement if one exists.', source: 'ORC § 4735.57(B)(4)' },
+  { front: 'Duties after closing', back: 'Once the deal closes (or the contract otherwise ends), a licensee\'s remaining duties narrow to just two: provide a full accounting of money and property, and keep transaction information confidential -- with specific carve-outs like court order, crime prevention, or defending the brokerage from a wrongful-conduct claim.', source: 'ORC § 4735.74' },
+];
+
 // `free: true` = viewable/playable without an access code (a hand-picked promotional sample).
 // This flag is presentation-only -- the real gate is the server's own FREE_RESOURCES allowlist
 // in examprep-api, which must be kept in sync with this list by filename.
@@ -9661,6 +9828,33 @@ var RESOURCES = {
       topic: 'General Reference', free: true },
   ],
   oh_re_salesperson: [
+    { title: 'Real Estate Recovery Fund Quick Facts', type: 'table', table: OH_RE_SALESPERSON_RECOVERY_FUND_TABLE,
+      desc: 'The real Ohio Real Estate Recovery Fund cap, special assessment trigger, and filing deadline pulled directly from the Revised Code -- the single-cap structure that trips up anyone who studied a different state\'s recovery fund first.',
+      topic: 'State Governance, Discipline & Recovery Fund', free: true },
+    { title: 'Advertising & Team Advertising Quick Facts', type: 'table', table: OH_RE_SALESPERSON_ADVERTISING_TABLE,
+      desc: 'Real name-prominence rules, the FSBO-advertising trap on exclusive listings, the 14-day stale-website deadline, and the team-name rules -- with the real citation penalty structure behind them.',
+      topic: 'License Law & Commission Rules (Advertising, Trust Accounts, Property Management)' },
+    { title: 'Trust Account & Earnest Money Quick Facts', type: 'table', table: OH_RE_SALESPERSON_TRUST_EARNEST_MONEY_TABLE,
+      desc: 'Real trust account labeling and commingling rules, the property-management-account interest exception, Ohio\'s 2-year earnest money dispute mechanic, and the 3-year records retention window.',
+      topic: 'License Law & Commission Rules (Advertising, Trust Accounts, Property Management)' },
+    { title: 'Agency Disclosure & Dual Agency Quick Facts', type: 'table', table: OH_RE_SALESPERSON_AGENCY_DISCLOSURE_TABLE,
+      desc: 'The real, distinct timing triggers for purchaser-side vs. seller-side agency disclosure, the automatic-dual-agent trap for management-level licensees, and what happens when confidential information leaks to the wrong side.',
+      topic: 'Brokerage Relationships & Agency Law' },
+    { title: 'Continuing Education & Renewal Quick Facts', type: 'table', table: OH_RE_SALESPERSON_CE_RENEWAL_TABLE,
+      desc: 'Real CE hour counts (including the often-missed 3-hour broker course and the age-70+ reduction), the one-time new-broker post-licensure requirement, and the real renewal fees and late penalty.',
+      topic: 'Licensing Requirements & Continuing Education' },
+    { title: 'Governance & Discipline Concepts', type: 'flashcards', flashcards: OH_RE_SALESPERSON_GOVERNANCE_DISCIPLINE_FLASHCARDS,
+      desc: 'How the Commission is actually composed, how a complaint moves through mediation and investigation, the real 3-year investigation deadline, and the citation-vs-formal-discipline escalation path.',
+      topic: 'State Governance, Discipline & Recovery Fund' },
+    { title: 'Key Ohio License Status Terms', type: 'flashcards', flashcards: OH_RE_SALESPERSON_LICENSE_STATUS_FLASHCARDS,
+      desc: 'Real Ohio-specific license-status vocabulary -- on deposit, inactive, resigned -- plus the right-to-list home sale agreement trap and the definite-place-of-business requirement.',
+      topic: 'Licensing Requirements & Continuing Education', free: true },
+    { title: 'License Law & Commission Rules Concepts', type: 'flashcards', flashcards: OH_RE_SALESPERSON_PRACTICE_RULES_FLASHCARDS,
+      desc: 'Trust account labeling, property management trust accounts, the license-lending prohibition, blockbusting, home inspector referrals, and the earnest money default-return clause.',
+      topic: 'License Law & Commission Rules (Advertising, Trust Accounts, Property Management)' },
+    { title: 'Agency & Fiduciary Duty Concepts', type: 'flashcards', flashcards: OH_RE_SALESPERSON_AGENCY_FIDUCIARY_FLASHCARDS,
+      desc: 'The real statutory duty language behind Ohio agency law -- what can and can\'t be waived, subagency, confidential information, contemporaneous offers, and duties that survive closing.',
+      topic: 'Brokerage Relationships & Agency Law' },
     { title: 'Ohio Revised Code Chapter 4735 (Real Estate Brokers)', type: 'pdf', url: 'https://codes.ohio.gov/ohio-revised-code/chapter-4735',
       desc: 'The official statute, published by the Ohio Legislative Service Commission — the authoritative source the state-specific portion of the exam is based on.',
       topic: 'General Reference', free: true },
