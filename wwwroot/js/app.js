@@ -3667,7 +3667,12 @@ function categoryWaitlistPromptHtml(kind, tracks) {
 // tracks/breakdown wraps) so pick-category-state can refresh it without a full page re-render.
 function categoryHeroTrackLinkHtml(track) {
   if (!track) return '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>';
-  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
+  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>' +
+    // Parity with the "Try Free Sample" question CTA, but for the free resources tab instead --
+    // #/resources needs no login (see renderResources()'s own comment: anonymous visitors get the
+    // server's free-sample allowlist signed), so this is a real, working preview the moment a
+    // state is picked, not a locked teaser.
+    '<a class="btn-secondary hub-hero-btn" href="' + track.route + '#/resources">Preview Free Resources →</a>';
 }
 
 function categoryFeatureTilesHtml(tiles) {
