@@ -6710,11 +6710,18 @@ function drawCategorySampleQuestion() {
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
-function categoryStatsHtml(activeCount, stateCount) {
+function categoryStatsHtml(activeCount, stateCount, resourceStats) {
   var tiles = [
     { value: activeCount, label: 'State Tracks' },
     { value: stateCount, label: 'States Covered' },
   ];
+  // Same "only show if real" rule as the homepage's own resource tiles (fillReadinessCard) -- many
+  // categories (Driver/CDL/Motorcycle/Boating) have no Key Facts Digest content yet, and a bare
+  // "0 Quick-Fact Tables" would read as a broken page, not an honest gap.
+  if (resourceStats && (resourceStats.tables || resourceStats.decks)) {
+    tiles.push({ value: resourceStats.tables, label: 'Quick-Fact Tables' });
+    tiles.push({ value: resourceStats.decks, label: 'Flashcard Decks' });
+  }
   return '<div class="hub-readiness-card">' +
     '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Coverage</span>, Not Marketing Copy</p>' +
     '<div class="hub-readiness-top-row">' +
@@ -6800,7 +6807,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size) + '</div>' +
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
     '</div>' +
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
@@ -7194,6 +7201,15 @@ function fillReadinessCard() {
       { value: s.tracksLive, label: 'Live Tracks' },
       { value: s.examsCompleted, label: 'Mock Exams' },
     ];
+    // Site-wide Key Facts Digest coverage (Quick-Fact tables + flashcard decks), added as a second
+    // tile pair only once real content exists to show -- an all-zero pair would look like a broken
+    // page rather than an honest "not built yet," so this is genuinely additive, never a fabricated
+    // placeholder. See aggregateResourceStats().
+    var siteResourceStats = aggregateResourceStats(HUB_EXAMS.filter(function (e) { return e.active; }).map(function (e) { return e.examType; }));
+    if (siteResourceStats.tables || siteResourceStats.decks) {
+      tiles.push({ value: siteResourceStats.tables, label: 'Quick-Fact Tables' });
+      tiles.push({ value: siteResourceStats.decks, label: 'Flashcard Decks' });
+    }
     wrap.innerHTML = '<div class="hub-readiness-card">' +
       '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Results</span>, Not Marketing Copy</p>' +
       '<div class="hub-readiness-top-row">' +
@@ -7333,6 +7349,42 @@ function resourceInventorySummary(examType) {
   if (counts.video) parts.push(counts.video + ' video' + (counts.video === 1 ? '' : 's'));
   if (counts.table) parts.push(counts.table + ' reference guide' + (counts.table === 1 ? '' : 's'));
   return { compact: mediaCount + ' audio/video lessons', full: parts.join(' · ') + ', plus the official handbook' };
+}
+
+// Aggregates real per-track resource counts (Quick-Fact tables, flashcard decks + their card
+// count, audio/video lessons) across one or more exam types -- powers the "N tables · N decks"
+// style stat tiles on the homepage, category pages, and track landing pages. Excludes pdf/link
+// entries (those are just official-handbook links, not content this site authored). Computed live
+// from RESOURCES itself, same never-drifts-out-of-sync property as resourceInventorySummary above.
+function aggregateResourceStats(examTypes) {
+  var tables = 0, decks = 0, cards = 0, audio = 0, video = 0;
+  (examTypes || []).forEach(function (examType) {
+    (RESOURCES[examType] || []).forEach(function (r) {
+      if (r.type === 'table') tables++;
+      else if (r.type === 'flashcards') { decks++; cards += (r.flashcards || []).length; }
+      else if (r.type === 'audio') audio++;
+      else if (r.type === 'video') video++;
+    });
+  });
+  return { tables: tables, decks: decks, cards: cards, audio: audio, video: video, total: tables + decks + audio + video };
+}
+
+// Per-track "what's actually in the Resources tab" stat strip for the track landing page --
+// reuses the same .outcome-tile styling as the homepage/category stats cards so the number
+// treatment reads consistently across all three levels. Renders nothing (not a zero-filled row)
+// for the ~194 tracks that don't have Key Facts Digest content yet -- resourceInventorySummary's
+// existing "Official handbook" text line already covers that case on its own.
+function trackResourceStatsHtml(examType) {
+  var s = aggregateResourceStats([examType]);
+  if (!s.tables && !s.decks && !s.audio && !s.video) return '';
+  var tiles = [];
+  if (s.tables) tiles.push({ value: s.tables, label: 'Quick-Fact Table' + (s.tables === 1 ? '' : 's') });
+  if (s.decks) tiles.push({ value: s.decks, label: 'Flashcard Deck' + (s.decks === 1 ? '' : 's') + (s.cards ? '<br>(' + s.cards + ' cards)' : '') });
+  if (s.audio) tiles.push({ value: s.audio, label: 'Audio Lesson' + (s.audio === 1 ? '' : 's') });
+  if (s.video) tiles.push({ value: s.video, label: 'Video' + (s.video === 1 ? '' : 's') });
+  return '<div class="track-resource-stats">' + tiles.map(function (t) {
+    return '<div class="outcome-tile"><div class="outcome-tile-value">' + t.value + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
+  }).join('') + '</div>';
 }
 
 // Native <audio controls>/<video controls> has a draggable scrubber but no dedicated skip
@@ -8259,7 +8311,7 @@ function renderTrackLanding() {
     '<h1>' + exam.title + '</h1>' +
     '<p class="muted page-intro-text track-landing-description">' + exam.description + '</p>' +
     '<div class="buy-layout">' +
-    '<div class="buy-value-col"><div class="card">' + specsHtml + breakdownHtml + '</div></div>' +
+    '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '</div></div>' +
     '<div class="card">' +
     '<div id="track-landing-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="exam-track-price" id="landing-price">…</div>' +
