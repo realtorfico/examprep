@@ -1708,7 +1708,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nc_re_salesperson',
     title: 'North Carolina Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/nc',
-    duration: '120 Minutes', questions: '60 Multiple Choice (State-Specific Portion)', passScore: '45/60 Correct (75%)',
+    duration: '120 Minutes', questions: '60 Multiple Choice (State-Specific Portion)', passScore: 'Score of 75 Per Section (Psychometrically Set, Not a Raw Percentage) -- State Portion Scored Separately',
     breakdown: [['Licensure', '5%'], ['Agency', '27%'], ['Supervision/Compensation', '7%'], ['Brokerage Practice', '20%'], ['Taxes/Insurance', '6%'], ['Contracts/Closing', '12%'], ['Landlord/Tenant', '5%'], ['Other NC Laws', '18%']],
   },
   {
