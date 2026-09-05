@@ -2098,7 +2098,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'hi_re_broker',
     title: 'Hawaii Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/hi',
-    duration: '240 Minutes (4 Hours)', questions: '125 Multiple Choice (75 National + 50 Hawaii State-Specific)', passScore: '75% (Each Section Scored Independently)',
+    duration: '240 Minutes (4 Hours)', questions: '130 Multiple Choice (80 National + 50 Hawaii State-Specific)', passScore: '75% (Each Section Scored Independently)',
     breakdown: [['Contracts (National)', '12%'], ['Professional Practices & Conduct (HI)', '10%'], ['Agency (National)', '8%'], ['Practice of Real Estate (National)', '7%'], ['Property Ownership (National)', '6%'], ['Financing & Settlement (National)', '6%'], ['Ascertaining & Disclosing Material Facts (HI)', '5%'], ['Title & Conveyances (HI)', '5%'], ['Contracts (HI)', '5%'], ['Valuation (National)', '5%'], ['Transfer of Title (National)', '4%'], ['Real Estate Calculations (National)', '4%'], ['Property Disclosures (National)', '4%'], ['Property Management (HI)', '4%'], ['Escrow Process & Closing Statements (HI)', '3%'], ['Property Management (National)', '3%'], ['Land Use Controls (National)', '3%'], ['Types of Ownership (HI)', '2%'], ['Land Utilization (HI)', '2%'], ['Financing (HI)', '2%']],
   },
   {
