@@ -7294,24 +7294,96 @@ function renderTabs(active) {
 
 // ---- Study resources (audio/video/pdf/image guides, per exam type) --------
 
-// Real, DB-backed per-track Resources content (tables/flashcards/audio/pdf/etc.) -- see
-// loadResourcesCatalog() and boot()'s Promise.all. Starts empty; boot() populates it before the
-// first route() call, same "gate first render on a small async fetch" pattern loadTrackRegistry()
-// already established for HUB_EXAMS. Was previously ~4,700 lines of hardcoded table/flashcard
-// const literals plus this object's own entries for all 262 tracks -- migrated 2026-09-03 to the
-// `resources` table in D1 (examprep-api), which is now the single source of truth. A content-only
-// change (new track, edited fact, new audio file) is now a plain D1 write -- no app.js edit, no
-// site-repo commit, no API redeploy required.
+// Real, DB-backed per-track Resources content (tables/flashcards/audio/pdf/etc.). Was previously
+// ~4,700 lines of hardcoded table/flashcard const literals plus this object's own entries for all
+// 262 tracks -- migrated 2026-09-03 to the `resources` table in D1 (examprep-api), which is now the
+// single source of truth. A content-only change (new track, edited fact, new audio file) is a plain
+// D1 write -- no app.js edit, no site-repo commit, no API redeploy required.
+//
+// Filled ONE TRACK AT A TIME by loadTrackResources() rather than all at once at boot (changed
+// 2026-09-05). The full catalog is ~2.4MB raw across 285 tracks, 80% of it table rows and flashcard
+// arrays -- and boot() used to fetch all of it and block the first paint on it, on every page load,
+// to render pages that never read more than one track's worth. Per-track counts (which IS what the
+// homepage/category/track-landing stat tiles need) now come from the tiny RESOURCE_COUNTS map below.
 var RESOURCES = {};
 
-var resourcesCatalogPromise = null;
-function loadResourcesCatalog() {
-  if (!resourcesCatalogPromise) {
-    resourcesCatalogPromise = apiFetch('/resources/catalog').then(function (res) {
-      RESOURCES = (res && res.resources) || {};
-    });
+// examType -> in-flight-or-settled promise, so repeat renders of the same track (or two callers on
+// one page, e.g. the landing preview and the stat strip) share a single request.
+var trackResourcesPromises = {};
+function loadTrackResources(examType) {
+  if (!examType) return Promise.resolve();
+  if (!trackResourcesPromises[examType]) {
+    trackResourcesPromises[examType] = apiFetch('/resources/catalog?examType=' + encodeURIComponent(examType))
+      .then(function (res) {
+        var byTrack = (res && res.resources) || {};
+        // Keyed response, so this works unchanged whether the API returned just this track or (as
+        // the test fixtures and the no-params mode do) a whole catalog keyed by exam type.
+        RESOURCES[examType] = byTrack[examType] || [];
+      })
+      .catch(function () { RESOURCES[examType] = RESOURCES[examType] || []; });
   }
-  return resourcesCatalogPromise;
+  return trackResourcesPromises[examType];
+}
+
+// Per-track resource COUNTS for every track (~11KB, vs ~2.4MB for the full catalog) -- enough for
+// every pre-purchase surface that just needs "how much material is in here": the homepage and
+// category stat tiles, the track landing stat strip, and resourceInventorySummary(). Deliberately
+// NOT part of boot()'s blocking Promise.all: nothing on any page needs to wait on it to render,
+// so it loads alongside the first paint and the tiles fill in when it lands.
+var RESOURCE_COUNTS = {};
+
+// Set when a stat surface renders before the counts arrive, so we know a re-fill is worth doing.
+// In the common case counts (1KB, CDN-cached) beat the three blocking boot fetches and the first
+// render already has them, so nothing below runs at all.
+var resourceCountsNeedRepaint = false;
+
+// Deliberately re-fills only the three stat surfaces rather than re-running route(). A full
+// re-render would also reset live page state a visitor may already have touched in those first few
+// hundred milliseconds -- a picked state in the category dropdown, an answered sample question --
+// which is a bad trade for filling in a few numbers.
+function fillResourceCountSurfaces() {
+  if (!resourceCountsNeedRepaint) return;
+  resourceCountsNeedRepaint = false;
+
+  if (document.getElementById('hub-readiness-wrap')) fillReadinessCard();
+
+  var catWrap = document.getElementById('category-stats-wrap');
+  if (catWrap && categoryPageState && categoryPageState.tracks) {
+    var tracks = categoryPageState.tracks;
+    catWrap.innerHTML = categoryStatsHtml(
+      tracks.length,
+      new Set(tracks.map(function (t) { return t.stateCode; })).size,
+      aggregateResourceStats(tracks.map(function (t) { return t.examType; }))
+    );
+    fillCategoryQuestionCount(tracks);
+    loadSiteConfig().then(fillCategoryStatsRadial);
+  }
+
+  // Track landing: the strip renders nothing at all for a track with no digest content, so this
+  // has to handle "wasn't there before, should be now" as well as replacing an existing strip.
+  var exam = state.examType && trackByExamType(state.examType);
+  if (exam && document.querySelector('.track-landing')) {
+    var stripHtml = trackResourceStatsHtml(exam.examType);
+    var existing = document.querySelector('.track-resource-stats');
+    if (existing) existing.outerHTML = stripHtml;
+    else if (stripHtml) {
+      // Anchor on the breakdown block, which is what directly follows the strip in the first
+      // render -- .exam-specs isn't the right anchor, since the official-source link and freshness
+      // line sit between it and the strip.
+      var breakdown = document.querySelector('.buy-value-col .breakdown-label');
+      if (breakdown) breakdown.insertAdjacentHTML('beforebegin', stripHtml);
+    }
+  }
+}
+
+var resourceCountsPromise = null;
+function loadResourceCounts() {
+  if (!resourceCountsPromise) {
+    resourceCountsPromise = apiFetch('/resources/catalog?counts=1').then(function (res) {
+      RESOURCE_COUNTS = (res && res.counts) || {};
+    }).catch(function () { RESOURCE_COUNTS = {}; });
+  }
+  return resourceCountsPromise;
 }
 
 
@@ -7339,15 +7411,17 @@ function resourceTypeCellHtml(type) {
 // (never a separately-maintained count), so it can't drift out of sync with what's really there,
 // and it updates automatically as more tracks grow their own resource libraries over time.
 function resourceInventorySummary(examType) {
-  var items = RESOURCES[examType] || [];
-  var counts = {};
-  items.forEach(function (r) { counts[r.type] = (counts[r.type] || 0) + 1; });
-  var mediaCount = (counts.audio || 0) + (counts.video || 0);
+  // Reads the tiny counts map, not the full per-track items -- this renders on hub cards and the
+  // track landing page, neither of which should pull a track's whole content payload just to say
+  // "3 audio lessons". Falls back to counting already-loaded items (the Resources tab has them) if
+  // the counts map hasn't landed yet, so this never renders a wrong/empty summary mid-load.
+  var s = aggregateResourceStats([examType]);
+  var mediaCount = s.audio + s.video;
   if (!mediaCount) return { compact: 'Official handbook', full: 'Official handbook (external link)' };
   var parts = [];
-  if (counts.audio) parts.push(counts.audio + ' audio lesson' + (counts.audio === 1 ? '' : 's'));
-  if (counts.video) parts.push(counts.video + ' video' + (counts.video === 1 ? '' : 's'));
-  if (counts.table) parts.push(counts.table + ' reference guide' + (counts.table === 1 ? '' : 's'));
+  if (s.audio) parts.push(s.audio + ' audio lesson' + (s.audio === 1 ? '' : 's'));
+  if (s.video) parts.push(s.video + ' video' + (s.video === 1 ? '' : 's'));
+  if (s.tables) parts.push(s.tables + ' reference guide' + (s.tables === 1 ? '' : 's'));
   return { compact: mediaCount + ' audio/video lessons', full: parts.join(' · ') + ', plus the official handbook' };
 }
 
@@ -7358,7 +7432,20 @@ function resourceInventorySummary(examType) {
 // from RESOURCES itself, same never-drifts-out-of-sync property as resourceInventorySummary above.
 function aggregateResourceStats(examTypes) {
   var tables = 0, decks = 0, cards = 0, audio = 0, video = 0;
+  // Counts not in yet -- whatever this render produces is provisional, so ask boot() to repaint
+  // once they land. (Empty map only ever means "still loading" or "endpoint failed"; a site with
+  // genuinely zero resources everywhere would still return a row per track.)
+  if (!Object.keys(RESOURCE_COUNTS).length) resourceCountsNeedRepaint = true;
   (examTypes || []).forEach(function (examType) {
+    // Prefer the ~11KB counts map (loaded for every track at boot). Only fall back to counting a
+    // track's actual items when that track happens to be fully loaded but counts aren't -- which
+    // is what the test fixtures do, and what a counts-endpoint failure would leave us with.
+    var c = RESOURCE_COUNTS[examType];
+    if (c) {
+      tables += c.tables || 0; decks += c.decks || 0; cards += c.cards || 0;
+      audio += c.audio || 0; video += c.video || 0;
+      return;
+    }
     (RESOURCES[examType] || []).forEach(function (r) {
       if (r.type === 'table') tables++;
       else if (r.type === 'flashcards') { decks++; cards += (r.flashcards || []).length; }
@@ -7493,6 +7580,14 @@ function postResourceProgress(resourceKey, type, percent, isNewOpen) {
 }
 
 async function renderResources() {
+  // This is the ONE surface that needs a track's full content (table rows, flashcard arrays), so
+  // it's the one that pays to fetch it -- for this track alone, not all 285. Paint the tab chrome
+  // first so the fetch doesn't leave a blank screen; loadTrackResources() de-dupes if the landing
+  // page already kicked off the same request.
+  if (!RESOURCES[state.examType]) {
+    appEl.innerHTML = renderTabs('resources') + '<p class="muted">Loading…</p>';
+    await loadTrackResources(state.examType);
+  }
   var items = RESOURCES[state.examType] || [];
   if (!items.length) {
     appEl.innerHTML = renderTabs('resources') +
@@ -8352,6 +8447,7 @@ function renderTrackLanding() {
     if (el) el.textContent = '';
   });
   loadOtherTracksPricing();
+  fillTrackLandingResourcePreview(exam.examType);
   loadTrackLandingSampleQuestion(exam);
   // Same testimonials the exam's own category landing page shows (category_content is keyed by
   // category slug, not per-track) -- real, relevant social proof for THIS exam kind, not a fake
@@ -8376,6 +8472,27 @@ function renderTrackLanding() {
 // an unlock CTA, same as before -- the example content inside is illustrative (what the UI looks
 // like), not a claim about the viewer's own data, same category as the sample question mockups
 // this site has always shown to logged-out visitors.
+// Split out of trackLandingPreviewHtml so the same markup can be re-rendered in place once that
+// track's items arrive, without re-rendering the whole landing page.
+function trackLandingResourcePreviewInnerHtml(examType) {
+  var resourceItems = (RESOURCES[examType] || []).slice(0, 4);
+  return (resourceItems.length ? resourceItems.map(function (r) {
+    return '<div class="card locked-preview-resource-card">' +
+      '<div class="locked-preview-resource-title">' + escapeHtml(r.title) + (r.free ? ' <span class="badge">Free</span>' : '') + '</div>' +
+      '<p class="muted">' + escapeHtml(r.desc) + '</p>' +
+      '</div>';
+  }).join('') : '<p class="muted">Study resources for this track.</p>') +
+    '<a class="muted locked-preview-seeall" href="#/resources">See all resources →</a>';
+}
+
+function fillTrackLandingResourcePreview(examType) {
+  if (RESOURCES[examType]) return; // already loaded -- first render was already correct
+  loadTrackResources(examType).then(function () {
+    var wrap = document.getElementById('locked-preview-resources');
+    if (wrap) wrap.innerHTML = trackLandingResourcePreviewInnerHtml(examType);
+  });
+}
+
 function trackLandingPreviewHtml(exam) {
   var firstTopic = (exam.breakdown && exam.breakdown[0] && exam.breakdown[0][0]) || 'the exam topics';
   // "Preview only" badge (added 2026-09-02) -- makes it visually obvious at a glance that these
@@ -8408,15 +8525,12 @@ function trackLandingPreviewHtml(exam) {
   // quiz/exam/toughest45/progress require an account), so unlike the three panels above these show
   // real, un-blurred content straight from the same data every visitor already sees on #/resources
   // and #/info, not a fabricated mockup. Each links out to that real tab to explore further.
-  var resourceItems = (RESOURCES[exam.examType] || []).slice(0, 4);
-  var resourcesPanel = '<div class="locked-preview-resources">' +
-    (resourceItems.length ? resourceItems.map(function (r) {
-      return '<div class="card locked-preview-resource-card">' +
-        '<div class="locked-preview-resource-title">' + escapeHtml(r.title) + (r.free ? ' <span class="badge">Free</span>' : '') + '</div>' +
-        '<p class="muted">' + escapeHtml(r.desc) + '</p>' +
-        '</div>';
-    }).join('') : '<p class="muted">Study resources for this track.</p>') +
-    '<a class="muted locked-preview-seeall" href="#/resources">See all resources →</a>' +
+  // Needs real item titles/descs, which live in the per-track payload rather than the counts map --
+  // so this panel fills in a moment later (see fillTrackLandingResourcePreview) rather than the
+  // page blocking on that fetch. Same progressive-enhancement posture as this page's promo and
+  // pricing slots.
+  var resourcesPanel = '<div class="locked-preview-resources" id="locked-preview-resources">' +
+    trackLandingResourcePreviewInnerHtml(exam.examType) +
     '</div>';
   var infoLinks = (ADDITIONAL_INFO_LINKS[exam.examType] || []).slice(0, 3);
   var infoPanel = '<div class="locked-preview-info">' +
@@ -12516,7 +12630,13 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   // accountExamType still null and HUB_EXAMS still empty) -- re-render both once the real values
   // are in, so a logged-in visitor's Refer/sample links reflect their own track's account instead
   // of no track/whatever page they'd last viewed.
-  Promise.all([loadSiteConfig(), loadAccountExamType(), loadTrackRegistry(), loadResourcesCatalog()]).then(function () {
+  // Resource COUNTS are deliberately NOT in the gate below (changed 2026-09-05). They used to be --
+  // as the full ~2.4MB catalog, no less -- which meant every page load waited on the single largest
+  // payload this site serves before painting anything, to render pages that mostly needed a handful
+  // of integers from it. Kicked off here so it's in flight during the blocking fetches, and the
+  // surfaces that use it (stat tiles, resourceInventorySummary) fill in when it lands.
+  loadResourceCounts().then(fillResourceCountSurfaces);
+  Promise.all([loadSiteConfig(), loadAccountExamType(), loadTrackRegistry()]).then(function () {
     renderSiteHeader();
     renderSiteFooter();
     route();
