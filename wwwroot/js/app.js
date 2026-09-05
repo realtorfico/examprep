@@ -1996,13 +1996,13 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'wa_re_salesperson',
     title: 'Washington Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/wa',
-    duration: '90 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: '21/30 Correct (70%)',
+    duration: '90 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (State Portion Scored Separately, Not a Raw Percentage)',
     breakdown: [['Licensing Requirements & Examination', '25%'], ['Agency Relationships & Disclosure', '21%'], ['Trust Accounts & Client Funds', '18%'], ['Fair Housing & Anti-Discrimination', '15%'], ['Records, Supervision & Discipline', '21%']],
   },
   {
     examType: 'wa_re_broker',
     title: 'Washington Managing Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-broker/wa',
-    duration: '90 Minutes', questions: '44 Multiple Choice (State-Specific Portion)', passScore: '33/44 Correct (75%)',
+    duration: '90 Minutes', questions: '44 Multiple Choice (State-Specific Portion, 48 Points)', passScore: 'Scaled Score of 75 (State Portion Scored Separately, Not a Raw Percentage)',
     breakdown: [['Licensing & Qualifications', '16%'], ['Designated Broker & Supervisory Authority', '21%'], ['Branch Office Supervision & Recordkeeping', '18%'], ['Trust Account Oversight', '21%'], ['Advertising Compliance & Disciplinary Oversight', '13%'], ['License Renewal, Continuing Education & Firm Closure', '11%']],
   },
   {
@@ -2284,7 +2284,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nj_re_salesperson',
     title: 'New Jersey Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/nj',
-    duration: '60 Minutes', questions: '30 Multiple Choice (State-Specific Portion of a 110-Question Combo Exam)', passScore: '21/30 Correct (70%)',
+    duration: 'No Separate State-Portion Time Limit (Full Exam Is 4 Hours / 110 Questions)', questions: '30 Multiple Choice (State-Specific Portion of a 110-Question Combo Exam)', passScore: 'No Separate State-Portion Score (Combined 70% Across All 110 Questions)',
     breakdown: [['Licensing Qualifications, Pre-License/Continuing Education & Fees', '29%'], ['Agency Relationships, Advertising & Licensee Conduct (NJAC)', '20%'], ['Trust Accounts, Discipline & Guaranty Fund', '20%'], ['Real Estate Timeshare Act', '18%'], ['Subdivided Lands Full Disclosure Act', '13%']],
   },
   {
