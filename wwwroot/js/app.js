@@ -2038,7 +2038,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ar_re_salesperson',
     title: 'Arkansas Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ar',
-    duration: '60 Minutes', questions: '30 Multiple Choice (State-Specific Portion)', passScore: '21/30 Correct (70%)',
+    duration: '2 to 4 Hours (Total Exam Session -- No Separate State Time Limit Published)', questions: '30 Scored + 10 Pretest (Arkansas Law Portion)', passScore: 'Scaled Score of 70 (Arkansas Law Portion, Scored Separately, Not a Raw Percentage)',
     breakdown: [['Statutory Requirements Governing Licensee Activities', '47%'], ['Agency Relationships & Disclosures', '27%'], ['Duties & Powers of the Real Estate Commission', '13%'], ['Licensing Requirements', '7%'], ['Other Statutory Requirements', '6%']],
   },
   {
@@ -2290,7 +2290,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nm_re_salesperson',
     title: 'New Mexico Real Estate Broker Examination', category: 'Real Estate Licensing', route: '/real-estate-salesperson/nm',
-    duration: '60 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (75%)',
+    duration: '60 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (76%) -- State Portion Scored Separately',
     breakdown: [['Licensing, Qualifications, Applications & Commission Administration', '24%'], ['Agency, Fiduciary Duties & Broker Relationships', '19%'], ['Trust Accounts, Recovery Fund & E&O Insurance', '17%'], ['Advertising, Property Management & Closing Practices', '15%'], ['Continuing Education, Nonresident Reciprocity & Timeshare Registration', '14%'], ['Discipline, Investigations & Unlicensed Enforcement', '11%']],
   },
   {
