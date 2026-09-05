@@ -2200,7 +2200,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'mn_re_salesperson',
     title: 'Minnesota Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/mn',
-    duration: '90 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '30/40 Correct (75%)',
+    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '75% Correct (State Portion Scored Separately)',
     breakdown: [['Discipline, Penalties, Public Information & Recovery Fund', '20%'], ['Definitions, Pre-License Education & Continuing Education', '19%'], ['Advertising, Compensation, Records & Prohibited Practices', '19%'], ['Licensing, Fees, Examinations & Closing Agent Licensure', '17%'], ['Agency Disclosure & Brokerage Contracts', '16%'], ['Trust Accounts & Specialty Business Operations', '9%']],
   },
   {
