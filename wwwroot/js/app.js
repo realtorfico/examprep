@@ -2026,7 +2026,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'al_re_salesperson',
     title: 'Alabama Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/al',
-    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
+    duration: '60 Minutes', questions: '40 Multiple Choice (Alabama State-Specific Law Portion)', passScore: 'Scaled Score of 70 (0-100 Scale, Not a Raw Percentage)',
     breakdown: [['Violations & Grounds for Disciplinary Action', '38%'], ['Licensing Requirements, License Status & Role of the Commission', '25%'], ['RECAD, Trust Funds & Estimated Closing Statements', '15%'], ['Broker, Company & Place-of-Business Licenses', '12%'], ['Recovery Fund & the Disciplinary Process', '10%']],
   },
   {
