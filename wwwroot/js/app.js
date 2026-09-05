@@ -1624,7 +1624,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'pa_re_salesperson',
     title: 'Pennsylvania Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/pa',
-    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '75% (30/40 Correct)',
+    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 75 (0-100 Scale, Not a Raw Percentage) -- State Portion Scored Separately',
     breakdown: [['Real Estate Commission & Licensure', '33%'], ['Agency and Disclosure', '25%'], ['Regulations Governing the Activities of Licensees', '27%'], ['Miscellaneous', '15%']],
   },
   {
@@ -1660,7 +1660,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'oh_re_salesperson',
     title: 'Ohio Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/oh',
-    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: '28/40 Correct (70%)',
+    duration: '60 Minutes', questions: '40 Multiple Choice (State-Specific Portion)', passScore: 'Scaled Score of 70 (0-100 Scale, Not a Raw Percentage) -- State Portion Scored Separately',
     breakdown: [['Licensing Requirements & Continuing Education', '15%'], ['State Governance, Discipline & Recovery Fund', '10%'], ['License Law & Commission Rules (Advertising, Trust Accounts, Property Management)', '40%'], ['Brokerage Relationships & Agency Law', '35%']],
   },
   {
@@ -1690,7 +1690,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ga_re_salesperson',
     title: 'Georgia Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ga',
-    duration: '120 Minutes', questions: '52 Multiple Choice (State-Specific Portion)', passScore: '39/52 Correct (75%)',
+    duration: 'No Separate Time Limit Published (Single-Sitting Exam)', questions: '52 Multiple Choice (State-Specific Portion)', passScore: '39/52 Correct (75%)',
     breakdown: [['State Laws and Rules', '31%'], ['Real Estate Practice in Georgia', '40%'], ['Finance and Closing', '29%']],
   },
   {
