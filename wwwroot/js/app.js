@@ -2710,7 +2710,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'mt_notary',
     title: 'Montana Notary Public Exam Prep', category: 'State Licensing', route: '/notary/mt',
-    duration: 'Untimed', questions: '30 Multiple Choice (202-Question Practice Pool)', passScore: '80% (real 30-question SOS-administered online exam, per ARM 44.15.101)',
+    duration: 'Untimed', questions: 'Default: 30 Multiple Choice (No Official Count Exists -- Not Published in ARM 44.15 or by the SOS) -- 202-Question Practice Pool', passScore: '80% (Real SOS-Administered Online Exam Threshold, ARM 44.15.101(4)(a)(i))',
     breakdown: [['General Provisions & Definitions', '15%'], ['Commissioning, Qualifications & Bond', '13%'], ['Notarial Acts, Certificates & Identification', '15%'], ['Remote & Electronic Notarization', '5%'], ['Signature, Stamp & Journal Recordkeeping', '11%'], ['Fees, Prohibited Acts & Discipline', '17%'], ['Federal, Tribal & Foreign Notarial Acts', '8%'], ['Applied Notarial Scenarios', '16%']],
   },
   {
