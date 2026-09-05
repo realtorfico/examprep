@@ -2146,7 +2146,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ky_re_salesperson',
     title: 'Kentucky Real Estate Sales Associate Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ky',
-    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (76%)',
+    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct -- 75% Required',
     breakdown: [['Brokerage Activities & Requirements', '36%'], ['Requirements for a License', '20%'], ['Disclosures & Agency Issues', '16%'], ['License Law Requirements for Contracts', '12%'], ['Real Estate Commission Powers & Enforcement', '10%'], ['Property Management', '6%']],
   },
   {
@@ -2320,7 +2320,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'or_re_salesperson',
     title: 'Oregon Real Estate Broker Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/or',
-    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (76%)',
+    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '75% (38/50 Correct)',
     breakdown: [['Oregon Real Estate Related Statutes', '30%'], ['Regulation of Broker Activities', '24%'], ['License Law & Disciplinary Measures', '12%'], ['Agency Law & Rules', '10%'], ['Document Handling & Recordkeeping', '10%'], ['Property Management', '8%'], ['Handling of Clients\' Funds', '6%']],
   },
   {
