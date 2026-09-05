@@ -153,10 +153,38 @@ objects.forEach((obj) => {
   const examType = field(obj, 'examType');
   const route = field(obj, 'route');
   const title = field(obj, 'title');
-  const description = field(obj, 'description');
   if (!examType || !route || route === '#') return;
-  allTracks.push({ examType, route, title, description });
+  allTracks.push({ examType, route, title, description: '' }); // description filled from D1 below
 });
+
+// Track descriptions moved out of app.js into D1 (track_content.description) on 2026-09-05 -- at
+// ~917 B/track they were the largest per-track cost in the JS bundle. Fetched here per-track from
+// the same live API this script already reads /track-registry from, rather than adding a
+// bulk "every description" endpoint that would just recreate the payload problem if anything ever
+// called it from the client. Slow-ish (a few hundred small requests) but this is a manual build
+// step, not a request path.
+async function fillDescriptions(tracks, origin) {
+  const CONCURRENCY = 12;
+  let cursor = 0, failed = 0;
+  async function worker() {
+    while (cursor < tracks.length) {
+      const t = tracks[cursor++];
+      try {
+        const r = await fetch(origin + '/api/track-content?examType=' + encodeURIComponent(t.examType));
+        const body = await r.json();
+        t.description = (body.content && body.content.description) || '';
+      } catch (e) { failed++; }
+      if (!t.description) failed++;
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  if (failed) {
+    // Loud, not silent: a missing description would otherwise quietly ship an empty <meta
+    // description> for that route, which is exactly the kind of SEO regression nobody notices.
+    throw new Error(failed + ' track description(s) could not be fetched -- refusing to write ' +
+      'SEO_META with empty descriptions. Check the API is reachable and track_content is populated.');
+  }
+}
 
 (async () => {
   // active status is no longer a field on HUB_EXAMS_CONTENT objects at all -- it lives in D1 (see
@@ -169,6 +197,7 @@ objects.forEach((obj) => {
   (registryData.tracks || []).forEach((t) => { activeByExamType[t.examType] = t.active; });
 
   const tracks = allTracks.filter((t) => activeByExamType[t.examType] === true);
+  await fillDescriptions(tracks, SITE_ORIGIN);
   const missingFromRegistry = allTracks.filter((t) => !(t.examType in activeByExamType));
   if (missingFromRegistry.length) {
     console.log('NOTE:', missingFromRegistry.length, 'HUB_EXAMS_CONTENT entries have no matching track_registry row yet (excluded from SEO_META/sitemap this run):', missingFromRegistry.map((t) => t.examType).join(', '));
