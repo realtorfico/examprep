@@ -2260,7 +2260,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ne_re_salesperson',
     title: 'Nebraska Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ne',
-    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '38/50 Correct (75% Minimum)',
+    duration: '90 Minutes', questions: '50 Multiple Choice (State-Specific Portion)', passScore: '75% Minimum -- State and National Portions Scored Separately',
     breakdown: [['Duties & Powers of the Real Estate Commission', '10%'], ['Licensing Requirements & Activities', '15%'], ['Statutory Requirements Governing Licensee Activities', '30%'], ['Agency: Duties, Disclosures & Transactions', '35%'], ['Additional Topics: Subdivided Land, Fair Housing & Equitable Interest', '10%']],
   },
   {
