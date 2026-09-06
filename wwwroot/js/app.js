@@ -1015,10 +1015,11 @@ function blogListItemsHtml(posts, activeKind) {
     ? '<div class="blog-list">' + posts.map(function (p) {
         var kindLabel = kindFromSlug(p.kind) || p.kind;
         var href = blogPostHref(p.slug, activeKind);
-        return '<article class="blog-list-item card">' +
+        return '<article class="blog-list-item card' + (p.featured ? ' blog-list-item-featured' : '') + '">' +
+          (p.featured ? '<span class="badge blog-list-item-featured-badge">🎯 Practice Test Guide</span>' : '') +
           '<span class="badge blog-list-item-badge">' + escapeHtml(kindLabel) + '</span>' +
           '<h2><a href="' + href + '">' + escapeHtml(p.title) + '</a></h2>' +
-          '<p class="muted blog-list-meta">' + (p.stateCode ? escapeHtml(p.stateCode) + ' · ' : '') +
+          '<p class="muted blog-list-meta">' + (p.state_code ? escapeHtml(p.state_code) + ' · ' : '') +
           (p.published_at ? new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
           '<p class="blog-list-excerpt">' + escapeHtml(p.excerpt) + '</p>' +
           '<a class="blog-read-more" href="' + href + '">Read more →</a>' +
@@ -1110,8 +1111,9 @@ function renderBlogPost(slug) {
     // ~200 wpm is the commonly-cited average adult silent reading speed -- a rough estimate label,
     // not a precise claim, same spirit as this project's other honestly-hedged display numbers.
     var readMins = Math.max(1, Math.round(stripHtml(post.body_html).split(/\s+/).length / 200));
-    appEl.innerHTML = '<div class="narrow-page blog-post">' +
+    appEl.innerHTML = '<div class="narrow-page blog-post' + (post.featured ? ' blog-post-featured' : '') + '">' +
       '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind) + '">← Guides &amp; Tips</a></p>' +
+      (post.featured ? '<div class="blog-post-featured-banner">🎯 Practice Test Guide — everything you need for this exam, in one place</div>' : '') +
       '<span class="badge blog-post-badge">' + escapeHtml(kindLabel) + '</span>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
       '<p class="muted blog-post-meta">' + (post.state_code ? escapeHtml(post.state_code) + ' · ' : '') +

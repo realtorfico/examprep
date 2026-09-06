@@ -797,6 +797,23 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .blog-read-more { color: var(--accent); font-weight: 600; font-size: 0.9rem; margin-top: auto; }
 .blog-load-more-wrap { text-align: center; margin-top: 2rem; }
 .blog-back-btn { margin-top: 1.5rem; }
+/* Featured posts (e.g. state-specific practice-test/cheat-sheet guides) get gold-accent treatment
+   -- same --highlight token as .btn-gold, so it reads as "higher-intent" consistent with that
+   button's existing meaning on this site, not a brand-new color introduced just for this. */
+.blog-list-item-featured {
+  border: 1px solid color-mix(in srgb, var(--highlight) 45%, var(--border));
+  background: color-mix(in srgb, var(--highlight) 6%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--highlight) 20%, transparent);
+}
+.blog-list-item-featured-badge {
+  background: var(--highlight); color: var(--highlight-foreground); border-color: var(--highlight);
+  margin-bottom: 0.6rem; margin-right: 0.4rem;
+}
+.blog-post-featured-banner {
+  display: inline-block; background: var(--highlight); color: var(--highlight-foreground);
+  font-weight: 700; font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 999px;
+  margin-bottom: 1rem;
+}
 .blog-post-back { margin-bottom: 1rem; }
 .blog-post-badge { margin-bottom: 0.75rem; }
 .blog-post h1 { margin: 0 0 0.5rem; line-height: 1.25; }
