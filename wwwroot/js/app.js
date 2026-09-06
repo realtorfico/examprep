@@ -1480,6 +1480,17 @@ function renderProfile() {
         '<div class="profile-row"><span class="muted">Referral points</span><span>' + (p.points || 0) + ' — <a href="' + trackRoute + '#/refer">Refer a friend →</a></span></div>'
       : '<p class="muted">No email on file, so we can\'t show referral points here — that needs an email to look up. ' +
         '<a href="' + trackRoute + '#/refer">Add one via the referral page</a> to start earning points.</p>';
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var examDateStatus;
+    if (p.examDate) {
+      var daysLeft = Math.round((Date.parse(p.examDate + 'T00:00:00Z') - Date.parse(todayStr + 'T00:00:00Z')) / 86400000);
+      var daysLeftLabel = daysLeft < 0 ? 'already passed' : daysLeft === 0 ? 'today!' : daysLeft === 1 ? 'tomorrow' : daysLeft + ' days away';
+      examDateStatus = '<p class="muted">' + daysLeftLabel + (p.buyerEmail
+        ? (p.countdownOptOut ? ' — daily reminder emails are turned off (unsubscribed).' : ' — you\'ll get a daily countdown email with 2 practice questions until then.')
+        : ' — set an email on file (via the referral page) to receive countdown reminder emails.') + '</p>';
+    } else {
+      examDateStatus = '<p class="muted">Set your exam date to get a daily countdown email with 2 real practice questions leading up to it.</p>';
+    }
     appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1>' +
       '<div class="card profile-card">' +
       '<div class="profile-row"><span class="muted">Track</span><strong>' + escapeHtml(trackTitle) + '</strong></div>' +
@@ -1490,6 +1501,13 @@ function renderProfile() {
       '<div class="profile-row"><span class="muted">Purchase</span><span>' + purchaseLine + '</span></div>' +
       '</div>' +
       '<div class="card profile-card">' + emailSection + '</div>' +
+      '<div class="card profile-card">' +
+      '<div class="profile-row"><span class="muted">Exam date</span><span>' +
+      '<input type="date" name="examDate" value="' + (p.examDate ? escapeHtml(p.examDate) : '') + '" min="' + todayStr + '"> ' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="save-exam-date">Save</button>' +
+      (p.examDate ? ' <button class="btn-secondary btn-sm" type="button" data-act="clear-exam-date">Clear</button>' : '') +
+      '</span></div>' + examDateStatus +
+      '</div>' +
       '<a class="btn-secondary hub-cta" href="' + trackRoute + '#/progress">View full progress →</a> ' +
       '<button class="btn-secondary btn-sm" type="button" data-act="log-out">Log out</button></div>';
   }).catch(function (e) {
@@ -6860,6 +6878,17 @@ async function renderReferForm() {
   }
 }
 
+function renderCountdownUnsubscribe(token) {
+  appEl.innerHTML = '<div class="narrow-page"><h1>One moment…</h1><p class="muted">Unsubscribing you from countdown emails.</p></div>';
+  apiFetch('/countdown/unsubscribe?token=' + encodeURIComponent(token)).then(function () {
+    appEl.innerHTML = '<div class="narrow-page"><h1>Unsubscribed</h1>' +
+      '<p class="muted">You won\'t get any more daily countdown emails. You can turn them back on any time by setting a new exam date on your Profile page.</p>' +
+      '<a class="btn-secondary hub-cta" href="#/profile">Go to My Profile →</a></div>';
+  }).catch(function () {
+    appEl.innerHTML = '<div class="narrow-page"><h1>Something went wrong</h1><p class="muted">This link may be invalid.</p></div>';
+  });
+}
+
 function renderReferVerify(token) {
   appEl.innerHTML = '<div class="narrow-page"><h1>Confirming…</h1><p class="muted">One moment.</p></div>';
   apiFetch('/referrals/verify?token=' + encodeURIComponent(token)).then(function (res) {
@@ -7058,6 +7087,7 @@ async function renderTrackApp() {
   if (view.indexOf('refer-verify/') === 0) { renderReferVerify(view.slice('refer-verify/'.length)); return; }
   if (view.indexOf('points-redeem-verify/') === 0) { renderPointsRedeemVerify(view.slice('points-redeem-verify/'.length)); return; }
   if (view.indexOf('promo-verify/') === 0) { renderPromoVerify(view.slice('promo-verify/'.length)); return; }
+  if (view.indexOf('countdown-unsubscribe/') === 0) { renderCountdownUnsubscribe(view.slice('countdown-unsubscribe/'.length)); return; }
   if (view === 'resources') { await renderResources(); return; } // partially public — see renderResources()
   if (view === 'info') { renderAdditionalInfo(); return; } // fully public
   // Any of quiz/exam/toughest45/progress (plus their history/detail sub-views) while logged out
@@ -7817,6 +7847,18 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'save-exam-date') {
+    var examDateEl = document.querySelector('[name="examDate"]');
+    var examDateVal = examDateEl ? examDateEl.value : '';
+    if (!examDateVal) return;
+    el.disabled = true;
+    apiFetch('/profile/exam-date', { method: 'POST', body: { examDate: examDateVal } })
+      .then(function () { renderProfile(); })
+      .catch(function () { el.disabled = false; alert('Could not save your exam date. Try again shortly.'); });
+  } else if (act === 'clear-exam-date') {
+    apiFetch('/profile/exam-date', { method: 'POST', body: { examDate: null } })
+      .then(function () { renderProfile(); })
+      .catch(function () { alert('Could not clear your exam date. Try again shortly.'); });
   } else if (act === 'copy-embed-snippet') {
     var snippetVal = el.getAttribute('data-snippet');
     if (navigator.clipboard) navigator.clipboard.writeText(snippetVal).catch(function () {});
