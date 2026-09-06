@@ -2794,7 +2794,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'az_driver',
     title: 'Arizona Driver Knowledge Test', category: 'Driver & Vehicle Safety (DMV)', route: '/driver/az',
-    duration: 'Untimed', questions: 'Default: 40 Multiple Choice (No Official Item Count Published -- ADOT\'s Written and Verbal Tests Page Blocks Automated Access, Persistent 403) -- 265-Question Practice Pool', passScore: '80% (Confirmed -- ADOT Practice Tests Page)',
+    duration: 'Untimed', questions: '30 Multiple Choice (ADOT Permit Test Page) -- 265-Question Practice Pool', passScore: '24/30 Correct (80%, ADOT Permit Test Page)',
     breakdown: [['Licensing & Graduated Driver License','11%'],['Vehicle Equipment, Insurance & Seatbelt/Child Restraint','10%'],['Traffic Signals, Signs, Pavement Markings & Lane Use','14%'],['Right-of-Way, Intersections, Speed & Following Distance','12%'],['Parking & Freeway Driving','9%'],['Sharing the Road & Distracted Driving','12%'],['DUI, Alcohol & Drugs','7%'],['Weather, Mechanical Emergencies & Crash Reporting','15%'],['License Suspension/Revocation & Law Enforcement Stops','10%']],
   },
   {
