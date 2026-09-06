@@ -5517,7 +5517,7 @@ async function renderTrackLanding() {
     '<h1>' + exam.title + '</h1>' +
     '<p class="muted page-intro-text track-landing-description">' + trackDescription(exam.examType) + '</p>' +
     '<div class="buy-layout">' +
-    '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '</div></div>' +
+    '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '<div id="track-landing-blogpost-wrap"></div>' + '</div></div>' +
     '<div class="card">' +
     '<div id="track-landing-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="exam-track-price" id="landing-price">…</div>' +
@@ -5560,6 +5560,7 @@ async function renderTrackLanding() {
   loadOtherTracksPricing();
   fillTrackLandingResourcePreview(exam.examType);
   loadTrackLandingSampleQuestion(exam);
+  loadTrackLandingBlogPost(exam);
   // Same testimonials the exam's own category landing page shows (category_content is keyed by
   // category slug, not per-track) -- real, relevant social proof for THIS exam kind, not a fake
   // per-track set that would need authoring 190+ times over.
@@ -5575,6 +5576,24 @@ async function renderTrackLanding() {
     var wrap = document.getElementById('track-landing-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
   }).catch(function () { /* best-effort -- page still works without it */ });
+}
+
+// Links this track's landing page to its matching featured long-tail blog post (the state-specific
+// practice-test/cheat-sheet guides -- see [[project_marketing_round4_countdown_and_longtail_seo]]),
+// when one exists. Reuses the same /blog?kind= list the Guides page itself fetches -- no new API
+// endpoint needed, filtered client-side for this track's real state_code + featured flag. Best-
+// effort: most tracks won't have a matching post yet (only CA's 7 pilot tracks do, as of this
+// build), so the wrap just stays empty rather than showing a broken or generic fallback link.
+function loadTrackLandingBlogPost(exam) {
+  apiFetch('/blog?kind=' + encodeURIComponent(kindSlug(exam.examKind))).then(function (res) {
+    var posts = (res && res.posts) || [];
+    var match = posts.find(function (p) { return p.featured && p.state_code === exam.stateCode; });
+    var wrap = document.getElementById('track-landing-blogpost-wrap');
+    if (!wrap || !match) return;
+    wrap.innerHTML = '<a class="track-landing-blogpost-link" href="' + blogPostHref(match.slug, kindSlug(exam.examKind)) + '">' +
+      '🎯 Read the full ' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + ' ' + escapeHtml(exam.examKind) +
+      ' Practice Test &amp; Cheat Sheet →</a>';
+  }).catch(function () { /* best-effort -- section just stays empty */ });
 }
 
 // Tabbed Quiz/Exam/Progress teaser, embedded directly on the landing page (client-side tab switch,

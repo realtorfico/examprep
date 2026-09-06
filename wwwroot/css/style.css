@@ -814,6 +814,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   font-weight: 700; font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 999px;
   margin-bottom: 1rem;
 }
+.track-landing-blogpost-link {
+  display: block; margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 10px;
+  background: color-mix(in srgb, var(--highlight) 12%, var(--surface-2));
+  border: 1px solid color-mix(in srgb, var(--highlight) 40%, var(--border));
+  color: var(--fg); font-weight: 600; text-decoration: none; font-size: 0.9rem;
+}
+.track-landing-blogpost-link:hover { border-color: var(--highlight); }
 .blog-post-back { margin-bottom: 1rem; }
 .blog-post-badge { margin-bottom: 0.75rem; }
 .blog-post h1 { margin: 0 0 0.5rem; line-height: 1.25; }
