@@ -1003,30 +1003,30 @@ function renderFaq() {
 // comment), not hardcoded here, so publishing needs no code deploy. kind is a category slug
 // (matches HUB_KIND_SLUGS values / category_content.slug) so each post can link back to its
 // category page via kindFromSlug().
-// blogPostHref/blogListHref carry the active category (and, within a category, state) filter
-// across a real page navigation (this site uses real <a href> page loads for /blog, not
-// client-side pushState routing -- see the route() comment below) via ?from=<kind>&fromState=<state>
-// query params on the post URL, so clicking "← Blog" from a post can return to the same filtered
-// list instead of always resetting to "All". stateCode is only ever meaningful alongside a kind
-// (state is not filterable across mixed categories), so blogListHref silently drops it when kind
-// is empty rather than producing a state-only URL renderBlogList was never designed to read.
+// blogPostHref/blogListHref carry the active category AND state filter across a real page
+// navigation (this site uses real <a href> page loads for /blog, not client-side pushState
+// routing -- see the route() comment below) via ?from=<kind>&fromState=<state> query params on
+// the post URL, so clicking "← Blog" from a post can return to the same filtered list instead of
+// always resetting to "All". The two filters are INDEPENDENT -- a state can be selected with no
+// category active (narrows to that state's posts across every category), so stateCode is never
+// gated behind kind being truthy.
 // A THIRD-ARGUMENT DISTINCTION matters here: omitting stateCode entirely (undefined) produces a
-// bare ?kind= URL that lets renderBlogList fall back to the visitor's own cookie-derived state
-// (see the pxq_state default in renderBlogList below) -- this is what category-tab links do, so
-// switching category always re-defaults rather than carrying a stale explicit state forward.
-// Passing stateCode as an empty string (what the state <select>'s "All states" option does)
-// instead writes a literal state= (present but empty) -- an explicit "no, really, all states"
-// that intentionally overrides the cookie default rather than triggering it.
+// bare URL that lets renderBlogList fall back to the visitor's own cookie-derived state (see the
+// pxq_state default in renderBlogList below) -- this is what category-tab links do, so switching
+// category always re-defaults rather than carrying a stale explicit state forward. Passing
+// stateCode as an empty string (what the state <select>'s "All states" option does) instead
+// writes a literal state= (present but empty) -- an explicit "no, really, all states" that
+// intentionally overrides the cookie default rather than triggering it.
 function blogListHref(kind, stateCode) {
   var params = [];
   if (kind) params.push('kind=' + encodeURIComponent(kind));
-  if (kind && stateCode !== undefined) params.push('state=' + encodeURIComponent(stateCode));
+  if (stateCode !== undefined) params.push('state=' + encodeURIComponent(stateCode));
   return '/blog' + (params.length ? '?' + params.join('&') : '');
 }
 function blogPostHref(slug, kind, stateCode) {
   var params = [];
   if (kind) params.push('from=' + encodeURIComponent(kind));
-  if (kind && stateCode) params.push('fromState=' + encodeURIComponent(stateCode));
+  if (stateCode) params.push('fromState=' + encodeURIComponent(stateCode));
   return '/blog/' + encodeURIComponent(slug) + (params.length ? '?' + params.join('&') : '');
 }
 
@@ -1068,26 +1068,28 @@ function blogCategoryTabsHtml(posts, activeKind) {
     '</div>';
 }
 
-// State filter, shown only once a single category is selected -- state is meaningless as a filter
-// across mixed categories, and with up to 50 state posts eventually landing in one category (see
-// the long-tail SEO rollout), category tabs alone stop being enough to find one specific state's
-// article. A <select> rather than tabs, unlike blogCategoryTabsHtml above, because 50 states as
-// individual tabs would be unwieldy where 8 categories are not. Switching category (a tab click)
-// always resets this filter to "All states" -- blogListHref only ever attaches ?state= alongside
-// a ?kind=, so a bare category link can't carry a stale state selection forward. Real posts with no
-// state_code (general educational guides, not the long-tail per-track articles) are ALWAYS shown
-// regardless of which state is selected -- a state filter narrows state-SPECIFIC content, it isn't
-// a hard partition that should hide universally-relevant articles nobody asked to hide (see
-// renderBlogList's matching "!p.state_code ||" shown-filter). Each state option's displayed count
-// reflects that too (state-specific count plus the general count), so what's shown always matches
-// what the dropdown promised.
+// State filter, available whenever there's at least one state-specific post in the current view
+// -- independent of whether a category is also selected (postsForKind IS just "posts" already
+// when no category is active, see renderBlogList), since a visitor comparing everything they're
+// studying for in their own state is just as real a use case as narrowing one category. With up
+// to 50 state posts eventually landing in one category alone (see the long-tail SEO rollout),
+// category tabs alone were never going to be enough to find one specific state's article anyway.
+// A <select> rather than tabs, unlike blogCategoryTabsHtml above, because 50 states as individual
+// tabs would be unwieldy where 8 categories are not. Switching category (a tab click) always
+// resets this filter to "All states" -- blogListHref only ever attaches ?state= when explicitly
+// passed a stateCode, so a bare category link can't carry a stale state selection forward. Real
+// posts with no state_code (general educational guides, not the long-tail per-track articles) are
+// ALWAYS shown regardless of which state is selected -- a state filter narrows state-SPECIFIC
+// content, it isn't a hard partition that should hide universally-relevant articles nobody asked
+// to hide (see renderBlogList's matching "!p.state_code ||" shown-filter). Each state option's
+// displayed count reflects that too (state-specific count plus the general count), so what's shown
+// always matches what the dropdown promised.
 // isDefaulted (see renderBlogList) means this state wasn't asked for via the URL at all -- it's the
 // visitor's own pxq_state cookie applied automatically. Surfaced as a visible note ABOVE the select
 // (not just the select's pre-chosen value) specifically so this never reads as "the blog is
 // missing posts" -- a silent filter a visitor didn't ask for has to be obvious, not just technically
 // discoverable in a dropdown.
 function blogStateFilterHtml(postsForKind, activeKind, activeState, isDefaulted) {
-  if (!activeKind) return '';
   var counts = {}, generalCount = 0;
   postsForKind.forEach(function (p) { if (p.state_code) counts[p.state_code] = (counts[p.state_code] || 0) + 1; else generalCount++; });
   var codes = Object.keys(counts).sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
@@ -1135,8 +1137,9 @@ function renderBlogList() {
   // null means "no ?state= at all" (an ordinary category-tab link or first visit) -- only THAT
   // case falls back to the visitor's own saved state below. An explicit '' (from choosing "All
   // states" in the filter itself) is a real, deliberate override and must stick, not be silently
-  // replaced by the cookie again.
-  var stateParam = activeKind ? params.get('state') : null;
+  // replaced by the cookie again. Read regardless of activeKind now -- state and category are
+  // independent filters (see blogListHref's own comment).
+  var stateParam = params.get('state');
   appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
@@ -1162,7 +1165,7 @@ function renderBlogList() {
 function renderBlogPost(slug) {
   var postParams = new URLSearchParams(location.search);
   var fromKind = postParams.get('from') || '';
-  var fromState = fromKind ? (postParams.get('fromState') || '') : '';
+  var fromState = postParams.get('fromState') || ''; // independent of fromKind -- see blogListHref's comment
   appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
   Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
     var post = results[0] && results[0].post;
