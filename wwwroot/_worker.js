@@ -724,6 +724,17 @@ export default {
     }
     if (url.pathname === '/mcp') return env.API.fetch(request);
 
+    // Category-scoped MCP aliases, e.g. /notary/api/mcp -- same backend endpoint as bare /mcp,
+    // but tags the request with which category's tools/instructions to default to.
+    const categoryMcpMatch = url.pathname.match(/^\/([a-z-]+)\/api\/mcp$/);
+    if (categoryMcpMatch && KIND_SLUGS[categoryMcpMatch[1]]) {
+      const target = new URL(request.url);
+      target.pathname = '/mcp';
+      target.searchParams.set('kind', categoryMcpMatch[1]);
+      const proxied = new Request(target, request);
+      return env.API.fetch(proxied);
+    }
+
     // California's real estate track was originally launched as /ca_dre (examType ca_dre),
     // breaking this project's {state}_{category} naming convention -- renamed to /ca_real_estate
     // 2026-08-24, which is itself now redirected again by TRACK_REDIRECTS below to
