@@ -781,6 +781,15 @@ export default {
     }
     if (url.pathname === '/mcp') return env.API.fetch(request);
 
+    // Signed media downloads (per-track audio narrations, PDFs) are served by the API worker's
+    // /media/:file handler (see handleMediaFile in passexamhq-api/src/index.js), but the signed
+    // URLs handed out by /api/resources/free are bare `/media/...` paths, not `/api/media/...` --
+    // so unlike the /api/ prefix above, this one forwards as-is with no path rewrite. Discovered
+    // 2026-09-06 while verifying al_driver's audio resources: every /media/* request on this
+    // domain was silently falling through to the SPA shell (200 text/html) instead of streaming
+    // the file, which would have broken every free/paid audio and PDF download sitewide.
+    if (url.pathname.startsWith('/media/')) return env.API.fetch(request);
+
     // Category-scoped MCP aliases, e.g. /notary/api/mcp -- same backend endpoint as bare /mcp,
     // but tags the request with which category's tools/instructions to default to.
     const categoryMcpMatch = url.pathname.match(/^\/([a-z-]+)\/api\/mcp$/);
