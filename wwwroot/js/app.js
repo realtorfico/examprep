@@ -1075,8 +1075,12 @@ function blogCategoryTabsHtml(posts, activeKind) {
 // individual tabs would be unwieldy where 8 categories are not. Switching category (a tab click)
 // always resets this filter to "All states" -- blogListHref only ever attaches ?state= alongside
 // a ?kind=, so a bare category link can't carry a stale state selection forward. Real posts with no
-// state_code (general educational guides, not the long-tail per-track articles) are counted in
-// "All states" but never given their own state option, since they don't have one.
+// state_code (general educational guides, not the long-tail per-track articles) are ALWAYS shown
+// regardless of which state is selected -- a state filter narrows state-SPECIFIC content, it isn't
+// a hard partition that should hide universally-relevant articles nobody asked to hide (see
+// renderBlogList's matching "!p.state_code ||" shown-filter). Each state option's displayed count
+// reflects that too (state-specific count plus the general count), so what's shown always matches
+// what the dropdown promised.
 // isDefaulted (see renderBlogList) means this state wasn't asked for via the URL at all -- it's the
 // visitor's own pxq_state cookie applied automatically. Surfaced as a visible note ABOVE the select
 // (not just the select's pre-chosen value) specifically so this never reads as "the blog is
@@ -1084,13 +1088,13 @@ function blogCategoryTabsHtml(posts, activeKind) {
 // discoverable in a dropdown.
 function blogStateFilterHtml(postsForKind, activeKind, activeState, isDefaulted) {
   if (!activeKind) return '';
-  var counts = {};
-  postsForKind.forEach(function (p) { if (p.state_code) counts[p.state_code] = (counts[p.state_code] || 0) + 1; });
+  var counts = {}, generalCount = 0;
+  postsForKind.forEach(function (p) { if (p.state_code) counts[p.state_code] = (counts[p.state_code] || 0) + 1; else generalCount++; });
   var codes = Object.keys(counts).sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
   if (!codes.length) return ''; // no state-specific posts in this category yet -- nothing to filter
   var options = ['<option value="">All states (' + postsForKind.length + ')</option>'].concat(
     codes.map(function (code) {
-      return '<option value="' + code + '"' + (code === activeState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[code] || code) + ' (' + counts[code] + ')</option>';
+      return '<option value="' + code + '"' + (code === activeState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[code] || code) + ' (' + (counts[code] + generalCount) + ')</option>';
     })
   );
   var defaultedNote = (isDefaulted && activeState)
@@ -1145,7 +1149,9 @@ function renderBlogList() {
       activeState = cookieStateHasPosts ? cookieState : '';
       isDefaulted = !!cookieStateHasPosts;
     }
-    var shown = activeState ? postsForKind.filter(function (p) { return p.state_code === activeState; }) : postsForKind;
+    // General posts (no state_code) always stay visible -- a state filter narrows state-specific
+    // content, it shouldn't also hide articles that apply to every visitor regardless of state.
+    var shown = activeState ? postsForKind.filter(function (p) { return !p.state_code || p.state_code === activeState; }) : postsForKind;
     blogListState = { posts: posts, postsForKind: postsForKind, shown: shown, activeKind: activeKind, activeState: activeState, isDefaulted: isDefaulted, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
     drawBlogList();
   }).catch(function () {
