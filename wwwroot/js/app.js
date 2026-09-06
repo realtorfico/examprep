@@ -1003,18 +1003,31 @@ function renderFaq() {
 // comment), not hardcoded here, so publishing needs no code deploy. kind is a category slug
 // (matches HUB_KIND_SLUGS values / category_content.slug) so each post can link back to its
 // category page via kindFromSlug().
-// blogPostHref/blogListHref carry the active category filter across a real page navigation (this
-// site uses real <a href> page loads for /blog, not client-side pushState routing -- see the route()
-// comment below) via a ?from=<kind> query param on the post URL, so clicking "← Blog" from a post
-// can return to the same filtered list instead of always resetting to "All".
-function blogListHref(kind) { return '/blog' + (kind ? '?kind=' + encodeURIComponent(kind) : ''); }
-function blogPostHref(slug, kind) { return '/blog/' + encodeURIComponent(slug) + (kind ? '?from=' + encodeURIComponent(kind) : ''); }
+// blogPostHref/blogListHref carry the active category (and, within a category, state) filter
+// across a real page navigation (this site uses real <a href> page loads for /blog, not
+// client-side pushState routing -- see the route() comment below) via ?from=<kind>&fromState=<state>
+// query params on the post URL, so clicking "← Blog" from a post can return to the same filtered
+// list instead of always resetting to "All". stateCode is only ever meaningful alongside a kind
+// (state is not filterable across mixed categories), so blogListHref silently drops it when kind
+// is empty rather than producing a state-only URL renderBlogList was never designed to read.
+function blogListHref(kind, stateCode) {
+  var params = [];
+  if (kind) params.push('kind=' + encodeURIComponent(kind));
+  if (kind && stateCode) params.push('state=' + encodeURIComponent(stateCode));
+  return '/blog' + (params.length ? '?' + params.join('&') : '');
+}
+function blogPostHref(slug, kind, stateCode) {
+  var params = [];
+  if (kind) params.push('from=' + encodeURIComponent(kind));
+  if (kind && stateCode) params.push('fromState=' + encodeURIComponent(stateCode));
+  return '/blog/' + encodeURIComponent(slug) + (params.length ? '?' + params.join('&') : '');
+}
 
-function blogListItemsHtml(posts, activeKind) {
+function blogListItemsHtml(posts, activeKind, activeState) {
   return posts.length
     ? '<div class="blog-list">' + posts.map(function (p) {
         var kindLabel = kindFromSlug(p.kind) || p.kind;
-        var href = blogPostHref(p.slug, activeKind);
+        var href = blogPostHref(p.slug, activeKind, activeState);
         return '<article class="blog-list-item card' + (p.featured ? ' blog-list-item-featured' : '') + '">' +
           (p.featured ? '<span class="badge blog-list-item-featured-badge">🎯 Practice Test Guide</span>' : '') +
           '<span class="badge blog-list-item-badge">' + escapeHtml(kindLabel) + '</span>' +
@@ -1048,6 +1061,29 @@ function blogCategoryTabsHtml(posts, activeKind) {
     '</div>';
 }
 
+// State filter, shown only once a single category is selected -- state is meaningless as a filter
+// across mixed categories, and with up to 50 state posts eventually landing in one category (see
+// the long-tail SEO rollout), category tabs alone stop being enough to find one specific state's
+// article. A <select> rather than tabs, unlike blogCategoryTabsHtml above, because 50 states as
+// individual tabs would be unwieldy where 8 categories are not. Switching category (a tab click)
+// always resets this filter to "All states" -- blogListHref only ever attaches ?state= alongside
+// a ?kind=, so a bare category link can't carry a stale state selection forward. Real posts with no
+// state_code (general educational guides, not the long-tail per-track articles) are counted in
+// "All states" but never given their own state option, since they don't have one.
+function blogStateFilterHtml(postsForKind, activeKind, activeState) {
+  if (!activeKind) return '';
+  var counts = {};
+  postsForKind.forEach(function (p) { if (p.state_code) counts[p.state_code] = (counts[p.state_code] || 0) + 1; });
+  var codes = Object.keys(counts).sort(function (a, b) { return (STATE_LABELS[a] || a).localeCompare(STATE_LABELS[b] || b); });
+  if (!codes.length) return ''; // no state-specific posts in this category yet -- nothing to filter
+  var options = ['<option value="">All states (' + postsForKind.length + ')</option>'].concat(
+    codes.map(function (code) {
+      return '<option value="' + code + '"' + (code === activeState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[code] || code) + ' (' + counts[code] + ')</option>';
+    })
+  );
+  return '<select class="blog-state-filter" data-act="change-blog-state-filter" data-kind="' + escapeHtml(activeKind) + '" aria-label="Filter by state">' + options.join('') + '</select>';
+}
+
 // Renders in batches instead of the whole filtered list at once -- with 30+ posts in "All", a
 // single-column list of full cards became an extremely long scroll. blogListState holds the
 // already-fetched data (one /blog call covers every category) plus how many of the current
@@ -1057,13 +1093,15 @@ var BLOG_PAGE_SIZE = 12;
 var blogListState = null;
 
 function drawBlogList() {
-  var posts = blogListState.posts, shown = blogListState.shown, activeKind = blogListState.activeKind;
+  var posts = blogListState.posts, postsForKind = blogListState.postsForKind, shown = blogListState.shown;
+  var activeKind = blogListState.activeKind, activeState = blogListState.activeState;
   var visibleCount = blogListState.visibleCount;
   var remaining = shown.length - visibleCount;
   appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1>' +
     '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
     blogCategoryTabsHtml(posts, activeKind) +
-    blogListItemsHtml(shown.slice(0, visibleCount), activeKind) +
+    blogStateFilterHtml(postsForKind, activeKind, activeState) +
+    blogListItemsHtml(shown.slice(0, visibleCount), activeKind, activeState) +
     (remaining > 0
       ? '<div class="blog-load-more-wrap"><button class="btn-secondary" data-act="blog-load-more">Load more (' + remaining + ' remaining)</button></div>'
       : '') +
@@ -1071,12 +1109,15 @@ function drawBlogList() {
 }
 
 function renderBlogList() {
-  var activeKind = new URLSearchParams(location.search).get('kind') || '';
+  var params = new URLSearchParams(location.search);
+  var activeKind = params.get('kind') || '';
+  var activeState = activeKind ? (params.get('state') || '') : '';
   appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
-    var shown = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
-    blogListState = { posts: posts, shown: shown, activeKind: activeKind, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
+    var postsForKind = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
+    var shown = activeState ? postsForKind.filter(function (p) { return p.state_code === activeState; }) : postsForKind;
+    blogListState = { posts: posts, postsForKind: postsForKind, shown: shown, activeKind: activeKind, activeState: activeState, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
     drawBlogList();
   }).catch(function () {
     appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
@@ -1084,11 +1125,13 @@ function renderBlogList() {
 }
 
 function renderBlogPost(slug) {
-  var fromKind = new URLSearchParams(location.search).get('from') || '';
+  var postParams = new URLSearchParams(location.search);
+  var fromKind = postParams.get('from') || '';
+  var fromState = fromKind ? (postParams.get('fromState') || '') : '';
   appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
   Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
     var post = results[0] && results[0].post;
-    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind) + '">← Back to Guides &amp; Tips</a></div>'; return; }
+    if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind, fromState) + '">← Back to Guides &amp; Tips</a></div>'; return; }
     var kindLabel = kindFromSlug(post.kind) || post.kind;
     var categoryHref = '/' + post.kind;
     // Prev/next -- the list is already published_at DESC (newest first), so "next" (older) is the
@@ -1101,10 +1144,10 @@ function renderBlogPost(slug) {
     var prevNextHtml = (prevPost || nextPost)
       ? '<div class="blog-post-prevnext">' +
         (prevPost
-          ? '<a class="blog-post-prevnext-link" href="' + blogPostHref(prevPost.slug, fromKind) + '"><span class="muted blog-post-prevnext-label">← Previous</span><span class="blog-post-prevnext-title">' + escapeHtml(prevPost.title) + '</span></a>'
+          ? '<a class="blog-post-prevnext-link" href="' + blogPostHref(prevPost.slug, fromKind, fromState) + '"><span class="muted blog-post-prevnext-label">← Previous</span><span class="blog-post-prevnext-title">' + escapeHtml(prevPost.title) + '</span></a>'
           : '<span></span>') +
         (nextPost
-          ? '<a class="blog-post-prevnext-link blog-post-prevnext-next" href="' + blogPostHref(nextPost.slug, fromKind) + '"><span class="muted blog-post-prevnext-label">Next →</span><span class="blog-post-prevnext-title">' + escapeHtml(nextPost.title) + '</span></a>'
+          ? '<a class="blog-post-prevnext-link blog-post-prevnext-next" href="' + blogPostHref(nextPost.slug, fromKind, fromState) + '"><span class="muted blog-post-prevnext-label">Next →</span><span class="blog-post-prevnext-title">' + escapeHtml(nextPost.title) + '</span></a>'
           : '<span></span>') +
         '</div>'
       : '';
@@ -1112,7 +1155,7 @@ function renderBlogPost(slug) {
     // not a precise claim, same spirit as this project's other honestly-hedged display numbers.
     var readMins = Math.max(1, Math.round(stripHtml(post.body_html).split(/\s+/).length / 200));
     appEl.innerHTML = '<div class="narrow-page blog-post' + (post.featured ? ' blog-post-featured' : '') + '">' +
-      '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind) + '">← Guides &amp; Tips</a></p>' +
+      '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind, fromState) + '">← Guides &amp; Tips</a></p>' +
       (post.featured ? '<div class="blog-post-featured-banner">🎯 Practice Test Guide — everything you need for this exam, in one place</div>' : '') +
       '<span class="badge blog-post-badge">' + escapeHtml(kindLabel) + '</span>' +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
@@ -7605,6 +7648,11 @@ document.addEventListener('change', function (e) {
     if (sampleSubhead) sampleSubhead.innerHTML = categorySampleSubheadHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');
     if (sampleWrap) { sampleWrap.innerHTML = '<p class="muted">Loading…</p>'; loadCategorySampleQuestion(); }
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-blog-state-filter') {
+    // Blog list is real-navigation, not client-rendered (see blogListHref's own comment) -- so
+    // unlike pick-category-state above, this just does a real page load rather than patching the
+    // DOM in place.
+    location.href = blogListHref(e.target.getAttribute('data-kind') || '', e.target.value);
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-gift-kind') {
     giftPickedKind = e.target.value;
     giftPickedState = ''; // the old state pick may not be valid for the new category

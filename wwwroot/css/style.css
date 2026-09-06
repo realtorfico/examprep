@@ -775,6 +775,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 600; text-decoration: none;
 }
 .blog-category-tabs a.active { background: var(--accent); color: var(--accent-foreground); border-color: var(--accent); }
+.blog-state-filter {
+  display: block; margin-top: 0.75rem; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 600;
+  background: var(--card); color: var(--fg); border: 1px solid var(--border); border-radius: 8px;
+  max-width: 16rem;
+}
 .blog-list {
   display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.5rem;
 }
