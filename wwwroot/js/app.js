@@ -1010,10 +1010,17 @@ function renderFaq() {
 // list instead of always resetting to "All". stateCode is only ever meaningful alongside a kind
 // (state is not filterable across mixed categories), so blogListHref silently drops it when kind
 // is empty rather than producing a state-only URL renderBlogList was never designed to read.
+// A THIRD-ARGUMENT DISTINCTION matters here: omitting stateCode entirely (undefined) produces a
+// bare ?kind= URL that lets renderBlogList fall back to the visitor's own cookie-derived state
+// (see the pxq_state default in renderBlogList below) -- this is what category-tab links do, so
+// switching category always re-defaults rather than carrying a stale explicit state forward.
+// Passing stateCode as an empty string (what the state <select>'s "All states" option does)
+// instead writes a literal state= (present but empty) -- an explicit "no, really, all states"
+// that intentionally overrides the cookie default rather than triggering it.
 function blogListHref(kind, stateCode) {
   var params = [];
   if (kind) params.push('kind=' + encodeURIComponent(kind));
-  if (kind && stateCode) params.push('state=' + encodeURIComponent(stateCode));
+  if (kind && stateCode !== undefined) params.push('state=' + encodeURIComponent(stateCode));
   return '/blog' + (params.length ? '?' + params.join('&') : '');
 }
 function blogPostHref(slug, kind, stateCode) {
@@ -1070,7 +1077,12 @@ function blogCategoryTabsHtml(posts, activeKind) {
 // a ?kind=, so a bare category link can't carry a stale state selection forward. Real posts with no
 // state_code (general educational guides, not the long-tail per-track articles) are counted in
 // "All states" but never given their own state option, since they don't have one.
-function blogStateFilterHtml(postsForKind, activeKind, activeState) {
+// isDefaulted (see renderBlogList) means this state wasn't asked for via the URL at all -- it's the
+// visitor's own pxq_state cookie applied automatically. Surfaced as a visible note ABOVE the select
+// (not just the select's pre-chosen value) specifically so this never reads as "the blog is
+// missing posts" -- a silent filter a visitor didn't ask for has to be obvious, not just technically
+// discoverable in a dropdown.
+function blogStateFilterHtml(postsForKind, activeKind, activeState, isDefaulted) {
   if (!activeKind) return '';
   var counts = {};
   postsForKind.forEach(function (p) { if (p.state_code) counts[p.state_code] = (counts[p.state_code] || 0) + 1; });
@@ -1081,7 +1093,12 @@ function blogStateFilterHtml(postsForKind, activeKind, activeState) {
       return '<option value="' + code + '"' + (code === activeState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[code] || code) + ' (' + counts[code] + ')</option>';
     })
   );
-  return '<select class="blog-state-filter" data-act="change-blog-state-filter" data-kind="' + escapeHtml(activeKind) + '" aria-label="Filter by state">' + options.join('') + '</select>';
+  var defaultedNote = (isDefaulted && activeState)
+    ? '<p class="muted blog-state-defaulted-note">📍 Showing ' + escapeHtml(STATE_LABELS[activeState] || activeState) +
+      ' (based on your saved state) — <a href="' + blogListHref(activeKind, '') + '">view all states</a></p>'
+    : '';
+  return defaultedNote +
+    '<select class="blog-state-filter" data-act="change-blog-state-filter" data-kind="' + escapeHtml(activeKind) + '" aria-label="Filter by state">' + options.join('') + '</select>';
 }
 
 // Renders in batches instead of the whole filtered list at once -- with 30+ posts in "All", a
@@ -1100,7 +1117,7 @@ function drawBlogList() {
   appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1>' +
     '<p class="muted">Guides and tips for passing your licensing exam.</p>' +
     blogCategoryTabsHtml(posts, activeKind) +
-    blogStateFilterHtml(postsForKind, activeKind, activeState) +
+    blogStateFilterHtml(postsForKind, activeKind, activeState, blogListState.isDefaulted) +
     blogListItemsHtml(shown.slice(0, visibleCount), activeKind, activeState) +
     (remaining > 0
       ? '<div class="blog-load-more-wrap"><button class="btn-secondary" data-act="blog-load-more">Load more (' + remaining + ' remaining)</button></div>'
@@ -1111,13 +1128,25 @@ function drawBlogList() {
 function renderBlogList() {
   var params = new URLSearchParams(location.search);
   var activeKind = params.get('kind') || '';
-  var activeState = activeKind ? (params.get('state') || '') : '';
+  // null means "no ?state= at all" (an ordinary category-tab link or first visit) -- only THAT
+  // case falls back to the visitor's own saved state below. An explicit '' (from choosing "All
+  // states" in the filter itself) is a real, deliberate override and must stick, not be silently
+  // replaced by the cookie again.
+  var stateParam = activeKind ? params.get('state') : null;
   appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Loading…</p></div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
     var postsForKind = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
+    var isDefaulted = false;
+    var activeState = stateParam;
+    if (activeState === null) {
+      var cookieState = getStateCookie();
+      var cookieStateHasPosts = cookieState && postsForKind.some(function (p) { return p.state_code === cookieState; });
+      activeState = cookieStateHasPosts ? cookieState : '';
+      isDefaulted = !!cookieStateHasPosts;
+    }
     var shown = activeState ? postsForKind.filter(function (p) { return p.state_code === activeState; }) : postsForKind;
-    blogListState = { posts: posts, postsForKind: postsForKind, shown: shown, activeKind: activeKind, activeState: activeState, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
+    blogListState = { posts: posts, postsForKind: postsForKind, shown: shown, activeKind: activeKind, activeState: activeState, isDefaulted: isDefaulted, visibleCount: Math.min(BLOG_PAGE_SIZE, shown.length) };
     drawBlogList();
   }).catch(function () {
     appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Couldn\'t load articles right now.</p></div>';
