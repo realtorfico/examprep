@@ -5452,6 +5452,21 @@ function drawTrackLandingSampleQuestion() {
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
+// A handful of tracks (all 24 exam-waived notary states plus az_boating, per live
+// track_registry.is_exam_required) have real practice content on this site even though the state
+// itself never requires a state-administered exam for that credential -- the content still has
+// value for study/reference, but a visitor landing here from search needs to know upfront that
+// there's no exam to actually take, rather than discovering it deep in the FAQ. Placed as the very
+// first thing on the page, above the breadcrumb, so it can't be missed or mistaken for marketing.
+function examNotRequiredBannerHtml(exam) {
+  var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
+  return '<div class="exam-not-required-banner">' +
+    '<span class="exam-not-required-badge">No State Exam Required</span>' +
+    '<span class="exam-not-required-text">' + escapeHtml(stateName) + ' does not require a state-administered ' +
+    escapeHtml((exam.examKind || '').toLowerCase()) + ' exam. The content on this page is provided for reference and study only.</span>' +
+    '</div>';
+}
+
 // ---- Track landing/sales page (logged-out visitors) -----------------------
 // Consolidated single sales page (Round 2 redesign decision) -- replaces the previous four
 // per-tab locked-preview mockups (one each for Quiz/Exam/Toughest45/Progress, each showing a
@@ -5502,6 +5517,7 @@ async function renderTrackLanding() {
 
   appEl.innerHTML =
     '<div class="track-landing">' +
+    (exam.isExamRequired === false ? examNotRequiredBannerHtml(exam) : '') +
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     '<a href="/' + kindSlug(exam.examKind) + '">' + escapeHtml(exam.examKind) + '</a> / ' +
     '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
