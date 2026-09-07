@@ -380,19 +380,23 @@ a { color: var(--accent); }
 .question-text { font-size: 1.1rem; line-height: 1.5; font-weight: 500; max-width: 68ch; scroll-margin-top: 0.5rem; }
 .question-progress-note { font-size: 0.8rem; margin-top: 0.6rem; }
 
-button {
+button, .btn-primary, .btn-secondary, .btn-gold {
   appearance: none; -webkit-appearance: none; -moz-appearance: none;
   cursor: pointer; border: none; border-radius: 10px; padding: 0.6rem 0.9rem;
   font-weight: 600; font-size: 0.9rem; transition: filter 0.15s, transform 0.15s ease, box-shadow 0.15s ease;
   display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   font-family: inherit;
 }
-/* border-radius lives here (not just on the button{} base rule above) because .btn-primary/
-   .btn-secondary are also used on plain <a> tags all over the site (hub-cta, promo-banner-cta,
-   etc.) -- button{} only matches real <button> elements, so an anchor styled as a button would
-   otherwise get every button visual EXCEPT its rounded corners. Pill-shaped (999px, not a fixed
-   px radius) as of the 2026-08-24 visual refresh -- deliberately independent of --radius (which
-   governs cards/panels), not derived from it.
+/* .btn-primary/.btn-secondary/.btn-gold joined the base selector above (not just border-radius)
+   because they're also used on plain <a> tags all over the site (hub-cta, promo-banner-cta, the
+   resources table's per-row "Unlock" action, etc.) -- button{} alone only matches real <button>
+   elements, so an anchor styled as one of these classes got every button visual EXCEPT the
+   structural ones (padding, flex centering, cursor) -- harmless-looking in most spots (background/
+   border/color still applied via the class rules below), but broke badly wherever an anchor's
+   surrounding layout assumed a real button box, e.g. collapsing to plain inline underlined text
+   inside a narrow table cell.
+   The border-radius override below stays separate (999px pill, not this rule's 10px) --
+   deliberately independent of --radius (which governs cards/panels), not derived from it.
    .btn-gold is a third, higher-intent variant (redeem/buy-style CTAs) alongside primary/secondary
    -- gold used deliberately as an accent rather than just a badge tint. */
 .btn-primary, .btn-secondary, .btn-gold { border-radius: 999px; }
