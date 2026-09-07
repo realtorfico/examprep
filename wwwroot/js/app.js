@@ -5969,7 +5969,12 @@ async function renderExamIntro(mode) {
       ? '<li><strong>No time limit</strong>, matching the real test — take as long as you need</li>'
       : '<li><strong>' + Math.round(config.durationSec / 60) + '-minute</strong> timer, running continuously in one sitting</li>') +
     '<li>No answer feedback until you finish — just like the real thing</li>' +
-    '<li>Need <strong>' + config.passPercent + '%</strong> to pass (' + compliance.passScoreNote + ')</li>' +
+    // config.passPercent is null for scored-not-pass/fail tracks (e.g. ACT's 1-36 composite) --
+    // no pass threshold to state, so this line is skipped entirely rather than printing "Need
+    // null% to pass".
+    (config.passPercent != null
+      ? '<li>Need <strong>' + config.passPercent + '%</strong> to pass (' + compliance.passScoreNote + ')</li>'
+      : '') +
     '</ul>' +
     '<p class="muted">' + (isUntimed
       ? 'This stays open even if you close this tab — reopening it will resume right where you left off, not restart. There\'s no pausing.'
@@ -6295,12 +6300,17 @@ function renderExamResults(result, opts) {
     : '<button class="btn-primary hub-cta" type="button" data-act="exam-restart" data-mode="' + mode + '">Take another ' +
       (mode === 'toughest45' ? 'Weak Spots exam' : 'practice exam') + ' →</button>';
 
+  // result.passed is null (not just falsy) for scored-not-pass/fail tracks (e.g. ACT) -- no real
+  // pass/fail to report, so this shows a neutral completion headline and leaves the percent stat
+  // box uncolored instead of red.
+  var resultHeadline = result.passed === null ? 'Practice exam complete' : result.passed ? 'You passed! 🎉' : 'Not quite — keep studying';
+  var percentValClass = result.passed === null ? '' : result.passed ? 'correct' : 'wrong';
   appEl.innerHTML = renderTabs(examTabKey(mode)) +
-    '<h1>' + (result.passed ? 'You passed! 🎉' : 'Not quite — keep studying') + '</h1>' +
+    '<h1>' + resultHeadline + '</h1>' +
     dateNote +
     '<div class="stats-bar">' +
     '<div class="stat-box"><div class="label">Score</div><div class="val">' + result.correct + ' / ' + result.total + '</div></div>' +
-    '<div class="stat-box"><div class="label">Percent</div><div class="val ' + (result.passed ? 'correct' : 'wrong') + '">' + result.percent + '%</div></div>' +
+    '<div class="stat-box"><div class="label">Percent</div><div class="val ' + percentValClass + '">' + result.percent + '%</div></div>' +
     '<div class="stat-box"><div class="label">Time used</div><div class="val">' + formatClock(result.timeTakenSec) + '</div></div>' +
     '</div>' +
     '<p class="muted mockexam-result-note">Practice score only — the real exam reports a proprietary scaled score, not raw percent-correct.</p>' +
