@@ -2122,6 +2122,17 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Origination Activities', '27%'], ['Federal Laws & Rules', '24%'], ['General Mortgage Knowledge', '20%'], ['Ethics & Fair Lending', '18%']],
   },
   {
+    // Scaffold entry (route: '#', matches mlo above) -- track_registry row is active:0, no live
+    // content yet. Covers only the 3 REQUIRED multiple-choice sections (English/Math/Reading);
+    // Science is optional and excluded, Writing is a separate optional essay this site's MC-only
+    // schema can't represent. Breakdown weighted by each section's real scored-question count
+    // (40+41+27=108 total) from ACT's own official "Preparing for the ACT" 2025-2026 guide.
+    examType: 'act',
+    title: 'ACT', category: 'ACT', route: '#',
+    duration: '125 Minutes', questions: '131 Questions (108 Scored)', passScore: 'N/A (1-36 composite score, no pass threshold)',
+    breakdown: [['English', '37%'], ['Mathematics', '38%'], ['Reading', '25%']],
+  },
+  {
     examType: 'ak_re_salesperson',
     title: 'Alaska Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ak',
     duration: '80 Minutes', questions: '40 Multiple Choice (State Law Portion)', passScore: '30/40 Correct (75%)',
@@ -3397,6 +3408,7 @@ var HUB_KIND_SLUGS = {
   'Boating': 'boating',
   'Notary': 'notary',
   'Mortgage Loan Origination': 'mlo',
+  'ACT': 'act',
 };
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
