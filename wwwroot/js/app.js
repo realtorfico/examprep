@@ -376,6 +376,15 @@ function loadPublicStats() {
   return publicStatsPromise;
 }
 
+// Lightweight published-post counts (~1KB, CDN-cached) for the homepage/category/track hero
+// article-count tiles -- deliberately NOT the full /blog list (214KB across 291 posts), which
+// would be wasteful to fetch just to count rows. See handleBlogCounts in examprep-api.
+var blogCountsPromise = null;
+function loadBlogCounts() {
+  if (!blogCountsPromise) blogCountsPromise = apiFetch('/blog?counts=1');
+  return blogCountsPromise;
+}
+
 // On a specific track's page, the footer's affiliation disclaimer names that track's real
 // agency/requirement (accurate and precise). On the hub itself (no track in the URL path) there's
 // no single track to name -- falling back to trackCompliance's default (ca_notary) would wrongly
@@ -3894,11 +3903,15 @@ function drawCategorySampleQuestion() {
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
-function categoryStatsHtml(activeCount, stateCount, resourceStats) {
+function categoryStatsHtml(activeCount, articleCount, resourceStats) {
   var tiles = [
     { value: activeCount, label: 'State Tracks' },
-    { value: stateCount, label: 'States Covered' },
   ];
+  // Replaces the old "States Covered" tile (redundant with State Tracks -- this site has one track
+  // per state, so the two numbers were always identical) with a real per-category article count.
+  // Same "only show if real" gate as the resource tiles below -- several categories (Boating/CDL/
+  // Motorcycle, as of this build) have no long-tail SEO articles yet.
+  if (articleCount) tiles.push({ value: articleCount, label: 'Articles & Guides' });
   // Same "only show if real" rule as the homepage's own resource tiles (fillReadinessCard) -- many
   // categories (Driver/CDL/Motorcycle/Boating) have no Key Facts Digest content yet, and a bare
   // "0 Quick-Fact Tables" would read as a broken page, not an honest gap.
@@ -3996,7 +4009,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, new Set(tracks.map(function (t) { return t.stateCode; })).size, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
     '</div>' +
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
@@ -4014,6 +4027,26 @@ async function renderCategoryPage(kind) {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
     fillCategoryStatsRadial();
   });
+  fillCategoryArticleCount(kind, tracks);
+}
+
+// Article count comes from a separate lightweight fetch (loadBlogCounts, not part of boot()) so it
+// patches the stats card in place once it lands, same "arrives late, repaint don't reflow" posture
+// as fillCategoryQuestionCount/fillCategoryStatsRadial above -- rather than blocking first paint on
+// a third fetch. Best-effort: several categories (Boating/CDL/Motorcycle, as of this build) have no
+// long-tail articles yet, so a 0 here correctly leaves the tile absent, not "0 Articles."
+function fillCategoryArticleCount(kind, tracks) {
+  var catWrap = document.getElementById('category-stats-wrap');
+  if (!catWrap) return;
+  loadBlogCounts().then(function (bc) {
+    var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
+    if (!articleCount) return;
+    var wrap = document.getElementById('category-stats-wrap');
+    if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
+    wrap.innerHTML = categoryStatsHtml(tracks.length, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+    fillCategoryQuestionCount(tracks);
+    loadSiteConfig().then(fillCategoryStatsRadial);
+  }).catch(function () { /* best-effort -- tile just stays absent */ });
 }
 
 var CATEGORY_ICONS = {
@@ -4374,7 +4407,9 @@ function comparisonTableHtml() {
 function fillReadinessCard() {
   var wrap = document.getElementById('hub-readiness-wrap');
   if (!wrap) return;
-  loadPublicStats().then(function (s) {
+  Promise.all([loadPublicStats(), loadBlogCounts().catch(function () { return null; })]).then(function (results) {
+    var s = results[0];
+    var blogCounts = results[1];
     if (s.passRate == null && s.totalQuestions == null && s.tracksLive == null) return; // nothing real to show
     var radial = radialProgressSvg(s.passRate != null ? s.passRate : 0, {
       size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
@@ -4390,6 +4425,11 @@ function fillReadinessCard() {
       { value: s.tracksLive, label: 'Live Tracks' },
       { value: s.examsCompleted, label: 'Mock Exams' },
     ];
+    // Site-wide article count (blog + long-tail SEO guides combined) -- same "only show if real"
+    // rule as the resource tiles below, though at this site's scale it's always real.
+    if (blogCounts && blogCounts.total) {
+      tiles.push({ value: blogCounts.total, label: 'Articles & Guides' });
+    }
     // Site-wide Key Facts Digest coverage (Quick-Fact tables + flashcard decks), added as a second
     // tile pair only once real content exists to show -- an all-zero pair would look like a broken
     // page rather than an honest "not built yet," so this is genuinely additive, never a fabricated
@@ -4539,13 +4579,18 @@ function fillResourceCountSurfaces() {
   var catWrap = document.getElementById('category-stats-wrap');
   if (catWrap && categoryPageState && categoryPageState.tracks) {
     var tracks = categoryPageState.tracks;
-    catWrap.innerHTML = categoryStatsHtml(
-      tracks.length,
-      new Set(tracks.map(function (t) { return t.stateCode; })).size,
-      aggregateResourceStats(tracks.map(function (t) { return t.examType; }))
-    );
-    fillCategoryQuestionCount(tracks);
-    loadSiteConfig().then(fillCategoryStatsRadial);
+    var kind = categoryPageState.kind;
+    // Routed through loadBlogCounts (memoized, so effectively instant here) rather than a fixed
+    // 0 -- this repaint can fire after fillCategoryArticleCount already painted a real count, and
+    // overwriting it back to 0 would be a visible regression.
+    loadBlogCounts().then(function (bc) {
+      var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
+      var wrap = document.getElementById('category-stats-wrap');
+      if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
+      wrap.innerHTML = categoryStatsHtml(tracks.length, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+      fillCategoryQuestionCount(tracks);
+      loadSiteConfig().then(fillCategoryStatsRadial);
+    }).catch(function () { /* best-effort -- stats card just keeps its current content */ });
   }
 
   // Track landing: the strip renders nothing at all for a track with no digest content, so this
@@ -5585,6 +5630,10 @@ async function renderTrackLanding() {
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
+    // Filled in by fillTrackLandingArticleCount() below -- article counts come from a separate
+    // lightweight fetch (loadBlogCounts), not part of this synchronous render, so this div stays
+    // empty until that resolves rather than showing a placeholder "0 Articles."
+    '<div id="track-landing-article-count-line"></div>' +
     '</div>' + officialLinkHtml + freshnessHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
@@ -5658,6 +5707,7 @@ async function renderTrackLanding() {
   fillTrackLandingResourcePreview(exam.examType);
   loadTrackLandingSampleQuestion(exam);
   loadTrackLandingBlogPost(exam);
+  fillTrackLandingArticleCount(exam);
   // Same testimonials the exam's own category landing page shows (category_content is keyed by
   // category slug, not per-track) -- real, relevant social proof for THIS exam kind, not a fake
   // per-track set that would need authoring 190+ times over.
@@ -5691,6 +5741,24 @@ function loadTrackLandingBlogPost(exam) {
       '🎯 Read the full ' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + ' ' + escapeHtml(exam.examKind) +
       ' Practice Test &amp; Cheat Sheet →</a>';
   }).catch(function () { /* best-effort -- section just stays empty */ });
+}
+
+// This track's article count = state-specific posts (kindStateCounts) + state-agnostic editorial
+// posts for the same category (kindAgnosticCounts), matching the same "state-agnostic posts count
+// toward every state" semantics the admin blog filter uses (blogPostMatchesFilters). Best-effort:
+// the line just stays empty (not "0 Articles") if there's genuinely nothing to show.
+function fillTrackLandingArticleCount(exam) {
+  var line = document.getElementById('track-landing-article-count-line');
+  if (!line) return;
+  loadBlogCounts().then(function (bc) {
+    if (!bc) return;
+    var slug = kindSlug(exam.examKind);
+    var count = (bc.kindStateCounts && bc.kindStateCounts[slug + ':' + exam.stateCode] || 0) +
+      (bc.kindAgnosticCounts && bc.kindAgnosticCounts[slug] || 0);
+    if (!count) return;
+    var el = document.getElementById('track-landing-article-count-line');
+    if (el) el.innerHTML = '📰 <strong>Articles &amp; Guides:</strong> ' + count;
+  }).catch(function () { /* best-effort -- line just stays empty */ });
 }
 
 // Tabbed Quiz/Exam/Progress teaser, embedded directly on the landing page (client-side tab switch,
