@@ -1513,8 +1513,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 /* Track landing page's "what's in the Resources tab" stat strip -- reuses .outcome-tile (defined
    below) so the bold-number treatment matches the homepage/category stats cards exactly. A plain
-   flex row rather than the fixed 2-col grid those use, since this can hold 1-4 tiles depending on
-   which resource types a given track actually has (see trackResourceStatsHtml()). */
+   flex row rather than the fixed 2-col grid those use, since this can hold 1-5 tiles: an always-
+   present Practice Questions tile (async-filled, see fillTrackQuestionCount()) plus up to 4 more
+   depending on which resource types a given track actually has (see trackResourceStatsHtml()). */
 .track-resource-stats {
   display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 0.8rem; padding: 0.7rem 0.75rem;
   border: 1px solid var(--border); border-radius: 8px; background: color-mix(in srgb, var(--accent) 5%, var(--surface-2));

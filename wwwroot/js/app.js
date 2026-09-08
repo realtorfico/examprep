@@ -4737,8 +4737,11 @@ function fillResourceCountSurfaces() {
     }).catch(function () { /* best-effort -- stats card just keeps its current content */ });
   }
 
-  // Track landing: the strip renders nothing at all for a track with no digest content, so this
-  // has to handle "wasn't there before, should be now" as well as replacing an existing strip.
+  // Track landing: the strip always renders now (it carries the Practice Questions tile even for
+  // a track with no digest content), so this mainly handles replacing an existing strip -- but the
+  // regenerated markup's #track-question-count-tile is blank again (trackResourceStatsHtml() can't
+  // know the live count synchronously), so re-run fillTrackQuestionCount() right after or a number
+  // that had already loaded before this repaint fired would silently vanish and never come back.
   var exam = state.examType && trackByExamType(state.examType);
   if (exam && document.querySelector('.track-landing')) {
     var stripHtml = trackResourceStatsHtml(exam.examType);
@@ -4751,6 +4754,7 @@ function fillResourceCountSurfaces() {
       var breakdown = document.querySelector('.buy-value-col .breakdown-label');
       if (breakdown) breakdown.insertAdjacentHTML('beforebegin', stripHtml);
     }
+    fillTrackQuestionCount(exam.examType);
   }
 }
 
@@ -4836,20 +4840,40 @@ function aggregateResourceStats(examTypes) {
 
 // Per-track "what's actually in the Resources tab" stat strip for the track landing page --
 // reuses the same .outcome-tile styling as the homepage/category stats cards so the number
-// treatment reads consistently across all three levels. Renders nothing (not a zero-filled row)
-// for the ~194 tracks that don't have Key Facts Digest content yet -- resourceInventorySummary's
-// existing "Official handbook" text line already covers that case on its own.
+// treatment reads consistently across all three levels. Always includes a Practice Questions
+// tile (filled in by fillTrackQuestionCount() below, since the real live count needs a fetch)
+// so the row still renders even for the ~194 tracks that don't have Key Facts Digest content
+// yet -- resourceInventorySummary's existing "Official handbook" text line covers the lack of
+// supplementary resources on its own, but a visitor still deserves to see the real pool size.
 function trackResourceStatsHtml(examType) {
   var s = aggregateResourceStats([examType]);
-  if (!s.tables && !s.decks && !s.audio && !s.video) return '';
   var tiles = [];
+  tiles.push({ id: 'track-question-count-tile' }); // patched by fillTrackQuestionCount()
   if (s.tables) tiles.push({ value: s.tables, label: 'Quick-Fact Table' + (s.tables === 1 ? '' : 's') });
   if (s.decks) tiles.push({ value: s.decks, label: 'Flashcard Deck' + (s.decks === 1 ? '' : 's') + (s.cards ? '<br>(' + s.cards + ' cards)' : '') });
   if (s.audio) tiles.push({ value: s.audio, label: 'Audio Lesson' + (s.audio === 1 ? '' : 's') });
   if (s.video) tiles.push({ value: s.video, label: 'Video' + (s.video === 1 ? '' : 's') });
   return '<div class="track-resource-stats">' + tiles.map(function (t) {
-    return '<div class="outcome-tile"><div class="outcome-tile-value">' + t.value + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
+    return t.id
+      ? '<div class="outcome-tile" id="' + t.id + '"></div>'
+      : '<div class="outcome-tile"><div class="outcome-tile-value">' + t.value + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
   }).join('') + '</div>';
+}
+
+// Real live practice-question-pool size for this one track, from the same public
+// /questions/counts endpoint the category page's own Practice Questions tile uses (see
+// fillCategoryQuestionCount above) -- never a fabricated/estimated figure. Best-effort: the
+// tile just stays empty (not a fake number) if the fetch fails or the track has no questions yet.
+async function fillTrackQuestionCount(examType) {
+  var tile = document.getElementById('track-question-count-tile');
+  if (!tile) return;
+  try {
+    var res = await apiFetch('/questions/counts');
+    var row = (res.counts || []).filter(function (r) { return r.exam_type === examType; })[0];
+    var count = row ? row.count : 0;
+    if (!count) return;
+    tile.innerHTML = '<div class="outcome-tile-value">' + count.toLocaleString() + '</div><div class="outcome-tile-label">Practice Question' + (count === 1 ? '' : 's') + '</div>';
+  } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
 // Native <audio controls>/<video controls> has a draggable scrubber but no dedicated skip
@@ -5862,6 +5886,7 @@ async function renderTrackLanding() {
     if (el) el.textContent = '';
   });
   loadOtherTracksPricing();
+  fillTrackQuestionCount(exam.examType);
   fillTrackLandingResourcePreview(exam.examType);
   loadTrackLandingSampleQuestion(exam);
   loadTrackLandingBlogPost(exam);
