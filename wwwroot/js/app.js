@@ -3995,6 +3995,12 @@ function categoryStatsHtml(tracks, articleCount, resourceStats) {
     tiles.push({ value: resourceStats.tables, label: 'Quick-Fact Tables' });
     tiles.push({ value: resourceStats.decks, label: 'Flashcard Decks' });
   }
+  // Audio Lessons tile -- same "only show if real" gate as tables/decks above, and the same
+  // independent-gate pattern as the homepage's own Audio Lessons tile (fillReadinessCard) so a
+  // category with audio but no tables/decks yet (or vice versa) still shows what's real.
+  if (resourceStats && resourceStats.audio) {
+    tiles.push({ value: resourceStats.audio, label: 'Audio Lessons' });
+  }
   return '<div class="hub-readiness-card">' +
     '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Coverage</span>, Not Marketing Copy</p>' +
     '<div class="hub-readiness-top-row">' +
