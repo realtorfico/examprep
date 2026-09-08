@@ -3600,6 +3600,36 @@ function trackDescription(examType) {
   return (c && c.description) || '';
 }
 
+// Ad-campaign message-match hero copy for the two tracks currently running paid search ads
+// (drafts/marketing/ad_copy_drafts.md) -- deliberately a fixed, reviewed set for exactly these two
+// exam types, NOT a generic hero_headline/hero_subhead-with-fallback system (unlike the category
+// page's content.hero_headline pattern). Every other track keeps its existing per-track
+// TRACK_CONTENT description untouched -- no silently-rendered generic/fallback copy anywhere here.
+var TRACK_HERO_OVERRIDES = {
+  il_notary: {
+    headline: 'Illinois Notary Exam Practice',
+    subhead: '50 real practice questions modeled on the official Illinois notary exam. You need ' +
+      '43/50 (85%) to pass — know exactly where you stand before test day.',
+    bullets: [
+      'Built from official Illinois notary sourcing, not a generic multi-state guess',
+      '88% of students across our Notary tracks passed their practice exam (76 real attempts, all states combined)',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+    ],
+  },
+  ca_re_salesperson: {
+    headline: 'California Real Estate Salesperson Exam Practice',
+    subhead: '150 real practice questions built from official DRE content. You need 105/150 (70%) ' +
+      'to pass — a failed attempt costs $100 to retake (DRE fee, effective 7/1/2024).',
+    bullets: [
+      'Content sourced directly from official DRE material, not a repackaged PDF',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+      'Updated for current CA real estate law',
+    ],
+  },
+};
+
 function trackInfoLinks(examType) {
   var c = TRACK_CONTENT[examType];
   return (c && c.infoLinks) || [];
@@ -5853,6 +5883,7 @@ async function renderTrackLanding() {
         '</div>';
     }).join('') + '</div>';
   var compliance = trackCompliance(exam.examType);
+  var heroOverride = TRACK_HERO_OVERRIDES[exam.examType] || null;
 
   appEl.innerHTML =
     '<div class="track-landing">' +
@@ -5879,8 +5910,12 @@ async function renderTrackLanding() {
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>' +
     (examTypeHasIntlExposure(exam.examType) ? internationalBadgeHtml() : '') + '</div>' +
-    '<h1>' + escapeHtml(fullKindLabel(exam.title)) + '</h1>' +
-    '<p class="muted page-intro-text track-landing-description">' + trackDescription(exam.examType) + '</p>' +
+    '<h1>' + escapeHtml(heroOverride ? heroOverride.headline : fullKindLabel(exam.title)) + '</h1>' +
+    '<p class="muted page-intro-text track-landing-description">' +
+    (heroOverride ? escapeHtml(heroOverride.subhead) : trackDescription(exam.examType)) + '</p>' +
+    (heroOverride ? '<ul class="buy-feature-list track-hero-trust-list">' +
+      heroOverride.bullets.map(function (b) { return '<li>✓ ' + escapeHtml(b) + '</li>'; }).join('') +
+      '</ul>' : '') +
     '<div class="buy-layout">' +
     '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '<div id="track-landing-blogpost-wrap"></div>' + '</div></div>' +
     '<div class="card">' +

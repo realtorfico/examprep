@@ -1149,6 +1149,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    detail -- capped to 65ch inside a container that can run up to 1400px wide, it visually reads as
    using barely half the page. Let it use the full .track-landing width instead. */
 .track-landing-description { max-width: none; }
+/* Ad-campaign hero trust bullets (TRACK_HERO_OVERRIDES) -- reuses .buy-feature-list's checkmark
+   list styling but needs its own top margin since it follows a paragraph here, not a price card. */
+.track-hero-trust-list { margin-top: 1rem; margin-bottom: 1.4rem; max-width: 46ch; }
 .track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
 .track-landing-freshness { font-size: 0.72rem; margin: 0.35rem 0 0; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
