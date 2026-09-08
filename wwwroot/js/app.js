@@ -3606,12 +3606,15 @@ function trackDescription(examType) {
 // (2) notaryHeroOverride() below -- a data-driven generator for the WHOLE Notary category, built
 // after the same reviewed IL Notary copy proved out the pattern. Every field is either real
 // per-track data from track_registry (question count/pass score/min correct) or a genuine
-// sitewide constant (guarantee terms, the Notary category pass rate) -- nothing invented per
-// state, so this isn't the "generic content" the no-fallback rule above is about. Gated on
-// exam.isExamRequired so it can never fire for a waived-exam track (feedback_exam_required_only_for_marketing)
-// and self-updates if the registry's eligible-state set ever changes -- no hardcoded state list to
-// maintain. Every other non-Notary, non-ca_re_salesperson track keeps its existing per-track
-// TRACK_CONTENT description untouched -- no silently-rendered generic/fallback copy anywhere here.
+// sitewide constant (guarantee terms, a category's real pass rate IF it has enough live attempt
+// data -- e.g. Real Estate Salesperson has zero recorded attempts sitewide as of this build, so
+// its generator omits any pass-rate bullet entirely rather than reusing Notary's). Nothing invented
+// per state, so this isn't the "generic content" the no-fallback rule above is about. Each
+// category's generator is gated on exam.isExamRequired so it can never fire for a waived-exam track
+// (feedback_exam_required_only_for_marketing) and self-updates if the registry's eligible-state set
+// ever changes -- no hardcoded state list to maintain. Every track outside TRACK_HERO_OVERRIDES and
+// every wired-up category generator keeps its existing per-track TRACK_CONTENT description
+// untouched -- no silently-rendered generic/fallback copy anywhere here.
 var TRACK_HERO_OVERRIDES = {
   ca_re_salesperson: {
     headline: 'California Real Estate Salesperson Exam Practice',
@@ -3664,8 +3667,43 @@ function notaryHeroOverride(exam) {
   };
 }
 
+// Real Estate Salesperson's own numeric quirk, distinct from Notary's: most non-clean states here
+// use a genuine SCALED score (PSI/Pearson-style, "Scaled Score of 75 (0-100 Scale, Not a Raw
+// Percentage)") rather than Notary's "not officially published at all" pattern -- still a real,
+// state-disclosed number, just not a simple X-of-Y-correct ratio, so the subhead avoids presenting
+// the registry's minCorrect/questionCount as if it WERE that raw ratio. A few states (NY's
+// "Estimated" item count/score, NJ's combined-110-question structure with no separate state-portion
+// score) are non-official/non-standard for a different reason -- caught by the same regex since
+// both explicitly disclose the caveat in already-vetted display text, not guessed here.
+function reSalespersonMechanicsAreCleanRatio(exam) {
+  var text = (exam.questions || '') + ' ' + (exam.passScore || '');
+  return !/scaled score|estimated|psychometrically set|no separate/i.test(text);
+}
+
+function reSalespersonHeroOverride(exam) {
+  if (exam.examKind !== 'Real Estate Salesperson' || !exam.isExamRequired) return null;
+  var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
+  var q = exam.questionCount, min = exam.minCorrect, pass = exam.passPercent;
+  var subhead = reSalespersonMechanicsAreCleanRatio(exam)
+    ? q + ' real practice questions modeled on the official ' + stateName + ' real estate salesperson exam. You need ' +
+      min + '/' + q + ' (' + pass + '%) to pass — know exactly where you stand before test day.'
+    : q + ' real practice questions covering the ' + stateName + ' real estate salesperson exam. Our mock ' +
+      'exam uses a ' + min + '/' + q + ' (' + pass + '%) passing bar — see the exam specs below for ' +
+      'exactly how ' + stateName + '\'s real exam is scored.';
+  return {
+    headline: stateName + ' Real Estate Salesperson Exam Practice',
+    subhead: subhead,
+    bullets: [
+      'Built from official ' + stateName + ' real estate sourcing, not a generic multi-state guess',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+      'Updated for current ' + stateName + ' real estate law',
+    ],
+  };
+}
+
 function getTrackHeroOverride(exam) {
-  return TRACK_HERO_OVERRIDES[exam.examType] || notaryHeroOverride(exam);
+  return TRACK_HERO_OVERRIDES[exam.examType] || notaryHeroOverride(exam) || reSalespersonHeroOverride(exam);
 }
 
 function trackInfoLinks(examType) {
