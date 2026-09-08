@@ -4755,6 +4755,7 @@ function fillResourceCountSurfaces() {
       if (breakdown) breakdown.insertAdjacentHTML('beforebegin', stripHtml);
     }
     fillTrackQuestionCount(exam.examType);
+    fillTrackLandingArticleCount(exam);
   }
 }
 
@@ -4849,6 +4850,7 @@ function trackResourceStatsHtml(examType) {
   var s = aggregateResourceStats([examType]);
   var tiles = [];
   tiles.push({ id: 'track-question-count-tile' }); // patched by fillTrackQuestionCount()
+  tiles.push({ id: 'track-article-count-tile' }); // patched by fillTrackLandingArticleCount()
   if (s.tables) tiles.push({ value: s.tables, label: 'Quick-Fact Table' + (s.tables === 1 ? '' : 's') });
   if (s.decks) tiles.push({ value: s.decks, label: 'Flashcard Deck' + (s.decks === 1 ? '' : 's') + (s.cards ? '<br>(' + s.cards + ' cards)' : '') });
   if (s.audio) tiles.push({ value: s.audio, label: 'Audio Lesson' + (s.audio === 1 ? '' : 's') });
@@ -5798,10 +5800,6 @@ async function renderTrackLanding() {
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
-    // Filled in by fillTrackLandingArticleCount() below -- article counts come from a separate
-    // lightweight fetch (loadBlogCounts), not part of this synchronous render, so this div stays
-    // empty until that resolves rather than showing a placeholder "0 Articles."
-    '<div id="track-landing-article-count-line"></div>' +
     '</div>' + officialLinkHtml + freshnessHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
@@ -5928,20 +5926,23 @@ function loadTrackLandingBlogPost(exam) {
 
 // This track's article count = state-specific posts (kindStateCounts) + state-agnostic editorial
 // posts for the same category (kindAgnosticCounts), matching the same "state-agnostic posts count
-// toward every state" semantics the admin blog filter uses (blogPostMatchesFilters). Best-effort:
-// the line just stays empty (not "0 Articles") if there's genuinely nothing to show.
+// toward every state" semantics the admin blog filter uses (blogPostMatchesFilters). Renders as a
+// tile in the same .track-resource-stats strip as Practice Questions/Tables/Decks/etc. (moved out
+// of its old standalone specs-card text line 2026-09-08 so all the "how much is really here" counts
+// live in one place). Best-effort: the tile just stays empty (not "0 Articles") if there's
+// genuinely nothing to show.
 function fillTrackLandingArticleCount(exam) {
-  var line = document.getElementById('track-landing-article-count-line');
-  if (!line) return;
+  var tile = document.getElementById('track-article-count-tile');
+  if (!tile) return;
   loadBlogCounts().then(function (bc) {
     if (!bc) return;
     var slug = kindSlug(exam.examKind);
     var count = (bc.kindStateCounts && bc.kindStateCounts[slug + ':' + exam.stateCode] || 0) +
       (bc.kindAgnosticCounts && bc.kindAgnosticCounts[slug] || 0);
     if (!count) return;
-    var el = document.getElementById('track-landing-article-count-line');
-    if (el) el.innerHTML = '📰 <strong>Articles &amp; Guides:</strong> ' + count;
-  }).catch(function () { /* best-effort -- line just stays empty */ });
+    var el = document.getElementById('track-article-count-tile');
+    if (el) el.innerHTML = '<div class="outcome-tile-value">' + count + '</div><div class="outcome-tile-label">Article' + (count === 1 ? '' : 's') + ' &amp; Guides</div>';
+  }).catch(function () { /* best-effort -- tile just stays empty */ });
 }
 
 // Tabbed Quiz/Exam/Progress teaser, embedded directly on the landing page (client-side tab switch,
