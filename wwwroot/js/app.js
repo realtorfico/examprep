@@ -3470,6 +3470,18 @@ var FULL_KIND_NAMES = {
   OAT: 'Optometry Admission Test',
 };
 function fullKindLabel(kind) { return FULL_KIND_NAMES[kind] ? kind + ' (' + FULL_KIND_NAMES[kind] + ')' : kind; }
+
+// Per-track "international students" deep-dive article slugs -- these 4 national exam kinds are
+// the only ones where testing-location/eligibility questions genuinely differ track-to-track (a
+// state licensing exam has no equivalent "can I take this from abroad" question). Keyed by
+// examType (lowercase, e.g. 'dat'), not the display kind -- see the track landing page's
+// intlStudentsLinkHtml() below, the only place this is read.
+var INTL_STUDENTS_ARTICLE_SLUGS = {
+  act: 'act-for-international-students',
+  dat: 'dat-for-international-students',
+  clt: 'clt-for-international-students',
+  oat: 'oat-for-international-students',
+};
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
   for (var k in HUB_KIND_SLUGS) { if (HUB_KIND_SLUGS[k] === slug) return k; }
@@ -5807,12 +5819,19 @@ async function renderTrackLanding() {
       new Date(exam.questionsUpdatedAt * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) +
       ' — every question is sourced from the current official handbook or statute, not third-party prep material.</p>'
     : '';
+  // Only these 4 national exam kinds have a real "can I take this from outside the U.S." question
+  // worth a dedicated link -- a state licensing exam has no international-eligibility angle.
+  var intlSlug = INTL_STUDENTS_ARTICLE_SLUGS[exam.examType];
+  var intlStudentsHtml = intlSlug
+    ? '<p class="muted track-landing-intl-inline">🌍 Testing from outside the U.S.? ' +
+      '<a class="exam-track-view-link" href="' + blogPostHref(intlSlug, kindSlug(exam.examKind)) + '">What international students should know →</a></p>'
+    : '';
   var specsHtml = '<div class="exam-specs">' +
     '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '<div>📚 <strong>Study Resources:</strong> ' + resourceInventorySummary(exam.examType).full + '</div>' +
-    '</div>' + officialLinkHtml + freshnessHtml;
+    '</div>' + officialLinkHtml + intlStudentsHtml + freshnessHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
