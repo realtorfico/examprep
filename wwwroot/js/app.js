@@ -3600,23 +3600,19 @@ function trackDescription(examType) {
   return (c && c.description) || '';
 }
 
-// Ad-campaign message-match hero copy for the two tracks currently running paid search ads
-// (drafts/marketing/ad_copy_drafts.md) -- deliberately a fixed, reviewed set for exactly these two
-// exam types, NOT a generic hero_headline/hero_subhead-with-fallback system (unlike the category
-// page's content.hero_headline pattern). Every other track keeps its existing per-track
+// Ad-campaign message-match hero copy. Two mechanisms, deliberately kept separate:
+// (1) TRACK_HERO_OVERRIDES -- a fixed, hand-authored, reviewed entry for a single one-off track
+// (ca_re_salesperson) tied to its own specific ad campaign (drafts/marketing/ad_copy_drafts.md).
+// (2) notaryHeroOverride() below -- a data-driven generator for the WHOLE Notary category, built
+// after the same reviewed IL Notary copy proved out the pattern. Every field is either real
+// per-track data from track_registry (question count/pass score/min correct) or a genuine
+// sitewide constant (guarantee terms, the Notary category pass rate) -- nothing invented per
+// state, so this isn't the "generic content" the no-fallback rule above is about. Gated on
+// exam.isExamRequired so it can never fire for a waived-exam track (feedback_exam_required_only_for_marketing)
+// and self-updates if the registry's eligible-state set ever changes -- no hardcoded state list to
+// maintain. Every other non-Notary, non-ca_re_salesperson track keeps its existing per-track
 // TRACK_CONTENT description untouched -- no silently-rendered generic/fallback copy anywhere here.
 var TRACK_HERO_OVERRIDES = {
-  il_notary: {
-    headline: 'Illinois Notary Exam Practice',
-    subhead: '50 real practice questions modeled on the official Illinois notary exam. You need ' +
-      '43/50 (85%) to pass — know exactly where you stand before test day.',
-    bullets: [
-      'Built from official Illinois notary sourcing, not a generic multi-state guess',
-      '88% of students across our Notary tracks passed their practice exam (76 real attempts so far)',
-      '7-day money-back guarantee, no questions asked',
-      '50% refund if you take and fail the real exam within 180 days',
-    ],
-  },
   ca_re_salesperson: {
     headline: 'California Real Estate Salesperson Exam Practice',
     subhead: '150 real practice questions built from official DRE content. You need 105/150 (70%) ' +
@@ -3629,6 +3625,48 @@ var TRACK_HERO_OVERRIDES = {
     ],
   },
 };
+
+// True only when BOTH this track's item count and its passing score are the real, officially
+// published numbers -- not this site's own "Default: N (No Official Count Exists...)" placeholder
+// or a "Self-Study Benchmark" stand-in (see reference_notary_exam_mechanics: several states'
+// exam.questions/passScore display strings already carry these exact, deliberately-chosen phrases
+// from the original per-state accuracy audit). Reusing that existing, already-vetted disclosure
+// text as the classifier here -- not introducing a new judgment call -- so the hero subhead never
+// claims a specific number is "the official exam" when the site's own specs card two inches below
+// it says otherwise.
+function notaryMechanicsAreOfficial(exam) {
+  var q = exam.questions || '';
+  var p = exam.passScore || '';
+  var countOfficial = q.indexOf('Default:') === -1;
+  var passOfficial = !/self-study benchmark|no published passing score|no official threshold/i.test(p);
+  return countOfficial && passOfficial;
+}
+
+function notaryHeroOverride(exam) {
+  if (exam.examKind !== 'Notary' || !exam.isExamRequired) return null;
+  var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
+  var q = exam.questionCount, min = exam.minCorrect, pass = exam.passPercent;
+  var subhead = notaryMechanicsAreOfficial(exam)
+    ? q + ' real practice questions modeled on the official ' + stateName + ' notary exam. You need ' +
+      min + '/' + q + ' (' + pass + '%) to pass — know exactly where you stand before test day.'
+    : q + ' real practice questions covering ' + stateName + ' notary law and procedure. Our mock ' +
+      'exam uses a ' + min + '/' + q + ' (' + pass + '%) passing bar — see the exam specs below for ' +
+      'exactly what ' + stateName + ' does and doesn\'t officially publish.';
+  return {
+    headline: stateName + ' Notary Exam Practice',
+    subhead: subhead,
+    bullets: [
+      'Built from official ' + stateName + ' notary sourcing, not a generic multi-state guess',
+      '88% of students across our Notary tracks passed their practice exam (76 real attempts so far)',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+    ],
+  };
+}
+
+function getTrackHeroOverride(exam) {
+  return TRACK_HERO_OVERRIDES[exam.examType] || notaryHeroOverride(exam);
+}
 
 function trackInfoLinks(examType) {
   var c = TRACK_CONTENT[examType];
@@ -5883,7 +5921,7 @@ async function renderTrackLanding() {
         '</div>';
     }).join('') + '</div>';
   var compliance = trackCompliance(exam.examType);
-  var heroOverride = TRACK_HERO_OVERRIDES[exam.examType] || null;
+  var heroOverride = getTrackHeroOverride(exam);
 
   appEl.innerHTML =
     '<div class="track-landing">' +
