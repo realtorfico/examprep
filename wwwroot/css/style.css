@@ -1087,7 +1087,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    ever-narrower row. Falls back to 2-per-row under 600px so 3 columns don't get squeezed illegible
    on a narrow phone. */
 .hub-readiness-tiles {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+  display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 1.25rem; column-gap: 0.5rem;
   margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
 }
 .hub-readiness-tiles .outcome-tile { min-width: 0; }
