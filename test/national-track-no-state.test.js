@@ -133,6 +133,24 @@ test('homepage category card for a state-based category (control case) still lin
     'a real multi-state category should still link to its category landing page -- guards against the ACT fix over-applying');
 });
 
+test('category page stats card omits the "State Tracks" tile for a national track', async (t) => {
+  const { dom, document } = await bootApp({ url: 'https://passexamhq.com/act' });
+  t.after(() => dom.window.close());
+
+  const labels = [...document.querySelectorAll('.outcome-tile-label')].map((el) => el.textContent);
+  assert.ok(!labels.includes('State Tracks'),
+    'a single national track has no meaningful "State Tracks" count to show (always 1 by definition, and the label itself is wrong)');
+});
+
+test('category page stats card (control case) still shows "State Tracks" for a real multi-state category', async (t) => {
+  const { dom, document } = await bootApp({ url: 'https://passexamhq.com/notary' });
+  t.after(() => dom.window.close());
+
+  const labels = [...document.querySelectorAll('.outcome-tile-label')].map((el) => el.textContent);
+  assert.ok(labels.includes('State Tracks'),
+    'a real multi-state category should still show its State Tracks count -- guards against the ACT fix over-applying');
+});
+
 test('buy page for a national track is reachable and does not show a raw state code in its breadcrumb', async (t) => {
   const { dom, window, document } = await bootApp({ url: 'https://passexamhq.com/act/us#/buy' });
   t.after(() => dom.window.close());

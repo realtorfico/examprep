@@ -3931,10 +3931,17 @@ function drawCategorySampleQuestion() {
     '<div class="options-grid">' + choiceHtml + '</div>' + submitControl + explanation;
 }
 
-function categoryStatsHtml(activeCount, articleCount, resourceStats) {
-  var tiles = [
-    { value: activeCount, label: 'State Tracks' },
-  ];
+// tracks: the category's active HUB_EXAMS entries (not just a count) -- needed to detect a
+// single national track (stateCode==='US', e.g. ACT) so its "State Tracks" tile can be omitted.
+// That tile is trivially uninformative for a single-track category (always "1" by definition) and
+// the label itself is flatly wrong for a track with no state division -- same stateCode!=='US'
+// distinguishing check as every other national-track fix in this file, not just an activeCount===1
+// check, since a real state-based category early in its rollout (genuinely only 1 state live so
+// far) should still show its (accurate, if small) "State Tracks" count.
+function categoryStatsHtml(tracks, articleCount, resourceStats) {
+  var activeCount = tracks.length;
+  var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
+  var tiles = hasRealStates ? [{ value: activeCount, label: 'State Tracks' }] : [];
   // Replaces the old "States Covered" tile (redundant with State Tracks -- this site has one track
   // per state, so the two numbers were always identical) with a real per-category article count.
   // Same "only show if real" gate as the resource tiles below -- several categories (Boating/CDL/
@@ -4049,7 +4056,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks.length, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
     '</div>' +
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
@@ -4083,7 +4090,7 @@ function fillCategoryArticleCount(kind, tracks) {
     if (!articleCount) return;
     var wrap = document.getElementById('category-stats-wrap');
     if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-    wrap.innerHTML = categoryStatsHtml(tracks.length, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+    wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
     fillCategoryQuestionCount(tracks);
     loadSiteConfig().then(fillCategoryStatsRadial);
   }).catch(function () { /* best-effort -- tile just stays absent */ });
@@ -4653,7 +4660,7 @@ function fillResourceCountSurfaces() {
       var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
       var wrap = document.getElementById('category-stats-wrap');
       if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-      wrap.innerHTML = categoryStatsHtml(tracks.length, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+      wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
       fillCategoryQuestionCount(tracks);
       loadSiteConfig().then(fillCategoryStatsRadial);
     }).catch(function () { /* best-effort -- stats card just keeps its current content */ });
