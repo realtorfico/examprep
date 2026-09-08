@@ -1047,6 +1047,7 @@ function blogListItemsHtml(posts, activeKind, activeState) {
         return '<article class="blog-list-item card' + (p.featured ? ' blog-list-item-featured' : '') + '">' +
           (p.featured ? '<span class="badge blog-list-item-featured-badge">🎯 Practice Test Guide</span>' : '') +
           '<span class="badge blog-list-item-badge">' + escapeHtml(kindLabel) + '</span>' +
+          (INTL_STUDENTS_ARTICLE_SLUGS[p.kind] === p.slug ? internationalBadgeHtml() : '') +
           '<h2><a href="' + href + '">' + escapeHtml(p.title) + '</a></h2>' +
           '<p class="muted blog-list-meta">' + (p.state_code ? escapeHtml(p.state_code) + ' · ' : '') +
           (p.published_at ? new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
@@ -1205,6 +1206,7 @@ function renderBlogPost(slug) {
       '<p class="muted blog-post-back"><a href="' + blogListHref(fromKind, fromState) + '">← Guides &amp; Tips</a></p>' +
       (post.featured ? '<div class="blog-post-featured-banner">🎯 Practice Test Guide — everything you need for this exam, in one place</div>' : '') +
       '<span class="badge blog-post-badge">' + escapeHtml(kindLabel) + '</span>' +
+      (INTL_STUDENTS_ARTICLE_SLUGS[post.kind] === post.slug ? internationalBadgeHtml() : '') +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
       '<p class="muted blog-post-meta">' + (post.state_code ? escapeHtml(post.state_code) + ' · ' : '') +
       (post.published_at ? new Date(post.published_at * 1000).toLocaleDateString() + ' · ' : '') + readMins + ' min read</p>' +
@@ -3482,6 +3484,16 @@ var INTL_STUDENTS_ARTICLE_SLUGS = {
   clt: 'clt-for-international-students',
   oat: 'oat-for-international-students',
 };
+// One shared badge, reused everywhere international-student exposure is worth flagging: the
+// homepage category card, the category/track landing page heroes, and the international-students
+// articles themselves (via examTypeHasIntlExposure below). `compact` drops the label text for the
+// tightest spots (leaving just the globe icon) -- currently unused but kept for a future spot that
+// turns out too cramped for the full "International" text.
+function internationalBadgeHtml(compact) {
+  return '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍' +
+    (compact ? '' : ' International') + '</span>';
+}
+function examTypeHasIntlExposure(examType) { return !!INTL_STUDENTS_ARTICLE_SLUGS[examType]; }
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
   for (var k in HUB_KIND_SLUGS) { if (HUB_KIND_SLUGS[k] === slug) return k; }
@@ -4108,6 +4120,7 @@ async function renderCategoryPage(kind) {
     '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
     '<span class="section-eyebrow">' + escapeHtml(kind) + '</span>' +
+    (examTypeHasIntlExposure(slug) ? internationalBadgeHtml() : '') +
     '<h1>' + escapeHtml(headline) + '</h1>' +
     '<p>' + escapeHtml(subhead) + '</p>' +
     '<div class="hub-trust-badges">' +
@@ -4319,7 +4332,7 @@ function categoryCardsHtml() {
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
       '<div class="category-nav-card-content">' +
-      '<h3>' + escapeHtml(fullKindLabel(kind)) + '</h3>' +
+      '<h3>' + escapeHtml(fullKindLabel(kind)) + (examTypeHasIntlExposure(kindSlug(kind)) ? ' ' + internationalBadgeHtml() : '') + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
       // "1 state"/"X states" is also a "treat US as a state" mistake for a single national track --
@@ -5865,7 +5878,8 @@ async function renderTrackLanding() {
         '<a href="/' + kindSlug(exam.examKind) + '">Pick your state on the ' + escapeHtml(exam.examKind) + ' page →</a></p>'
       : '') +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
-    '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
+    '<span class="status-badge active"><span class="pulse-dot"></span>Active</span>' +
+    (examTypeHasIntlExposure(exam.examType) ? internationalBadgeHtml() : '') + '</div>' +
     '<h1>' + escapeHtml(fullKindLabel(exam.title)) + '</h1>' +
     '<p class="muted page-intro-text track-landing-description">' + trackDescription(exam.examType) + '</p>' +
     '<div class="buy-layout">' +

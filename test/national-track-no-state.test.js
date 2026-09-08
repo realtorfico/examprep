@@ -115,7 +115,11 @@ test('homepage category card for a national track links straight to the track pa
   t.after(() => dom.window.close());
 
   const track = findActTrack(window);
-  const actCard = [...document.querySelectorAll('.category-nav-card')].find((a) => a.querySelector('h3').textContent === 'ACT');
+  // Matches the h3's leading text rather than an exact string -- the h3 now also carries the
+  // international-exposure badge's text ("🌍 International") appended after the kind name for
+  // ACT/DAT/CLT/OAT (see internationalBadgeHtml() in app.js), so an exact-equality check would
+  // break the moment that badge (or any future trailing label) is added.
+  const actCard = [...document.querySelectorAll('.category-nav-card')].find((a) => /^ACT\b/.test(a.querySelector('h3').textContent.trim()));
   assert.ok(actCard, 'expected an ACT card on the homepage category grid');
   assert.equal(actCard.getAttribute('href'), track.route,
     'a single-national-track card should link directly to the track page, skipping the category landing page');

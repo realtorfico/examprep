@@ -584,6 +584,26 @@ nav.sub-tabs a[aria-current="page"] {
   background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent-hover);
   border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
 }
+/* One consistent marker for "this exam/article has real international-student exposure" (ACT/DAT/
+   CLT/OAT today -- see internationalBadgeHtml() in app.js, the single place this class is used) --
+   a teal, deliberately distinct from every other badge color already in use (accent-blue for the
+   plain category badge, correct-green for the "Active" status badge, highlight-gold for pricing/
+   CTA emphasis) so it reads as its own consistent signal wherever it appears: homepage category
+   cards, category/track landing page heroes, and the international-students articles themselves.
+   Base rule targets dark mode (this site's default -- see the --bg block above), with a light-mode
+   override below using the same two-selector pattern (explicit [data-theme] + prefers-color-scheme)
+   the rest of this file already uses, rather than a single static color that would fail contrast
+   in one theme or the other. */
+.badge-international {
+  font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; font-weight: 600;
+  background: color-mix(in srgb, oklch(0.7 0.1 200) 22%, transparent); color: oklch(0.82 0.1 200);
+  border: 1px solid color-mix(in srgb, oklch(0.7 0.1 200) 40%, transparent);
+  display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap;
+}
+:root[data-theme="light"] .badge-international { color: oklch(0.42 0.1 200); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .badge-international { color: oklch(0.42 0.1 200); }
+}
 .error-text { color: var(--incorrect); }
 .result-correct { color: var(--correct); }
 .result-incorrect { color: var(--incorrect); }
