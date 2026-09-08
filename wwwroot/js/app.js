@@ -2128,7 +2128,14 @@ var HUB_EXAMS_CONTENT = [
     // schema can't represent. Breakdown weighted by each section's real scored-question count
     // (40+41+27=108 total) from ACT's own official "Preparing for the ACT" 2025-2026 guide.
     examType: 'act',
-    title: 'ACT', category: 'ACT', route: '#',
+    // route was left at '#' (the inactive-scaffold placeholder, matching MLO's convention) when
+    // this entry was first built with active=0 -- never updated when the track later went active
+    // (2026-09-08), which silently broke all navigation into it: activeTrackForPath() explicitly
+    // excludes route==='#' tracks, so /act/us never resolved to the track page (fell through to
+    // renderHub()), and the category page's "View full track details" link (href="#") was a
+    // dead no-op. Real route now follows the standard /<kindSlug>/<stateCode-lowercase> pattern
+    // every other track uses.
+    title: 'ACT', category: 'ACT', route: '/act/us',
     duration: '125 Minutes', questions: '131 Questions (108 Scored)', passScore: 'N/A (1-36 composite score, no pass threshold)',
     breakdown: [['English', '37%'], ['Mathematics', '38%'], ['Reading', '25%']],
   },
