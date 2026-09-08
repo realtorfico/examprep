@@ -4064,7 +4064,7 @@ function fillCategoryArticleCount(kind, tracks) {
 var CATEGORY_ICONS = {
   'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
   'Boating': '⛵', 'Real Estate Salesperson': '🏠', 'Real Estate Broker': '🏢',
-  'Mortgage Loan Origination': '💰',
+  'Mortgage Loan Origination': '💰', 'ACT': '🎓',
 };
 
 // Expanded description of who each category's practice tracks are for, shown on the homepage
@@ -4080,6 +4080,7 @@ var CATEGORY_DESCRIPTIONS = {
   'Commercial Driver (CDL)': 'Prepare for your Commercial Driver’s License knowledge tests and endorsements -- the credential required to legally operate trucks and buses.',
   'Motorcycle': 'Study for your state’s motorcycle license or endorsement knowledge test -- the credential required to legally ride on public roads.',
   'Boating': 'Prepare for your state’s boating safety education exam or card requirement -- often mandatory before operating a powered vessel or PWC.',
+  'ACT': 'Prepare for the ACT, the national college-entrance exam used alongside the SAT for admissions decisions -- one test, the same everywhere, no state-by-state variation.',
 };
 
 // A few salient, generally-true points shown as a short bullet list on each homepage category
@@ -4122,6 +4123,11 @@ var CATEGORY_POINTS = {
     'Many states waive the requirement for boaters born before a certain date',
     'Often required specifically for personal watercraft (PWC) operation',
   ],
+  'ACT': [
+    'Covers English, Math, and Reading -- Science and an optional Writing essay are not part of this practice bank',
+    'Scored 1-36 (a composite average), not a pass/fail exam',
+    'Same test nationwide -- no state-specific rules or requirements to track',
+  ],
 };
 
 // States a category deliberately does NOT cover, and a short public-facing reason why -- shown as
@@ -4137,13 +4143,17 @@ var CATEGORY_EXCLUDED_INFO = {
 };
 
 // Homepage category-card display order, grouped with a visual break between the licensing-exam
-// categories (Notary, Real Estate) and the knowledge-test categories (Driver/CDL/Motorcycle/
-// Boating) -- explicit user-specified order (2026-08-31), not alphabetical. Any active category
-// not named here (e.g. a newly-launched one) falls into a third, unlabeled trailing group so it
-// still appears rather than silently vanishing from the homepage.
+// categories (Notary, Real Estate), the knowledge-test categories (Driver/CDL/Motorcycle/
+// Boating), and the university/professional-school entrance exams (ACT, and future national
+// single-track kinds like DAT/OAT/CLT once built -- add their real HUB_KIND_SLUGS key to this
+// group when each goes active) -- explicit user-specified order (2026-08-31, extended
+// 2026-09-08), not alphabetical. Any active category not named in any group here (e.g. a
+// newly-launched one) falls into a final, unlabeled trailing group so it still appears rather
+// than silently vanishing from the homepage.
 var CATEGORY_ORDER_GROUPS = [
   ['Notary', 'Real Estate Salesperson', 'Real Estate Broker'],
   ['Driver', 'Commercial Driver (CDL)', 'Motorcycle', 'Boating'],
+  ['ACT'],
 ];
 
 // One card per category with at least one active track, each linking straight to that category's
