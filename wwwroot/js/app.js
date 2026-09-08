@@ -4280,17 +4280,16 @@ var CATEGORY_EXCLUDED_INFO = {
 };
 
 // Homepage category-card display order, grouped with a visual break between the licensing-exam
-// categories (Notary, Real Estate), the knowledge-test categories (Driver/CDL/Motorcycle/
-// Boating), and the university/professional-school entrance exams (ACT, and future national
-// single-track kinds like DAT/OAT/CLT once built -- add their real HUB_KIND_SLUGS key to this
-// group when each goes active) -- explicit user-specified order (2026-08-31, extended
-// 2026-09-08), not alphabetical. Any active category not named in any group here (e.g. a
-// newly-launched one) falls into a final, unlabeled trailing group so it still appears rather
-// than silently vanishing from the homepage.
+// categories (Notary, Real Estate, Mortgage Loan Origination), the knowledge-test categories
+// (Driver/CDL/Motorcycle/Boating), and the academic/professional-school entrance exams (ACT/CLT/
+// DAT/OAT) -- explicit user-specified order (2026-08-31, extended 2026-09-08 for ACT, extended
+// again 2026-09-08 to cover every kind including MLO once it activates), not alphabetical. Any
+// active category not named in any group here (e.g. a newly-launched one) falls into a final,
+// unlabeled trailing group so it still appears rather than silently vanishing from the homepage.
 var CATEGORY_ORDER_GROUPS = [
-  ['Notary', 'Real Estate Salesperson', 'Real Estate Broker'],
+  ['Notary', 'Real Estate Salesperson', 'Real Estate Broker', 'Mortgage Loan Origination'],
   ['Driver', 'Commercial Driver (CDL)', 'Motorcycle', 'Boating'],
-  ['ACT'],
+  ['ACT', 'CLT', 'DAT', 'OAT'],
 ];
 
 // One card per category with at least one active track, each linking straight to that category's
