@@ -4202,21 +4202,37 @@ function categoryCardsHtml() {
   if (leftover.length) ordered.push(leftover);
 
   function cardHtml(kind) {
-    var stateCount = new Set(HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; }).map(function (t) { return t.stateCode; })).size;
+    var kindTracks = HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; });
+    var stateCount = new Set(kindTracks.map(function (t) { return t.stateCode; })).size;
+    // A single national track (no real state division -- ACT today, future kinds like DAT/OAT/CLT
+    // later) links straight to its own track page instead of the category landing page: there's
+    // nothing to browse or pick between, so the intermediate category-page click is pure friction.
+    // The category page itself is untouched and stays live/indexable for organic SEO landing
+    // traffic -- this only changes the SITE'S OWN internal navigation entry point from the
+    // homepage. Deliberately gated on stateCode === 'US' (the national-track placeholder), not on
+    // kindTracks.length === 1 alone -- a real state-based category that just happens to have only
+    // one state live so far (e.g. early in a rollout) should still route through its category page,
+    // since more states are genuinely expected to appear there later.
+    var singleNationalTrack = kindTracks.length === 1 && kindTracks[0].stateCode === 'US';
+    var cardHref = singleNationalTrack ? kindTracks[0].route : '/' + kindSlug(kind);
     var points = CATEGORY_POINTS[kind] || [];
     var excluded = CATEGORY_EXCLUDED_INFO[kind];
     var excludedPill = excluded ? '<span class="category-nav-card-excludedcount" title="' + escapeHtml(excluded.note) + '">' +
       excluded.count + ' N/A</span>' : '';
-    return '<a class="exam-track-card is-active category-nav-card" href="/' + kindSlug(kind) + '">' +
+    return '<a class="exam-track-card is-active category-nav-card" href="' + cardHref + '">' +
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
       '<div class="category-nav-card-content">' +
       '<h3>' + escapeHtml(kind) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
-      '<div class="category-nav-card-counts"><span class="category-nav-card-statecount">' + stateCount + ' state' + (stateCount === 1 ? '' : 's') + '</span>' + excludedPill + '</div>' +
+      // "1 state"/"X states" is also a "treat US as a state" mistake for a single national track --
+      // shows "Nationwide" instead, same distinguishing check as cardHref above.
+      '<div class="category-nav-card-counts"><span class="category-nav-card-statecount">' +
+      (singleNationalTrack ? 'Nationwide' : stateCount + ' state' + (stateCount === 1 ? '' : 's')) +
+      '</span>' + excludedPill + '</div>' +
       '</div>' +
-      '</div><div class="exam-track-footer"><span class="exam-track-view-link">Browse tracks →</span></div>' +
+      '</div><div class="exam-track-footer"><span class="exam-track-view-link">' + (singleNationalTrack ? 'View track →' : 'Browse tracks →') + '</span></div>' +
       '</a>';
   }
 

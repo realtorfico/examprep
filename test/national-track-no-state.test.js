@@ -110,6 +110,29 @@ test('category page breakdown and sample-question subheads do not claim a nation
     'sample subhead should not redundantly prefix the generic "National" label onto the exam name');
 });
 
+test('homepage category card for a national track links straight to the track page, not the category page', async (t) => {
+  const { dom, window, document } = await bootApp({ url: 'https://passexamhq.com/' });
+  t.after(() => dom.window.close());
+
+  const track = findActTrack(window);
+  const actCard = [...document.querySelectorAll('.category-nav-card')].find((a) => a.querySelector('h3').textContent === 'ACT');
+  assert.ok(actCard, 'expected an ACT card on the homepage category grid');
+  assert.equal(actCard.getAttribute('href'), track.route,
+    'a single-national-track card should link directly to the track page, skipping the category landing page');
+  assert.match(actCard.querySelector('.category-nav-card-statecount').textContent, /Nationwide/,
+    'should not show a "1 state" count for a track with no real state division');
+});
+
+test('homepage category card for a state-based category (control case) still links to its category landing page', async (t) => {
+  const { dom, document } = await bootApp({ url: 'https://passexamhq.com/' });
+  t.after(() => dom.window.close());
+
+  const notaryCard = [...document.querySelectorAll('.category-nav-card')].find((a) => a.querySelector('h3').textContent === 'Notary');
+  assert.ok(notaryCard, 'expected a Notary card on the homepage category grid');
+  assert.equal(notaryCard.getAttribute('href'), '/notary',
+    'a real multi-state category should still link to its category landing page -- guards against the ACT fix over-applying');
+});
+
 test('buy page for a national track is reachable and does not show a raw state code in its breadcrumb', async (t) => {
   const { dom, window, document } = await bootApp({ url: 'https://passexamhq.com/act/us#/buy' });
   t.after(() => dom.window.close());
