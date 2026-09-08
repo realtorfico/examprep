@@ -4512,6 +4512,12 @@ function fillReadinessCard() {
       tiles.push({ value: siteResourceStats.tables, label: 'Quick-Fact Tables' });
       tiles.push({ value: siteResourceStats.decks, label: 'Flashcard Decks' });
     }
+    // Audio Lessons tile -- same "only show if real" gate, added alongside tables/decks now that
+    // narrated Key Facts audio exists for a meaningful number of tracks (previously omitted here
+    // even though aggregateResourceStats() already computed the real count).
+    if (siteResourceStats.audio) {
+      tiles.push({ value: siteResourceStats.audio, label: 'Audio Lessons' });
+    }
     wrap.innerHTML = '<div class="hub-readiness-card">' +
       '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Results</span>, Not Marketing Copy</p>' +
       '<div class="hub-readiness-top-row">' +

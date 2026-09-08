@@ -1081,17 +1081,18 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    items land in the same columns as the State Tracks/States Covered tiles under the divider. */
 .hub-readiness-top-row { display: grid; grid-template-columns: repeat(2, 1fr); align-items: center; gap: 0.5rem; margin-top: 0.85rem; }
 .hub-readiness-radial-wrap { display: flex; justify-content: center; }
-/* Flex, not a fixed-column grid, so 2 tiles (no Key Facts content yet) or 4 tiles (tracks/states/
-   tables/decks, once it exists) both fill one row edge-to-edge instead of a 2x2 grid leaving the
-   4-tile case as two rows. Falls back to 2-per-row under 600px (see below) so 4 tiles don't get
-   squeezed illegible on a narrow phone. */
+/* Fixed 3-per-row grid (not a flexible flex-grow row) so a growing tile count (Live Tracks, Mock
+   Exams, Articles & Guides, Quick-Fact Tables, Flashcard Decks, Audio Lessons -- up to 6 once all
+   real content exists) wraps into clean rows of 3 instead of squeezing every tile into one
+   ever-narrower row. Falls back to 2-per-row under 600px so 3 columns don't get squeezed illegible
+   on a narrow phone. */
 .hub-readiness-tiles {
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
   margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
 }
-.hub-readiness-tiles .outcome-tile { flex: 1 1 0; min-width: 0; }
+.hub-readiness-tiles .outcome-tile { min-width: 0; }
 @media (max-width: 600px) {
-  .hub-readiness-tiles .outcome-tile { flex: 1 1 calc(50% - 0.25rem); }
+  .hub-readiness-tiles { grid-template-columns: repeat(2, 1fr); }
 }
 /* Narrower than the tiles' original full-width home (see .outcome-tile-value below) -- this card
    is a hero-column sidebar, not a 1400px-wide section, so the numbers need to shrink to fit
