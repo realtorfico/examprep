@@ -3637,7 +3637,14 @@ var TRACK_HERO_OVERRIDES = {
 // text as the classifier here -- not introducing a new judgment call -- so the hero subhead never
 // claims a specific number is "the official exam" when the site's own specs card two inches below
 // it says otherwise.
-function notaryMechanicsAreOfficial(exam) {
+// Shared across Notary, Driver, CDL, Motorcycle, and Boating -- all four "DMV-style" categories
+// use the exact same "Default: N (No Official Count Exists...)" / "Self-Study Benchmark" disclosure
+// convention as Notary (confirmed live: 17+ Driver tracks alone carry it; CDL/Motorcycle/Boating
+// were swept for the same markers and came back clean, but the check stays here defensively in
+// case that ever changes). Real Estate Salesperson/Broker use a different check (see
+// reSalespersonMechanicsAreCleanRatio/reBrokerMechanicsAreCleanRatio below) since their real quirk
+// is a genuine scaled/multi-portion score, not an undisclosed number.
+function mechanicsAreOfficiallyPublished(exam) {
   var q = exam.questions || '';
   var p = exam.passScore || '';
   var countOfficial = q.indexOf('Default:') === -1;
@@ -3649,7 +3656,7 @@ function notaryHeroOverride(exam) {
   if (exam.examKind !== 'Notary' || !exam.isExamRequired) return null;
   var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
   var q = exam.questionCount, min = exam.minCorrect, pass = exam.passPercent;
-  var subhead = notaryMechanicsAreOfficial(exam)
+  var subhead = mechanicsAreOfficiallyPublished(exam)
     ? q + ' real practice questions modeled on the official ' + stateName + ' notary exam. You need ' +
       min + '/' + q + ' (' + pass + '%) to pass — know exactly where you stand before test day.'
     : q + ' real practice questions covering ' + stateName + ' notary law and procedure. Our mock ' +
@@ -3702,8 +3709,82 @@ function reSalespersonHeroOverride(exam) {
   };
 }
 
+// Real Estate Broker's own quirk, one step further than Salesperson's: MOST of these exams are
+// genuinely two-portion (National + State), often with separate per-portion thresholds or a
+// weighted-point system rather than one raw item count -- e.g. Virginia requires 60/80 National
+// AND 38/50 State independently, which a single blended ratio cannot represent. The registry's own
+// questionCount/minCorrect/passPercent ARE real numbers (this site's own practice-exam threshold,
+// same fields the actual grading code uses), so they're never fabricated -- but presenting them as
+// "the official exam" would misrepresent a state whose real exam has no single blended number.
+function reBrokerMechanicsAreCleanRatio(exam) {
+  var text = (exam.questions || '') + ' ' + (exam.passScore || '');
+  return !/scaled score|estimated|national|both portions|both required|each portion|each section|separately|points/i.test(text);
+}
+
+function reBrokerHeroOverride(exam) {
+  if (exam.examKind !== 'Real Estate Broker' || !exam.isExamRequired) return null;
+  var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
+  var q = exam.questionCount, min = exam.minCorrect, pass = exam.passPercent;
+  var subhead = reBrokerMechanicsAreCleanRatio(exam)
+    ? q + ' real practice questions modeled on the official ' + stateName + ' real estate broker exam. You need ' +
+      min + '/' + q + ' (' + pass + '%) to pass — know exactly where you stand before test day.'
+    : q + ' real practice questions covering the ' + stateName + ' real estate broker exam. Our mock ' +
+      'exam uses a ' + min + '/' + q + ' (' + pass + '%) passing bar — see the exam specs below for ' +
+      'exactly how ' + stateName + '\'s real exam is scored.';
+  return {
+    headline: stateName + ' Real Estate Broker Exam Practice',
+    subhead: subhead,
+    bullets: [
+      'Built from official ' + stateName + ' real estate sourcing, not a generic multi-state guess',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+      'Updated for current ' + stateName + ' real estate law',
+    ],
+  };
+}
+
+// Shared builder for the four "DMV-style" categories (Driver, CDL, Motorcycle, Boating) -- same
+// Default:/self-study-benchmark officialness check as Notary, same bullet shape, differing only in
+// the sourcing/law noun used in bullets 1/4 and the topic phrase used in the non-official subhead.
+function dmvStyleHeroOverride(exam, examKind, headlineNoun, sourcingNoun, topicPhrase, lawNoun) {
+  if (exam.examKind !== examKind || !exam.isExamRequired) return null;
+  var stateName = STATE_LABELS[exam.stateCode] || exam.stateCode;
+  var q = exam.questionCount, min = exam.minCorrect, pass = exam.passPercent;
+  var subhead = mechanicsAreOfficiallyPublished(exam)
+    ? q + ' real practice questions modeled on the official ' + stateName + ' ' + headlineNoun + ' exam. You need ' +
+      min + '/' + q + ' (' + pass + '%) to pass — know exactly where you stand before test day.'
+    : q + ' real practice questions covering ' + stateName + ' ' + topicPhrase + '. Our mock ' +
+      'exam uses a ' + min + '/' + q + ' (' + pass + '%) passing bar — see the exam specs below for ' +
+      'exactly what ' + stateName + ' does and doesn\'t officially publish.';
+  return {
+    headline: stateName + ' ' + (headlineNoun.charAt(0).toUpperCase() + headlineNoun.slice(1)) + ' Exam Practice',
+    subhead: subhead,
+    bullets: [
+      'Built from official ' + stateName + ' ' + sourcingNoun + ' sourcing, not a generic multi-state guess',
+      '7-day money-back guarantee, no questions asked',
+      '50% refund if you take and fail the real exam within 180 days',
+      'Updated for current ' + stateName + ' ' + lawNoun,
+    ],
+  };
+}
+
+function driverHeroOverride(exam) {
+  return dmvStyleHeroOverride(exam, 'Driver', 'driver', "driver's manual", "driver's license rules", 'driving laws');
+}
+function cdlHeroOverride(exam) {
+  return dmvStyleHeroOverride(exam, 'Commercial Driver (CDL)', 'CDL', 'CDL manual and federal FMCSA', 'CDL rules and procedures', 'and federal CDL rules');
+}
+function motorcycleHeroOverride(exam) {
+  return dmvStyleHeroOverride(exam, 'Motorcycle', 'motorcycle', 'motorcycle manual', 'motorcycle license rules', 'motorcycle laws');
+}
+function boatingHeroOverride(exam) {
+  return dmvStyleHeroOverride(exam, 'Boating', 'boating', 'boating law', 'boating safety law', 'boating regulations');
+}
+
 function getTrackHeroOverride(exam) {
-  return TRACK_HERO_OVERRIDES[exam.examType] || notaryHeroOverride(exam) || reSalespersonHeroOverride(exam);
+  return TRACK_HERO_OVERRIDES[exam.examType] || notaryHeroOverride(exam) || reSalespersonHeroOverride(exam) ||
+    reBrokerHeroOverride(exam) || driverHeroOverride(exam) || cdlHeroOverride(exam) || motorcycleHeroOverride(exam) ||
+    boatingHeroOverride(exam);
 }
 
 function trackInfoLinks(examType) {
