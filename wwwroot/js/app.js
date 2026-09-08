@@ -3612,7 +3612,7 @@ var TRACK_HERO_OVERRIDES = {
       '43/50 (85%) to pass — know exactly where you stand before test day.',
     bullets: [
       'Built from official Illinois notary sourcing, not a generic multi-state guess',
-      '88% of students across our Notary tracks passed their practice exam (76 real attempts, all states combined)',
+      '88% of students across our Notary tracks passed their practice exam (76 real attempts so far)',
       '7-day money-back guarantee, no questions asked',
       '50% refund if you take and fail the real exam within 180 days',
     ],
