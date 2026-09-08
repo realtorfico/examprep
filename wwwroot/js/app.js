@@ -3826,7 +3826,12 @@ function categoryBreakdownHtml(track) {
   return '<section class="category-breakdown">' +
     '<p class="section-eyebrow">Curriculum coverage</p>' +
     '<h2 class="comparison-heading">What\'s Inside the Question Bank</h2>' +
-    '<p class="muted">Shown for ' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' — exact topics and weighting vary by state.</p>' +
+    // stateCode==='US' is the national single-track placeholder (ACT, and MLO if it ever
+    // activates) -- "exact topics and weighting vary by state" is simply false for a track with no
+    // state variation at all, so that clause is dropped rather than naming a fake state.
+    (track.stateCode !== 'US'
+      ? '<p class="muted">Shown for ' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' — exact topics and weighting vary by state.</p>'
+      : '<p class="muted">The same nationwide breakdown for every test-taker.</p>') +
     '<div class="breakdown-list">' + track.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
       return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
@@ -3840,7 +3845,11 @@ function categoryBreakdownHtml(track) {
 // be baked into categorySampleWidgetHtml()'s one-time render, so picking a new state changed the
 // sample question underneath it but left this subhead stuck on whichever state loaded the page.
 function categorySampleSubheadHtml(track) {
-  return escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' + escapeHtml(track.examKind) + ' — no access code needed.';
+  // stateCode==='US' is the national single-track placeholder -- track.examKind alone ("ACT") is
+  // already the full name for these, so prefixing a state label would be redundant at best
+  // (STATE_LABELS.US resolves to 'National', which would read "National ACT — ...").
+  var prefix = track.stateCode !== 'US' ? escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' : '';
+  return prefix + escapeHtml(track.examKind) + ' — no access code needed.';
 }
 
 function categorySampleWidgetHtml() {
@@ -4003,15 +4012,18 @@ async function renderCategoryPage(kind) {
   var subhead = (content && content.hero_subhead) ||
     ('Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.');
   var selectedState = repTrack ? repTrack.stateCode : '';
-  // True only when at least one track in this category uses a real state_code (a STATE_LABELS
-  // key) -- false for a single national track like ACT, whose state_code is the 'US' placeholder
-  // (same convention MLO already used, but MLO stayed inactive the whole time this code existed,
-  // so this branch was never actually exercised live until ACT went active 2026-09-08). Gates the
-  // state picker AND the waitlist prompt below -- both assume "more states could exist," which
-  // isn't true for a track that will never be state-divided. Checked with .some rather than
-  // .every: a kind's tracks are always homogeneous in practice (either all real states, or the one
-  // 'US' scaffold), but .some is the more defensive choice if that ever stops being true.
-  var hasRealStates = tracks.some(function (t) { return !!STATE_LABELS[t.stateCode]; });
+  // True only when at least one track in this category has a real state_code -- false for a
+  // single national track like ACT, whose state_code is the 'US' placeholder (same convention MLO
+  // already used, but MLO stayed inactive the whole time this code existed, so this branch was
+  // never actually exercised live until ACT went active 2026-09-08). Gates the state picker AND
+  // the waitlist prompt below -- both assume "more states could exist," which isn't true for a
+  // track that will never be state-divided. Deliberately checks stateCode !== 'US' directly
+  // rather than STATE_LABELS[t.stateCode] truthiness -- STATE_LABELS DOES have a 'US': 'National'
+  // entry (for unrelated display purposes elsewhere), which would make that check true and defeat
+  // this gate entirely. Checked with .some rather than .every: a kind's tracks are always
+  // homogeneous in practice (either all real states, or the one 'US' scaffold), but .some is the
+  // more defensive choice if that ever stops being true.
+  var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -5688,21 +5700,21 @@ async function renderTrackLanding() {
     (exam.isExamRequired === false ? examNotRequiredBannerHtml(exam) : '') +
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     '<a href="/' + kindSlug(exam.examKind) + '">' + escapeHtml(exam.examKind) + '</a> / ' +
-    // STATE_LABELS[exam.stateCode] is only real for an actual state -- a national single-track
-    // exam (ACT, and MLO if it ever activates) uses the 'US' placeholder, which has no
-    // STATE_LABELS entry, so the fallback needs to be the track's own shortName ("National ACT")
-    // rather than the raw placeholder code itself.
-    '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.shortName || exam.stateCode) + '</span></nav>' +
+    // exam.stateCode === 'US' is the national single-track placeholder (ACT, and MLO if it ever
+    // activates) -- deliberately checked directly rather than STATE_LABELS[exam.stateCode]
+    // truthiness, since STATE_LABELS DOES have a 'US': 'National' entry for unrelated display
+    // purposes, which would defeat this check. A national track's breadcrumb falls back to its
+    // own shortName ("National ACT") instead.
+    '<span class="breadcrumb-current">' + escapeHtml(exam.stateCode !== 'US' ? (STATE_LABELS[exam.stateCode] || exam.stateCode) : (exam.shortName || exam.stateCode)) + '</span></nav>' +
     // Points at the category page's own state picker (categoryStateSelectHtml) rather than
     // describing a mechanism to use in place -- this used to reference a header state picker that
     // was removed entirely during the category-first restructure (2026-08-25), leaving both the
     // "state picker" and "on mobile, open the ☰ menu first" halves of the old copy dead: there was
     // nothing left on this page, or in the header, for either sentence to actually point to.
-    // Omitted entirely for a national single-track exam (no STATE_LABELS entry for its
-    // state_code) -- there's no other state variant to pick, so the sentence has nothing to point
-    // to.
-    (STATE_LABELS[exam.stateCode]
-      ? '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode]) + '</strong>? ' +
+    // Omitted entirely for a national single-track exam -- there's no other state variant to pick,
+    // so the sentence has nothing to point to.
+    (exam.stateCode !== 'US'
+      ? '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? ' +
         '<a href="/' + kindSlug(exam.examKind) + '">Pick your state on the ' + escapeHtml(exam.examKind) + ' page →</a></p>'
       : '') +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
@@ -6445,11 +6457,12 @@ function drawBuyForm(pricing, giftIntent) {
   buyPromoDiscountCents = 0;
   var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     (track ? '<a href="/' + kindSlug(track.examKind) + '">' + escapeHtml(track.examKind) + '</a> / ' : '') +
-    // STATE_LABELS[track.stateCode] is only real for an actual state -- falls back to trackTitle
-    // both when there's no state_code at all AND when it's the 'US' national-track placeholder
-    // (previously only checked truthiness of stateCode, so 'US' -- a truthy string -- fell through
-    // to the raw placeholder instead of a real label, same bug class as the track landing page).
-    (track ? '<a href="' + track.route + '">' + escapeHtml(STATE_LABELS[track.stateCode] || trackTitle) + '</a> / ' : '') +
+    // Falls back to trackTitle both when there's no state_code at all AND when it's the 'US'
+    // national-track placeholder -- deliberately checked directly rather than
+    // STATE_LABELS[track.stateCode] truthiness, since STATE_LABELS DOES have a 'US': 'National'
+    // entry for unrelated display purposes, which would defeat this check (same bug class as the
+    // track landing page and category page breakdown/sample-subhead fixes).
+    (track ? '<a href="' + track.route + '">' + escapeHtml(track.stateCode !== 'US' ? (STATE_LABELS[track.stateCode] || trackTitle) : trackTitle) + '</a> / ' : '') +
     '<span class="breadcrumb-current">Get Instant Access</span></nav>';
   appEl.innerHTML =
     breadcrumbHtml +

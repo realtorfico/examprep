@@ -4,7 +4,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "node --test",
-    "check-info-links": "node scripts/check-info-links-coverage.js"
+    "check-info-links": "node scripts/check-info-links-coverage.js",
+    "check-track-routes": "node scripts/check-track-routes.js"
   },
   "devDependencies": {
     "jsdom": "^25.0.1",
