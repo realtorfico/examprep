@@ -2165,6 +2165,19 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Verbal Reasoning', '33%'], ['Grammar/Writing', '33%'], ['Quantitative Reasoning', '34%']],
   },
   {
+    // Scaffold entry, active:0 in track_registry until content is live. Covers all 4 real OAT
+    // sections (Survey of Natural Sciences, Reading Comprehension, Physics, Quantitative Reasoning)
+    // -- unlike DAT, no section is excluded (OAT has no spatial/image-based section like DAT's PAT).
+    // Structure and timing sourced directly from ADA's own 2026 OAT Candidate Guide
+    // (temp/oat/oat-guide.txt). Scored 200-400 per section (distinct from DAT's 200-600 scale --
+    // don't conflate the two), confirmed via ADA's own 2025 OAT User Guide data tables
+    // (temp/oat/oat_user_guide.txt).
+    examType: 'oat',
+    title: 'OAT', category: 'OAT', route: '/oat/us',
+    duration: '245 Minutes', questions: '230 Questions', passScore: 'N/A (200-400 scaled score per section, no pass threshold)',
+    breakdown: [['Survey of Natural Sciences', '43%'], ['Reading Comprehension', '22%'], ['Physics', '17%'], ['Quantitative Reasoning', '18%']],
+  },
+  {
     examType: 'ak_re_salesperson',
     title: 'Alaska Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ak',
     duration: '80 Minutes', questions: '40 Multiple Choice (State Law Portion)', passScore: '30/40 Correct (75%)',
@@ -3443,6 +3456,7 @@ var HUB_KIND_SLUGS = {
   'ACT': 'act',
   'DAT': 'dat',
   'CLT': 'clt',
+  'OAT': 'oat',
 };
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
@@ -4126,7 +4140,7 @@ function fillCategoryArticleCount(kind, tracks) {
 var CATEGORY_ICONS = {
   'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
   'Boating': '⛵', 'Real Estate Salesperson': '🏠', 'Real Estate Broker': '🏢',
-  'Mortgage Loan Origination': '💰', 'ACT': '🎓', 'DAT': '🦷', 'CLT': '📜',
+  'Mortgage Loan Origination': '💰', 'ACT': '🎓', 'DAT': '🦷', 'CLT': '📜', 'OAT': '👓',
 };
 
 // Expanded description of who each category's practice tracks are for, shown on the homepage
@@ -4145,6 +4159,7 @@ var CATEGORY_DESCRIPTIONS = {
   'ACT': 'Prepare for the ACT, the national college-entrance exam used alongside the SAT for admissions decisions -- one test, the same everywhere, no state-by-state variation.',
   'DAT': 'Prepare for the DAT, the national admissions exam used by dental schools across the U.S. and Canada -- one test, the same everywhere, no state-by-state variation.',
   'CLT': 'Prepare for the CLT, a classical-education-focused alternative to the SAT and ACT accepted at hundreds of colleges nationwide -- one test, the same everywhere, no state-by-state variation.',
+  'OAT': 'Prepare for the OAT, the national admissions exam used by optometry schools across the U.S. -- one test, the same everywhere, no state-by-state variation.',
 };
 
 // A few salient, generally-true points shown as a short bullet list on each homepage category
@@ -4200,6 +4215,11 @@ var CATEGORY_POINTS = {
   'CLT': [
     'Covers all 3 real sections: Verbal Reasoning, Grammar/Writing, and Quantitative Reasoning -- no calculator allowed on the math portion',
     'Scored 0-120 (0-40 per section), not a pass/fail exam',
+    'Same test nationwide -- no state-specific rules or requirements to track',
+  ],
+  'OAT': [
+    'Covers all 4 real sections: Survey of the Natural Sciences, Reading Comprehension, Physics, and Quantitative Reasoning',
+    'Scored 200-400 per section, not a pass/fail exam',
     'Same test nationwide -- no state-specific rules or requirements to track',
   ],
 };
