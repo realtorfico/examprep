@@ -2140,6 +2140,19 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['English', '37%'], ['Mathematics', '38%'], ['Reading', '25%']],
   },
   {
+    // Scaffold entry, active:0 in track_registry until content is live. Covers the 3 text-based
+    // DAT sections (Survey of Natural Sciences, Reading Comprehension, Quantitative Reasoning);
+    // the Perceptual Ability Test (90 items, spatial/3D-rotation image items) is excluded from this
+    // mock since it needs real image assets this site's MC-text schema doesn't yet support -- same
+    // pattern as ACT excluding its optional Writing section. Structure and timing sourced directly
+    // from ADA's own 2026 DAT Candidate Guide (temp/dat/dat-guide.txt). Breakdown weighted by each
+    // section's real item count (100+50+40=190 total).
+    examType: 'dat',
+    title: 'DAT', category: 'DAT', route: '/dat/us',
+    duration: '195 Minutes', questions: '190 Questions', passScore: 'N/A (200-600 scaled score per section, no pass threshold)',
+    breakdown: [['Survey of Natural Sciences', '53%'], ['Reading Comprehension', '26%'], ['Quantitative Reasoning', '21%']],
+  },
+  {
     examType: 'ak_re_salesperson',
     title: 'Alaska Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ak',
     duration: '80 Minutes', questions: '40 Multiple Choice (State Law Portion)', passScore: '30/40 Correct (75%)',
@@ -3416,6 +3429,7 @@ var HUB_KIND_SLUGS = {
   'Notary': 'notary',
   'Mortgage Loan Origination': 'mlo',
   'ACT': 'act',
+  'DAT': 'dat',
 };
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
@@ -4099,7 +4113,7 @@ function fillCategoryArticleCount(kind, tracks) {
 var CATEGORY_ICONS = {
   'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
   'Boating': '⛵', 'Real Estate Salesperson': '🏠', 'Real Estate Broker': '🏢',
-  'Mortgage Loan Origination': '💰', 'ACT': '🎓',
+  'Mortgage Loan Origination': '💰', 'ACT': '🎓', 'DAT': '🦷',
 };
 
 // Expanded description of who each category's practice tracks are for, shown on the homepage
@@ -4116,6 +4130,7 @@ var CATEGORY_DESCRIPTIONS = {
   'Motorcycle': 'Study for your state’s motorcycle license or endorsement knowledge test -- the credential required to legally ride on public roads.',
   'Boating': 'Prepare for your state’s boating safety education exam or card requirement -- often mandatory before operating a powered vessel or PWC.',
   'ACT': 'Prepare for the ACT, the national college-entrance exam used alongside the SAT for admissions decisions -- one test, the same everywhere, no state-by-state variation.',
+  'DAT': 'Prepare for the DAT, the national admissions exam used by dental schools across the U.S. and Canada -- one test, the same everywhere, no state-by-state variation.',
 };
 
 // A few salient, generally-true points shown as a short bullet list on each homepage category
@@ -4161,6 +4176,11 @@ var CATEGORY_POINTS = {
   'ACT': [
     'Covers English, Math, and Reading -- Science and an optional Writing essay are not part of this practice bank',
     'Scored 1-36 (a composite average), not a pass/fail exam',
+    'Same test nationwide -- no state-specific rules or requirements to track',
+  ],
+  'DAT': [
+    'Covers Survey of the Natural Sciences, Reading Comprehension, and Quantitative Reasoning -- the Perceptual Ability Test is not part of this practice bank',
+    'Scored 200-600 per section on the ADA’s current scale (updated March 2025), not a pass/fail exam',
     'Same test nationwide -- no state-specific rules or requirements to track',
   ],
 };
