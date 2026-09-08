@@ -2153,6 +2153,18 @@ var HUB_EXAMS_CONTENT = [
     breakdown: [['Survey of Natural Sciences', '53%'], ['Reading Comprehension', '26%'], ['Quantitative Reasoning', '21%']],
   },
   {
+    // Scaffold entry, active:0 in track_registry until content is live. All 3 real CLT7 sections
+    // covered (Verbal Reasoning, Grammar/Writing, Quantitative Reasoning), each 40 questions --
+    // no section is excluded, unlike ACT/DAT. Structure and timing sourced directly from the real
+    // 2024-2025 CLT7 sample test (temp/clt/clt7_sample.txt). Scored 0-120 composite (0-40 per
+    // section, roughly 1 point per correct answer with statistical equating), confirmed via
+    // MasteryPrep/CollegeVine/Wikipedia 2026 CLT scoring references -- no pass/fail threshold.
+    examType: 'clt',
+    title: 'CLT', category: 'CLT', route: '/clt/us',
+    duration: '135 Minutes', questions: '120 Questions', passScore: 'N/A (0-120 composite score, no pass threshold)',
+    breakdown: [['Verbal Reasoning', '33%'], ['Grammar/Writing', '33%'], ['Quantitative Reasoning', '34%']],
+  },
+  {
     examType: 'ak_re_salesperson',
     title: 'Alaska Real Estate Salesperson Exam', category: 'Real Estate Licensing', route: '/real-estate-salesperson/ak',
     duration: '80 Minutes', questions: '40 Multiple Choice (State Law Portion)', passScore: '30/40 Correct (75%)',
@@ -3430,6 +3442,7 @@ var HUB_KIND_SLUGS = {
   'Mortgage Loan Origination': 'mlo',
   'ACT': 'act',
   'DAT': 'dat',
+  'CLT': 'clt',
 };
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
@@ -4113,7 +4126,7 @@ function fillCategoryArticleCount(kind, tracks) {
 var CATEGORY_ICONS = {
   'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
   'Boating': '⛵', 'Real Estate Salesperson': '🏠', 'Real Estate Broker': '🏢',
-  'Mortgage Loan Origination': '💰', 'ACT': '🎓', 'DAT': '🦷',
+  'Mortgage Loan Origination': '💰', 'ACT': '🎓', 'DAT': '🦷', 'CLT': '📜',
 };
 
 // Expanded description of who each category's practice tracks are for, shown on the homepage
@@ -4131,6 +4144,7 @@ var CATEGORY_DESCRIPTIONS = {
   'Boating': 'Prepare for your state’s boating safety education exam or card requirement -- often mandatory before operating a powered vessel or PWC.',
   'ACT': 'Prepare for the ACT, the national college-entrance exam used alongside the SAT for admissions decisions -- one test, the same everywhere, no state-by-state variation.',
   'DAT': 'Prepare for the DAT, the national admissions exam used by dental schools across the U.S. and Canada -- one test, the same everywhere, no state-by-state variation.',
+  'CLT': 'Prepare for the CLT, a classical-education-focused alternative to the SAT and ACT accepted at hundreds of colleges nationwide -- one test, the same everywhere, no state-by-state variation.',
 };
 
 // A few salient, generally-true points shown as a short bullet list on each homepage category
@@ -4181,6 +4195,11 @@ var CATEGORY_POINTS = {
   'DAT': [
     'Covers Survey of the Natural Sciences, Reading Comprehension, and Quantitative Reasoning -- the Perceptual Ability Test is not part of this practice bank',
     'Scored 200-600 per section on the ADA’s current scale (updated March 2025), not a pass/fail exam',
+    'Same test nationwide -- no state-specific rules or requirements to track',
+  ],
+  'CLT': [
+    'Covers all 3 real sections: Verbal Reasoning, Grammar/Writing, and Quantitative Reasoning -- no calculator allowed on the math portion',
+    'Scored 0-120 (0-40 per section), not a pass/fail exam',
     'Same test nationwide -- no state-specific rules or requirements to track',
   ],
 };
