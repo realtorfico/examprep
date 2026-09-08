@@ -3996,6 +3996,15 @@ async function renderCategoryPage(kind) {
   var subhead = (content && content.hero_subhead) ||
     ('Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.');
   var selectedState = repTrack ? repTrack.stateCode : '';
+  // True only when at least one track in this category uses a real state_code (a STATE_LABELS
+  // key) -- false for a single national track like ACT, whose state_code is the 'US' placeholder
+  // (same convention MLO already used, but MLO stayed inactive the whole time this code existed,
+  // so this branch was never actually exercised live until ACT went active 2026-09-08). Gates the
+  // state picker AND the waitlist prompt below -- both assume "more states could exist," which
+  // isn't true for a track that will never be state-divided. Checked with .some rather than
+  // .every: a kind's tracks are always homogeneous in practice (either all real states, or the one
+  // 'US' scaffold), but .some is the more defensive choice if that ever stops being true.
+  var hasRealStates = tracks.some(function (t) { return !!STATE_LABELS[t.stateCode]; });
 
   appEl.innerHTML =
     renderNewsBanner() +
@@ -4014,8 +4023,8 @@ async function renderCategoryPage(kind) {
     // running at the end of this function, same as every other refund-percent mention on the site.
     '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' +
     '</div>' +
-    (tracks.length ? categoryStateSelectHtml(tracks, selectedState) : '') +
-    categoryWaitlistPromptHtml(kind, tracks) +
+    (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
@@ -5672,14 +5681,23 @@ async function renderTrackLanding() {
     (exam.isExamRequired === false ? examNotRequiredBannerHtml(exam) : '') +
     '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     '<a href="/' + kindSlug(exam.examKind) + '">' + escapeHtml(exam.examKind) + '</a> / ' +
-    '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</span></nav>' +
+    // STATE_LABELS[exam.stateCode] is only real for an actual state -- a national single-track
+    // exam (ACT, and MLO if it ever activates) uses the 'US' placeholder, which has no
+    // STATE_LABELS entry, so the fallback needs to be the track's own shortName ("National ACT")
+    // rather than the raw placeholder code itself.
+    '<span class="breadcrumb-current">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.shortName || exam.stateCode) + '</span></nav>' +
     // Points at the category page's own state picker (categoryStateSelectHtml) rather than
     // describing a mechanism to use in place -- this used to reference a header state picker that
     // was removed entirely during the category-first restructure (2026-08-25), leaving both the
     // "state picker" and "on mobile, open the ☰ menu first" halves of the old copy dead: there was
     // nothing left on this page, or in the header, for either sentence to actually point to.
-    '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode] || exam.stateCode) + '</strong>? ' +
-    '<a href="/' + kindSlug(exam.examKind) + '">Pick your state on the ' + escapeHtml(exam.examKind) + ' page →</a></p>' +
+    // Omitted entirely for a national single-track exam (no STATE_LABELS entry for its
+    // state_code) -- there's no other state variant to pick, so the sentence has nothing to point
+    // to.
+    (STATE_LABELS[exam.stateCode]
+      ? '<p class="muted track-landing-state-hint">Not studying for <strong class="state-name-emphasis">' + escapeHtml(STATE_LABELS[exam.stateCode]) + '</strong>? ' +
+        '<a href="/' + kindSlug(exam.examKind) + '">Pick your state on the ' + escapeHtml(exam.examKind) + ' page →</a></p>'
+      : '') +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
     '<h1>' + exam.title + '</h1>' +
@@ -6420,7 +6438,11 @@ function drawBuyForm(pricing, giftIntent) {
   buyPromoDiscountCents = 0;
   var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     (track ? '<a href="/' + kindSlug(track.examKind) + '">' + escapeHtml(track.examKind) + '</a> / ' : '') +
-    (track ? '<a href="' + track.route + '">' + escapeHtml(track.stateCode ? (STATE_LABELS[track.stateCode] || track.stateCode) : trackTitle) + '</a> / ' : '') +
+    // STATE_LABELS[track.stateCode] is only real for an actual state -- falls back to trackTitle
+    // both when there's no state_code at all AND when it's the 'US' national-track placeholder
+    // (previously only checked truthiness of stateCode, so 'US' -- a truthy string -- fell through
+    // to the raw placeholder instead of a real label, same bug class as the track landing page).
+    (track ? '<a href="' + track.route + '">' + escapeHtml(STATE_LABELS[track.stateCode] || trackTitle) + '</a> / ' : '') +
     '<span class="breadcrumb-current">Get Instant Access</span></nav>';
   appEl.innerHTML =
     breadcrumbHtml +
