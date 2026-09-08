@@ -3458,6 +3458,18 @@ var HUB_KIND_SLUGS = {
   'CLT': 'clt',
   'OAT': 'oat',
 };
+// Spelled-out names for the acronym-only exam kinds that aren't yet as universally recognized as
+// ACT (deliberately excluded here) -- shown as "DAT (Dental Admission Test)" only in the roomier
+// headings (track landing page H1, category page hero, homepage category card) where the extra
+// length reads as helpful context rather than clutter. Left OUT of HUB_KIND_SLUGS/exam.category
+// itself so tight spots (breadcrumbs, badges, the exam-track-grid card's own <h3>) keep showing
+// the bare acronym -- see fullKindLabel() below for the one shared helper that applies this.
+var FULL_KIND_NAMES = {
+  DAT: 'Dental Admission Test',
+  CLT: 'Classic Learning Test',
+  OAT: 'Optometry Admission Test',
+};
+function fullKindLabel(kind) { return FULL_KIND_NAMES[kind] ? kind + ' (' + FULL_KIND_NAMES[kind] + ')' : kind; }
 function kindSlug(kind) { return HUB_KIND_SLUGS[kind] || kind.toLowerCase().replace(/[^a-z0-9]+/g, '-'); }
 function kindFromSlug(slug) {
   for (var k in HUB_KIND_SLUGS) { if (HUB_KIND_SLUGS[k] === slug) return k; }
@@ -4062,7 +4074,7 @@ async function renderCategoryPage(kind) {
     content = (results[0].categories || [])[0] || null;
   } catch (e) { /* best-effort -- page still works with fallback copy */ }
 
-  var headline = (content && content.hero_headline) || (kind + ' Exam Prep');
+  var headline = (content && content.hero_headline) || (fullKindLabel(kind) + ' Exam Prep');
   var subhead = (content && content.hero_subhead) ||
     ('Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.');
   var selectedState = repTrack ? repTrack.stateCode : '';
@@ -4295,7 +4307,7 @@ function categoryCardsHtml() {
       '<div class="exam-track-body">' +
       '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[kind] || '📚') + '</div>' +
       '<div class="category-nav-card-content">' +
-      '<h3>' + escapeHtml(kind) + '</h3>' +
+      '<h3>' + escapeHtml(fullKindLabel(kind)) + '</h3>' +
       '<p class="category-nav-card-desc">' + escapeHtml(CATEGORY_DESCRIPTIONS[kind] || 'Practice tracks for ' + kind + ' licensing.') + '</p>' +
       (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
       // "1 state"/"X states" is also a "treat US as a state" mistake for a single national track --
@@ -5835,7 +5847,7 @@ async function renderTrackLanding() {
       : '') +
     '<div class="exam-track-top"><span class="badge">' + exam.category + '</span>' +
     '<span class="status-badge active"><span class="pulse-dot"></span>Active</span></div>' +
-    '<h1>' + exam.title + '</h1>' +
+    '<h1>' + escapeHtml(fullKindLabel(exam.title)) + '</h1>' +
     '<p class="muted page-intro-text track-landing-description">' + trackDescription(exam.examType) + '</p>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '<div id="track-landing-blogpost-wrap"></div>' + '</div></div>' +
