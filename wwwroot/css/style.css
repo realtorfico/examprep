@@ -1072,9 +1072,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 #category-hero-track-link-wrap { display: contents; }
 .hub-hero-btn { width: auto; padding: 0.5rem 1.6rem; font-size: 0.95rem; }
 .hub-hero-subtext { font-size: 0.82rem; margin-top: 1rem; }
-/* Empty (no textContent) until loadRecentActivity()'s fetch resolves -- occupies no visible space
-   as an inline element until then, so a slow/failed fetch never leaves a placeholder-shaped gap. */
-.hub-activity-ticker { font-size: 0.82rem; font-weight: 600; color: var(--correct); margin-top: 0.6rem; }
+/* Reserves one line's height before loadRecentActivity()'s fetch resolves -- this used to occupy
+   zero space until then (see the removed comment here), but real recent-activity data exists on
+   essentially every load at this site's current traffic level (verified live, 2026-09-09), so the
+   common case is "text appears" not "stays empty" -- unlike #home-promotions-wrap just below,
+   which right now has zero promos to show beyond the header ribbon's one and so is deliberately
+   NOT given a reservation (that would trade today's real "always empty" case for a shift that
+   doesn't currently happen). Part of the CLS fix, 2026-09-09 (Gemini field-data report). */
+.hub-activity-ticker { font-size: 0.82rem; font-weight: 600; color: var(--correct); margin-top: 0.6rem; min-height: 1.15rem; display: block; }
 /* "Real Results, Not Marketing Copy" hero card (fillReadinessCard() in app.js) -- real sitewide
    data, not the fabricated per-visitor numbers v0's version shows. Sits in the hero's 2nd grid
    column on desktop (see .hub-hero above), stacks below the copy on mobile -- #hub-readiness-wrap
