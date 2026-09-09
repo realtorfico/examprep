@@ -1086,7 +1086,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    Total-questions count used to live in its own standalone .hub-hero-question-stat callout in the
    hero copy column -- moved into .hub-readiness-top-row (2026-08-25) to match the category pages'
    stats card, which pairs it with the pass/refund-rate radial above the tiles divider instead. */
-#hub-readiness-wrap:empty { display: none; }
+/* min-height (not the old :empty{display:none}) so this hero-column card reserves its real,
+   roughly-known footprint before fillReadinessCard()'s /stats/public fetch lands -- the old rule
+   left it at 0 height until then, so the card popping in shoved the rest of the hero (and
+   everything below it) down hard on every homepage load. Part of the CLS fix, 2026-09-09 (Gemini
+   field-data report: homepage was ~80% "Poor"). Only matters for the fetch's brief real-world
+   window -- the theoretical "genuinely no stats at all" case (see fillReadinessCard's own early
+   return) isn't a real state at this site's current scale, so a permanently blank card in that
+   edge case is an acceptable tradeoff for reserving space in the common case. */
+#hub-readiness-wrap { min-height: 300px; }
+@media (max-width: 799px) { #hub-readiness-wrap { min-height: 260px; } }
 .hub-readiness-card {
   margin-top: 1.5rem; border: 1px solid var(--border); border-top: 3px solid var(--highlight);
   border-radius: var(--radius-xl);
@@ -1814,6 +1823,20 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    pale cream band against the surrounding near-white header/page (doc audit's "remove the cream
    top banner line" complaint). The gold/accent attention-grab now lives entirely in the icon and
    bold text instead of the bar's fill. */
+/* Reserves the fallback tagline's real rendered height (0.5rem padding + ~1 line of 0.82rem text
+   + 1px border) before either the fallback or a real promo fetch fills it in -- this wrap starts
+   empty in the DOM (renderSiteHeader() in app.js) and used to have no reserved height at all,
+   making it shift literally every page on the site the moment fillPromoRibbon()'s /promotions
+   fetch (or its catch-path fallback) landed, since it sits above #app and the site-wide footer
+   both. Part of the CLS fix, 2026-09-09 (Gemini field-data report). */
+.promo-ribbon { min-height: 2.25rem; }
+
+/* Loading-state skeleton (see loadingSkeletonHtml() in app.js) -- reserves rough vertical space
+   on routes with no real-content fallback to render synchronously, part of the same CLS fix. */
+.skeleton-wrap { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.5rem 0 1.5rem; }
+.skeleton-line { height: 1rem; border-radius: 6px; background: var(--surface-2); width: 100%; }
+.skeleton-title { height: 1.75rem; width: 55%; margin-bottom: 0.5rem; }
+.skeleton-line-short { width: 65%; }
 .promo-ribbon .promo-banner {
   margin-bottom: 0; border-radius: 0; border-width: 0 0 1px;
   background: var(--card);

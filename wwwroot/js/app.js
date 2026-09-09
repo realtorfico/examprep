@@ -1205,6 +1205,24 @@ function drawBlogList() {
     '<button class="btn-secondary btn-sm blog-back-btn" data-act="go-back">← Back</button></div>';
 }
 
+// Generic loading placeholder for the routes below that genuinely have no real content to render
+// synchronously (a blog list/post, resource/progress/exam data, etc., unlike renderCategoryPage/
+// renderTrackLanding which have real fallback copy -- see fillCategoryContent's comment). These
+// used to show a single-line "Loading…" <p>, which is near-zero height, so the swap to the real,
+// much taller page content shoved the site-wide footer (and anything else already on screen) down
+// hard -- a major, uniform source of layout shift (CLS fix, 2026-09-09, Gemini field-data report).
+// This isn't pixel-matched to each page's real layout (that would need a bespoke skeleton per
+// route) -- just enough placeholder height, via `rows`, to land in the right ballpark so the real
+// content's arrival moves things far less than a one-line stub did.
+function loadingSkeletonHtml(rows) {
+  rows = rows || 4;
+  var lines = '';
+  for (var i = 0; i < rows; i++) {
+    lines += '<div class="skeleton-line' + (i % 3 === 2 ? ' skeleton-line-short' : '') + '"></div>';
+  }
+  return '<div class="skeleton-wrap"><div class="skeleton-line skeleton-title"></div>' + lines + '</div>';
+}
+
 function renderBlogList() {
   var params = new URLSearchParams(location.search);
   var activeKind = params.get('kind') || '';
@@ -1214,7 +1232,8 @@ function renderBlogList() {
   // replaced by the cookie again. Read regardless of activeKind now -- state and category are
   // independent filters (see blogListHref's own comment).
   var stateParam = params.get('state');
-  appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="blog-page"><h1>Guides &amp; Tips</h1>' +
+    '<p class="muted">Guides and tips for passing your licensing exam.</p>' + loadingSkeletonHtml(8) + '</div>';
   apiFetch('/blog').then(function (res) {
     var posts = (res && res.posts) || [];
     var postsForKind = activeKind ? posts.filter(function (p) { return p.kind === activeKind; }) : posts;
@@ -1240,7 +1259,7 @@ function renderBlogPost(slug) {
   var postParams = new URLSearchParams(location.search);
   var fromKind = postParams.get('from') || '';
   var fromState = postParams.get('fromState') || ''; // independent of fromKind -- see blogListHref's comment
-  appEl.innerHTML = '<div class="narrow-page"><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="narrow-page">' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([apiFetch('/blog/' + encodeURIComponent(slug)), apiFetch('/blog').catch(function () { return { posts: [] }; })]).then(function (results) {
     var post = results[0] && results[0].post;
     if (!post) { appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="' + blogListHref(fromKind, fromState) + '">← Back to Guides &amp; Tips</a></div>'; return; }
@@ -1351,7 +1370,7 @@ function renderTestimonialForm() {
 // /stats/public pass rate, correctly framed as practice-exam performance, not a claim about real
 // official exam outcomes we have no way to measure).
 function renderGuarantee() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1>' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([loadSiteConfig(), apiFetch('/stats/public').catch(function () { return null; })]).then(function (results) {
     var stats = results[1];
     var passRateNote = (stats && stats.passRate != null)
@@ -1513,7 +1532,7 @@ function renderEmbedGenerator() {
 // sample-size gate only, never a value gate, so a real (if unflattering) rate is never hidden once
 // there's enough data to trust it.
 function renderPassRates() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Pass Rate Transparency</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Pass Rate Transparency</h1>' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([
     apiFetch('/stats/public').catch(function () { return null; }),
     apiFetch('/stats/pass-rates-by-category').catch(function () { return null; }),
@@ -1587,7 +1606,7 @@ function changelogValueLabel(field, value) {
   return value;
 }
 function renderChangelog() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Exam Mechanics Changelog</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>Exam Mechanics Changelog</h1>' + loadingSkeletonHtml(8) + '</div>';
   apiFetch('/changelog').then(function (res) {
     var items = (res && res.items) || [];
     var rows = items.map(function (it) {
@@ -1628,7 +1647,7 @@ function renderProfile() {
       '<button class="btn-secondary btn-sm" type="button" data-act="go-back">← Back</button></div>';
     return;
   }
-  appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1><p class="muted">Loading…</p></div>';
+  appEl.innerHTML = '<div class="narrow-page"><h1>My Profile</h1>' + loadingSkeletonHtml(4) + '</div>';
   apiFetch('/profile').then(function (p) {
     var track = trackByExamType(p.examType);
     var trackTitle = (track && track.title) || p.examType;
@@ -4352,7 +4371,7 @@ async function fillCategoryQuestionCount(tracks) {
   } catch (e) { /* best-effort -- tile just stays empty */ }
 }
 
-async function renderCategoryPage(kind) {
+function renderCategoryPage(kind) {
   var slug = kindSlug(kind);
   var tracks = categoryActiveTracks(kind);
   var repTrack = pickRepresentativeTrack(tracks);
@@ -4376,21 +4395,15 @@ async function renderCategoryPage(kind) {
   hubScopedState = repTrack ? repTrack.stateCode : null;
   renderSiteFooter();
 
-  appEl.innerHTML = '<p>Loading…</p>';
+  // Renders immediately below with the generic per-kind fallback copy (headline/subhead) rather
+  // than blocking first paint on the /category-content fetch and showing a "Loading…" stub in
+  // between -- that stub-then-full-page-swap pattern was the single biggest source of layout
+  // shift on this site's highest-traffic pages (CLS fix, 2026-09-09, driven by a Gemini field-data
+  // report showing ~100% "Poor" CLS on /cdl and friends). The real CMS copy, when it exists,
+  // patches in afterward via fillCategoryContent() -- in place, never a second full-page replace.
   var content = null;
-  try {
-    // Both in parallel -- the track's own content (for its card's description excerpt) is a
-    // separate 1KB fetch, and there's no reason to make it wait behind the category copy.
-    var results = await Promise.all([
-      apiFetch('/category-content?slug=' + encodeURIComponent(slug)),
-      repTrack ? loadTrackContent(repTrack.examType) : Promise.resolve(null),
-    ]);
-    content = (results[0].categories || [])[0] || null;
-  } catch (e) { /* best-effort -- page still works with fallback copy */ }
-
-  var headline = (content && content.hero_headline) || (fullKindLabel(kind) + ' Exam Prep');
-  var subhead = (content && content.hero_subhead) ||
-    ('Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.');
+  var headline = fullKindLabel(kind) + ' Exam Prep';
+  var subhead = 'Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.';
   var selectedState = repTrack ? repTrack.stateCode : '';
   // True only when at least one track in this category has a real state_code -- false for a
   // single national track like ACT, whose state_code is the 'US' placeholder (same convention MLO
@@ -4411,8 +4424,8 @@ async function renderCategoryPage(kind) {
     '<div class="hub-hero-copy">' +
     '<span class="section-eyebrow">' + escapeHtml(kind) + '</span>' +
     (examTypeHasIntlExposure(slug) ? internationalBadgeHtml() : '') +
-    '<h1>' + escapeHtml(headline) + '</h1>' +
-    '<p>' + escapeHtml(subhead) + '</p>' +
+    '<h1 id="category-hero-headline">' + escapeHtml(headline) + '</h1>' +
+    '<p id="category-hero-subhead">' + escapeHtml(subhead) + '</p>' +
     '<div class="hub-trust-badges">' +
     '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
     '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
@@ -4436,13 +4449,13 @@ async function renderCategoryPage(kind) {
     '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), hasFailGuarantee) + '</div>' +
     '</div>' +
     trustStripHtml() +
-    categoryFeatureTilesHtml(content && content.featureTiles) +
+    '<div id="category-feature-tiles-wrap">' + categoryFeatureTilesHtml(content && content.featureTiles) + '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
     '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
     categorySampleWidgetHtml() +
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
-    categoryTestimonialsHtml(content && content.testimonials) +
+    '<div id="category-testimonials-wrap">' + categoryTestimonialsHtml(content && content.testimonials) + '</div>' +
     guaranteeCtaBandHtml(hasFailGuarantee);
 
   if (repTrack) loadCategorySampleQuestion();
@@ -4452,6 +4465,29 @@ async function renderCategoryPage(kind) {
     fillCategoryStatsRadial();
   });
   fillCategoryArticleCount(kind, tracks);
+  fillCategoryContent(kind, slug, repTrack);
+}
+
+// Patches in the /category-content-derived copy (hero headline/subhead, feature tiles,
+// testimonials) once the fetch resolves, rather than blocking first paint on it -- see the
+// "Renders immediately below" comment above renderCategoryPage's fallback-copy assignment.
+function fillCategoryContent(kind, slug, repTrack) {
+  Promise.all([
+    apiFetch('/category-content?slug=' + encodeURIComponent(slug)),
+    repTrack ? loadTrackContent(repTrack.examType) : Promise.resolve(null),
+  ]).then(function (results) {
+    if (!categoryPageState || categoryPageState.kind !== kind) return; // navigated away
+    var content = (results[0].categories || [])[0] || null;
+    if (!content) return; // nothing new -- fallback copy already in place
+    var headlineEl = document.getElementById('category-hero-headline');
+    var subheadEl = document.getElementById('category-hero-subhead');
+    if (headlineEl && content.hero_headline) headlineEl.textContent = content.hero_headline;
+    if (subheadEl && content.hero_subhead) subheadEl.textContent = content.hero_subhead;
+    var tilesWrap = document.getElementById('category-feature-tiles-wrap');
+    if (tilesWrap && content.featureTiles) tilesWrap.innerHTML = categoryFeatureTilesHtml(content.featureTiles);
+    var testimonialsWrap = document.getElementById('category-testimonials-wrap');
+    if (testimonialsWrap && content.testimonials) testimonialsWrap.innerHTML = categoryTestimonialsHtml(content.testimonials);
+  }).catch(function () { /* best-effort -- fallback copy stays */ });
 }
 
 // Article count comes from a separate lightweight fetch (loadBlogCounts, not part of boot()) so it
@@ -5335,7 +5371,7 @@ async function renderResources() {
   // first so the fetch doesn't leave a blank screen; loadTrackResources() de-dupes if the landing
   // page already kicked off the same request.
   if (!RESOURCES[state.examType]) {
-    appEl.innerHTML = renderTabs('resources') + '<p class="muted">Loading…</p>';
+    appEl.innerHTML = renderTabs('resources') + loadingSkeletonHtml(6);
     await loadTrackResources(state.examType);
   }
   var items = RESOURCES[state.examType] || [];
@@ -5346,7 +5382,7 @@ async function renderResources() {
   }
 
   var loggedIn = isLoggedInForCurrentTrack();
-  appEl.innerHTML = renderTabs('resources') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('resources') + loadingSkeletonHtml(6);
 
   // Logged-in sessions get everything signed; anonymous visitors only get the server's own
   // free-sample allowlist signed (see FREE_RESOURCES in examprep-api) — nothing client-side
@@ -5897,7 +5933,7 @@ function progressResetSectionHtml() {
 }
 
 async function renderProgress() {
-  appEl.innerHTML = renderTabs('progress') + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs('progress') + loadingSkeletonHtml(8);
   progressResetPending = null; // a fresh load (e.g. after a reset) always starts from the unconfirmed state
   examAttemptOpenId = null;
   examAttemptDetailCache = {};
@@ -6116,12 +6152,18 @@ function examNotRequiredBannerHtml(exam) {
 // logged out, or logged in for a different track. Reuses the same specs/breakdown markup the hub
 // cards used to show before they were shrunk (kept in style.css for exactly this) and the
 // checkout page's two-column .buy-layout pattern.
-async function renderTrackLanding() {
+function renderTrackLanding() {
   var exam = trackByExamType(state.examType);
   if (!exam) { renderHub(); return; }
-  // 0.8KB and CDN-cached for 5 min -- fetched only on a track's own page, for that one track,
-  // rather than shipping all 285 tracks' disclaimer prose in the bundle to every visitor.
-  await loadTrackContent(exam.examType);
+  // Used to `await loadTrackContent(exam.examType)` here before painting anything at all -- #app
+  // stayed completely empty (with the header/footer already rendered around it, see boot()) for
+  // the full fetch round-trip, then the whole page popped in at once, shoving the footer straight
+  // down the page. trackInfoLinks/trackDescription/trackCompliance below all read from the
+  // TRACK_CONTENT cache and already have safe generic fallbacks when it's not loaded yet, so this
+  // now renders immediately with whatever's cached (real content on a repeat visit this session,
+  // fallback copy otherwise) and patches in the real content afterward via
+  // fillTrackLandingContent() -- same CLS fix as renderCategoryPage's fillCategoryContent()
+  // (2026-09-09, Gemini field-data report).
   // Lives right in the specs card (facts about THIS exam), not the purchase card further down --
   // it's a trust/verification link a skeptical, comparison-shopping visitor wants BEFORE deciding
   // to buy, not a purchase action, so a small inline link here reads better than a full-width
@@ -6157,7 +6199,7 @@ async function renderTrackLanding() {
     '<div>⏱️ <strong>Duration:</strong> ' + exam.duration + '</div>' +
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
-    '</div>' + officialLinkHtml + intlStudentsHtml;
+    '</div>' + '<div id="track-landing-infolink-wrap">' + officialLinkHtml + '</div>' + intlStudentsHtml;
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
@@ -6196,7 +6238,7 @@ async function renderTrackLanding() {
     freshnessBadgeHtml +
     (examTypeHasIntlExposure(exam.examType) ? internationalBadgeHtml() : '') + '</div>' +
     '<h1>' + escapeHtml(heroOverride ? heroOverride.headline : fullKindLabel(exam.title)) + '</h1>' +
-    '<p class="muted page-intro-text track-landing-description">' +
+    '<p class="muted page-intro-text track-landing-description" id="track-landing-description-text">' +
     (heroOverride ? escapeHtml(heroOverride.subhead) : trackDescription(exam.examType)) + '</p>' +
     (heroOverride ? '<ul class="buy-feature-list track-hero-trust-list">' +
       heroOverride.bullets.map(function (b) { return '<li>✓ ' + escapeHtml(b) + '</li>'; }).join('') +
@@ -6223,7 +6265,8 @@ async function renderTrackLanding() {
     '<a class="btn-secondary hub-cta" href="#/resources">Preview Free Resources →</a>' +
     '</div>' +
     '<p class="muted redeem-sample-hint">Already have a code? <a href="#/redeem">Redeem it →</a></p>' +
-    '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + '.</p>' +
+    '<p class="muted track-landing-disclaimer">Not affiliated with, authorized by, sponsored by, or endorsed by ' +
+    '<span id="track-landing-orgline">' + compliance.orgLine + '</span>.</p>' +
     '</div>' +
     '</div>' +
     trackLandingSampleWidgetHtml() +
@@ -6253,6 +6296,7 @@ async function renderTrackLanding() {
   loadTrackLandingSampleQuestion(exam);
   loadTrackLandingBlogPost(exam);
   fillTrackLandingArticleCount(exam);
+  fillTrackLandingContent(exam, !!heroOverride);
   // Same testimonials the exam's own category landing page shows (category_content is keyed by
   // category slug, not per-track) -- real, relevant social proof for THIS exam kind, not a fake
   // per-track set that would need authoring 190+ times over.
@@ -6268,6 +6312,30 @@ async function renderTrackLanding() {
     var wrap = document.getElementById('track-landing-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
   }).catch(function () { /* best-effort -- page still works without it */ });
+}
+
+// Patches in the TRACK_CONTENT-derived pieces (official info link, generic description, real
+// compliance org line) once loadTrackContent resolves, rather than blocking renderTrackLanding's
+// first paint on it -- see the comment at the top of renderTrackLanding(). hasHeroOverride skips
+// the description patch entirely: an override track's subhead is static ad-campaign copy, not
+// TRACK_CONTENT's generic description, so there's nothing to patch there.
+function fillTrackLandingContent(exam, hasHeroOverride) {
+  loadTrackContent(exam.examType).then(function () {
+    if (state.examType !== exam.examType) return; // navigated away
+    var infoWrap = document.getElementById('track-landing-infolink-wrap');
+    var infoLinks = trackInfoLinks(exam.examType);
+    if (infoWrap && infoLinks.length) {
+      infoWrap.innerHTML = '<p class="muted track-landing-official-inline">Verify with the official source: ' +
+        '<a class="exam-track-view-link" href="' + infoLinks[0].url + '" target="_blank" rel="noopener noreferrer">Official exam info ↗</a></p>';
+    }
+    if (!hasHeroOverride) {
+      var descEl = document.getElementById('track-landing-description-text');
+      var desc = trackDescription(exam.examType);
+      if (descEl && desc) descEl.innerHTML = desc;
+    }
+    var orgEl = document.getElementById('track-landing-orgline');
+    if (orgEl) orgEl.textContent = trackCompliance(exam.examType).orgLine;
+  });
 }
 
 // Links this track's landing page to its matching featured long-tail blog post (the state-specific
@@ -6474,7 +6542,7 @@ var examState = { attempt: null, config: null, currentIndex: 0, timerHandle: nul
 
 async function renderExam(mode) {
   mode = mode || 'standard';
-  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + loadingSkeletonHtml(6);
   try {
     var current = await apiFetch('/exam/current?mode=' + mode);
     if (current.attempt) { enterExamSitting(current.attempt, mode); return; }
@@ -6572,7 +6640,7 @@ async function renderExamHistory(mode) {
 
 async function renderExamAttemptDetailView(attemptId, mode) {
   mode = mode || 'standard';
-  appEl.innerHTML = renderTabs(examTabKey(mode)) + '<p class="muted">Loading…</p>';
+  appEl.innerHTML = renderTabs(examTabKey(mode)) + loadingSkeletonHtml(6);
   try {
     var result = await apiFetch('/exam/attempt?attemptId=' + encodeURIComponent(attemptId));
     renderExamResults(result, { fromHistory: true, mode: mode });
@@ -7586,7 +7654,7 @@ function referHowItWorksHtml(rules) {
 async function renderReferForm() {
   referFriendRowCount = 1;
   var referrerInfo = loadReferrerInfo();
-  appEl.innerHTML = '<h1>Refer friends, earn free access</h1><p class="muted">Loading…</p>';
+  appEl.innerHTML = '<h1>Refer friends, earn free access</h1>' + loadingSkeletonHtml(5);
 
   // 'refer' is dispatched before renderTrackApp()'s isLoggedInForCurrentTrack() guard, so a
   // logged-in visitor who somehow lands on a DIFFERENT track's #/refer path (stale bookmark,
@@ -7762,7 +7830,7 @@ async function renderSample() {
   var track = currentTrackOrNull();
   if (!track) { location.hash = ''; location.href = tracksHomeHref(); return; }
   appEl.innerHTML = '<h1>Try a Free Sample: ' + escapeHtml(track.shortName || track.title) + '</h1>' +
-    '<p class="muted">10 questions, no access code needed.</p><p class="muted">Loading…</p>';
+    '<p class="muted">10 questions, no access code needed.</p>' + loadingSkeletonHtml(4);
   if (!sampleState.questions || sampleState.examType !== track.examType) {
     try {
       var res = await apiFetch('/sample?examType=' + encodeURIComponent(track.examType));
