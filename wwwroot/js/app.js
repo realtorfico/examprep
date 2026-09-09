@@ -325,9 +325,12 @@ function fillPromoRibbon() {
     wrap.innerHTML = promoRibbonFallbackHtml();
   });
 }
+// Track-agnostic sitewide default -- this ribbon renders on every page, including the scored,
+// non-pass/fail national tracks (ACT/DAT/CLT/OAT) where "pass or X% back" doesn't apply, so it
+// can't assert that specific claim unconditionally. See guaranteeFaqHtml('Which tracks are
+// covered?') on the guarantee page for the accurate per-track breakdown.
 function promoRibbonFallbackHtml() {
-  return '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Pass or ' + refundFailurePercent +
-    '% of Your Money Back</strong> — see our guarantee →</a>';
+  return '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Real Practice, Real Guarantees</strong> — see our refund policy →</a>';
 }
 
 function updateThemeButton() {
@@ -413,6 +416,11 @@ function renderSiteFooter() {
   }
   var orgLine = pageTrack ? trackCompliance(pageTrack.examType).orgLine : HUB_FOOTER_ORG_LINE;
   var requirement = pageTrack ? trackCompliance(pageTrack.examType).footerRequirement : HUB_FOOTER_REQUIREMENT;
+  // pageTrack.passPercent is null for a scored, non-pass/fail national exam (ACT/DAT/CLT/OAT) --
+  // there's no "failing" a composite-scored exam, so the footer's refund line shouldn't assert the
+  // pass-or-X%-back claim for those pages. Defaults true off any page without a specific track
+  // (home, etc.), same as the other track-agnostic spots on the site.
+  var hasFailGuarantee = pageTrack ? pageTrack.passPercent != null : true;
   var referTrack = referTrackOrNull(pageTrack);
   var referHref = referTrack ? (referTrack.route + '#/refer') : tracksHomeHref();
   var activeTracks = HUB_EXAMS.filter(function (e) { return e.active; });
@@ -462,7 +470,11 @@ function renderSiteFooter() {
     '</div>' +
     categoriesCol + accountCol + supportCol + companyCol +
     '</div>' +
-    '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>. © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
+    '<div class="footer-legal-strip muted">' + window.location.hostname + ' is an independent study tool, not affiliated with, authorized by, sponsored by, or endorsed by ' + orgLine + ' or any other government agency. Practice questions only, and ' + requirement + ' — ' +
+    (hasFailGuarantee
+      ? 'passing the real exam isn\'t guaranteed, though we back that risk with our <a href="#/guarantee">' + refundFailurePercent + '% refund guarantee</a>.'
+      : 'we back your purchase with our <a href="#/guarantee">7-day refund guarantee</a>.') +
+    ' © ' + SITE_YEAR + ' PassExamHQ. All rights reserved.</div>' +
     '</div>';
 }
 
@@ -1352,7 +1364,9 @@ function renderGuarantee() {
       guaranteeFaqHtml('What if I used a promo code or points?',
         'Any points or promo discount applied at checkout only reduces what you paid — the guarantee still covers whatever cash amount you actually paid.') +
       guaranteeFaqHtml('Which tracks are covered?',
-        'Every active track — the same ' + refundFailurePercent + '% pass-or-refund guarantee and 7-day return window apply sitewide, not just select tracks.') +
+        'Every active licensing-exam track (Notary, Real Estate, Driver, CDL, Motorcycle, Boating, and every other pass/fail state or professional exam) gets both guarantees — ' +
+        'the ' + refundFailurePercent + '% pass-or-refund guarantee and the 7-day return window. Our scored, composite national exams (ACT, DAT, CLT, OAT) have no pass/fail ' +
+        'threshold to fail, so there\'s no "fail the real exam" claim for those — they\'re still covered by the 7-day return window, just not the pass-or-refund half.') +
       '</dl>' +
       '</section>' +
       '</div>';
@@ -4202,7 +4216,7 @@ function drawCategorySampleQuestion() {
 // distinguishing check as every other national-track fix in this file, not just an activeCount===1
 // check, since a real state-based category early in its rollout (genuinely only 1 state live so
 // far) should still show its (accurate, if small) "State Tracks" count.
-function categoryStatsHtml(tracks, articleCount, resourceStats) {
+function categoryStatsHtml(tracks, articleCount, resourceStats, hasFailGuarantee) {
   var activeCount = tracks.length;
   var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
   var tiles = hasRealStates ? [{ value: activeCount, label: 'State Tracks' }] : [];
@@ -4228,7 +4242,10 @@ function categoryStatsHtml(tracks, articleCount, resourceStats) {
     '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Coverage</span>, Not Marketing Copy</p>' +
     '<div class="hub-readiness-top-row">' +
     '<div class="outcome-tile hub-readiness-question-count" id="category-question-count-tile"></div>' +
-    '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' +
+    // Omitted (not swapped for a substitute stat) when the category has no real pass/fail
+    // guarantee to visualize (ACT/DAT/CLT/OAT) -- fillCategoryStatsRadial() safely no-ops when
+    // this wrap doesn't exist.
+    (hasFailGuarantee ? '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' : '') +
     '</div>' +
     '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
       return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
@@ -4264,7 +4281,12 @@ async function renderCategoryPage(kind) {
   var slug = kindSlug(kind);
   var tracks = categoryActiveTracks(kind);
   var repTrack = pickRepresentativeTrack(tracks);
-  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false };
+  // Scored, non-pass/fail national exams (ACT/DAT/CLT/OAT -- passPercent IS NULL in track_registry)
+  // have no "fail the real exam" concept, so the "pass or X% back" half of the sitewide guarantee
+  // doesn't apply to them -- only the always-valid 7-day refund does. Defaults true when there's no
+  // repTrack yet (nothing real to gate on) since the vast majority of tracks do have it.
+  var hasFailGuarantee = repTrack ? repTrack.passPercent != null : true;
+  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, hasFailGuarantee: hasFailGuarantee, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false };
   // hubScopedState drives the footer's "top state tracks" links (and the #/gift page) -- previously
   // forced null here unconditionally (see route()'s old comment), which meant the footer kept
   // showing its unscoped fallback (first-3-active-overall, in practice always California) no matter
@@ -4318,7 +4340,9 @@ async function renderCategoryPage(kind) {
     // not a replacement for the full guaranteeCtaBandHtml() band, which stays at the bottom of the
     // page as the closing note. .js-refund-pct is patched by the loadSiteConfig() sweep already
     // running at the end of this function, same as every other refund-percent mention on the site.
-    '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' +
+    // Omitted entirely (not swapped for a substitute claim) for a scored, non-pass/fail category
+    // (ACT/DAT/CLT/OAT) -- there's no "failing" a composite-scored exam to refund against.
+    (hasFailGuarantee ? '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' : '') +
     '</div>' +
     (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
     (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
@@ -4327,7 +4351,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; }))) + '</div>' +
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), hasFailGuarantee) + '</div>' +
     '</div>' +
     trustStripHtml() +
     categoryFeatureTilesHtml(content && content.featureTiles) +
@@ -4337,7 +4361,7 @@ async function renderCategoryPage(kind) {
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     categoryTestimonialsHtml(content && content.testimonials) +
-    guaranteeCtaBandHtml();
+    guaranteeCtaBandHtml(hasFailGuarantee);
 
   if (repTrack) loadCategorySampleQuestion();
   fillCategoryQuestionCount(tracks);
@@ -4361,7 +4385,7 @@ function fillCategoryArticleCount(kind, tracks) {
     if (!articleCount) return;
     var wrap = document.getElementById('category-stats-wrap');
     if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-    wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+    wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), categoryPageState.hasFailGuarantee);
     fillCategoryQuestionCount(tracks);
     loadSiteConfig().then(fillCategoryStatsRadial);
   }).catch(function () { /* best-effort -- tile just stays absent */ });
@@ -4697,7 +4721,24 @@ function howItWorksHtml() {
 // will see). refundFailurePercent shows its pre-fetch default (50) at first paint, then gets
 // patched by a .js-refund-pct sweep once real config loads -- see renderCategoryPage()'s own
 // loadSiteConfig().then() callback.
-function guaranteeCtaBandHtml() {
+// hasFailGuarantee is falsy for scored, non-pass/fail national exams (ACT/DAT/CLT/OAT --
+// track_registry.pass_percent IS NULL) -- there's no "failing" a composite-scored exam, so those
+// tracks only ever get the always-valid 7-day refund, not the "pass or X% back" claim.
+function guaranteeCtaBandHtml(hasFailGuarantee) {
+  if (!hasFailGuarantee) {
+    return '<section class="guarantee-band">' +
+      '<div class="guarantee-band-copy">' +
+      '<span class="badge guarantee-band-badge">🛡️ Our guarantee, in plain language</span>' +
+      '<h2>Not what you expected? Get a full refund within 7 days.</h2>' +
+      '<p>This exam is scored, not pass/fail, so there\'s no "fail the real exam" refund to offer -- ' +
+      'but a 7-day, no-questions-asked refund still covers your purchase.</p>' +
+      '<a class="guarantee-band-cta" href="#/guarantee">Read the guarantee →</a>' +
+      '</div>' +
+      '<div class="guarantee-band-cards">' +
+      '<div class="guarantee-band-card"><h3>7-day refund</h3><p>Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>' +
+      '</div>' +
+      '</section>';
+  }
   return '<section class="guarantee-band">' +
     '<div class="guarantee-band-copy">' +
     '<span class="badge guarantee-band-badge">🛡️ Two guarantees, in plain language</span>' +
@@ -4954,7 +4995,7 @@ function fillResourceCountSurfaces() {
       var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
       var wrap = document.getElementById('category-stats-wrap');
       if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-      wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })));
+      wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), categoryPageState.hasFailGuarantee);
       fillCategoryQuestionCount(tracks);
       loadSiteConfig().then(fillCategoryStatsRadial);
     }).catch(function () { /* best-effort -- stats card just keeps its current content */ });
@@ -6083,7 +6124,7 @@ async function renderTrackLanding() {
     '<li>✓ Timed mock exam &amp; Weak Spots drills</li>' +
     '<li>✓ Voice-enabled answering &amp; read-aloud</li>' +
     '<li>✓ Per-topic progress tracking</li>' +
-    '<li>✓ Pass-or-money-back guarantee</li>' +
+    (exam.passPercent != null ? '<li>✓ Pass-or-money-back guarantee</li>' : '<li>✓ 7-day refund guarantee</li>') +
     '</ul>' +
     '<div class="buy-cta-group">' +
     '<a class="btn-primary hub-cta" href="#/buy">Get Instant Access →</a>' +
@@ -6105,7 +6146,7 @@ async function renderTrackLanding() {
     trackLandingPreviewHtml(exam) +
     '</section>' +
     '<div id="track-landing-testimonials-wrap"></div>' +
-    guaranteeCtaBandHtml() +
+    guaranteeCtaBandHtml(exam.passPercent != null) +
     '<div id="buy-other-tracks-wrap" class="track-landing-crosssell"></div>' +
     '</div>';
 
@@ -6844,9 +6885,15 @@ function drawBuyForm(pricing, giftIntent) {
     // the price of" rather than competing with the page title for first attention.
     '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="card buy-guarantee-card">' +
-    '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
-    '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
-    '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>' +
+    // track.passPercent is null for a scored, non-pass/fail national exam (ACT/DAT/CLT/OAT) --
+    // there's no "fail the real exam" to refund against for those, so this shows only the
+    // always-valid 7-day refund instead of the pass-or-X%-back claim.
+    (track && track.passPercent != null
+      ? '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
+        '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
+        '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>'
+      : '<div class="buy-guarantee-item"><strong>🛡️ 7-Day Refund Guarantee</strong>' +
+        '<p class="muted">Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>') +
     '<p class="muted buy-guarantee-footnote"><a href="#/refund">Refund request →</a></p>' +
     '</div>' +
     '</div>' +
@@ -7210,6 +7257,11 @@ async function submitStripePayment() {
 }
 
 function renderPurchaseSuccess(code, pointsApplied) {
+  // state.examType is set to the just-purchased track right before this is called (see the
+  // caller above), so this is real per-purchase track context, not a track-agnostic guess.
+  // purchasedTrack.passPercent is null for a scored, non-pass/fail national exam (ACT/DAT/CLT/OAT).
+  var purchasedTrack = trackByExamType(state.examType);
+  var hasFailGuarantee = purchasedTrack ? purchasedTrack.passPercent != null : true;
   appEl.innerHTML =
     '<h1>You\'re in! 🎉</h1>' +
     (pointsApplied ? '<p class="muted">' + pointsApplied + ' points applied to this purchase.</p>' : '') +
@@ -7219,11 +7271,17 @@ function renderPurchaseSuccess(code, pointsApplied) {
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
     '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>' +
-    '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees — ' +
-    '<a href="#/refund">request one anytime →</a></p>';
+    (hasFailGuarantee
+      ? '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees — <a href="#/refund">request one anytime →</a></p>'
+      : '<p class="muted redeem-sample-hint">Covered by our 7-day refund guarantee — <a href="#/refund">request one anytime →</a></p>');
 }
 
 function renderGiftPurchaseSuccess(code, recipientEmail) {
+  // The gift buyer already picked a specific track before checkout (giftResultHtml links into
+  // that track's own #/buy-gift route), so state.examType is real per-purchase context here too,
+  // same as renderPurchaseSuccess -- not a track-agnostic guess.
+  var giftedTrack = trackByExamType(state.examType);
+  var hasFailGuarantee = giftedTrack ? giftedTrack.passPercent != null : true;
   appEl.innerHTML =
     '<h1>Gift purchased! 🎁</h1>' +
     '<div class="card purchase-success-card">' +
@@ -7233,8 +7291,9 @@ function renderGiftPurchaseSuccess(code, recipientEmail) {
     '<div class="purchase-code">' + code + '</div>' +
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
-    '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — ' +
-    'covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees.</p>' +
+    (hasFailGuarantee
+      ? '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees.</p>'
+      : '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — covered by our 7-day refund guarantee.</p>') +
     '<a class="btn-primary hub-cta" href="#/gift">Buy another gift →</a>';
 }
 
@@ -7259,8 +7318,11 @@ function renderGift() {
     '<div id="gift-result-wrap">' + giftResultHtml() + '</div>' +
     // Reassurance content this page didn't have before -- previously the guarantee only appeared
     // post-purchase (renderGiftPurchaseSuccess) or in the buy-gift checkout itself, i.e. after the
-    // decision to spend money was already made, not before it.
-    guaranteeCtaBandHtml();
+    // decision to spend money was already made, not before it. The recipient's track isn't known
+    // yet at this point (visitor hasn't picked one), so this passes true rather than doing a
+    // per-track lookup here -- 261 of 265 tracks do have the fail guarantee, a reasonable default
+    // for a track-agnostic page.
+    guaranteeCtaBandHtml(true);
 }
 
 // ---- Refund requests (7-day unconditional + pass-or-N%-back) --------------
@@ -7283,6 +7345,8 @@ function renderRefundRequest() {
     '<label class="refund-claim-type-option"><input type="radio" name="claimType" value="exam_failure_50pct"> ' +
     '<span><strong>Pass or ' + refundFailurePercent + '% of Your Money Back</strong><br><span class="muted">' + refundFailurePercent + '% refund if you took and failed the real exam.</span></span></label>' +
     '</div>' +
+    '<p class="muted refund-failure-caveat">This option only applies to pass/fail licensing exams (Notary, Real Estate, Driver, CDL, Motorcycle, Boating, etc.). ' +
+    'It doesn\'t apply to our scored, composite national exams — ACT, DAT, CLT, or OAT — since there\'s no "failing" a test with no pass/fail threshold.</p>' +
     '<div id="refund-failure-fields" class="refund-failure-fields">' +
     '<label class="muted buy-email-label">Exam date</label>' +
     '<input type="date" name="examDate">' +
@@ -7479,8 +7543,9 @@ async function renderReferForm() {
     referHowItWorksHtml(rules) +
     '<div id="refer-testimonials-wrap"></div>' +
     // Reassurance content this page didn't have before -- a referrer is vouching for the product
-    // to a friend, so the same guarantee band shown on category/track pages belongs here too.
-    guaranteeCtaBandHtml();
+    // to a friend, so the same guarantee band shown on category/track pages belongs here too. The
+    // friend's eventual track isn't known here either -- same track-agnostic default as renderGift.
+    guaranteeCtaBandHtml(true);
   renderTurnstileWidget();
   Promise.all([apiFetch('/promotions?placement=refer'), loadSiteConfig()]).then(function (results) {
     var r = results[0];
