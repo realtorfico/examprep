@@ -705,7 +705,7 @@ function renderReportIssueWidget() {
   var root = document.getElementById('report-issue-root');
   if (!root) return;
   root.innerHTML =
-    '<button class="report-issue-toggle" type="button" data-act="toggle-report-issue" aria-label="Report an issue">🐞</button>' +
+    '<button class="report-issue-toggle" type="button" data-act="toggle-report-issue" aria-label="Report an issue" title="Report an issue">🐞</button>' +
     '<div class="report-issue-panel" id="report-issue-panel" hidden>' +
     '<div class="report-issue-panel-header"><span>Report an issue</span>' +
     '<button class="report-issue-close" type="button" data-act="toggle-report-issue" aria-label="Close">✕</button></div>' +
