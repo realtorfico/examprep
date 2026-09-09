@@ -1153,7 +1153,6 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    list styling but needs its own top margin since it follows a paragraph here, not a price card. */
 .track-hero-trust-list { margin-top: 1rem; margin-bottom: 1.4rem; max-width: 46ch; }
 .track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
-.track-landing-freshness { font-size: 0.72rem; margin: 0.35rem 0 0; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }
 .track-landing-preview-section h2 { margin-bottom: 0.3rem; }
@@ -1517,6 +1516,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .status-badge.active { background: color-mix(in srgb, var(--correct) 20%, transparent); color: var(--correct); }
 .pulse-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--correct); }
+/* Track landing hero's "question bank last updated" trust badge (see freshnessBadgeHtml in
+   app.js) -- promoted here from a tiny muted footnote under the specs card so it's visible without
+   scrolling. Gold/highlight accent (not the green .status-badge.active reuses) so it reads as its
+   own distinct trust signal in the badge row, not a second "active" indicator. */
+.freshness-badge {
+  background: color-mix(in srgb, var(--highlight) 18%, transparent);
+  color: color-mix(in srgb, var(--highlight) 70%, var(--fg));
+  border-color: color-mix(in srgb, var(--highlight) 45%, transparent);
+}
 .exam-track-resources { font-size: 0.72rem; margin-bottom: 0.35rem; }
 /* Doc audit's "larger bold" pricing ask -- bumped from 1.05rem. Shared by the hub grid, the gift
    page's cards, AND the track landing page's main price (id="landing-price", same class) -- the
