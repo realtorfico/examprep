@@ -356,6 +356,27 @@ var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this 
 // Also seeds progressAccuracyPassPct/progressCoveragePassPct (declared further down, alongside
 // the Progress tab) so logged-out pages like Buy can quote them too -- the Progress tab's own
 // /progress fetch still re-syncs them for a logged-in user, this is just the pre-login source.
+// Fires the Google Ads "Purchase" conversion (AW-1046929025/ki0qCK3M3vEcEIG9m_MD), added 2026-09-08
+// for the paid search campaigns. Called ONLY from the two genuine-money paths (Stripe purchase and
+// Stripe gift purchase) -- never from the points-redeem flow, which is a real transaction to the
+// site but not real ad-attributable revenue. valueCents is the REAL amount Stripe actually
+// captured (server-echoed back from /stripe/confirm as capturedCents, matching what the discount/
+// promo logic actually charged -- never a guessed/static value), converted to whole-dollar float
+// since gtag's `value` param expects the currency's major unit, not cents. transactionId is the
+// real, stable purchase code (unique per order) -- passing it lets Google de-duplicate if this
+// ever fires twice for the same order (e.g. a page refresh replaying the idempotent-retry response
+// path in handleStripeConfirm), so this is safe to call on that path too, not just a first-time
+// purchase. No-ops safely if gtag isn't defined (e.g. ad blocker) rather than throwing.
+function firePurchaseConversion(valueCents, transactionId) {
+  if (typeof gtag !== 'function' || !valueCents) return;
+  gtag('event', 'conversion', {
+    send_to: 'AW-1046929025/ki0qCK3M3vEcEIG9m_MD',
+    value: valueCents / 100,
+    currency: 'USD',
+    transaction_id: transactionId || '',
+  });
+}
+
 var refundFailurePercent = 50;
 var siteConfigPromise = null;
 function loadSiteConfig() {
@@ -7235,6 +7256,7 @@ async function submitStripePayment() {
       // the header/footer -- a gift purchase never logs the buyer in as the student, and if they
       // were already logged into their OWN account, setToken(null) would corrupt that session
       // (localStorage stringifies null to the literal text "null").
+      firePurchaseConversion(res.capturedCents, res.code);
       renderGiftPurchaseSuccess(res.code, recipientEmail);
       return;
     }
@@ -7248,6 +7270,7 @@ async function submitStripePayment() {
     renderSiteFooter();
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
+    firePurchaseConversion(res.capturedCents, res.code);
     renderPurchaseSuccess(res.code, res.pointsApplied);
   } catch (err) {
     appEl.innerHTML = '<h1>Something went wrong</h1>' +
