@@ -1708,6 +1708,35 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .exam-not-required-text { flex: 1; min-width: 12rem; font-size: 0.88rem; font-weight: 600; }
 
+/* Category page's "we picked a state for you" notice (see categoryStateDetectedBannerHtml in
+   app.js) -- same static boxed-callout language as .exam-not-required-banner above, deliberately
+   more prominent than the muted one-line .blog-state-defaulted-note equivalent on /blog: this sits
+   directly above a purchase-intent page (ad traffic lands here), so a wrong state guess is a much
+   higher-stakes silent failure than a filtered list. Base (gold) = a real cookie match (geolocation
+   or a past explicit pick); --unknown modifier (neutral, no highlight color) = no usable cookie at
+   all, an outright guess -- visually distinct so it never overstates confidence it doesn't have. */
+.category-state-detected-banner {
+  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+  background: color-mix(in srgb, var(--highlight) 16%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--highlight) 50%, var(--border));
+  border-radius: 12px; padding: 0.8rem 1.1rem; margin: 0.9rem 0;
+}
+.category-state-detected-banner--unknown {
+  background: color-mix(in srgb, var(--muted) 12%, var(--card));
+  border-color: var(--border);
+}
+.category-state-detected-badge {
+  flex-shrink: 0; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.25rem 0.6rem; border-radius: 999px; background: var(--highlight); color: #1a1203;
+}
+.category-state-detected-banner--unknown .category-state-detected-badge {
+  background: var(--muted); color: var(--card);
+}
+.category-state-detected-text { flex: 1; min-width: 14rem; font-size: 0.92rem; font-weight: 600; }
+.category-state-detected-text strong { color: var(--accent); }
+.category-state-detected-banner--unknown .category-state-detected-text strong { color: inherit; }
+.category-state-detected-text .btn-link { font-size: 0.92rem; font-weight: 700; }
+
 .news-flash-banner {
   display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
   background: color-mix(in srgb, var(--highlight) 14%, var(--card));

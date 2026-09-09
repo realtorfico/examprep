@@ -4088,6 +4088,29 @@ function pickRepresentativeTrack(tracks) {
   return tracks[0] || null;
 }
 
+// Prominent, boxed notice (same visual language as examNotRequiredBannerHtml -- a static,
+// gold-accent callout, not the pulsing news-flash-banner treatment) shown directly above the state
+// picker whenever the state currently displayed wasn't explicitly chosen this page load, so a wrong
+// guess is impossible to miss -- see [[project_google_ads_cdl_campaign_launch]]'s geolocation-
+// coverage fix: this is the visible half of that fix. "cookie" means a real pxq_state cookie
+// (geolocation or a past explicit pick) matched a track in this category; "fallback" means there
+// was no usable cookie at all (no cookie, non-US visitor, or the cookie's state doesn't offer this
+// category) and the shown state is just the first one in list order -- an outright guess, so it
+// gets a distinct (unhighlighted) style and more direct wording rather than implying real detection.
+function categoryStateDetectedBannerHtml(track, stateSource) {
+  if (!track) return '';
+  var stateName = escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode);
+  var isCookie = stateSource === 'cookie';
+  return '<div class="category-state-detected-banner' + (isCookie ? '' : ' category-state-detected-banner--unknown') + '" id="category-state-detected-banner">' +
+    '<span class="category-state-detected-badge">' + (isCookie ? '📍 Showing Your State' : '❓ Example State') + '</span>' +
+    '<span class="category-state-detected-text">' +
+    (isCookie
+      ? 'Based on your saved location, we\'re showing <strong>' + stateName + '</strong> exam info.'
+      : 'We couldn\'t detect your state, so <strong>' + stateName + '</strong> is shown as an example.') +
+    ' Not right? <button type="button" class="btn-link" data-act="focus-category-state-select">Pick your state below ↓</button></span>' +
+    '</div>';
+}
+
 function categoryStateSelectHtml(tracks, selectedState) {
   var options = ['<option value="">Choose your state…</option>'].concat(
     tracks.slice().sort(function (a, b) { return (STATE_LABELS[a.stateCode] || a.stateCode).localeCompare(STATE_LABELS[b.stateCode] || b.stateCode); })
@@ -4096,7 +4119,7 @@ function categoryStateSelectHtml(tracks, selectedState) {
       })
   );
   return '<label class="category-state-select-label">Select your state' +
-    '<select class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
+    '<select id="category-state-select" class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
 }
 
 // "Notify me when my state launches" -- categoryStateSelectHtml() above only ever lists ACTIVE
@@ -4338,7 +4361,13 @@ async function renderCategoryPage(kind) {
   // doesn't apply to them -- only the always-valid 7-day refund does. Defaults true when there's no
   // repTrack yet (nothing real to gate on) since the vast majority of tracks do have it.
   var hasFailGuarantee = repTrack ? repTrack.passPercent != null : true;
-  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, hasFailGuarantee: hasFailGuarantee, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false };
+  // isDefaulted: true until the visitor explicitly uses the state picker THIS page load (cleared in
+  // the pick-category-state handler) -- drives categoryStateDetectedBannerHtml() below. stateSource
+  // distinguishes a real cookie match ("cookie": geolocation or a past explicit pick) from the
+  // no-signal-at-all fallback to tracks[0] ("fallback") -- see that function's own header comment.
+  var cookieStateForBanner = getStateCookie();
+  var stateSource = (cookieStateForBanner && repTrack && repTrack.stateCode === cookieStateForBanner) ? 'cookie' : 'fallback';
+  categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, hasFailGuarantee: hasFailGuarantee, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false, isDefaulted: true, stateSource: stateSource };
   // hubScopedState drives the footer's "top state tracks" links (and the #/gift page) -- previously
   // forced null here unconditionally (see route()'s old comment), which meant the footer kept
   // showing its unscoped fallback (first-3-active-overall, in practice always California) no matter
@@ -4396,6 +4425,7 @@ async function renderCategoryPage(kind) {
     // (ACT/DAT/CLT/OAT) -- there's no "failing" a composite-scored exam to refund against.
     (hasFailGuarantee ? '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' : '') +
     '</div>' +
+    (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
     (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
     (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
     '<div class="hub-hero-cta">' +
@@ -8344,6 +8374,12 @@ document.addEventListener('change', function (e) {
     categoryPageState.repTrack = newRepTrack;
     hubScopedState = newRepTrack.stateCode;
     renderSiteFooter();
+    // Now an explicit pick -- the detected/example-state banner no longer applies this page load.
+    if (categoryPageState.isDefaulted) {
+      categoryPageState.isDefaulted = false;
+      var detectedBannerEl = document.getElementById('category-state-detected-banner');
+      if (detectedBannerEl) detectedBannerEl.remove();
+    }
     var heroLinkWrap = document.getElementById('category-hero-track-link-wrap');
     if (heroLinkWrap) heroLinkWrap.innerHTML = categoryHeroTrackLinkHtml(newRepTrack);
     var tracksWrap = document.getElementById('category-tracks-grid-wrap');
@@ -8584,6 +8620,9 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'scroll-to-category-sample') {
     var sampleEl = document.getElementById('category-sample');
     if (sampleEl) sampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (act === 'focus-category-state-select') {
+    var categoryStateSelectEl = document.getElementById('category-state-select');
+    if (categoryStateSelectEl) { categoryStateSelectEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); categoryStateSelectEl.focus(); }
   } else if (act === 'toggle-theme') {
     var nextTheme = el.getAttribute('data-next');
     var local = loadLocalPrefs();
