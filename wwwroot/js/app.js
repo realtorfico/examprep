@@ -6951,6 +6951,18 @@ function drawBuyForm(pricing, giftIntent) {
         '</select>'
       : '') +
     '</div>' +
+    // Optional, saved via the same /profile/exam-date endpoint the Profile page's own exam-date
+    // field already uses -- hidden in gift mode since the buyer isn't who'll actually sit the exam
+    // (issueGiftCode never creates a users row for them to attach a date to; the eventual redeemer
+    // can set their own date later via the exam intro page or their Profile once they redeem).
+    // Each purchase mints a brand-new, separate `users` row (see issueAndRedeemCode) rather than
+    // reusing one shared account per email, so this is already safely scoped per-track even for a
+    // buyer who owns multiple tracks -- no risk of a second purchase's date overwriting the first.
+    (giftIntent ? '' :
+      '<div id="buy-exam-date-wrap">' +
+      '<label class="muted buy-email-label">Exam date (optional — we\'ll send a daily countdown with practice questions)</label>' +
+      '<input type="date" id="buy-exam-date" min="' + new Date().toISOString().slice(0, 10) + '">' +
+      '</div>') +
     // Points-check and promo-code are two independent, unrelated checkout actions that used to
     // stack as their own full-width rows -- side by side on anything wider than a phone instead,
     // to cut the form's vertical height (per-user request).
@@ -7243,6 +7255,8 @@ async function submitStripePayment() {
   var recipientEmail = isGift && recipientEmailEl && recipientEmailEl.value.trim() ? recipientEmailEl.value.trim() : undefined;
   var giftMessageEl = document.getElementById('buy-gift-message');
   var giftMessage = isGift && giftMessageEl && giftMessageEl.value.trim() ? giftMessageEl.value.trim() : undefined;
+  var examDateEl = document.getElementById('buy-exam-date');
+  var buyExamDate = !isGift && examDateEl && examDateEl.value ? examDateEl.value : undefined;
   try {
     var res = await apiFetch('/stripe/confirm', {
       method: 'POST', body: {
@@ -7271,6 +7285,10 @@ async function submitStripePayment() {
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
     firePurchaseConversion(res.capturedCents, res.code);
+    // Best-effort, same as the code/gift emails above -- res.token is already set (setToken just
+    // ran), so this call is authenticated as the brand-new users row this purchase just created.
+    // Never blocks rendering the success screen on it.
+    if (buyExamDate) apiFetch('/profile/exam-date', { method: 'POST', body: { examDate: buyExamDate } }).catch(function () {});
     renderPurchaseSuccess(res.code, res.pointsApplied);
   } catch (err) {
     appEl.innerHTML = '<h1>Something went wrong</h1>' +
