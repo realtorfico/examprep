@@ -7015,6 +7015,8 @@ function drawBuyForm(pricing, giftIntent) {
     if (fieldsEl) fieldsEl.hidden = !giftCheckboxEl.checked;
     var ageCategoryWrapEl = document.getElementById('buy-age-category-wrap');
     if (ageCategoryWrapEl) ageCategoryWrapEl.hidden = giftCheckboxEl.checked;
+    var examDateWrapEl = document.getElementById('buy-exam-date-wrap');
+    if (examDateWrapEl) examDateWrapEl.hidden = giftCheckboxEl.checked;
   });
   if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
     var el = document.getElementById('stripe-payment-element');
