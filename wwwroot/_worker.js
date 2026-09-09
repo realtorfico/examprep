@@ -1314,12 +1314,21 @@ export default {
     let response = await env.ASSETS.fetch(request);
     const isHtml = (response.headers.get('content-type') || '').includes('text/html');
 
-    if (url.pathname === '/') {
-      // Best-effort geolocation-derived state cookie for a first-time visitor with no cookie yet
-      // -- purely "for next time" (app.js doesn't read this back client-side yet, see the header
-      // comment), so it's fine if this never fires for a non-US visitor/bot/VPN Cloudflare can't
-      // place. Never cached: a cached Set-Cookie here would leak one visitor's detected state to
-      // every later visitor hitting the same cached edge response.
+    // Bare /{category-slug} (e.g. /cdl) -- a state-based category's landing page, matched the same
+    // way the old /{state}/{kind-slug} redirect above does, just without a state prefix.
+    const categoryPageMatch = url.pathname.match(/^\/([a-z-]+)\/?$/);
+    const isCategoryPageRequest = categoryPageMatch && KIND_SLUGS[categoryPageMatch[1]];
+
+    if (url.pathname === '/' || isCategoryPageRequest) {
+      // Best-effort geolocation-derived state cookie for a first-time visitor with no cookie yet.
+      // Now genuinely load-bearing, not just "for next time": app.js's pickRepresentativeTrack()
+      // reads this cookie to decide which state's track/mechanics render on the category page --
+      // ads (e.g. the CDL Google Ads campaign) land visitors directly on /{slug}, skipping "/"
+      // entirely, so without this the geolocation branch never ran for them and they'd silently see
+      // whichever state happens to be first in HUB_EXAMS order instead of their own. Fine if this
+      // never fires for a non-US visitor/bot/VPN Cloudflare can't place -- the category page's own
+      // state picker is still there as a fallback. Never cached: a cached Set-Cookie here would leak
+      // one visitor's detected state to every later visitor hitting the same cached edge response.
       const headers = new Headers(response.headers);
       headers.set('Cache-Control', 'private, no-store');
       if (!parseCookie(request.headers.get('Cookie'), 'pxq_state')) {
