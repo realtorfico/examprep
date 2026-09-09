@@ -694,6 +694,37 @@ function sendHelpChatQuestion(question) {
   setTimeout(function () { appendHelpChatMessage('bot', answerHelpChatQuestion(question)); }, 350);
 }
 
+// ---- Report an issue widget -------------------------------------------------
+// Site-wide "something's wrong with this page" reporting, separate from the help-chat widget
+// (that's FAQ Q&A, this is bug/content reporting) -- deliberately no Turnstile, matching the
+// /waitlist/join precedent: worst case is a junk entry an admin dismisses in a click, so a
+// challenge would only add friction for no real benefit here.
+var reportIssueOpen = false;
+
+function renderReportIssueWidget() {
+  var root = document.getElementById('report-issue-root');
+  if (!root) return;
+  root.innerHTML =
+    '<button class="report-issue-toggle" type="button" data-act="toggle-report-issue" aria-label="Report an issue">🐞</button>' +
+    '<div class="report-issue-panel" id="report-issue-panel" hidden>' +
+    '<div class="report-issue-panel-header"><span>Report an issue</span>' +
+    '<button class="report-issue-close" type="button" data-act="toggle-report-issue" aria-label="Close">✕</button></div>' +
+    '<form class="report-issue-form" data-act="report-issue-submit">' +
+    '<p class="muted report-issue-intro">Found a wrong answer, a broken link, or something else off? Let us know.</p>' +
+    '<textarea name="description" rows="4" placeholder="What went wrong?" required maxlength="2000"></textarea>' +
+    '<input type="email" name="email" placeholder="Your email (optional, in case we follow up)">' +
+    '<button class="btn-primary btn-sm" type="submit">Send report</button>' +
+    '<p class="report-issue-status" id="report-issue-status" hidden></p>' +
+    '</form>' +
+    '</div>';
+}
+
+function toggleReportIssuePanel() {
+  reportIssueOpen = !reportIssueOpen;
+  var panelEl = document.getElementById('report-issue-panel');
+  if (panelEl) panelEl.hidden = !reportIssueOpen;
+}
+
 // ---- Site news banner ------------------------------------------------------
 // Dismissible via localStorage keyed by id, so a future announcement (new id) reappears
 // for everyone even if they dismissed an older one. Rendered on the hub (home page) and
@@ -8268,6 +8299,32 @@ document.addEventListener('submit', async function (e) {
       var testimonialFormEl = document.querySelector('form[data-act="testimonial-submit"]');
       if (testimonialFormEl) testimonialFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">Something went wrong. Please try again.</p>');
     }
+  } else if (act === 'report-issue-submit') {
+    e.preventDefault();
+    var reportIssueForm = e.target;
+    var reportIssueStatusEl = document.getElementById('report-issue-status');
+    var reportIssueBtn = reportIssueForm.querySelector('button[type="submit"]');
+    var reportIssueDescription = reportIssueForm.description.value.trim();
+    if (!reportIssueDescription) return;
+    if (reportIssueBtn) reportIssueBtn.disabled = true;
+    try {
+      await apiFetch('/issue-reports', {
+        method: 'POST',
+        body: {
+          description: reportIssueDescription,
+          email: reportIssueForm.email.value.trim() || undefined,
+          pageUrl: location.href,
+          userAgent: navigator.userAgent,
+        },
+      });
+      reportIssueForm.innerHTML = '<p class="muted">Thanks — we\'ll take a look.</p>';
+    } catch (err) {
+      if (reportIssueBtn) reportIssueBtn.disabled = false;
+      if (reportIssueStatusEl) {
+        reportIssueStatusEl.hidden = false;
+        reportIssueStatusEl.textContent = 'Something went wrong. Please try again.';
+      }
+    }
   }
 });
 
@@ -8348,6 +8405,8 @@ document.addEventListener('click', async function (e) {
     }
   } else if (act === 'help-chat-suggestion') {
     sendHelpChatQuestion(el.getAttribute('data-question') || '');
+  } else if (act === 'toggle-report-issue') {
+    toggleReportIssuePanel();
   } else if (act === 'listen') {
     speak(questionReadText(state.question));
   } else if (act === 'answer') {
@@ -8833,6 +8892,16 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && helpChatOpen) closeHelpChat();
 });
 
+// Same click-outside/Escape backup close pattern as the help-chat panel above.
+document.addEventListener('click', function (e) {
+  if (!reportIssueOpen) return;
+  var root = document.getElementById('report-issue-root');
+  if (root && !root.contains(e.target)) toggleReportIssuePanel();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && reportIssueOpen) toggleReportIssuePanel();
+});
+
 // ---- Update checker ---------------------------------------------------
 // index.html itself is served with max-age=0 (always revalidated on a real page load), but this
 // is a long-lived SPA -- someone who leaves a tab open for hours/days never re-fetches it on
@@ -8878,6 +8947,7 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderSiteHeader();
   renderSiteFooter();
   renderHelpChatWidget(); // outside appEl -- rendered once here only, so it survives every route() re-render
+  renderReportIssueWidget(); // same reasoning -- outside appEl, rendered once, survives every route() re-render
   // Must know which track the token (if any) actually belongs to, AND have the real
   // track_registry identity data (kind/state/short_name/active for all 244 tracks, including any
   // admin "pull from sale" toggle -- active lives directly on the registry row now, no separate
