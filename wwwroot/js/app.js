@@ -8071,6 +8071,19 @@ function trackPageview() {
   if (!optOutLinkChecked) { optOutLinkChecked = true; checkTrackingOptOutLink(); }
   if (isTrackingExcluded()) return;
   var path = location.pathname + (location.hash || '');
+  // Bare category pages (e.g. /cdl) don't carry a fixed state in the URL the way a track page
+  // (/cdl/il) does -- the state actually shown is resolved client-side by pickRepresentativeTrack()
+  // (geolocation cookie, or first-in-list fallback), so "visited /cdl" alone doesn't say which
+  // state's content they saw. Recomputed here with the identical pure inputs renderCategoryPage()
+  // itself uses (same cookie, same tracks list), so it always agrees with what was actually
+  // rendered, and tagged onto the tracked path so the admin Visitors table can show it. Added
+  // 2026-09-10 at the user's request.
+  var categoryMatchForTracking = location.pathname.match(/^\/([a-z-]+)\/?$/);
+  var kindForTracking = categoryMatchForTracking ? kindFromSlug(categoryMatchForTracking[1]) : '';
+  if (kindForTracking) {
+    var repTrackForTracking = pickRepresentativeTrack(categoryActiveTracks(kindForTracking));
+    if (repTrackForTracking) path += '?state=' + repTrackForTracking.stateCode;
+  }
   var pages = getSessionPages();
   if (pages[pages.length - 1] !== path) {
     pages.push(path);
