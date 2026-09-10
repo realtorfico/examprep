@@ -8311,12 +8311,33 @@ document.addEventListener('visibilitychange', function () {
 // eventName must be one of the API's FUNNEL_EVENT_NAMES allowlist (quiz_completed,
 // checkout_started as of this writing) -- purchase_completed is recorded server-side directly,
 // not through this.
-function trackEvent(eventName, examType) {
+function trackEvent(eventName, examType, variant) {
   if (isTrackingExcluded()) return;
   apiFetch('/track/event', {
     method: 'POST',
-    body: { sessionId: getOrCreateSessionId(), visitorId: getOrCreateVisitorId(), eventName: eventName, examType: examType || null },
+    body: { sessionId: getOrCreateSessionId(), visitorId: getOrCreateVisitorId(), eventName: eventName, examType: examType || null, variant: variant || null },
   }).catch(function () { /* best-effort */ });
+}
+
+// ---- A/B testing infra ------------------------------------------------
+// Lightweight, added 2026-09-10 -- deterministic per-visitor variant assignment, no server round
+// trip needed to decide (the variant only reaches the server later, riding along on whatever real
+// funnel event happens downstream -- see trackEvent's variant param). No live experiment is wired
+// up to use this yet; this is the plumbing only, ready for whichever headline/CTA/price test gets
+// defined next.
+function getExperimentVariant(experimentKey, variants) {
+  var storageKey = 'examprep_experiment_' + experimentKey;
+  var stored = null;
+  try { stored = localStorage.getItem(storageKey); } catch (e) { /* private-browsing etc -- fall through */ }
+  if (stored && variants.indexOf(stored) !== -1) return stored;
+  // Deterministic hash of visitorId+experimentKey (not Math.random()) so the same visitor lands in
+  // the same bucket even if localStorage gets cleared -- reproducible, not just consistent-per-tab.
+  var seed = getOrCreateVisitorId() + ':' + experimentKey;
+  var hash = 0;
+  for (var i = 0; i < seed.length; i++) { hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0; }
+  var variant = variants[Math.abs(hash) % variants.length];
+  try { localStorage.setItem(storageKey, variant); } catch (e) { /* best-effort */ }
+  return variant;
 }
 
 // Every page below is rendered off location.hash only (#/faq, #/pass-rates, etc.) -- there's no
