@@ -8192,7 +8192,18 @@ function sendVisitBeacon(pages, firstTouch, isFinal) {
 }
 document.addEventListener('visibilitychange', function () {
   if (document.visibilityState === 'hidden' && !isTrackingExcluded()) {
-    sendVisitBeacon(getSessionPages(), getFirstTouchUtm() || { referrer: '', utmSource: '', utmMedium: '', utmCampaign: '' }, true);
+    // Guard added 2026-09-10: getSessionPages() reads sessionStorage, which trackPageview() only
+    // populates once it's actually run -- if this tab-hide fires before that (a fast/background-tab
+    // session can beat the first pageview beacon here), pages comes back [], and since this payload
+    // never includes a `path` field either, the server's fallback (landingPath = pages.length ?
+    // pages[0] : (path || '/')) permanently corrupts that session's landing_path to '/' on first
+    // insert -- confirmed live: a real ad visitor's recorded landing page showed '/' while their
+    // actual page journey never included it at all. An empty pages array has nothing real to
+    // report anyway, so just skip sending rather than sending garbage.
+    var pages = getSessionPages();
+    if (pages.length) {
+      sendVisitBeacon(pages, getFirstTouchUtm() || { referrer: '', utmSource: '', utmMedium: '', utmCampaign: '' }, true);
+    }
   }
 });
 
