@@ -8,19 +8,25 @@
 # Buttons were replaced by Stripe here (2026-08) -- the PayPal backend integration is left
 # intact for now (see lib/paypal.js) but the frontend no longer loads anything from paypal.com,
 # so its CSP allowances were dropped too.
-# googletagmanager.com/google.com/doubleclick.net = Google Ads conversion tracking (gtag.js,
-# AW-1046929025, added 2026-09-08 for the paid search campaigns) -- script-src for the gtag.js
-# library file itself; connect-src + img-src for the conversion-ping beacon (fetch/XHR normally,
-# falls back to a 1x1 image pixel in some browser contexts). The inline gtag('js', ...)/gtag('config',
-# ...) init code lives in its own same-origin /js/gtag-init.js file instead of an inline <script>
-# block, same reasoning as turnstile-callback.js -- keeps this CSP free of 'unsafe-inline'.
+# googletagmanager.com/google.com/doubleclick.net/googleadservices.com = Google Ads conversion
+# tracking (gtag.js, AW-1046929025, added 2026-09-08 for the paid search campaigns) -- script-src
+# for the gtag.js library file itself; connect-src + img-src for the conversion-ping beacon
+# (fetch/XHR normally, falls back to a 1x1 image pixel in some browser contexts). googleadservices.com
+# added 2026-09-10 -- the base tag loaded fine (verification passed) but the account's Purchases
+# conversion action sat at "Awaiting conversions" through a real live purchase, and this domain
+# (the actual pagead/conversion ping target per Google's own CSP docs) was missing from
+# connect-src/img-src while its sibling ad-tracking domains were present -- CSP violations on a
+# beacon request fail silently with no console error, so this was invisible without cross-checking
+# against Google's documented CSP requirements. The inline gtag('js', ...)/gtag('config', ...) init
+# code lives in its own same-origin /js/gtag-init.js file instead of an inline <script> block, same
+# reasoning as turnstile-callback.js -- keeps this CSP free of 'unsafe-inline'.
 
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://js.stripe.com https://*.js.stripe.com https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net; media-src 'self'; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://api.stripe.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://js.stripe.com https://*.js.stripe.com https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com; media-src 'self'; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://api.stripe.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
