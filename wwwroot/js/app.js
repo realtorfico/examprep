@@ -7824,6 +7824,7 @@ async function renderReferForm() {
     '</form>' +
     '</div>' +
     referHowItWorksHtml(rules) +
+    '<div id="refer-leaderboard-wrap"></div>' +
     '<div id="refer-testimonials-wrap"></div>' +
     // Reassurance content this page didn't have before -- a referrer is vouching for the product
     // to a friend, so the same guarantee band shown on category/track pages belongs here too. The
@@ -7835,6 +7836,10 @@ async function renderReferForm() {
     var wrap = document.getElementById('refer-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], true);
   }).catch(function () { /* best-effort */ });
+  apiFetch('/referrals/leaderboard').then(function (res) {
+    var wrap = document.getElementById('refer-leaderboard-wrap');
+    if (wrap) wrap.innerHTML = referLeaderboardHtml(res.leaders || []);
+  }).catch(function () { /* best-effort -- section just stays empty */ });
   // Same testimonials the referred track's own category page shows (category_content is keyed by
   // category slug, not per-track) -- real social proof for what the referrer is vouching for.
   var referTrack = trackByExamType(referExamType);
@@ -7845,6 +7850,26 @@ async function renderReferForm() {
       if (wrap) wrap.innerHTML = categoryTestimonialsHtml(content && content.testimonials);
     }).catch(function () { /* best-effort -- section just stays empty */ });
   }
+}
+
+// Top referrers by real converted referrals -- see handleReferralLeaderboard's own comment for why
+// no sample-size gate is needed here (a raw count, unlike an average, is never statistically
+// noisy). Empty entirely if nobody's converted a referral yet -- no fake placeholder rows.
+var REFER_LEADERBOARD_MEDALS = ['🥇', '🥈', '🥉'];
+function referLeaderboardHtml(leaders) {
+  if (!leaders.length) return '';
+  var rows = leaders.map(function (l, i) {
+    return '<li class="refer-leaderboard-row">' +
+      '<span class="refer-leaderboard-medal">' + (REFER_LEADERBOARD_MEDALS[i] || '#' + (i + 1)) + '</span>' +
+      '<span class="refer-leaderboard-who">' + escapeHtml(l.display) + '</span>' +
+      '<span class="refer-leaderboard-count">' + l.convertedCount + ' referral' + (l.convertedCount === 1 ? '' : 's') + '</span>' +
+      '</li>';
+  }).join('');
+  return '<section class="refer-leaderboard">' +
+    '<h2 class="comparison-heading">Top Referrers</h2>' +
+    '<p class="muted page-intro-text">Real students who\'ve referred the most friends who went on to buy a course.</p>' +
+    '<ol class="refer-leaderboard-list">' + rows + '</ol>' +
+    '</section>';
 }
 
 function renderCountdownUnsubscribe(token) {

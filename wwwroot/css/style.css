@@ -932,6 +932,16 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .refer-how-it-works .comparison-heading { text-align: left; }
 .refer-how-it-works-grid { grid-template-columns: 1fr; }
 @media (min-width: 700px) { .refer-how-it-works-grid { grid-template-columns: repeat(3, 1fr); } }
+.refer-leaderboard { max-width: min(92vw, 700px); margin: 2rem auto 0; }
+.refer-leaderboard .comparison-heading { text-align: left; }
+.refer-leaderboard-list { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.refer-leaderboard-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.75rem 1rem;
+}
+.refer-leaderboard-medal { font-size: 1.3rem; }
+.refer-leaderboard-who { flex: 1; font-weight: 600; }
+.refer-leaderboard-count { color: var(--muted); font-size: 0.9rem; }
 .refer-name-email-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.75rem; }
 @media (min-width: 520px) {
   .refer-name-email-grid { flex-direction: row; }
