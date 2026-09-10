@@ -5926,20 +5926,21 @@ function progressTopicsTableHtml() {
     '</tr></thead><tbody>' + rows + '</tbody></table>' + toggleHtml;
 }
 
-// Leaderboard -- top 3 by accuracy, top 3 by coverage, same track only, fetched as one deduped
-// set from /leaderboard (see the Worker for why: it must guarantee the true top 3 for whichever
-// metric the client sorts by, without a second round-trip). Descending-only sort, no ascending
-// direction, since "who's lowest" isn't the point of a leaderboard.
+// Leaderboard -- top 2 by accuracy, top 2 by coverage (reduced from top 3, 2026-09-10), same
+// track only, fetched as one deduped set from /leaderboard (see the Worker for why: it must
+// guarantee the true top N for whichever metric the client sorts by, without a second round-trip).
+// Descending-only sort, no ascending direction, since "who's lowest" isn't the point of a
+// leaderboard.
 var leaderboardUsers = [];
 var leaderboardMinQuestions = 20;
 var leaderboardSortKey = 'accuracy';
 
 function leaderboardTableHtml() {
   if (!leaderboardUsers.length) {
-    return '<p class="muted">No one on your track has answered at least ' + leaderboardMinQuestions + ' questions yet.</p>';
+    return '<p class="muted">No one on your track has answered a minimum set of questions yet.</p>';
   }
   var key = leaderboardSortKey;
-  var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 3).map(function (u) {
+  var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 2).map(function (u) {
     return '<tr><td>' + u.code + '</td><td>' + u.accuracy + '%</td><td>' + u.coverage + '%</td><td>' + u.total + '</td><td>' + u.attempts + '</td></tr>';
   }).join('');
   var arrow = function (k) { return key === k ? ' ▼' : ''; };
@@ -6086,8 +6087,8 @@ async function renderProgress() {
     '</div>' +
     '<div class="card progress-table-card">' +
     '<h3 class="progress-leaderboard-heading">Leaderboard</h3>' +
-    '<p class="muted page-intro-text">Top 3 by accuracy and by coverage among everyone on your track who\'s answered at least ' +
-    leaderboardMinQuestions + ' questions.</p>' +
+    '<p class="muted page-intro-text">Top 2 by accuracy and by coverage among everyone on your track who\'s answered a minimum ' +
+    'set of questions.</p>' +
     '<div id="leaderboard-wrap">' + leaderboardTableHtml() + '</div>' +
     '</div>' +
     (examAttemptsHtml ? '<div class="card progress-table-card" id="exam-attempts-wrap">' + examAttemptsHtml + '</div>' : '<div id="exam-attempts-wrap"></div>') +
