@@ -7226,7 +7226,22 @@ function drawBuyForm(pricing, giftIntent) {
   // (e.g. a .edu student discount) gets auto-detected the moment a qualifying email is entered --
   // no code to type or Apply button to click for that case.
   var buyEmailEl = document.getElementById('buy-email');
-  if (buyEmailEl) buyEmailEl.addEventListener('blur', function () { mountStripePaymentElement(); });
+  var buyEmailRemountTimer = null;
+  if (buyEmailEl) {
+    buyEmailEl.addEventListener('blur', function () { mountStripePaymentElement(); });
+    // Also debounced on 'input', added 2026-09-10 -- browser/password-manager autofill frequently
+    // fills this field without ever firing a real focus+blur cycle (a well-known cross-browser
+    // autofill quirk), which silently skipped the checkout_intents abandoned-checkout tracking
+    // insert entirely (it only runs from inside mountStripePaymentElement, keyed off this exact
+    // field's value) -- confirmed live: zero rows in checkout_intents in production despite real
+    // completed purchases. 'input' DOES fire on autofill in every major browser, unlike blur/focus,
+    // so this catches that case too. Debounced so typing doesn't remount (and re-create a Stripe
+    // PaymentIntent) on every keystroke.
+    buyEmailEl.addEventListener('input', function () {
+      clearTimeout(buyEmailRemountTimer);
+      buyEmailRemountTimer = setTimeout(function () { mountStripePaymentElement(); }, 600);
+    });
+  }
   var buyPromoInputEl = document.getElementById('buy-promo-input');
   var buyPromoApplyBtn = document.querySelector('[data-act="apply-promo-code"]');
   if (buyPromoInputEl && buyPromoApplyBtn) {
