@@ -1531,14 +1531,23 @@ function renderEmbedGenerator() {
 // minSampleSize completed attempts shows "Not enough data yet" instead of a percentage -- a
 // sample-size gate only, never a value gate, so a real (if unflattering) rate is never hidden once
 // there's enough data to trust it.
+//
+// Second section (2026-09-10) adds /stats/quiz-accuracy-by-category alongside it -- students who
+// only ever use quiz mode and never submit a full scored exam were invisible to the page above.
+// Deliberately kept as its own separate table, not blended into the pass-rate numbers: quiz
+// accuracy and exam pass rate aren't the same kind of measurement, so merging them would read as
+// more directly comparable than they actually are. Same suppression rule/threshold, but the UI
+// copy never states the number, matching the pass-rate table's own existing copy.
 function renderPassRates() {
   appEl.innerHTML = '<div class="narrow-page"><h1>Pass Rate Transparency</h1>' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([
     apiFetch('/stats/public').catch(function () { return null; }),
     apiFetch('/stats/pass-rates-by-category').catch(function () { return null; }),
+    apiFetch('/stats/quiz-accuracy-by-category').catch(function () { return null; }),
   ]).then(function (results) {
     var overall = results[0];
     var byCategory = results[1];
+    var byQuiz = results[2];
     var minSample = (byCategory && byCategory.minSampleSize) || 20;
 
     var overallHtml = (overall && overall.passRate != null)
@@ -1563,6 +1572,34 @@ function renderPassRates() {
         '</tr>';
     }).join('');
 
+    var quizRows = ((byQuiz && byQuiz.categories) || []).map(function (cat) {
+      var accCell = cat.accuracyRate != null
+        ? '<strong>' + cat.accuracyRate + '%</strong>'
+        : '<span class="guide-na">Not enough data yet</span>';
+      return '<tr>' +
+        '<td>' + escapeHtml(cat.kind) + '</td>' +
+        '<td>' + cat.questionsAnswered.toLocaleString() + '</td>' +
+        '<td>' + accCell + '</td>' +
+        '<td class="guide-table-cta">' +
+        (cat.categorySlug ? '<a href="/' + cat.categorySlug + '">Practice ' + escapeHtml(cat.kind) + ' →</a>' : '') +
+        '</td>' +
+        '</tr>';
+    }).join('');
+    var quizSectionHtml = quizRows
+      ? '<h2 class="comparison-heading">Quiz Accuracy By Category</h2>' +
+        '<p class="page-intro-text">Not everyone takes a full timed practice exam — plenty of students only ever use quiz mode, ' +
+        'answering questions one at a time with instant feedback. This is that same real, live-computed accuracy, separate from ' +
+        'the pass-rate table above: it measures how often quiz answers are correct, not whether a full scored exam was passed, so ' +
+        'the two numbers aren\'t directly comparable. Categories with too few answered questions show "Not enough data yet" instead ' +
+        'of a percentage, for the same reason as above.</p>' +
+        '<div class="guide-table-wrap">' +
+        '<table class="guide-table">' +
+        '<thead><tr><th>Category</th><th>Questions Answered</th><th>Accuracy</th><th></th></tr></thead>' +
+        '<tbody>' + quizRows + '</tbody>' +
+        '</table>' +
+        '</div>'
+      : '';
+
     appEl.innerHTML =
       '<div class="pass-rates-page">' +
       '<span class="section-eyebrow">Real numbers, not marketing copy</span>' +
@@ -1586,6 +1623,7 @@ function renderPassRates() {
       '<p class="guide-source-note">Only fully completed (submitted) practice exams count. Each attempt is scored against the ' +
       'passing threshold that applied to it at the time it was taken. See our <a href="#/guarantee">pass-or-refund guarantee</a> ' +
       'for what this backs, or browse per-state exam mechanics on our <a href="/guides/notary-requirements-by-state">requirements-by-state guides</a>.</p>' +
+      quizSectionHtml +
       '</div>';
   });
 }
