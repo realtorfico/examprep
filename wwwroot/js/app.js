@@ -8082,7 +8082,15 @@ function trackPageview() {
   var kindForTracking = categoryMatchForTracking ? kindFromSlug(categoryMatchForTracking[1]) : '';
   if (kindForTracking) {
     var repTrackForTracking = pickRepresentativeTrack(categoryActiveTracks(kindForTracking));
-    if (repTrackForTracking) path += '?state=' + repTrackForTracking.stateCode;
+    if (repTrackForTracking) {
+      // Same cookie-vs-fallback distinction categoryStateDetectedBannerHtml() already shows the
+      // visitor (📍 real detection vs ❓ first-in-list guess) -- captured here too, added
+      // 2026-09-10, so "why did this visitor see state X" is answerable straight from the tracked
+      // path instead of needing a manual registry-order cross-check.
+      var cookieStateForTracking = getStateCookie();
+      var srcForTracking = (cookieStateForTracking && repTrackForTracking.stateCode === cookieStateForTracking) ? 'cookie' : 'fallback';
+      path += '?state=' + repTrackForTracking.stateCode + '&src=' + srcForTracking;
+    }
   }
   var pages = getSessionPages();
   if (pages[pages.length - 1] !== path) {
