@@ -6990,6 +6990,77 @@ function examReviewItemHtml(r, i) {
     '</details>';
 }
 
+// Shareable "exam ready" certificate, added 2026-09-10 -- real social-proof/viral upside for
+// real estate/notary especially, where passing is a genuine career milestone people post about.
+// Rendered entirely client-side via canvas (Workers can't run a headless browser the way the
+// one-time og-image/share-card generation scripts did -- this needs to be personalized per real
+// user, so it has to happen in the browser). Real brand colors (navy/gold), no invented visual
+// language. Percent shown is explicitly labeled "practice exam" -- never implies an official score.
+function drawCertificateCanvas(trackLabel, percent) {
+  var canvas = document.createElement('canvas');
+  canvas.width = 1200; canvas.height = 630;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0f2a5f';
+  ctx.fillRect(0, 0, 1200, 630);
+  ctx.strokeStyle = '#ea9600';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(24, 24, 1152, 582);
+  // Brand mark -- same navy-square/gold-checkmark shape as LOGO_SVG, drawn directly on canvas
+  // since an <img>/SVG element can't be reliably rasterized cross-browser without extra async load
+  // handling; a plain path draw is simpler and just as accurate for this fixed, simple shape.
+  ctx.fillStyle = '#ea9600';
+  ctx.save();
+  ctx.translate(600, 130);
+  ctx.beginPath();
+  ctx.arc(0, 0, 46, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#0f2a5f';
+  ctx.lineWidth = 10;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-20, 2);
+  ctx.lineTo(-6, 18);
+  ctx.lineTo(24, -18);
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle = '#fdfaf4';
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 60px system-ui, sans-serif';
+  ctx.fillText('Exam Ready!', 600, 250);
+  ctx.font = '30px system-ui, sans-serif';
+  ctx.fillText(trackLabel, 600, 320);
+  ctx.fillStyle = '#ea9600';
+  ctx.font = 'bold 46px system-ui, sans-serif';
+  ctx.fillText(percent + '% on my practice exam', 600, 400);
+  ctx.fillStyle = '#fdfaf4';
+  ctx.font = '22px system-ui, sans-serif';
+  ctx.globalAlpha = 0.85;
+  ctx.fillText('passexamhq.com', 600, 560);
+  ctx.globalAlpha = 1;
+  return canvas;
+}
+
+function shareCertificate(trackLabel, percent) {
+  var canvas = drawCertificateCanvas(trackLabel, percent);
+  canvas.toBlob(function (blob) {
+    if (!blob) return;
+    var file = new File([blob], 'passexamhq-exam-ready.png', { type: 'image/png' });
+    var shareText = 'I scored ' + percent + '% on my ' + trackLabel + ' practice exam on PassExamHQ!';
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Exam Ready!', text: shareText }).catch(function () { /* user cancelled -- no-op */ });
+      return;
+    }
+    // Fallback: a real download link -- works fine in a normal production website (unlike a
+    // sandboxed viewer that might block it), so no further fallback needed beyond this.
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'passexamhq-exam-ready.png';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }, 'image/png');
+}
+
 function renderExamResults(result, opts) {
   opts = opts || {};
   var mode = opts.mode || 'standard';
@@ -7020,6 +7091,10 @@ function renderExamResults(result, opts) {
     // history -- only on a fresh pass, not opts.fromHistory.
     (result.passed && !opts.fromHistory
       ? '<p class="muted mockexam-feedback-prompt">Nice work! <a href="#/feedback">Share your experience →</a></p>' : '') +
+    (result.passed && !opts.fromHistory
+      ? '<button class="btn-secondary btn-sm mockexam-share-cert-btn" type="button" data-act="share-certificate" ' +
+        'data-track-label="' + escapeHtml((trackByExamType(state.examType) || {}).title || state.examType) + '" ' +
+        'data-percent="' + result.percent + '">🎓 Share your achievement</button>' : '') +
     ctaHtml +
     '<h3 class="mockexam-review-heading">Review your answers</h3>' +
     '<label class="wrong-only-toggle"><input type="checkbox" data-act="toggle-wrong-only"> Show only questions I got wrong</label>' +
@@ -8969,6 +9044,8 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(snippetVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy snippet'; }, 1500);
+  } else if (act === 'share-certificate') {
+    shareCertificate(el.getAttribute('data-track-label') || '', el.getAttribute('data-percent') || '');
   } else if (act === 'share-refer-link') {
     var shareUrl = el.getAttribute('data-share-url');
     var shareTitle = el.getAttribute('data-share-title');
