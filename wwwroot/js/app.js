@@ -742,6 +742,50 @@ function renderNewsBanner() {
     '</div>';
 }
 
+// ---- Bookmark / install nudge (2026-09-10) ---------------------------------
+// No browser lets a page trigger the native "add bookmark" dialog via JS (blocked everywhere,
+// long-standing anti-spam measure) -- so the two real options are: (1) a real install prompt on
+// browsers that support PWA installation (Chrome/Edge desktop+Android fire `beforeinstallprompt`,
+// which we capture and replay via a real button -- a genuine one-click action, not just a hint),
+// or (2) a plain-text nudge everywhere else (Ctrl+D/⌘+D on desktop browsers with no install
+// support, or manual "Add to Home Screen" steps on iOS Safari, which never fires
+// beforeinstallprompt at all -- Apple's own long-standing platform limitation, not something any
+// site can work around). Shown once on the homepage only, dismissible forever after (own
+// localStorage flag, same pattern as the news banner above).
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  var wrap = document.getElementById('bookmark-nudge-wrap');
+  if (wrap) wrap.innerHTML = bookmarkNudgeHtml();
+});
+window.addEventListener('appinstalled', function () {
+  localStorage.setItem('examprep_bookmark_nudge_dismissed', '1');
+  deferredInstallPrompt = null;
+  var wrap = document.getElementById('bookmark-nudge-wrap');
+  if (wrap) wrap.innerHTML = '';
+});
+function bookmarkNudgeHtml() {
+  if (localStorage.getItem('examprep_bookmark_nudge_dismissed') === '1') return '';
+  var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) return ''; // already installed/running as an app -- nothing to nudge toward
+  var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var isMac = /Mac/.test(navigator.platform || '');
+  var bodyHtml;
+  if (deferredInstallPrompt) {
+    bodyHtml = '<span class="news-flash-text">📌 Install PassExamHQ for quick, one-tap access next time.</span>' +
+      '<button class="btn-secondary btn-sm" type="button" data-act="install-app">Install</button>';
+  } else if (isIos) {
+    bodyHtml = '<span class="news-flash-text">📌 Add PassExamHQ to your Home Screen: tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</span>';
+  } else {
+    bodyHtml = '<span class="news-flash-text">📌 Bookmark PassExamHQ for quick access: press <strong>' +
+      (isMac ? '⌘+D' : 'Ctrl+D') + '</strong>.</span>';
+  }
+  return '<div class="news-flash-banner" id="bookmark-nudge-banner">' + bodyHtml +
+    '<button class="news-flash-dismiss" type="button" data-act="dismiss-bookmark-nudge" aria-label="Dismiss">✕</button>' +
+    '</div>';
+}
+
 // ---- Promotions (admin-managed, examprep-admin's Promotions tab) ----------
 // Home-page banners are individually dismissible (unlike the single news banner, there can be
 // several at once, so this tracks a set of dismissed ids rather than one value). Checkout-page
@@ -4744,6 +4788,7 @@ function renderHub() {
 
   appEl.innerHTML =
     renderNewsBanner() +
+    '<div id="bookmark-nudge-wrap">' + bookmarkNudgeHtml() + '</div>' +
     '<div id="home-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
@@ -8700,6 +8745,23 @@ document.addEventListener('click', async function (e) {
     localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
     var bannerEl = el.closest('.news-flash-banner');
     if (bannerEl) bannerEl.remove();
+  } else if (act === 'dismiss-bookmark-nudge') {
+    localStorage.setItem('examprep_bookmark_nudge_dismissed', '1');
+    var nudgeBannerEl = el.closest('.news-flash-banner');
+    if (nudgeBannerEl) nudgeBannerEl.remove();
+  } else if (act === 'install-app') {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      // The user's choice (accepted/dismissed) doesn't change what we do here -- either way the
+      // browser's own one-shot prompt event is now spent (it can't be replayed), so stop offering
+      // the Install button either way rather than leaving a now-dead button on screen.
+      deferredInstallPrompt.userChoice.finally(function () {
+        deferredInstallPrompt = null;
+        localStorage.setItem('examprep_bookmark_nudge_dismissed', '1');
+        var installBannerEl = document.getElementById('bookmark-nudge-banner');
+        if (installBannerEl) installBannerEl.remove();
+      });
+    }
   } else if (act === 'dismiss-promo') {
     dismissPromoId(el.getAttribute('data-promo-id'));
     var promoBannerEl = el.closest('.promo-banner');
