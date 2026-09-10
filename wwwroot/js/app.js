@@ -1549,6 +1549,7 @@ function renderPassRates() {
     var byCategory = results[1];
     var byQuiz = results[2];
     var minSample = (byCategory && byCategory.minSampleSize) || 20;
+    var quizMinSample = (byQuiz && byQuiz.minSampleSize) || 20;
 
     var overallHtml = (overall && overall.passRate != null)
       ? '<div class="pass-rates-overall-card">' +
@@ -1562,9 +1563,12 @@ function renderPassRates() {
       var rateCell = cat.passRate != null
         ? '<strong>' + cat.passRate + '%</strong>'
         : '<span class="guide-na">Not enough data yet</span>';
+      var countCell = cat.attemptCount >= minSample
+        ? cat.attemptCount.toLocaleString()
+        : '<span class="guide-na">Not met minimum yet</span>';
       return '<tr>' +
         '<td>' + escapeHtml(cat.kind) + '</td>' +
-        '<td>' + cat.attemptCount.toLocaleString() + '</td>' +
+        '<td>' + countCell + '</td>' +
         '<td>' + rateCell + '</td>' +
         '<td class="guide-table-cta">' +
         (cat.categorySlug ? '<a href="/' + cat.categorySlug + '">Practice ' + escapeHtml(cat.kind) + ' →</a>' : '') +
@@ -1576,9 +1580,12 @@ function renderPassRates() {
       var accCell = cat.accuracyRate != null
         ? '<strong>' + cat.accuracyRate + '%</strong>'
         : '<span class="guide-na">Not enough data yet</span>';
+      var qCountCell = cat.questionsAnswered >= quizMinSample
+        ? cat.questionsAnswered.toLocaleString()
+        : '<span class="guide-na">Not met minimum yet</span>';
       return '<tr>' +
         '<td>' + escapeHtml(cat.kind) + '</td>' +
-        '<td>' + cat.questionsAnswered.toLocaleString() + '</td>' +
+        '<td>' + qCountCell + '</td>' +
         '<td>' + accCell + '</td>' +
         '<td class="guide-table-cta">' +
         (cat.categorySlug ? '<a href="/' + cat.categorySlug + '">Practice ' + escapeHtml(cat.kind) + ' →</a>' : '') +
