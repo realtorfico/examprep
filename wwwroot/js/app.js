@@ -8119,6 +8119,19 @@ function trackEvent(eventName, examType) {
   }).catch(function () { /* best-effort */ });
 }
 
+// Every page below is rendered off location.hash only (#/faq, #/pass-rates, etc.) -- there's no
+// server-side content at the bare pathname equivalent (/faq, /pass-rates), deliberately, since
+// none of these need crawler visibility (unlike /blog/* and /guides/*, which are real pathname
+// routes for exactly that reason). Before this list existed, visiting the bare pathname directly
+// (typed, bookmarked, or shared) silently fell through route()'s category-slug regex below --
+// "faq" parses as a syntactically valid but nonexistent category slug -- straight to the homepage,
+// with no error and no hint anything was wrong. Redirected instead of pathname-rendered, added
+// 2026-09-10 at the user's request.
+var HASH_ONLY_VIRTUAL_PAGES = new Set([
+  'terms', 'privacy', 'contact', 'feedback', 'about', 'faq', 'guarantee',
+  'pass-rates', 'embed', 'changelog', 'profile', 'redeem', 'refund', 'gift',
+]);
+
 function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
@@ -8136,6 +8149,13 @@ function route() {
   }
 
   var hashView = (location.hash || '').replace('#/', '');
+  if (!hashView) {
+    var barePathSlug = location.pathname.replace(/^\/+|\/+$/g, '');
+    if (HASH_ONLY_VIRTUAL_PAGES.has(barePathSlug)) {
+      location.replace('/#/' + barePathSlug + location.search);
+      return;
+    }
+  }
   if (hashView === 'terms') { renderTerms(); return; }
   if (hashView === 'privacy') { renderPrivacy(); return; }
   if (hashView === 'contact') { renderContact(); return; }
