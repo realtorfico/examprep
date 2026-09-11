@@ -811,6 +811,7 @@ function bookmarkNudgeHtml() {
   var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
   if (isStandalone) return ''; // already installed/running as an app -- nothing to nudge toward
   var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var isAndroid = /Android/.test(navigator.userAgent);
   var isMac = /Mac/.test(navigator.platform || '');
   var bodyHtml;
   if (deferredInstallPrompt) {
@@ -818,6 +819,12 @@ function bookmarkNudgeHtml() {
       '<button class="btn-secondary btn-sm" type="button" data-act="install-app">Install</button>';
   } else if (isIos) {
     bodyHtml = '<span class="news-flash-text">📌 Add PassExamHQ to your Home Screen: tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</span>';
+  } else if (isAndroid) {
+    // No beforeinstallprompt captured yet (install-eligibility heuristics not met yet, or a
+    // non-Chrome Android browser that never fires it, e.g. Firefox/Samsung Internet) -- Android has
+    // no keyboard shortcut at all, so the desktop Ctrl+D branch below would be a dead end here. Real
+    // menu path, works across Android browsers even if the exact wording varies slightly.
+    bodyHtml = '<span class="news-flash-text">📌 Add PassExamHQ to your Home Screen: tap your browser\'s <strong>menu</strong>, then <strong>Add to Home screen</strong>.</span>';
   } else {
     bodyHtml = '<span class="news-flash-text">📌 Bookmark PassExamHQ for quick access: press <strong>' +
       (isMac ? '⌘+D' : 'Ctrl+D') + '</strong>.</span>';
