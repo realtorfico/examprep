@@ -76,11 +76,15 @@ function findFfmpegUnder(dir) {
 // stop-distance rule appears in all 50 states' banks, Driver's stop-sign-octagon rule in 30,
 // Real Estate Broker's Fair Housing facts in 19-44, Boating's fire-extinguisher/sound-signal rules
 // in 20-25 -- every entry records verifiedAcrossStates as an audit trail, not just an assertion.
+// stateCount = real COUNT(DISTINCT exam_type) per category, verified via D1 -- NOT always 50.
+// Used only for the outro's "plus state-specific practice for N states" line, which is a raw
+// content-availability claim (content exists there), independent of the isExamRequired-gated
+// "pass this exam" framing used elsewhere (see feedback_exam_required_only_for_marketing).
 const GENERIC_POOLS = {
-  cdl_generic: { file: 'cdl_generic_questions.json', trackLabel: 'CDL', hookLabel: 'CDL', countSuffix: '_cdl' },
-  driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", countSuffix: '_driver' },
-  re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', countSuffix: '_re_broker' },
-  boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', countSuffix: '_boating' },
+  cdl_generic: { file: 'cdl_generic_questions.json', trackLabel: 'CDL', hookLabel: 'CDL', countSuffix: '_cdl', stateCount: 50 },
+  driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", countSuffix: '_driver', stateCount: 50 },
+  re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', countSuffix: '_re_broker', stateCount: 44 },
+  boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', countSuffix: '_boating', stateCount: 25 },
   // Reuses the SAME pool file as re_broker_generic, deliberately -- Fair Housing Act facts are
   // true federal law regardless of license type (a salesperson needs the same seven protected
   // classes / HUD / reasonable-accommodation knowledge a broker does). The salesperson question
@@ -90,7 +94,16 @@ const GENERIC_POOLS = {
   // federal law itself), but that's a drafting-emphasis difference in THIS database, not evidence
   // the facts themselves are any less true or relevant for a salesperson candidate. Confirmed the
   // pool's question text never says "broker" anywhere (only in the sourceExamType audit field).
-  re_salesperson_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Salesperson', hookLabel: 'real estate salesperson', countSuffix: '_re_salesperson' },
+  re_salesperson_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Salesperson', hookLabel: 'real estate salesperson', countSuffix: '_re_salesperson', stateCount: 50 },
+  // Verified cross-state via real DB text-matching, same rigor as every other pool: not state
+  // traffic law, but universal MSF-curriculum-derived riding-safety facts that show up
+  // independently worded in most states' motorcycle manuals -- convex-mirror distance distortion
+  // (exact "farther away than they really are" fact confirmed in 7 states: CA/VA/TX/NY/PA/NC/MS)
+  // and the mirrors-alone-aren't-enough head-check rule (confirmed in 6: CA/NY/PA/MN/UT/MS). A
+  // specific federal FMVSS 218 helmet-standard citation was tried first and rejected -- only CA's
+  // bank named the standard number; other states' DOT-helmet content was real but drafted with
+  // different specific stats/numbers per state, not consistent enough to use.
+  motorcycle_generic: { file: 'motorcycle_generic_questions.json', trackLabel: 'Motorcycle', hookLabel: 'motorcycle license', countSuffix: '_motorcycle', stateCount: 16 },
 };
 
 async function fetchQuestion(examType) {
@@ -138,7 +151,7 @@ const T = {
   tensionStart: 5000, reveal: 7000, outroIn: 11500, end: 15000,
 };
 
-const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵', re_salesperson_generic: '🏠' };
+const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵', re_salesperson_generic: '🏠', motorcycle_generic: '🏍️' };
 
 function buildHtml(q, questionCount, examType) {
   // Round down to a clean step so the "X+" claim is always literally true even for an odd real
@@ -211,7 +224,7 @@ function buildHtml(q, questionCount, examType) {
       <div class="badge"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#0f2a5f"/><path d="M9 16.8 13.4 21 23 11" stroke="#ea9600" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="headline">${roundedCount.toLocaleString()}+ real ${escapeHtml(q.trackLabel)} practice questions</div>
       <div class="sub">Free to start. No app.</div>
-      ${GENERIC_POOLS[examType] ? '<div class="sub2">Plus state-specific practice for all 50 states</div>' : ''}
+      ${pool_config ? `<div class="sub2">Plus state-specific practice for ${pool_config.stateCount === 50 ? 'all 50 states' : pool_config.stateCount + ' states'}</div>` : ''}
       <div class="url">passexamhq.com</div>
     </div>
     <script>

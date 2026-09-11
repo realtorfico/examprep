@@ -1,0 +1,20 @@
+[
+  {
+    "topic": "Mirror Use",
+    "question": "Compared to flat mirrors, convex (rounded) mirrors give a wider view of the road behind, but also:",
+    "choices": { "A": "Make vehicles seem closer than they really are", "B": "Make vehicles seem farther away than they really are", "C": "Cannot be legally used on a motorcycle", "D": "Eliminate the need for a head check" },
+    "correctChoice": "B",
+    "explanation": "Universal riding-safety fact taught in state manuals nationwide: convex mirrors widen the field of view but make following vehicles look farther away than they actually are, so riders must practice judging real distance with them.",
+    "sourceExamType": "pa_motorcycle",
+    "verifiedAcrossStates": 7
+  },
+  {
+    "topic": "Head Checks",
+    "question": "Why is checking your mirrors alone not enough before changing lanes on a motorcycle?",
+    "choices": { "A": "Mirrors are often broken on motorcycles", "B": "State law prohibits relying on mirrors while moving", "C": "Motorcycles have blind spots just like cars, so a head check is also needed", "D": "Mirrors only work correctly at night" },
+    "correctChoice": "C",
+    "explanation": "Universal riding-safety fact taught in state manuals nationwide: motorcycles have blind spots just like cars, so a rider must turn their head and look before changing lanes, not rely on mirrors alone.",
+    "sourceExamType": "ca_motorcycle",
+    "verifiedAcrossStates": 6
+  }
+]
