@@ -667,7 +667,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 
 /* Deliberately plain/low-key (no gold highlight like .buy-guarantee-card) -- an optional, secondary
    offer, not a second CTA competing with the real purchase flow. */
-.buy-reminder-card { gap: 0.5rem; padding: 0.9rem 1rem; }
+.buy-reminder-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.9rem 1rem; }
 .buy-reminder-intro { margin: 0; font-size: 0.82rem; }
 .buy-reminder-form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .buy-reminder-form input {
