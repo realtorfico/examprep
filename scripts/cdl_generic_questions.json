@@ -1,0 +1,74 @@
+[
+  {
+    "topic": "HazMat Endorsement",
+    "question": "Near which of the following hazard classes must you never smoke while loading or unloading?",
+    "choices": { "A": "Class 6 (Poisons) and Class 7 (Radioactive)", "B": "Class 1 (Explosives), Class 2.1 (Flammable Gas), Class 3 (Flammable Liquids), Class 4 (Flammable Solids), and Class 5 (Oxidizers)", "C": "Only Class 3 (Flammable Liquids)", "D": "Class 8 (Corrosives) and Class 9 (Miscellaneous)" },
+    "correctChoice": "B",
+    "explanation": "This is a federal hazmat rule, the same in every state: you must never smoke near Class 1, 2.1, 3, 4, or 5 hazard classes while loading or unloading.",
+    "sourceExamType": "ca_cdl",
+    "verifiedAcrossStates": 7
+  },
+  {
+    "topic": "Railroad Crossings",
+    "question": "At a railroad crossing with no white stop line painted on the pavement, a vehicle required to stop must stop no closer than how many feet and no farther than how many feet from the nearest rail?",
+    "choices": { "A": "10 feet to 30 feet", "B": "15 feet to 50 feet", "C": "20 feet to 75 feet", "D": "25 feet to 100 feet" },
+    "correctChoice": "B",
+    "explanation": "Federal rule, same everywhere: without a painted stop line, stop no closer than 15 feet and no farther than 50 feet from the nearest rail.",
+    "sourceExamType": "ca_cdl",
+    "verifiedAcrossStates": 50
+  },
+  {
+    "topic": "Air Brakes",
+    "question": "Before driving a vehicle with a dual air brake system, you should allow the compressor to build up a minimum pressure of what in both the primary and secondary systems?",
+    "choices": { "A": "55 psi", "B": "125 psi", "C": "150 psi", "D": "100 psi" },
+    "correctChoice": "D",
+    "explanation": "Federal rule, same everywhere: allow time for the air compressor to build at least 100 psi in both the primary and secondary systems before driving.",
+    "sourceExamType": "tx_cdl",
+    "verifiedAcrossStates": 49
+  },
+  {
+    "topic": "Skid Control",
+    "question": "If your vehicle begins to hydroplane, what should you do to regain control?",
+    "choices": { "A": "Brake firmly and steer against the skid", "B": "Release the accelerator and push in the clutch", "C": "Accelerate to force the tires back onto the road", "D": "Apply the parking brake" },
+    "correctChoice": "B",
+    "explanation": "Federal driving-technique rule, same everywhere: release the accelerator and push in the clutch to slow down and let the wheels turn freely -- never brake to slow down while hydroplaning.",
+    "sourceExamType": "fl_cdl",
+    "verifiedAcrossStates": 46
+  },
+  {
+    "topic": "Pre-Trip Inspection",
+    "question": "During a pre-trip inspection, what is the minimum tread depth required in every major groove on the front tires of a commercial vehicle?",
+    "choices": { "A": "2/32 inch", "B": "4/32 inch", "C": "6/32 inch", "D": "8/32 inch" },
+    "correctChoice": "B",
+    "explanation": "Federal rule, same everywhere: at least 4/32-inch tread depth is required in every major groove on front tires (2/32 inch on other tires).",
+    "sourceExamType": "ny_cdl",
+    "verifiedAcrossStates": 36
+  },
+  {
+    "topic": "Pre-Trip Inspection",
+    "question": "What will a pre-trip inspection help you find?",
+    "choices": { "A": "Only cosmetic issues with the vehicle", "B": "Problems that could cause a crash or breakdown", "C": "Only fuel efficiency problems", "D": "Only issues covered by the vehicle warranty" },
+    "correctChoice": "B",
+    "explanation": "A pre-trip inspection is meant to catch problems that could cause a crash or breakdown -- the same purpose everywhere, not a state-specific rule.",
+    "sourceExamType": "ny_cdl",
+    "verifiedAcrossStates": 36
+  },
+  {
+    "topic": "HazMat Endorsement",
+    "question": "Hazard classes in Placard Table 2 generally need placards only when the total amount transported is what?",
+    "choices": { "A": "1,001 pounds or more, including the package", "B": "500 pounds or more", "C": "Any amount at all, same as Table 1", "D": "5,000 pounds or more" },
+    "correctChoice": "A",
+    "explanation": "Federal hazmat rule (49 CFR), same everywhere: Table 2 hazard classes need placards only when the total amount is 1,001 pounds or more, including the package.",
+    "sourceExamType": "oh_cdl",
+    "verifiedAcrossStates": 40
+  },
+  {
+    "topic": "Cargo Securement",
+    "question": "Federal regulations require the aggregate working load limit of a cargo securement system to be at least what fraction of the weight of the article(s) secured?",
+    "choices": { "A": "One-quarter", "B": "One-half", "C": "Equal to", "D": "Twice" },
+    "correctChoice": "B",
+    "explanation": "Federal regulation, same everywhere: the aggregate working load limit must be at least one-half the weight of the article(s) secured.",
+    "sourceExamType": "pa_cdl",
+    "verifiedAcrossStates": 43
+  }
+]
