@@ -81,6 +81,16 @@ const GENERIC_POOLS = {
   driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", countSuffix: '_driver' },
   re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', countSuffix: '_re_broker' },
   boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', countSuffix: '_boating' },
+  // Reuses the SAME pool file as re_broker_generic, deliberately -- Fair Housing Act facts are
+  // true federal law regardless of license type (a salesperson needs the same seven protected
+  // classes / HUD / reasonable-accommodation knowledge a broker does). The salesperson question
+  // banks in this DB happen to be drafted far more state-code-citation-heavy than the broker
+  // banks (verified: "Fair Housing Act" exact phrase only in 6 states' salesperson banks vs.
+  // 19-44 for broker; most salesperson hits cite state statutes like VA Code/RCW/NMAC, not the
+  // federal law itself), but that's a drafting-emphasis difference in THIS database, not evidence
+  // the facts themselves are any less true or relevant for a salesperson candidate. Confirmed the
+  // pool's question text never says "broker" anywhere (only in the sourceExamType audit field).
+  re_salesperson_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Salesperson', hookLabel: 'real estate salesperson', countSuffix: '_re_salesperson' },
 };
 
 async function fetchQuestion(examType) {
@@ -128,7 +138,7 @@ const T = {
   tensionStart: 5000, reveal: 7000, outroIn: 11500, end: 15000,
 };
 
-const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵' };
+const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵', re_salesperson_generic: '🏠' };
 
 function buildHtml(q, questionCount, examType) {
   // Round down to a clean step so the "X+" claim is always literally true even for an odd real
