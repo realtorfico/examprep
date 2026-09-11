@@ -754,11 +754,19 @@ function renderNewsBanner() {
 // site can work around). Shown once on the homepage only, dismissible forever after (own
 // localStorage flag, same pattern as the news banner above).
 var deferredInstallPrompt = null;
+// Deliberately does NOT reactively re-render #bookmark-nudge-wrap here (removed 2026-09-10, found
+// via a real CrUX/field-data CLS regression report) -- beforeinstallprompt fires asynchronously,
+// on the browser's own unpredictable schedule, potentially well after the page has already
+// painted. Swapping the wrap's content post-paint (plain-text nudge -> a taller Install-button
+// variant) is exactly the "insert new content after first paint" anti-pattern
+// [[project_site_cls_fix_2026-09-09]] eliminated everywhere else on the site. Just capture the
+// event silently here; the Install-button variant will render correctly on this render's own
+// synchronous bookmarkNudgeHtml() call once deferredInstallPrompt is already set (e.g. a later
+// in-session navigation back to the homepage) -- never retroactively injected into an
+// already-painted page.
 window.addEventListener('beforeinstallprompt', function (e) {
   e.preventDefault();
   deferredInstallPrompt = e;
-  var wrap = document.getElementById('bookmark-nudge-wrap');
-  if (wrap) wrap.innerHTML = bookmarkNudgeHtml();
 });
 window.addEventListener('appinstalled', function () {
   localStorage.setItem('examprep_bookmark_nudge_dismissed', '1');
