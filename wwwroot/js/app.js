@@ -7265,6 +7265,20 @@ function drawBuyForm(pricing, giftIntent) {
         '<p class="muted">Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>') +
     '<p class="muted buy-guarantee-footnote"><a href="#/refund">Refund request →</a></p>' +
     '</div>' +
+    // Opt-in "not ready today" capture, added 2026-09-11 -- real Visitors data showed several buy-
+    // page visitors bouncing in well under a minute, too fast to have reached the real payment
+    // form below. A plain, honest reminder offer (no discount/urgency claim), deliberately its own
+    // small card separate from the actual payment column so it never reads as "is this the same as
+    // paying?". Posts to /buy/reminder -- see that endpoint's own comment for why this is a
+    // lightweight, separate capture from the real checkout-intent tracking.
+    '<div class="card buy-reminder-card" id="buy-reminder-card">' +
+    '<p class="muted buy-reminder-intro">Not ready today? Leave your email and we\'ll send a one-time reminder.</p>' +
+    '<form class="buy-reminder-form" data-act="buy-reminder-submit">' +
+    '<input type="email" name="email" placeholder="you@example.com" required>' +
+    '<button class="btn-secondary btn-sm" type="submit">Remind me</button>' +
+    '</form>' +
+    '<p class="buy-reminder-status" id="buy-reminder-status" hidden></p>' +
+    '</div>' +
     '</div>' +
     '<div class="buy-payment-col">' +
     '<div class="card">' +
@@ -8778,6 +8792,27 @@ document.addEventListener('submit', async function (e) {
       if (suggestionStatusEl) {
         suggestionStatusEl.hidden = false;
         suggestionStatusEl.textContent = 'Something went wrong. Please try again.';
+      }
+    }
+  } else if (act === 'buy-reminder-submit') {
+    e.preventDefault();
+    var buyReminderForm = e.target;
+    var buyReminderStatusEl = document.getElementById('buy-reminder-status');
+    var buyReminderBtn = buyReminderForm.querySelector('button[type="submit"]');
+    var buyReminderEmail = buyReminderForm.email.value.trim();
+    if (!buyReminderEmail) return;
+    if (buyReminderBtn) buyReminderBtn.disabled = true;
+    try {
+      await apiFetch('/buy/reminder', {
+        method: 'POST',
+        body: { email: buyReminderEmail, examType: state.examType },
+      });
+      buyReminderForm.innerHTML = '<p class="muted">We\'ll send you a reminder.</p>';
+    } catch (err) {
+      if (buyReminderBtn) buyReminderBtn.disabled = false;
+      if (buyReminderStatusEl) {
+        buyReminderStatusEl.hidden = false;
+        buyReminderStatusEl.textContent = 'Something went wrong. Please try again.';
       }
     }
   }

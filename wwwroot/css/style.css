@@ -665,6 +665,17 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
 .buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
 
+/* Deliberately plain/low-key (no gold highlight like .buy-guarantee-card) -- an optional, secondary
+   offer, not a second CTA competing with the real purchase flow. */
+.buy-reminder-card { gap: 0.5rem; padding: 0.9rem 1rem; }
+.buy-reminder-intro { margin: 0; font-size: 0.82rem; }
+.buy-reminder-form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.buy-reminder-form input {
+  flex: 1; min-width: 10rem; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface-2); color: var(--fg); padding: 0.5rem 0.7rem; font-size: 0.88rem;
+}
+.buy-reminder-status { margin: 0; font-size: 0.8rem; color: var(--muted); }
+
 /* Guarantee page (rebuilt as a full landing page, ported from v0's guarantee/page.tsx) */
 .guarantee-page { max-width: min(92vw, 1400px); margin: 0 auto; }
 .guarantee-hero { display: grid; gap: 1.75rem; padding: 1rem 0 1.75rem; border-bottom: 1px solid var(--border); }
