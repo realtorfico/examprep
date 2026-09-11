@@ -488,6 +488,7 @@ function renderSiteFooter() {
     '<span class="site-logo"><span class="site-logo-icon">' + LOGO_SVG + '</span>' +
     '<span class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></span></span>' +
     '<p class="muted footer-brand-blurb">Independent, one-time-purchase prep for real licensing exams. Question banks built on the current official handbooks — no subscriptions, ever.</p>' +
+    '<a class="footer-youtube-link" href="https://www.youtube.com/channel/UC_5WgVDsY9AAXFJhhYTLAMw" target="_blank" rel="noopener">▶ Watch on YouTube</a>' +
     '</div>' +
     categoriesCol + accountCol + supportCol + companyCol +
     '</div>' +

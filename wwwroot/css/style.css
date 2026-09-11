@@ -982,6 +982,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .footer-brand-col .site-logo { margin-bottom: 0.75rem; }
 .footer-brand-blurb { font-size: 0.82rem; max-width: 22rem; line-height: 1.5; }
+.footer-youtube-link { display: inline-block; margin-top: 0.7rem; font-size: 0.82rem; font-weight: 600; color: var(--accent-hover); }
 .footer-grid h3 { font-size: 0.85rem; margin: 0 0 0.85rem; }
 .footer-link-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
 .footer-link-list a { color: var(--muted); font-size: 0.82rem; text-decoration: none; transition: color 0.15s; }
