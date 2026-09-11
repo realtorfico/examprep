@@ -8328,6 +8328,12 @@ function trackPageview() {
       utmSource: params.get('utm_source') || '',
       utmMedium: params.get('utm_medium') || '',
       utmCampaign: params.get('utm_campaign') || '',
+      // utm_term carries the real Google Ads keyword when the campaign's Final URL suffix passes
+      // the {keyword} ValueTrack parameter -- lets a purchase be traced to the specific keyword
+      // that served the click, not just the campaign. gclid is a stronger, harder-to-lose signal
+      // that a visit really came from a paid click at all. Added 2026-09-11.
+      utmTerm: params.get('utm_term') || '',
+      gclid: params.get('gclid') || '',
     };
     sessionStorage.setItem('pxq_first_touch', JSON.stringify(firstTouch));
   }
@@ -8345,6 +8351,8 @@ function sendVisitBeacon(pages, firstTouch, isFinal) {
     utmSource: firstTouch.utmSource,
     utmMedium: firstTouch.utmMedium,
     utmCampaign: firstTouch.utmCampaign,
+    utmTerm: firstTouch.utmTerm,
+    gclid: firstTouch.gclid,
   };
   if (isFinal && navigator.sendBeacon) {
     navigator.sendBeacon(API_BASE + '/track/visit', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
