@@ -2088,3 +2088,46 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   #report-issue-root { left: 0.6rem; bottom: 0.6rem; }
   .report-issue-panel { width: calc(100vw - 1.2rem); }
 }
+
+/* ---- Suggestions widget ("let us know what you think") --------------------
+   Stacked directly above the Report an Issue button in the same bottom-left corner (rather than
+   a 3rd screen position) so the two floating triggers stay visually grouped -- same fixed-viewport
+   approach, same button size, offset up by one button-height + gap. */
+#suggestion-root { position: fixed; left: 1rem; bottom: calc(1rem + 3.4rem + 0.6rem); z-index: 50; }
+.suggestion-toggle {
+  width: 3.4rem; height: 3.4rem; border-radius: 999px; border: none; cursor: pointer;
+  background: var(--surface-2); color: var(--fg); font-size: 1.4rem; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--fg) 20%, transparent);
+}
+.suggestion-toggle:hover { background: var(--card); }
+.suggestion-panel {
+  position: absolute; left: 0; bottom: calc(3.4rem + 0.75rem);
+  width: min(20rem, calc(100vw - 2rem));
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--fg) 22%, transparent);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.suggestion-panel[hidden] { display: none; }
+.suggestion-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-weight: 700;
+}
+.suggestion-close {
+  background: transparent; border: none; color: var(--muted); cursor: pointer;
+  font-size: 1.1rem; line-height: 1; border-radius: 999px;
+  width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.suggestion-close:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
+.suggestion-form { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.85rem; }
+.suggestion-intro { margin: 0; font-size: 0.85rem; }
+.suggestion-form textarea, .suggestion-form input {
+  border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2);
+  color: var(--fg); padding: 0.5rem 0.7rem; font-size: 0.88rem; font-family: inherit; resize: vertical;
+}
+.suggestion-status { margin: 0; font-size: 0.82rem; color: var(--muted); }
+@media (max-width: 480px) {
+  #suggestion-root { left: 0.6rem; bottom: calc(0.6rem + 3.4rem + 0.6rem); }
+  .suggestion-panel { width: calc(100vw - 1.2rem); }
+}

@@ -726,6 +726,38 @@ function toggleReportIssuePanel() {
   if (panelEl) panelEl.hidden = !reportIssueOpen;
 }
 
+// ---- Suggestions widget ("let us know what you think") --------------------
+// Separate floating button from Report an Issue above (different intent: an idea/opinion, not a
+// bug) -- stacked in the same bottom-left corner (see style.css) rather than a 3rd screen position,
+// so the two triggers stay visually grouped without adding a new corner on small viewports.
+// Also the landing target for the automated "what do you think?" email (sendSuggestionRequestEmails'
+// daily cron, examprep-api) via a `?feedback=1` query param -- see the boot() auto-open below.
+var suggestionOpen = false;
+
+function renderSuggestionWidget() {
+  var root = document.getElementById('suggestion-root');
+  if (!root) return;
+  root.innerHTML =
+    '<button class="suggestion-toggle" type="button" data-act="toggle-suggestion" aria-label="Share your thoughts" title="Share your thoughts">💡</button>' +
+    '<div class="suggestion-panel" id="suggestion-panel" hidden>' +
+    '<div class="suggestion-panel-header"><span>Let us know what you think</span>' +
+    '<button class="suggestion-close" type="button" data-act="toggle-suggestion" aria-label="Close">✕</button></div>' +
+    '<form class="suggestion-form" data-act="suggestion-submit">' +
+    '<p class="muted suggestion-intro">What would make PassExamHQ better for you? Ideas, requests, anything.</p>' +
+    '<textarea name="description" rows="4" placeholder="Share your thoughts..." required maxlength="2000"></textarea>' +
+    '<input type="email" name="email" placeholder="Your email (optional, in case we follow up)">' +
+    '<button class="btn-primary btn-sm" type="submit">Send</button>' +
+    '<p class="suggestion-status" id="suggestion-status" hidden></p>' +
+    '</form>' +
+    '</div>';
+}
+
+function toggleSuggestionPanel() {
+  suggestionOpen = !suggestionOpen;
+  var panelEl = document.getElementById('suggestion-panel');
+  if (panelEl) panelEl.hidden = !suggestionOpen;
+}
+
 // ---- Site news banner ------------------------------------------------------
 // Dismissible via localStorage keyed by id, so a future announcement (new id) reappears
 // for everyone even if they dismissed an older one. Rendered on the hub (home page) and
@@ -8716,6 +8748,31 @@ document.addEventListener('submit', async function (e) {
         reportIssueStatusEl.textContent = 'Something went wrong. Please try again.';
       }
     }
+  } else if (act === 'suggestion-submit') {
+    e.preventDefault();
+    var suggestionForm = e.target;
+    var suggestionStatusEl = document.getElementById('suggestion-status');
+    var suggestionBtn = suggestionForm.querySelector('button[type="submit"]');
+    var suggestionDescription = suggestionForm.description.value.trim();
+    if (!suggestionDescription) return;
+    if (suggestionBtn) suggestionBtn.disabled = true;
+    try {
+      await apiFetch('/suggestions', {
+        method: 'POST',
+        body: {
+          description: suggestionDescription,
+          email: suggestionForm.email.value.trim() || undefined,
+          pageUrl: location.href,
+        },
+      });
+      suggestionForm.innerHTML = '<p class="muted">Thanks for sharing — we read every one.</p>';
+    } catch (err) {
+      if (suggestionBtn) suggestionBtn.disabled = false;
+      if (suggestionStatusEl) {
+        suggestionStatusEl.hidden = false;
+        suggestionStatusEl.textContent = 'Something went wrong. Please try again.';
+      }
+    }
   }
 });
 
@@ -8804,6 +8861,8 @@ document.addEventListener('click', async function (e) {
     sendHelpChatQuestion(el.getAttribute('data-question') || '');
   } else if (act === 'toggle-report-issue') {
     toggleReportIssuePanel();
+  } else if (act === 'toggle-suggestion') {
+    toggleSuggestionPanel();
   } else if (act === 'listen') {
     speak(questionReadText(state.question));
   } else if (act === 'answer') {
@@ -9321,6 +9380,16 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && reportIssueOpen) toggleReportIssuePanel();
 });
 
+// Same click-outside/Escape backup close pattern as the widgets above.
+document.addEventListener('click', function (e) {
+  if (!suggestionOpen) return;
+  var root = document.getElementById('suggestion-root');
+  if (root && !root.contains(e.target)) toggleSuggestionPanel();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && suggestionOpen) toggleSuggestionPanel();
+});
+
 // ---- Update checker ---------------------------------------------------
 // index.html itself is served with max-age=0 (always revalidated on a real page load), but this
 // is a long-lived SPA -- someone who leaves a tab open for hours/days never re-fetches it on
@@ -9367,6 +9436,11 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderSiteFooter();
   renderHelpChatWidget(); // outside appEl -- rendered once here only, so it survives every route() re-render
   renderReportIssueWidget(); // same reasoning -- outside appEl, rendered once, survives every route() re-render
+  renderSuggestionWidget(); // same reasoning -- outside appEl, rendered once, survives every route() re-render
+  // Deep link from sendSuggestionRequestEmails' "what do you think?" email (examprep-api) --
+  // auto-open the panel so a customer who clicks through lands directly in it, not just on the
+  // homepage having to go find the button themselves.
+  if (new URLSearchParams(location.search).get('feedback') === '1') toggleSuggestionPanel();
   // Must know which track the token (if any) actually belongs to, AND have the real
   // track_registry identity data (kind/state/short_name/active for all 244 tracks, including any
   // admin "pull from sale" toggle -- active lives directly on the registry row now, no separate
