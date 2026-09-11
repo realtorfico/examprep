@@ -341,4 +341,10 @@ async function main() {
   log('Done: ' + outPath);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+if (require.main === module) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}
+
+// Exported so generate-qotd-thumbnail.js can reuse the exact same real-data fetch + markup
+// (hook screen is screen #1 of this same HTML) instead of duplicating pool/branding logic.
+module.exports = { GENERIC_POOLS, HOOK_EMOJIS, fetchQuestion, fetchQuestionCount, buildHtml };
