@@ -66,24 +66,32 @@ function findFfmpegUnder(dir) {
   return found.ffmpeg && found.ffprobe ? found : null;
 }
 
-// Special pseudo-examType, added 2026-09-10 -- user asked why the video has to be tied to one
-// state when a lot of CDL General Knowledge content is genuinely federal (FMCSA/49 CFR), not state
-// law. Verified before building this, not assumed: cross-state text-match queries against the real
-// DB confirmed the same substantive rules appear independently worded across dozens of states'
-// banks (e.g. the railroad-crossing stop-distance rule literally appears in all 50 states' CDL
-// banks, the dual-air-brake minimum-psi rule in 49). The curated pool below (cdl_generic_questions
-// .json) is hand-picked from that verification pass -- each entry records verifiedAcrossStates as
-// an audit trail, not just an assertion.
-const GENERIC_CDL_EXAM_TYPE = 'cdl_generic';
+// Special pseudo-examTypes, one per category with a real verified pool -- added 2026-09-10 for
+// CDL, extended same day to Driver/Real Estate Broker/Boating after the user asked to scale this
+// to every category. NOT extended to Notary/Real Estate Salesperson/Motorcycle -- those categories
+// were specifically investigated and found to lack a strong federal/universal basis (notary has no
+// federal law at all; real estate is almost entirely state law outside Fair Housing; motorcycle's
+// cross-state signal was much weaker than CDL/Driver/Boating's). Each pool file is hand-picked from
+// real cross-state text-match verification against the live DB -- e.g. CDL's railroad-crossing
+// stop-distance rule appears in all 50 states' banks, Driver's stop-sign-octagon rule in 30,
+// Real Estate Broker's Fair Housing facts in 19-44, Boating's fire-extinguisher/sound-signal rules
+// in 20-25 -- every entry records verifiedAcrossStates as an audit trail, not just an assertion.
+const GENERIC_POOLS = {
+  cdl_generic: { file: 'cdl_generic_questions.json', trackLabel: 'CDL', hookLabel: 'CDL', countSuffix: '_cdl' },
+  driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", countSuffix: '_driver' },
+  re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', countSuffix: '_re_broker' },
+  boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', countSuffix: '_boating' },
+};
 
 async function fetchQuestion(examType) {
-  if (examType === GENERIC_CDL_EXAM_TYPE) {
-    const pool = JSON.parse(fs.readFileSync(path.join(__dirname, 'cdl_generic_questions.json'), 'utf8'));
+  var pool_config = GENERIC_POOLS[examType];
+  if (pool_config) {
+    const pool = JSON.parse(fs.readFileSync(path.join(__dirname, pool_config.file), 'utf8'));
     const picked = pool[Math.floor(Math.random() * pool.length)];
     return {
       topic: picked.topic, question: picked.question, choices: picked.choices,
       correctChoice: picked.correctChoice, explanation: picked.explanation,
-      trackLabel: 'CDL', date: new Date().toISOString().slice(0, 10),
+      trackLabel: pool_config.trackLabel, date: new Date().toISOString().slice(0, 10),
     };
   }
   const res = await fetch(API_BASE + '/qotd?examType=' + encodeURIComponent(examType));
@@ -93,14 +101,16 @@ async function fetchQuestion(examType) {
 
 // Real question-bank size for the outro CTA -- fetched live rather than hardcoded, so the claim is
 // always accurate for whatever examType this actually runs against (caught a real bug during v2's
-// first run: outro originally said a hardcoded "500+", real ca_cdl count is 400). For the generic
-// pseudo-examType, sums every real *_cdl exam_type's count (verified sitewide total, not a guess).
+// first run: outro originally said a hardcoded "500+", real ca_cdl count is 400). For a generic
+// pseudo-examType, sums every real matching exam_type's count (verified sitewide total, not a
+// guess) using that pool's countSuffix.
 async function fetchQuestionCount(examType) {
   const res = await fetch(API_BASE + '/questions/counts');
   if (!res.ok) throw new Error('GET /questions/counts failed: HTTP ' + res.status);
   const data = await res.json();
-  if (examType === GENERIC_CDL_EXAM_TYPE) {
-    return (data.counts || []).filter((c) => c.exam_type.endsWith('_cdl')).reduce((sum, c) => sum + c.count, 0);
+  var pool_config = GENERIC_POOLS[examType];
+  if (pool_config) {
+    return (data.counts || []).filter((c) => c.exam_type.endsWith(pool_config.countSuffix)).reduce((sum, c) => sum + c.count, 0);
   }
   const row = (data.counts || []).find((c) => c.exam_type === examType);
   if (!row) throw new Error('No question count found for exam_type ' + examType);
@@ -118,12 +128,17 @@ const T = {
   tensionStart: 5000, reveal: 7000, outroIn: 11500, end: 15000,
 };
 
+const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵' };
+
 function buildHtml(q, questionCount, examType) {
   // Round down to a clean step so the "X+" claim is always literally true even for an odd real
   // count, without looking artificially precise -- step scales with magnitude (nearest 50 for a
   // few hundred, nearest 1000 once we're into the thousands, e.g. the sitewide generic-pool count).
   const roundStep = questionCount >= 1000 ? 1000 : 50;
   const roundedCount = Math.floor(questionCount / roundStep) * roundStep;
+  var pool_config = GENERIC_POOLS[examType];
+  var hookEmoji = pool_config ? HOOK_EMOJIS[examType] : '📚';
+  var hookLabel = pool_config ? pool_config.hookLabel : q.trackLabel;
   const letters = ['A', 'B', 'C', 'D'];
   const optionsHtml = letters.map((k) =>
     `<div class="opt" id="opt-${k}"><span class="opt-letter">${k}</span><span class="opt-text">${escapeHtml(q.choices[k])}</span></div>`
@@ -171,8 +186,8 @@ function buildHtml(q, questionCount, examType) {
     #outro .url { margin-top: 44px; font-size: 44px; font-weight: 900; color: #fdfaf4; }
   </style></head><body>
     <div class="screen show" id="hook">
-      <div class="emoji">🚛</div>
-      <div class="line">Would <span>YOU</span> pass<br>this CDL question?</div>
+      <div class="emoji">${hookEmoji}</div>
+      <div class="line">Would <span>YOU</span> pass<br>this ${escapeHtml(hookLabel)} question?</div>
     </div>
     <div class="screen" id="main">
       <div class="brand">PassExam<span>HQ</span></div>
@@ -186,7 +201,7 @@ function buildHtml(q, questionCount, examType) {
       <div class="badge"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#0f2a5f"/><path d="M9 16.8 13.4 21 23 11" stroke="#ea9600" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="headline">${roundedCount.toLocaleString()}+ real ${escapeHtml(q.trackLabel)} practice questions</div>
       <div class="sub">Free to start. No app.</div>
-      ${examType === GENERIC_CDL_EXAM_TYPE ? '<div class="sub2">Plus state-specific practice for all 50 states</div>' : ''}
+      ${GENERIC_POOLS[examType] ? '<div class="sub2">Plus state-specific practice for all 50 states</div>' : ''}
       <div class="url">passexamhq.com</div>
     </div>
     <script>

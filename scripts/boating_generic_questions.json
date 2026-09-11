@@ -1,0 +1,20 @@
+[
+  {
+    "topic": "Fire Extinguishers",
+    "question": "How many 5-B portable fire extinguishers may a single 20-B portable fire extinguisher substitute for?",
+    "choices": { "A": "One 5-B extinguisher", "B": "Two 5-B extinguishers", "C": "Three 5-B extinguishers", "D": "Four 5-B extinguishers" },
+    "correctChoice": "B",
+    "explanation": "Federal U.S. Coast Guard classification, same everywhere: one 20-B portable fire extinguisher substitutes for two 5-B extinguishers.",
+    "sourceExamType": "mi_boating",
+    "verifiedAcrossStates": 25
+  },
+  {
+    "topic": "Sound Signals",
+    "question": "How many short blasts of a horn signal \"danger\" to another vessel?",
+    "choices": { "A": "Two", "B": "Three", "C": "Four", "D": "Five or more" },
+    "correctChoice": "D",
+    "explanation": "Federal Navigation Rules, same everywhere: five or more short, rapid blasts is the danger signal.",
+    "sourceExamType": "oh_boating",
+    "verifiedAcrossStates": 20
+  }
+]

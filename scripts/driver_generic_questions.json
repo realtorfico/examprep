@@ -1,0 +1,29 @@
+[
+  {
+    "topic": "Road Signs",
+    "question": "The STOP sign is the only sign on the highway with which shape?",
+    "choices": { "A": "Diamond", "B": "Triangle", "C": "Pentagon", "D": "Octagon (8-sided)" },
+    "correctChoice": "D",
+    "explanation": "Federal rule (MUTCD -- the same manual every state adopts for road signage), same everywhere: the STOP sign is the only octagon-shaped sign on the highway.",
+    "sourceExamType": "pa_driver",
+    "verifiedAcrossStates": 30
+  },
+  {
+    "topic": "Road Signs",
+    "question": "YIELD signs have which shape and colors?",
+    "choices": { "A": "Round, yellow and black", "B": "Eight-sided, red and white", "C": "Triangular (3-sided), red and white", "D": "Rectangular, black and white" },
+    "correctChoice": "C",
+    "explanation": "Federal rule (MUTCD), same everywhere: YIELD signs are triangular, red and white.",
+    "sourceExamType": "il_driver",
+    "verifiedAcrossStates": 37
+  },
+  {
+    "topic": "Alcohol & Driving",
+    "question": "What is the \"legal limit\" blood alcohol concentration for a non-commercial driver 21 years of age or older?",
+    "choices": { "A": ".08", "B": ".10", "C": ".05", "D": ".02" },
+    "correctChoice": "A",
+    "explanation": "Federal standard (23 U.S.C. 163, adopted by all 50 states for federal highway funding), same everywhere: .08 BAC.",
+    "sourceExamType": "pa_driver",
+    "verifiedAcrossStates": 38
+  }
+]

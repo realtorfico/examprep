@@ -1,0 +1,38 @@
+[
+  {
+    "topic": "Fair Housing Act",
+    "question": "The federal Fair Housing Act prohibits discrimination in housing transactions based on which set of protected classes?",
+    "choices": { "A": "Only race and religion", "B": "Only income level", "C": "Race, color, national origin, religion, sex, familial status, and disability", "D": "The federal Fair Housing Act contains no list of protected classes" },
+    "correctChoice": "C",
+    "explanation": "Federal law (Title VIII of the Civil Rights Act of 1968, as amended), same everywhere: seven protected classes.",
+    "sourceExamType": "ca_re_broker",
+    "verifiedAcrossStates": 19
+  },
+  {
+    "topic": "Fair Housing Act",
+    "question": "A federal agency principally responsible for enforcing the Fair Housing Act, investigating housing discrimination complaints, and issuing implementing regulations is the:",
+    "choices": { "A": "U.S. Department of Housing and Urban Development (HUD)", "B": "Federal Reserve Board", "C": "Consumer Financial Protection Bureau (CFPB) exclusively", "D": "Environmental Protection Agency (EPA)" },
+    "correctChoice": "A",
+    "explanation": "Federal law, same everywhere: HUD is the primary federal agency enforcing the Fair Housing Act.",
+    "sourceExamType": "tx_re_broker",
+    "verifiedAcrossStates": 44
+  },
+  {
+    "topic": "Fair Housing Act",
+    "question": "Under the Fair Housing Act, a housing provider's refusal to allow a tenant with a documented disability to keep an assistance animal, despite a no-pets policy, would most likely violate the requirement to provide:",
+    "choices": { "A": "A reasonable accommodation", "B": "A reasonable modification only", "C": "No obligation exists under federal law", "D": "A structural renovation at the landlord's sole expense in every case" },
+    "correctChoice": "A",
+    "explanation": "Federal law, same everywhere: waiving a no-pets policy for a documented assistance animal is a reasonable accommodation, distinct from a physical modification.",
+    "sourceExamType": "tx_re_broker",
+    "verifiedAcrossStates": 44
+  },
+  {
+    "topic": "Fair Housing Act",
+    "question": "The Fair Housing Act's protection based on \"familial status\" most directly prohibits discrimination against:",
+    "choices": { "A": "Married couples only", "B": "Single adults with no dependents", "C": "Families with children under 18, and pregnant individuals", "D": "Retired individuals" },
+    "correctChoice": "C",
+    "explanation": "Federal law, same everywhere: familial status covers households with children under 18 and pregnant individuals.",
+    "sourceExamType": "tx_re_broker",
+    "verifiedAcrossStates": 44
+  }
+]
