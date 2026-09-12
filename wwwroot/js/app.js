@@ -8263,6 +8263,16 @@ function getOrCreateSessionId() {
 function getSessionPages() {
   try { return JSON.parse(sessionStorage.getItem('pxq_session_pages') || '[]'); } catch (e) { return []; }
 }
+function getSessionClickCount() {
+  try { return Number(sessionStorage.getItem('pxq_session_clicks') || '0') || 0; } catch (e) { return 0; }
+}
+// Capture phase so this still counts even if a handler further down stops propagation --
+// intentionally a raw "clicks anywhere on the page" count (same metric Clarity already shows),
+// not scoped to specific interactive elements.
+document.addEventListener('click', function () {
+  if (isTrackingExcluded()) return;
+  try { sessionStorage.setItem('pxq_session_clicks', String(getSessionClickCount() + 1)); } catch (e) { /* ignore */ }
+}, true);
 function getFirstTouchUtm() {
   try { return JSON.parse(sessionStorage.getItem('pxq_first_touch') || 'null'); } catch (e) { return null; }
 }
@@ -8359,6 +8369,7 @@ function sendVisitBeacon(pages, firstTouch, isFinal) {
     utmTerm: firstTouch.utmTerm,
     gclid: firstTouch.gclid,
     utmContent: firstTouch.utmContent,
+    clickCount: getSessionClickCount(),
   };
   if (isFinal && navigator.sendBeacon) {
     navigator.sendBeacon(API_BASE + '/track/visit', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
