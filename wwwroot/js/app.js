@@ -8334,6 +8334,11 @@ function trackPageview() {
       // that a visit really came from a paid click at all. Added 2026-09-11.
       utmTerm: params.get('utm_term') || '',
       gclid: params.get('gclid') || '',
+      // Ad group ID (utm_content in the suffix) -- lets a landing-page anomaly (e.g. traffic
+      // unexpectedly reaching a page other than the campaign's intended one) be traced to the
+      // exact ad group without guesswork. Was already in the suffix string but never actually
+      // captured until this gap was found 2026-09-11 investigating a real /blog landing mystery.
+      utmContent: params.get('utm_content') || '',
     };
     sessionStorage.setItem('pxq_first_touch', JSON.stringify(firstTouch));
   }
@@ -8353,6 +8358,7 @@ function sendVisitBeacon(pages, firstTouch, isFinal) {
     utmCampaign: firstTouch.utmCampaign,
     utmTerm: firstTouch.utmTerm,
     gclid: firstTouch.gclid,
+    utmContent: firstTouch.utmContent,
   };
   if (isFinal && navigator.sendBeacon) {
     navigator.sendBeacon(API_BASE + '/track/visit', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
