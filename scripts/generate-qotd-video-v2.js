@@ -81,10 +81,10 @@ function findFfmpegUnder(dir) {
 // content-availability claim (content exists there), independent of the isExamRequired-gated
 // "pass this exam" framing used elsewhere (see feedback_exam_required_only_for_marketing).
 const GENERIC_POOLS = {
-  cdl_generic: { file: 'cdl_generic_questions.json', trackLabel: 'CDL', hookLabel: 'CDL', countSuffix: '_cdl', stateCount: 50 },
-  driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", countSuffix: '_driver', stateCount: 50 },
-  re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', countSuffix: '_re_broker', stateCount: 44 },
-  boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', countSuffix: '_boating', stateCount: 25 },
+  cdl_generic: { file: 'cdl_generic_questions.json', trackLabel: 'CDL', hookLabel: 'CDL', shortLabel: 'CDL', countSuffix: '_cdl', stateCount: 50 },
+  driver_generic: { file: 'driver_generic_questions.json', trackLabel: 'Driver', hookLabel: "driver's license", shortLabel: "DRIVER'S TEST", countSuffix: '_driver', stateCount: 50 },
+  re_broker_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Broker', hookLabel: 'real estate broker', shortLabel: 'RE BROKER', countSuffix: '_re_broker', stateCount: 44 },
+  boating_generic: { file: 'boating_generic_questions.json', trackLabel: 'Boating', hookLabel: 'boating license', shortLabel: 'BOATING', countSuffix: '_boating', stateCount: 25 },
   // Reuses the SAME pool file as re_broker_generic, deliberately -- Fair Housing Act facts are
   // true federal law regardless of license type (a salesperson needs the same seven protected
   // classes / HUD / reasonable-accommodation knowledge a broker does). The salesperson question
@@ -94,7 +94,7 @@ const GENERIC_POOLS = {
   // federal law itself), but that's a drafting-emphasis difference in THIS database, not evidence
   // the facts themselves are any less true or relevant for a salesperson candidate. Confirmed the
   // pool's question text never says "broker" anywhere (only in the sourceExamType audit field).
-  re_salesperson_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Salesperson', hookLabel: 'real estate salesperson', countSuffix: '_re_salesperson', stateCount: 50 },
+  re_salesperson_generic: { file: 're_broker_generic_questions.json', trackLabel: 'Real Estate Salesperson', hookLabel: 'real estate salesperson', shortLabel: 'RE SALESPERSON', countSuffix: '_re_salesperson', stateCount: 50 },
   // Verified cross-state via real DB text-matching, same rigor as every other pool: not state
   // traffic law, but universal MSF-curriculum-derived riding-safety facts that show up
   // independently worded in most states' motorcycle manuals -- convex-mirror distance distortion
@@ -103,7 +103,7 @@ const GENERIC_POOLS = {
   // specific federal FMVSS 218 helmet-standard citation was tried first and rejected -- only CA's
   // bank named the standard number; other states' DOT-helmet content was real but drafted with
   // different specific stats/numbers per state, not consistent enough to use.
-  motorcycle_generic: { file: 'motorcycle_generic_questions.json', trackLabel: 'Motorcycle', hookLabel: 'motorcycle license', countSuffix: '_motorcycle', stateCount: 16 },
+  motorcycle_generic: { file: 'motorcycle_generic_questions.json', trackLabel: 'Motorcycle', hookLabel: 'motorcycle license', shortLabel: 'MOTORCYCLE', countSuffix: '_motorcycle', stateCount: 16 },
 };
 
 async function fetchQuestion(examType) {
@@ -151,7 +151,29 @@ const T = {
   tensionStart: 5000, reveal: 7000, outroIn: 11500, end: 15000,
 };
 
-const HOOK_EMOJIS = { cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵', re_salesperson_generic: '🏠', motorcycle_generic: '🏍️' };
+const HOOK_EMOJIS = {
+  cdl_generic: '🚛', driver_generic: '🚗', re_broker_generic: '🏠', boating_generic: '⛵',
+  re_salesperson_generic: '🏘️', motorcycle_generic: '🏍️',
+  // National scored exams and Notary previously had no entry here and silently fell back to a
+  // generic 📚 for every single one -- a real contributor to "all the thumbnails look the same"
+  // (5+ categories, including all 27 Notary states, sharing one icon). Added 2026-09-12.
+  act: '🎓', dat: '🦷', clt: '📜', oat: '👁️',
+};
+// Notary is 27 separate per-state exam_types (ca_notary, ny_notary, ...), not one fixed key --
+// matched by suffix rather than an exact map entry.
+function emojiForExamType(examType) {
+  if (HOOK_EMOJIS[examType]) return HOOK_EMOJIS[examType];
+  if (examType.endsWith('_notary')) return '🖋️';
+  return '📚';
+}
+// Short, punchy category name for the thumbnail's big headline -- distinct from trackLabel (used
+// in body copy/sentences elsewhere), which is often too long to read at thumbnail size/distance.
+function shortLabelForExamType(examType, q) {
+  const pool_config = GENERIC_POOLS[examType];
+  if (pool_config) return pool_config.shortLabel;
+  if (['act', 'dat', 'clt', 'oat'].includes(examType)) return examType.toUpperCase();
+  return q.trackLabel.toUpperCase();
+}
 
 function buildHtml(q, questionCount, examType) {
   // Round down to a clean step so the "X+" claim is always literally true even for an odd real
@@ -160,7 +182,7 @@ function buildHtml(q, questionCount, examType) {
   const roundStep = questionCount >= 1000 ? 1000 : 50;
   const roundedCount = Math.floor(questionCount / roundStep) * roundStep;
   var pool_config = GENERIC_POOLS[examType];
-  var hookEmoji = pool_config ? HOOK_EMOJIS[examType] : '📚';
+  var hookEmoji = emojiForExamType(examType);
   var hookLabel = pool_config ? pool_config.hookLabel : q.trackLabel;
   const letters = ['A', 'B', 'C', 'D'];
   const optionsHtml = letters.map((k) =>
@@ -347,4 +369,4 @@ if (require.main === module) {
 
 // Exported so generate-qotd-thumbnail.js can reuse the exact same real-data fetch + markup
 // (hook screen is screen #1 of this same HTML) instead of duplicating pool/branding logic.
-module.exports = { GENERIC_POOLS, HOOK_EMOJIS, fetchQuestion, fetchQuestionCount, buildHtml };
+module.exports = { GENERIC_POOLS, HOOK_EMOJIS, fetchQuestion, fetchQuestionCount, buildHtml, emojiForExamType, shortLabelForExamType, escapeHtml };
