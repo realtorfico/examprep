@@ -1699,17 +1699,8 @@ function renderPassRates() {
         '</div>'
       : '';
 
-    appEl.innerHTML =
-      '<div class="pass-rates-page">' +
-      '<span class="section-eyebrow">Real numbers, not marketing copy</span>' +
-      '<h1>Pass Rate Transparency</h1>' +
-      '<p class="page-intro-text">Every pass-rate figure on PassExamHQ — here and everywhere else on the site — reflects practice ' +
-      'mock exams completed <em>on PassExamHQ itself</em>, computed live from our own database. It is not, and cannot be, a claim ' +
-      'about real official exam outcomes: no testing vendor or state licensing board shares that data with prep providers, so any ' +
-      'site claiming an official pass rate is estimating or making it up. What you see below is the one number we can actually ' +
-      'measure honestly, shown with the real sample sizes behind it.</p>' +
-      overallHtml +
-      '<h2 class="comparison-heading">By Category</h2>' +
+    var examSectionHtml =
+      '<h2 class="comparison-heading">Exam Pass Rate By Category</h2>' +
       '<p class="muted">Categories with fewer than ' + minSample + ' completed exams show "Not enough data yet" instead of a ' +
       'percentage — a rate computed from a handful of attempts is too noisy to mean anything, regardless of which way it points. ' +
       'We never hide a real rate just because it looks bad once there\'s enough data behind it.</p>' +
@@ -1721,8 +1712,20 @@ function renderPassRates() {
       '</div>' +
       '<p class="guide-source-note">Only fully completed (submitted) practice exams count. Each attempt is scored against the ' +
       'passing threshold that applied to it at the time it was taken. See our <a href="#/guarantee">pass-or-refund guarantee</a> ' +
-      'for what this backs, or browse per-state exam mechanics on our <a href="/guides/notary-requirements-by-state">requirements-by-state guides</a>.</p>' +
+      'for what this backs, or browse per-state exam mechanics on our <a href="/guides/notary-requirements-by-state">requirements-by-state guides</a>.</p>';
+
+    appEl.innerHTML =
+      '<div class="pass-rates-page">' +
+      '<span class="section-eyebrow">Real numbers, not marketing copy</span>' +
+      '<h1>Pass Rate Transparency</h1>' +
+      '<p class="page-intro-text">Every pass-rate figure on PassExamHQ — here and everywhere else on the site — reflects practice ' +
+      'mock exams completed <em>on PassExamHQ itself</em>, computed live from our own database. It is not, and cannot be, a claim ' +
+      'about real official exam outcomes: no testing vendor or state licensing board shares that data with prep providers, so any ' +
+      'site claiming an official pass rate is estimating or making it up. What you see below is the one number we can actually ' +
+      'measure honestly, shown with the real sample sizes behind it.</p>' +
+      overallHtml +
       quizSectionHtml +
+      examSectionHtml +
       '</div>';
   });
 }
