@@ -6030,12 +6030,9 @@ var leaderboardMinUsers = 5;
 var leaderboardSortKey = 'accuracy';
 
 function leaderboardTableHtml() {
-  if (!leaderboardUsers.length) {
-    // Covers two server-side cases (fewer than leaderboardMinQuestions answered, OR fewer than
-    // leaderboardMinUsers qualify at all) with one honest message rather than distinguishing them --
-    // either way there's genuinely no meaningful board to show yet.
-    return '<p class="muted">Not enough participants on your track yet for a leaderboard.</p>';
-  }
+  // Callers only ever invoke this once leaderboardUsers is non-empty -- the whole card is omitted
+  // by leaderboardSectionHtml otherwise. Defensive fallback only, not a real UI path.
+  if (!leaderboardUsers.length) return '';
   var key = leaderboardSortKey;
   var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 2).map(function (u) {
     return '<tr><td>' + u.code + '</td><td>' + u.accuracy + '%</td><td>' + u.coverage + '%</td><td>' + u.total + '</td><td>' + u.attempts + '</td></tr>';
@@ -6149,6 +6146,19 @@ async function renderProgress() {
 
   var examAttemptsHtml = examAttemptsSectionHtml();
 
+  // Hidden entirely below the qualifying-user threshold rather than showing a "not enough
+  // participants" placeholder -- a permanently-empty card reads worse than no card at all for a
+  // low-volume track, and matches this page's existing taste for dropping non-functional UI
+  // outright (see the nav-simplification note near renderTrackApp). Added 2026-09-12.
+  var leaderboardSectionHtml = leaderboardUsers.length
+    ? '<div class="card progress-table-card">' +
+      '<h3 class="progress-leaderboard-heading">Leaderboard</h3>' +
+      '<p class="muted page-intro-text">Top 2 by accuracy and by coverage among everyone on your track who\'s answered a minimum ' +
+      'set of questions.</p>' +
+      '<div id="leaderboard-wrap">' + leaderboardTableHtml() + '</div>' +
+      '</div>'
+    : '';
+
   // Radial rings for the two threshold-graded metrics (ported RadialProgress usage from v0's
   // study-hub.tsx) -- color reuses the same pass/fail logic as the stat-box classes below rather
   // than introducing a second source of truth for "did they clear the bar". The plain stats-bar
@@ -6183,12 +6193,7 @@ async function renderProgress() {
     '<h3>Progress by Topic</h3>' +
     '<div id="progress-topics-wrap">' + progressTopicsTableHtml() + '</div>' +
     '</div>' +
-    '<div class="card progress-table-card">' +
-    '<h3 class="progress-leaderboard-heading">Leaderboard</h3>' +
-    '<p class="muted page-intro-text">Top 2 by accuracy and by coverage among everyone on your track who\'s answered a minimum ' +
-    'set of questions.</p>' +
-    '<div id="leaderboard-wrap">' + leaderboardTableHtml() + '</div>' +
-    '</div>' +
+    leaderboardSectionHtml +
     (examAttemptsHtml ? '<div class="card progress-table-card" id="exam-attempts-wrap">' + examAttemptsHtml + '</div>' : '<div id="exam-attempts-wrap"></div>') +
     '</div>' +
     wrongQuestionsSection +
