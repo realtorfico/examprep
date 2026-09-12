@@ -1595,6 +1595,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .breakdown-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
 .breakdown-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.72rem; }
 .breakdown-row { display: flex; flex-direction: column; gap: 0.25rem; }
+.breakdown-exclusion-note { margin-top: 0.75rem; font-size: 0.78rem; line-height: 1.4; }
 .breakdown-row-top { display: flex; justify-content: space-between; }
 /* Track landing page's own "Key Breakdown" -- scoped to .buy-value-col rather than the shared
    .breakdown-* base rules above, which the category page's own (already-prominent, big-heading)

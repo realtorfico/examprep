@@ -4349,6 +4349,7 @@ function categoryBreakdownHtml(track) {
       return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
     }).join('') + '</div>' +
+    (BREAKDOWN_EXCLUSION_NOTES[track.examType] ? '<p class="muted breakdown-exclusion-note">ℹ️ ' + escapeHtml(BREAKDOWN_EXCLUSION_NOTES[track.examType]) + '</p>' : '') +
     '<div class="category-breakdown-cta"><a class="btn-secondary" href="' + track.route + '">See full ' + escapeHtml(track.shortName || '') + ' track details →</a></div>' +
     '</section>';
 }
@@ -4734,6 +4735,20 @@ var CATEGORY_POINTS = {
     'Scored 200-400 per section, not a pass/fail exam',
     'Same test nationwide -- no state-specific rules or requirements to track',
   ],
+};
+
+// Same exclusion fact as CATEGORY_POINTS' first ACT/DAT bullet above, reused verbatim rather than
+// redrafted -- this one renders on the actual track landing page's "Key Breakdown" table (see
+// breakdownHtml below), which previously disclosed the exclusion NOWHERE a buyer deciding whether
+// to purchase would necessarily see it (only the homepage category card had it). A buyer landing
+// directly on /dat/us or /act/us via a shared link, search result, or ad click could see 3
+// sections summing to 100% and reasonably assume that's the whole real exam. Found 2026-09-12 when
+// the user compared our DAT breakdown against a third-party source (Mometrix) and noticed the
+// missing Perceptual Ability Test section wasn't explained anywhere on the page they were on.
+// CLT/OAT excluded from this map on purpose -- both cover every real section, nothing to disclose.
+var BREAKDOWN_EXCLUSION_NOTES = {
+  act: 'Science and an optional Writing essay are real ACT sections not included in this practice bank.',
+  dat: 'The Perceptual Ability Test (90 real items) is not included in this practice bank -- it requires spatial/3D image-based questions this site\'s format doesn\'t yet support.',
 };
 
 // States a category deliberately does NOT cover, and a short public-facing reason why -- shown as
@@ -6352,6 +6367,7 @@ function renderTrackLanding() {
     '<div>📄 <strong>Questions:</strong> ' + exam.questions + '</div>' +
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '</div>' + '<div id="track-landing-infolink-wrap">' + officialLinkHtml + '</div>' + intlStudentsHtml;
+  var breakdownExclusionNote = BREAKDOWN_EXCLUSION_NOTES[exam.examType];
   var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
@@ -6359,7 +6375,8 @@ function renderTrackLanding() {
         '<div class="breakdown-row-top"><span>' + b[0] + '</span><span>' + b[1] + '</span></div>' +
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
         '</div>';
-    }).join('') + '</div>';
+    }).join('') + '</div>' +
+    (breakdownExclusionNote ? '<p class="muted breakdown-exclusion-note">ℹ️ ' + escapeHtml(breakdownExclusionNote) + '</p>' : '');
   var compliance = trackCompliance(exam.examType);
   var heroOverride = getTrackHeroOverride(exam);
 
