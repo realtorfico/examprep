@@ -922,6 +922,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    consistently. */
 .pass-rates-page { max-width: 900px; margin: 0 auto; padding: 1rem 0 3rem; }
 .pass-rates-overall-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; margin: 1.5rem 0 2.25rem; }
+/* Scoped (not the shared .comparison-heading rule) so the extra breathing room between the
+   Quiz Accuracy and Exam Pass Rate sections doesn't affect other pages using that same class. */
+.pass-rates-page .comparison-heading { margin-top: 3rem; }
 .pass-rates-overall-value { font-family: 'Fraunces', Georgia, serif; font-size: 2.6rem; font-weight: 700; color: var(--accent); }
 /* #/changelog */
 .changelog-page { max-width: 720px; }
