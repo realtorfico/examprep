@@ -7194,10 +7194,18 @@ var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification 
 // URL's PATHNAME too (a real page load, not just a hash change on the same page -- this SPA has no
 // pushState-based interception of pathname links), so any in-memory flag would be wiped before
 // drawBuyForm ever ran. Reading it fresh off location.hash survives that reload naturally.
+// Debounced (same idiom as trackPageview's visitBeaconTimer) -- renderBuy() itself has the same
+// "fires twice in quick succession on a double navigation event" quirk loadStripeSdk's shared
+// promise already guards against (see above), but this tracking call had no equivalent guard --
+// confirmed live in funnel_events: every real checkout on record had sent two identical
+// checkout_started rows, same session/timestamp. A genuine later re-visit to /buy still fires
+// normally since it lands well outside this short window.
+var checkoutStartedTimer = null;
 function renderBuy(giftIntent) {
   var trackTitle = (trackByExamType(state.examType) || {}).title || 'PassExamHQ';
   appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
-  trackEvent('checkout_started', state.examType);
+  clearTimeout(checkoutStartedTimer);
+  checkoutStartedTimer = setTimeout(function () { trackEvent('checkout_started', state.examType); }, 300);
   Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
     var p = results[0];
     buyPricing = p;
