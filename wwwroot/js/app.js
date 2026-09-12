@@ -6026,11 +6026,15 @@ function progressTopicsTableHtml() {
 // leaderboard.
 var leaderboardUsers = [];
 var leaderboardMinQuestions = 20;
+var leaderboardMinUsers = 5;
 var leaderboardSortKey = 'accuracy';
 
 function leaderboardTableHtml() {
   if (!leaderboardUsers.length) {
-    return '<p class="muted">No one on your track has answered a minimum set of questions yet.</p>';
+    // Covers two server-side cases (fewer than leaderboardMinQuestions answered, OR fewer than
+    // leaderboardMinUsers qualify at all) with one honest message rather than distinguishing them --
+    // either way there's genuinely no meaningful board to show yet.
+    return '<p class="muted">Not enough participants on your track yet for a leaderboard.</p>';
   }
   var key = leaderboardSortKey;
   var rows = leaderboardUsers.slice().sort(function (a, b) { return b[key] - a[key]; }).slice(0, 2).map(function (u) {
@@ -6086,6 +6090,7 @@ async function renderProgress() {
   progressExamAttempts = standardAttempts.concat(toughest45Attempts);
   leaderboardUsers = results[3].users || [];
   leaderboardMinQuestions = typeof results[3].minQuestions === 'number' ? results[3].minQuestions : leaderboardMinQuestions;
+  leaderboardMinUsers = typeof results[3].minUsers === 'number' ? results[3].minUsers : leaderboardMinUsers;
 
   // The totals above are a "last attempt wins" snapshot shared by quiz and mock exam (a question
   // answered in both only reflects whichever happened most recently) -- exam_attempts has no such
