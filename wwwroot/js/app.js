@@ -3087,7 +3087,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ct_notary',
     title: 'Connecticut Notary Public Exam Prep', category: 'State Licensing', route: '/notary/ct',
-    duration: 'Untimed', questions: 'Default: 35 Multiple Choice (No Official Count Exists -- Real Exam Is Embedded in the Application, No Fixed Length) -- 121-Question Practice Pool', passScore: '100% (Every Question on the Real Application-Embedded Exam Must Be Correct)',
+    duration: 'Untimed', questions: 'Default: 35 Multiple Choice (No Official Count Exists -- Real Exam Is Embedded in the Application, No Fixed Length) -- 196-Question Practice Pool', passScore: '100% (Every Question on the Real Application-Embedded Exam Must Be Correct)',
     breakdown: [['Definitions, Appointment & Qualifications', '25%'], ['Notarial Acts, Prohibited Conduct & Fees', '9%'], ['Electronic & Remote Notarization', '21%'], ['Signature, Seal & Certificate Forms', '7%'], ['Changes in Status, Discipline & Enforcement', '19%'], ['Statutory Nuances, Historical Changes & Integrated Scenarios', '19%']],
   },
   {
@@ -3171,7 +3171,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'or_notary',
     title: 'Oregon Notary Public Exam Prep', category: 'State Licensing', route: '/notary/or',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Real Exam Allows Unlimited Retakes, No Fixed Length) -- 199-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Real Exam Allows Unlimited Retakes, No Fixed Length) -- 315-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
     breakdown: [['General Provisions, Commissioning & Qualifications', '16%'], ['Notarial Acts, Powers, Types & Recognition', '15%'], ['Certificates, Seals, Stamps & Journal Recordkeeping', '20%'], ['Identification & Satisfactory Evidence', '7%'], ['Fees, Prohibited Acts & Protest', '14%'], ['Electronic & Remote Notarization', '10%'], ['Discipline, Enforcement & Penalties', '10%'], ['Integrative Scenario Review', '8%']],
   },
   {
