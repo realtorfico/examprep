@@ -378,6 +378,20 @@ function firePurchaseConversion(valueCents, transactionId) {
 }
 
 var refundFailurePercent = 50;
+// Plain buyer-reported attribution shown at checkout and (once) nudged post-purchase -- see
+// drawBuyForm's buy-referral-source-wrap and renderPurchaseSuccess/renderGiftPurchaseSuccess.
+// Deliberately a short fixed list (+ Other) rather than freeform, so admin reporting stays usable.
+var REFERRAL_SOURCE_OPTIONS = ['Google search', 'Social media', 'Friend or colleague', 'YouTube', 'Blog or article', 'Reddit'];
+// Reads whichever of the select/its "Other" text sidecar is actually filled in, from a given
+// select id + its matching "-other" text input id -- shared by the checkout form and both
+// post-purchase nudge forms so the three copies of this logic can't drift.
+function readReferralSourceInputs(selectId, otherId) {
+  var selectEl = document.getElementById(selectId);
+  var otherEl = document.getElementById(otherId);
+  if (!selectEl || !selectEl.value) return undefined;
+  if (selectEl.value === 'Other') return otherEl && otherEl.value.trim() ? otherEl.value.trim() : undefined;
+  return selectEl.value;
+}
 var siteConfigPromise = null;
 function loadSiteConfig() {
   if (!siteConfigPromise) {
@@ -7429,6 +7443,21 @@ function drawBuyForm(pricing, giftIntent) {
       '<label class="muted buy-email-label">Exam date (optional — we\'ll send a daily countdown with practice questions)</label>' +
       '<input type="date" id="buy-exam-date" min="' + new Date().toISOString().slice(0, 10) + '">' +
       '</div>') +
+    // Optional buyer-reported attribution -- separate from and lower-trust than the real
+    // gclid/utm_medium tracking (see isPaidVisit-equivalent admin logic), just a plain marketing
+    // question. Shown in gift mode too (unlike exam date) since the buyer, not the eventual
+    // redeemer, is who actually found the site. Skipping it here isn't the end of the road --
+    // renderPurchaseSuccess/renderGiftPurchaseSuccess nudge for it once, after purchase, via the
+    // same referralSource value stored on the codes row (see /purchase/referral-source).
+    '<div id="buy-referral-source-wrap">' +
+    '<label class="muted buy-email-label">How did you hear about us? (optional)</label>' +
+    '<select id="buy-referral-source">' +
+    '<option value="">Prefer not to say</option>' +
+    REFERRAL_SOURCE_OPTIONS.map(function (o) { return '<option value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</option>'; }).join('') +
+    '<option value="Other">Other</option>' +
+    '</select>' +
+    '<input type="text" id="buy-referral-source-other" placeholder="Tell us more" hidden>' +
+    '</div>' +
     // Points-check and promo-code are two independent, unrelated checkout actions that used to
     // stack as their own full-width rows -- side by side on anything wider than a phone instead,
     // to cut the form's vertical height (per-user request).
@@ -7498,6 +7527,11 @@ function drawBuyForm(pricing, giftIntent) {
     if (ageCategoryWrapEl) ageCategoryWrapEl.hidden = giftCheckboxEl.checked;
     var examDateWrapEl = document.getElementById('buy-exam-date-wrap');
     if (examDateWrapEl) examDateWrapEl.hidden = giftCheckboxEl.checked;
+  });
+  var referralSourceSelectEl = document.getElementById('buy-referral-source');
+  if (referralSourceSelectEl) referralSourceSelectEl.addEventListener('change', function () {
+    var otherEl = document.getElementById('buy-referral-source-other');
+    if (otherEl) otherEl.hidden = referralSourceSelectEl.value !== 'Other';
   });
   if (STRIPE_PUBLISHABLE_KEY.indexOf('REPLACE') !== -1) {
     var el = document.getElementById('stripe-payment-element');
@@ -7740,12 +7774,13 @@ async function submitStripePayment() {
   var giftMessage = isGift && giftMessageEl && giftMessageEl.value.trim() ? giftMessageEl.value.trim() : undefined;
   var examDateEl = document.getElementById('buy-exam-date');
   var buyExamDate = !isGift && examDateEl && examDateEl.value ? examDateEl.value : undefined;
+  var referralSource = readReferralSourceInputs('buy-referral-source', 'buy-referral-source-other');
   try {
     var res = await apiFetch('/stripe/confirm', {
       method: 'POST', body: {
         paymentIntentId: result.paymentIntent.id, examType: state.examType, email: email, ageCategory: ageCategory,
         isGift: isGift, recipientEmail: recipientEmail, giftMessage: giftMessage, refCode: getStoredRefCode(),
-        affCode: getStoredAffCode(), sessionId: getOrCreateSessionId(),
+        affCode: getStoredAffCode(), sessionId: getOrCreateSessionId(), referralSource: referralSource,
       },
     });
     if (res.isGift) {
@@ -7754,7 +7789,7 @@ async function submitStripePayment() {
       // were already logged into their OWN account, setToken(null) would corrupt that session
       // (localStorage stringifies null to the literal text "null").
       firePurchaseConversion(res.capturedCents, res.code);
-      renderGiftPurchaseSuccess(res.code, recipientEmail);
+      renderGiftPurchaseSuccess(res.code, recipientEmail, !referralSource);
       return;
     }
     setToken(res.token);
@@ -7772,7 +7807,7 @@ async function submitStripePayment() {
     // ran), so this call is authenticated as the brand-new users row this purchase just created.
     // Never blocks rendering the success screen on it.
     if (buyExamDate) apiFetch('/profile/exam-date', { method: 'POST', body: { examDate: buyExamDate } }).catch(function () {});
-    renderPurchaseSuccess(res.code, res.pointsApplied);
+    renderPurchaseSuccess(res.code, res.pointsApplied, !referralSource);
   } catch (err) {
     appEl.innerHTML = '<h1>Something went wrong</h1>' +
       '<p class="muted">Your payment may have gone through — contact whoever runs this site before trying ' +
@@ -7780,7 +7815,25 @@ async function submitStripePayment() {
   }
 }
 
-function renderPurchaseSuccess(code, pointsApplied) {
+// One-time post-purchase ask for whoever skipped the checkout-page question (see
+// buy-referral-source-wrap) -- posts straight to /purchase/referral-source keyed by the purchase
+// code already on-screen, no login required (works for the gift flow too, which has no account).
+// Swaps itself out for a quiet thank-you on submit rather than disappearing outright, so a
+// misclick isn't confusing.
+function referralSourceNudgeHtml(code) {
+  return '<div class="card referral-source-nudge-card" id="referral-source-nudge-card" data-code="' + escapeHtml(code) + '">' +
+    '<p class="muted">Quick one — how did you hear about us?</p>' +
+    '<select id="nudge-referral-source" data-act="change-nudge-referral-source">' +
+    '<option value="">Choose one…</option>' +
+    REFERRAL_SOURCE_OPTIONS.map(function (o) { return '<option value="' + escapeHtml(o) + '">' + escapeHtml(o) + '</option>'; }).join('') +
+    '<option value="Other">Other</option>' +
+    '</select>' +
+    '<input type="text" id="nudge-referral-source-other" placeholder="Tell us more" hidden>' +
+    '<button class="btn-secondary btn-sm" type="button" data-act="submit-referral-source-nudge">Submit</button>' +
+    '</div>';
+}
+
+function renderPurchaseSuccess(code, pointsApplied, needsReferralNudge) {
   // state.examType is set to the just-purchased track right before this is called (see the
   // caller above), so this is real per-purchase track context, not a track-agnostic guess.
   // purchasedTrack.passPercent is null for a scored, non-pass/fail national exam (ACT/DAT/CLT/OAT).
@@ -7794,13 +7847,14 @@ function renderPurchaseSuccess(code, pointsApplied) {
     '<div class="purchase-code">' + code + '</div>' +
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
+    (needsReferralNudge ? referralSourceNudgeHtml(code) : '') +
     '<a class="btn-primary hub-cta" href="#/quiz">Start studying →</a>' +
     (hasFailGuarantee
       ? '<p class="muted redeem-sample-hint">Covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees — <a href="#/refund">request one anytime →</a></p>'
       : '<p class="muted redeem-sample-hint">Covered by our 7-day refund guarantee — <a href="#/refund">request one anytime →</a></p>');
 }
 
-function renderGiftPurchaseSuccess(code, recipientEmail) {
+function renderGiftPurchaseSuccess(code, recipientEmail, needsReferralNudge) {
   // The gift buyer already picked a specific track before checkout (giftResultHtml links into
   // that track's own #/buy-gift route), so state.examType is real per-purchase context here too,
   // same as renderPurchaseSuccess -- not a track-agnostic guess.
@@ -7815,6 +7869,7 @@ function renderGiftPurchaseSuccess(code, recipientEmail) {
     '<div class="purchase-code">' + code + '</div>' +
     '<button class="btn-secondary btn-sm" data-act="copy-code" data-code="' + code + '">Copy code</button>' +
     '</div>' +
+    (needsReferralNudge ? referralSourceNudgeHtml(code) : '') +
     (hasFailGuarantee
       ? '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — covered by our 7-day refund and pass-or-' + refundFailurePercent + '%-back guarantees.</p>'
       : '<p class="muted redeem-sample-hint">They\'ll enter it on the <a href="#/redeem">Redeem page</a> to create their own account — covered by our 7-day refund guarantee.</p>') +
@@ -8154,7 +8209,7 @@ function renderPointsRedeemVerify(token) {
     renderSiteFooter();
     var local = loadLocalPrefs();
     applyTheme(local.theme, local.fontScale);
-    renderPurchaseSuccess(res.code);
+    renderPurchaseSuccess(res.code, undefined, true);
   }).catch(function (err) {
     var code = err.data && err.data.error;
     var msg = code === 'insufficient_points'
@@ -8954,6 +9009,9 @@ document.addEventListener('change', function (e) {
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-exam-age-category') {
     examAgeCategoryOverride = e.target.value;
     renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-nudge-referral-source') {
+    var nudgeOtherEl = document.getElementById('nudge-referral-source-other');
+    if (nudgeOtherEl) nudgeOtherEl.hidden = e.target.value !== 'Other';
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'pick-category-state') {
     var pickedState = e.target.value;
     if (!pickedState) return;
@@ -9287,6 +9345,17 @@ document.addEventListener('click', async function (e) {
     if (navigator.clipboard) navigator.clipboard.writeText(codeVal).catch(function () {});
     el.textContent = 'Copied!';
     setTimeout(function () { el.textContent = 'Copy code'; }, 1500);
+  } else if (act === 'submit-referral-source-nudge') {
+    var nudgeCardEl = document.getElementById('referral-source-nudge-card');
+    var nudgeCode = nudgeCardEl ? nudgeCardEl.getAttribute('data-code') : null;
+    var nudgeValue = readReferralSourceInputs('nudge-referral-source', 'nudge-referral-source-other');
+    if (!nudgeCode || !nudgeValue) return;
+    el.disabled = true;
+    apiFetch('/purchase/referral-source', { method: 'POST', body: { code: nudgeCode, referralSource: nudgeValue } })
+      .then(function () {
+        if (nudgeCardEl) nudgeCardEl.innerHTML = '<p class="muted">Thanks!</p>';
+      })
+      .catch(function () { el.disabled = false; });
   } else if (act === 'save-exam-date') {
     var examDateEl = document.querySelector('[name="examDate"]');
     var examDateVal = examDateEl ? examDateEl.value : '';

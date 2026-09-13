@@ -608,6 +608,8 @@ nav.sub-tabs a[aria-current="page"] {
 .result-correct { color: var(--correct); }
 .result-incorrect { color: var(--incorrect); }
 #turnstile-container { margin: 0.5rem 0; }
+#buy-referral-source-wrap { margin: 0.75rem 0; }
+#buy-referral-source-other { margin-top: 0.5rem; }
 
 input[type="text"], input[type="email"], input[type="date"], input[type="number"], select, textarea {
   width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border);
@@ -675,6 +677,13 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   background: var(--surface-2); color: var(--fg); padding: 0.5rem 0.7rem; font-size: 0.88rem;
 }
 .buy-reminder-status { margin: 0; font-size: 0.8rem; color: var(--muted); }
+
+/* Post-purchase one-time nudge for whoever skipped buy-referral-source-wrap at checkout -- same
+   plain/low-key treatment as .buy-reminder-card, for the same reason (a secondary ask, not
+   competing with the real post-purchase CTAs). */
+.referral-source-nudge-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.9rem 1rem; margin: 1rem 0; text-align: left; }
+.referral-source-nudge-card p { margin: 0; font-size: 0.85rem; }
+.referral-source-nudge-card #nudge-referral-source-other { margin-top: 0; }
 
 /* Guarantee page (rebuilt as a full landing page, ported from v0's guarantee/page.tsx) */
 .guarantee-page { max-width: min(92vw, 1400px); margin: 0 auto; }
