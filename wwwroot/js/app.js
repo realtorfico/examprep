@@ -3099,7 +3099,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'il_notary',
     title: 'Illinois Notary Public Exam Prep', category: 'State Licensing', route: '/notary/il',
-    duration: 'Untimed', questions: '50 Multiple Choice (218-Question Practice Pool)', passScore: '85% (at least 42 of 50 correct on the real course-embedded exam)',
+    duration: 'Untimed', questions: '50 Multiple Choice (262-Question Practice Pool)', passScore: '85% (at least 42 of 50 correct on the real course-embedded exam)',
     breakdown: [['General Provisions & Definitions', '16%'], ['Commissioning, Training, Bond, Status Changes & Reappointment', '24%'], ['Duties, Seal, Fees & Authority', '19%'], ['Notarial Acts & Forms', '13%'], ['Electronic & Remote Notarization', '10%'], ['Liability, Misconduct & Revocation', '12%'], ['Statutory Gaps & Edge Cases', '6%']],
   },
   {
