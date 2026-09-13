@@ -3153,7 +3153,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nm_notary',
     title: 'New Mexico Notary Public Exam Prep', category: 'State Licensing', route: '/notary/nm',
-    duration: 'Untimed', questions: '50 Multiple Choice (224-Question Practice Pool)', passScore: '80% (60-minute, 50-question real exam via the NM SOS\'s designated vendor)',
+    duration: 'Untimed', questions: '50 Multiple Choice (251-Question Practice Pool)', passScore: '80% (60-minute, 50-question real exam via the NM SOS\'s designated vendor)',
     breakdown: [['General Provisions, Definitions & Commissioning', '20%'], ['Notarial Acts, Authority, ID & Applied Scenarios', '13%'], ['Certificates, Stamp & Journal Recordkeeping', '20%'], ['Electronic & Remote Notarization', '12%'], ['Discipline, Ethics, Prohibited Acts & Fees', '26%'], ['Interstate, Federal & Foreign Notarial Acts', '9%']],
   },
   {
