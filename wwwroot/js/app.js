@@ -3183,7 +3183,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'ri_notary',
     title: 'Rhode Island Notary Public Exam Prep', category: 'State Licensing', route: '/notary/ri',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- RI\'s Own Manual Calls It Just \'Multi-Question\') -- 212-Question Practice Pool', passScore: '80% (Real Self-Graded Exam via the Secretary of State\'s Own Site)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- RI\'s Own Manual Calls It Just \'Multi-Question\') -- 252-Question Practice Pool', passScore: '80% (Real Self-Graded Exam via the Secretary of State\'s Own Site)',
     breakdown: [['Commissioning, Qualifications & General Provisions', '16%'], ['Official Stamp, Fees & Prohibited Acts', '19%'], ['Notarial Acts, Authority & Determinations', '16%'], ['Electronic & Remote Notarization', '15%'], ['Discipline, Validity & Transition Provisions', '15%'], ['Definitions & Key Terms', '10%'], ['Interstate, Federal & Foreign Recognition', '9%']],
   },
   {
