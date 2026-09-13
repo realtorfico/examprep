@@ -5,10 +5,13 @@
   "scripts": {
     "test": "node --test",
     "check-info-links": "node scripts/check-info-links-coverage.js",
-    "check-track-routes": "node scripts/check-track-routes.js"
+    "check-track-routes": "node scripts/check-track-routes.js",
+    "build": "node scripts/build-minified-js.js"
   },
   "devDependencies": {
+    "clean-css": "^5.3.3",
     "jsdom": "^25.0.1",
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "terser": "^5.51.2"
   }
 }
