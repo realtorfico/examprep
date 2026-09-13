@@ -3069,7 +3069,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'az_notary',
     title: 'Arizona Notary Public Exam Prep', category: 'State Licensing', route: '/notary/az',
-    duration: 'Untimed', questions: '45 Multiple Choice (219-Question Practice Pool)', passScore: '80% (36 of 45 correct on the real Pearson VUE exam)',
+    duration: 'Untimed', questions: '45 Multiple Choice (227-Question Practice Pool)', passScore: '80% (36 of 45 correct on the real Pearson VUE exam)',
     breakdown: [['General Provisions, Commissioning & Definitions', '18%'], ['Notarial Acts, Procedures & ID/Appearance Rules', '18%'], ['Fees, Bonds & Journal Recordkeeping', '16%'], ['Changes in Status, Enforcement & Discipline', '12%'], ['Electronic & Remote Online Notarization', '10%'], ['Signature, Seal & Certificate Forms', '10%'], ['Specialized Notary Roles & Business Access', '9%'], ['Cross-Cutting Scenarios & Error Patterns', '7%']],
   },
   {
