@@ -3093,7 +3093,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'hi_notary',
     title: 'Hawaii Notary Public Exam Prep', category: 'State Licensing', route: '/notary/hi',
-    duration: 'Untimed', questions: 'Default: 45 Multiple Choice (No Official Count Exists -- Not Published by Hawaii\'s AG) -- 218-Question Practice Pool', passScore: '80% (Real, Confirmed Threshold on the In-Person AG Exam)',
+    duration: 'Untimed', questions: 'Default: 45 Multiple Choice (No Official Count Exists -- Not Published by Hawaii\'s AG) -- 227-Question Practice Pool', passScore: '80% (Real, Confirmed Threshold on the In-Person AG Exam)',
     breakdown: [['Fees, Discipline & Enforcement', '23%'], ['Electronic & Remote Online Notarization', '20%'], ['Commissioning, Eligibility & Application Lifecycle', '17%'], ['Notarial Powers, Duties & Practice Mechanics', '16%'], ['Seal, Signature & Journal Recordkeeping', '13%'], ['Definitions & Key Terms', '7%'], ['Examination Procedures & Scheduling', '4%']],
   },
   {
