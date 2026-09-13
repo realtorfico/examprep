@@ -2365,6 +2365,16 @@ var HUB_EXAMS_CONTENT = [
     title: 'ACT', category: 'ACT', route: '/act/us',
     duration: '125 Minutes', questions: '131 Questions (108 Scored)', passScore: 'N/A (1-36 composite score, no pass threshold)',
     breakdown: [['English', '37%'], ['Mathematics', '38%'], ['Reading', '25%']],
+    // Real per-section question count + time limit, verified against ACT's own 2025-2026
+    // "Preparing for the ACT" guide (temp/act/act-guide.txt) -- included sections sum to the
+    // duration/questions strings above (50+45+36=131, 35+50+40=125). Science and Writing are real,
+    // official, optional ACT sections not part of this practice bank (see
+    // BREAKDOWN_EXCLUSION_NOTES) -- shown here anyway, visually de-emphasized, so this table always
+    // matches the complete real exam rather than silently only listing what we cover.
+    sections: [
+      ['English', 50, 35, true], ['Mathematics', 45, 50, true], ['Reading', 36, 40, true],
+      ['Science (optional)', 40, 40, false], ['Writing (optional)', '1 essay', 60, false],
+    ],
   },
   {
     // Scaffold entry, active:0 in track_registry until content is live. Covers the 3 text-based
@@ -2378,6 +2388,15 @@ var HUB_EXAMS_CONTENT = [
     title: 'DAT', category: 'DAT', route: '/dat/us',
     duration: '195 Minutes', questions: '190 Questions', passScore: 'N/A (200-600 scaled score per section, no pass threshold)',
     breakdown: [['Survey of Natural Sciences', '53%'], ['Reading Comprehension', '26%'], ['Quantitative Reasoning', '21%']],
+    // Real per-section question count + time limit, verified against ADA's own 2026 DAT Candidate
+    // Guide (temp/dat/dat-guide.txt line 702-709). Included sections sum to the duration/questions
+    // strings above (100+50+40=190, 90+60+45=195). Perceptual Ability is the real, official 4th
+    // DAT section this bank excludes (see BREAKDOWN_EXCLUSION_NOTES) -- shown here anyway, visually
+    // de-emphasized, so this table always matches the complete real exam.
+    sections: [
+      ['Survey of the Natural Sciences', 100, 90, true], ['Perceptual Ability', 90, 60, false],
+      ['Reading Comprehension', 50, 60, true], ['Quantitative Reasoning', 40, 45, true],
+    ],
   },
   {
     // Scaffold entry, active:0 in track_registry until content is live. All 3 real CLT7 sections
@@ -2390,6 +2409,12 @@ var HUB_EXAMS_CONTENT = [
     title: 'CLT', category: 'CLT', route: '/clt/us',
     duration: '135 Minutes', questions: '120 Questions', passScore: 'N/A (0-120 composite score, no pass threshold)',
     breakdown: [['Verbal Reasoning', '33%'], ['Grammar/Writing', '33%'], ['Quantitative Reasoning', '34%']],
+    // Real per-section question count + time limit, verified against the real CLT7 sample test
+    // (temp/clt/clt7_sample.txt lines 18-20, 43, 604). No section excluded -- all 3 real sections
+    // are covered, so every row here is included=true.
+    sections: [
+      ['Verbal Reasoning', 40, 45, true], ['Grammar/Writing', 40, 40, true], ['Quantitative Reasoning', 40, 50, true],
+    ],
   },
   {
     // Scaffold entry, active:0 in track_registry until content is live. Covers all 4 real OAT
@@ -2403,6 +2428,13 @@ var HUB_EXAMS_CONTENT = [
     title: 'OAT', category: 'OAT', route: '/oat/us',
     duration: '245 Minutes', questions: '230 Questions', passScore: 'N/A (200-400 scaled score per section, no pass threshold)',
     breakdown: [['Survey of Natural Sciences', '43%'], ['Reading Comprehension', '22%'], ['Physics', '17%'], ['Quantitative Reasoning', '18%']],
+    // Real per-section question count + time limit, verified against ADA's own 2026 OAT Candidate
+    // Guide (temp/oat/oat-guide.txt lines 702-716). No section excluded -- all 4 real sections are
+    // covered, so every row here is included=true.
+    sections: [
+      ['Survey of the Natural Sciences', 100, 90, true], ['Reading Comprehension', 50, 60, true],
+      ['Physics', 40, 50, true], ['Quantitative Reasoning', 40, 45, true],
+    ],
   },
   {
     examType: 'ak_re_salesperson',
@@ -4344,11 +4376,11 @@ function categoryBreakdownHtml(track) {
     (track.stateCode !== 'US'
       ? '<p class="muted">Shown for ' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' — exact topics and weighting vary by state.</p>'
       : '<p class="muted">The same nationwide breakdown for every test-taker.</p>') +
-    '<div class="breakdown-list">' + track.breakdown.map(function (b) {
+    (track.sections ? examOutlineTableHtml(track) : '<div class="breakdown-list">' + track.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
       return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
-    }).join('') + '</div>' +
+    }).join('') + '</div>') +
     (BREAKDOWN_EXCLUSION_NOTES[track.examType] ? '<p class="breakdown-exclusion-note">ℹ️ ' + escapeHtml(BREAKDOWN_EXCLUSION_NOTES[track.examType]) + '</p>' : '') +
     '<div class="category-breakdown-cta"><a class="btn-secondary" href="' + track.route + '">See full ' + escapeHtml(track.shortName || '') + ' track details →</a></div>' +
     '</section>';
@@ -4750,6 +4782,32 @@ var BREAKDOWN_EXCLUSION_NOTES = {
   act: 'Science and an optional Writing essay are real ACT sections not included in this practice bank.',
   dat: 'The Perceptual Ability Test (90 real items) is not included in this practice bank -- it requires spatial/3D image-based questions this site\'s format doesn\'t yet support.',
 };
+
+// Real exam-outline table (section / question count / time limit) for the 4 national exams that
+// have per-section `sections` data -- see each entry's own HUB_EXAMS_CONTENT comment for its
+// primary source. Excluded real sections (included===false) still show, visually de-emphasized
+// with a "Not in this bank" tag, so the table always reflects the complete real exam rather than
+// silently only listing what this site covers -- a visitor can see exactly what's missing and why
+// (paired with BREAKDOWN_EXCLUSION_NOTES' explanation) instead of the gap only surfacing if they
+// compare against a third-party source themselves.
+function examOutlineTableHtml(exam) {
+  var includedQ = 0, includedMin = 0;
+  var rowsHtml = exam.sections.map(function (s) {
+    var name = s[0], count = s[1], minutes = s[2], included = s[3];
+    if (included) { includedQ += count; includedMin += minutes; }
+    return '<tr class="' + (included ? '' : 'exam-outline-row-excluded') + '">' +
+      '<td>' + escapeHtml(name) + (included ? '' : ' <span class="badge exam-outline-excluded-badge">Not in this bank</span>') + '</td>' +
+      '<td>' + escapeHtml(String(count)) + '</td>' +
+      '<td>' + minutes + ' min</td>' +
+      '</tr>';
+  }).join('');
+  return '<div class="breakdown-label">Exam Outline</div>' +
+    '<div class="exam-outline-table-wrap"><table class="guide-table exam-outline-table">' +
+    '<thead><tr><th>Section</th><th>Questions</th><th>Time</th></tr></thead>' +
+    '<tbody>' + rowsHtml + '</tbody>' +
+    '</table></div>' +
+    '<div class="exam-outline-total">This practice bank: <strong>' + includedQ + ' questions</strong> · <strong>' + includedMin + ' minutes</strong></div>';
+}
 
 // States a category deliberately does NOT cover, and a short public-facing reason why -- shown as
 // a second, muted pill next to the state-count pill on each homepage category card. Counts/reasons
@@ -6368,7 +6426,15 @@ function renderTrackLanding() {
     '<div>🏆 <strong>Passing Score:</strong> ' + exam.passScore + '</div>' +
     '</div>' + '<div id="track-landing-infolink-wrap">' + officialLinkHtml + '</div>' + intlStudentsHtml;
   var breakdownExclusionNote = BREAKDOWN_EXCLUSION_NOTES[exam.examType];
-  var breakdownHtml = '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
+  // National exams with real per-section question-count/time-limit data (see the `sections` field
+  // on each of ACT/DAT/CLT/OAT's HUB_EXAMS_CONTENT entries) get the detailed real exam-outline
+  // table instead of the plain content-weighting percentage bars -- inspired by a competitor's
+  // outline table the user shared 2026-09-12, redone in this site's own brand/layout rather than
+  // copied. State licensing tracks have no `sections` data (they're single untimed blocks, not
+  // multi-section timed exams) and keep the original percentage-breakdown display unchanged.
+  var breakdownHtml = exam.sections ? examOutlineTableHtml(exam) +
+    (breakdownExclusionNote ? '<p class="breakdown-exclusion-note">ℹ️ ' + escapeHtml(breakdownExclusionNote) + '</p>' : '') :
+    '<div class="breakdown-label">Key Breakdown</div><div class="breakdown-list">' +
     exam.breakdown.map(function (b) {
       var pct = parseInt(b[1], 10) || 0;
       return '<div class="breakdown-row">' +
