@@ -3063,7 +3063,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'vt_notary',
     title: 'Vermont Notary Public Exam Prep', category: 'State Licensing', route: '/notary/vt',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Exam Embedded in OPR\'s Online Application, Not Disclosed) -- 227-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Exam Embedded in OPR\'s Online Application, Not Disclosed) -- 251-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
     breakdown: [['Definitions & General Provisions', '12%'], ['Commissioning, Qualifications & Exam Requirement', '22%'], ['Notarial Acts, Authority & Certificates', '24%'], ['Interstate, Federal & Foreign Recognition', '14%'], ['Remote & Electronic Notarization (Special Endorsement)', '18%'], ['Administrative Procedures, Fees & Continuing Education', '10%']],
   },
   {
