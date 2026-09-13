@@ -3147,7 +3147,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nj_notary',
     title: 'New Jersey Notary Public Exam Prep', category: 'State Licensing', route: '/notary/nj',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Left to State Treasurer\'s Discretion, Undisclosed) -- 202-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Left to State Treasurer\'s Discretion, Undisclosed) -- 250-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
     breakdown: [['Commissioning, Application, Course of Study & Exam Procedures', '25%'], ['Notarial Acts, Identification, Certificates & Authority', '22%'], ['Official Stamp & Journal Recordkeeping', '17%'], ['Discipline, Prohibited Acts & Multi-Jurisdiction Recognition', '15%'], ['Electronic & Remote Notarization', '11%'], ['Statutory Definitions & Exam-Style Application Traps', '10%']],
   },
   {
