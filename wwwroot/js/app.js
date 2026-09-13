@@ -3159,7 +3159,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'nv_notary',
     title: 'Nevada Notary Public Exam Prep', category: 'State Licensing', route: '/notary/nv',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Not Published by Nevada) -- 249-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Not Published by Nevada) -- 260-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- No Official Threshold Published)',
     breakdown: [['Appointment, Training & Bond', '20%'], ['Fees, Stamp & Journal Recordkeeping', '19%'], ['Electronic Notarization', '16%'], ['Certificates, Short Forms & Satisfactory Evidence', '14%'], ['Definitions, Public Records & Other Jurisdictions', '13%'], ['Notarial Powers, Duties, Prohibited Acts & Conflicts', '10%'], ['Violations, Discipline & Hearing Procedure', '8%']],
   },
   {
