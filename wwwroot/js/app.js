@@ -3165,7 +3165,7 @@ var HUB_EXAMS_CONTENT = [
   {
     examType: 'oh_notary',
     title: 'Ohio Notary Public Exam Prep', category: 'State Licensing', route: '/notary/oh',
-    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Ohio Rule Bars a Single Uniform Test) -- 237-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- ~15 Approved Providers Each Set Their Own Score)',
+    duration: 'Untimed', questions: 'Default: 50 Multiple Choice (No Official Count Exists -- Ohio Rule Bars a Single Uniform Test) -- 250-Question Practice Pool', passScore: '80% (Self-Study Benchmark -- ~15 Approved Providers Each Set Their Own Score)',
     breakdown: [['Notarial Acts, Identification, Acknowledgments & Depositions', '27%'], ['Remote Online Notarization (RON)', '23%'], ['Electronic Journals & Recordkeeping Security', '13%'], ['Commissioning & Qualifications', '11%'], ['Seal, Fees & Jurisdiction', '9%'], ['Term, Renewal, Discipline & Investigations', '8%'], ['Prohibited Acts & Advertising', '6%'], ['Mandatory Reporting of Adult Abuse', '3%']],
   },
   {
