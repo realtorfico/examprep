@@ -4349,7 +4349,7 @@ function categoryBreakdownHtml(track) {
       return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
     }).join('') + '</div>' +
-    (BREAKDOWN_EXCLUSION_NOTES[track.examType] ? '<p class="muted breakdown-exclusion-note">ℹ️ ' + escapeHtml(BREAKDOWN_EXCLUSION_NOTES[track.examType]) + '</p>' : '') +
+    (BREAKDOWN_EXCLUSION_NOTES[track.examType] ? '<p class="breakdown-exclusion-note">ℹ️ ' + escapeHtml(BREAKDOWN_EXCLUSION_NOTES[track.examType]) + '</p>' : '') +
     '<div class="category-breakdown-cta"><a class="btn-secondary" href="' + track.route + '">See full ' + escapeHtml(track.shortName || '') + ' track details →</a></div>' +
     '</section>';
 }
@@ -6376,7 +6376,7 @@ function renderTrackLanding() {
         '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div>' +
         '</div>';
     }).join('') + '</div>' +
-    (breakdownExclusionNote ? '<p class="muted breakdown-exclusion-note">ℹ️ ' + escapeHtml(breakdownExclusionNote) + '</p>' : '');
+    (breakdownExclusionNote ? '<p class="breakdown-exclusion-note">ℹ️ ' + escapeHtml(breakdownExclusionNote) + '</p>' : '');
   var compliance = trackCompliance(exam.examType);
   var heroOverride = getTrackHeroOverride(exam);
 

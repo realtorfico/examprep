@@ -38,7 +38,7 @@ function buildThumbnailHtml(q, questionCount, examType) {
   const accent = accentForExamType(examType);
   // Longer labels (long state names + "NOTARY", or "RE SALESPERSON") need a smaller font to stay
   // on one or two lines inside the pill rather than overflowing it.
-  const labelFontSize = label.length <= 5 ? 128 : label.length <= 10 ? 92 : label.length <= 16 ? 68 : 52;
+  const labelFontSize = label.length <= 5 ? 152 : label.length <= 10 ? 110 : label.length <= 16 ? 80 : 60;
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     * { box-sizing: border-box; }
