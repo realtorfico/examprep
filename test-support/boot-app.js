@@ -148,4 +148,44 @@ async function waitFor(predicate, { timeout = 2000, interval = 5 } = {}) {
   }
 }
 
-module.exports = { bootApp, waitFor, settle };
+// A fake window.turnstile -- every form-submit test needs this now that app.js's shared
+// getFreshTurnstileToken()/waitForTurnstileToken() helpers poll window.turnstileReady/getResponse()
+// rather than reading a synchronous, possibly-empty value once; without a stub, TURNSTILE_SITE_KEY
+// stays unconfigured ('REPLACE'-prefixed) in tests, window.turnstileReady never goes true, and the
+// poll runs its full ~10s of retries before giving up. Originally written for the buy-page
+// token-reuse regression (see buy-turnstile-token-reuse.test.js); shared here since the same
+// getFreshTurnstileToken() helper now backs redeem/refer/refund/contact/testimonial too.
+// windowSetup usage: windowSetup(win) { const { stub } = makeFakeTurnstile(); win.turnstileReady = true; win.turnstile = stub; }
+function makeFakeTurnstile() {
+  let tokenCounter = 0;
+  let currentToken = '';
+  let widgetCallback = null;
+  const resetCalls = [];
+  return {
+    stub: {
+      render(el, opts) {
+        widgetCallback = opts.callback;
+        currentToken = '';
+        setTimeout(() => {
+          tokenCounter++;
+          currentToken = 'token-' + tokenCounter;
+          widgetCallback();
+        }, 5);
+        return 'widget-1';
+      },
+      getResponse() { return currentToken; },
+      reset(id) {
+        resetCalls.push(id);
+        currentToken = ''; // the widget's own token is invalidated immediately on reset
+        setTimeout(() => {
+          tokenCounter++;
+          currentToken = 'token-' + tokenCounter;
+          widgetCallback();
+        }, 5);
+      },
+    },
+    resetCalls,
+  };
+}
+
+module.exports = { bootApp, waitFor, settle, makeFakeTurnstile };

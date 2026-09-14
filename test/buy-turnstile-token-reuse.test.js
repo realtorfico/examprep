@@ -25,39 +25,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { bootApp, waitFor } = require('../test-support/boot-app');
-
-function makeFakeTurnstile() {
-  let tokenCounter = 0;
-  let currentToken = '';
-  let widgetCallback = null;
-  const resetCalls = [];
-  return {
-    stub: {
-      render(el, opts) {
-        widgetCallback = opts.callback;
-        currentToken = '';
-        setTimeout(() => {
-          tokenCounter++;
-          currentToken = 'token-' + tokenCounter;
-          widgetCallback();
-        }, 5);
-        return 'widget-1';
-      },
-      getResponse() { return currentToken; },
-      reset(id) {
-        resetCalls.push(id);
-        currentToken = ''; // the widget's own token is invalidated immediately on reset
-        setTimeout(() => {
-          tokenCounter++;
-          currentToken = 'token-' + tokenCounter;
-          widgetCallback();
-        }, 5);
-      },
-    },
-    resetCalls,
-  };
-}
+const { bootApp, waitFor, makeFakeTurnstile } = require('../test-support/boot-app');
 
 function makeFakeStripe() {
   const elementsCalls = [];

@@ -7643,6 +7643,23 @@ var stripeMountSeq = 0;
 var turnstileTokenConsumed = false;
 var turnstileWidgetId = null; // set by renderTurnstileWidget, needed to reset() this specific widget
 
+// Same "don't resend an already-spent token" protection as mountStripePaymentElement's own
+// turnstileTokenConsumed check just above, generalized for every other form that shares this same
+// page-level widget -- redeem/refer/refund/contact/testimonial, the refer page's points-promo
+// "Apply" button, and the buy page's "email me a redemption link" button. Those used to call
+// window.turnstile.getResponse() directly, which happily hands back a cached, already-spent token
+// if ANY other action on the same page already sent one (e.g. Apply promo code, then Send
+// referrals, both on #/refer share one widget without a page re-render in between).
+function getFreshTurnstileToken(callback) {
+  if (turnstileTokenConsumed && window.turnstile && turnstileWidgetId != null) {
+    try { window.turnstile.reset(turnstileWidgetId); } catch (ignored) { /* widget already gone */ }
+  }
+  waitForTurnstileToken(function (token) {
+    if (token) turnstileTokenConsumed = true;
+    callback(token);
+  });
+}
+
 // Fetches a fresh PaymentIntent (reflecting the current email/points-checkbox state -- same
 // "just-in-time, always current" idea as PayPal's createOrder callback, just triggered by
 // mount/re-mount instead of a button click, since Stripe's Payment Element needs a real
@@ -8011,7 +8028,7 @@ async function applyPointsPromoCode() {
     return;
   }
   if (resultEl) resultEl.innerHTML = '<p class="muted">Checking…</p>';
-  waitForTurnstileToken(function (turnstileToken) {
+  getFreshTurnstileToken(function (turnstileToken) {
     apiFetch('/promotions/redeem-points-multiplier', {
       method: 'POST', body: { promoCode: code, email: email, turnstileToken: turnstileToken },
     }).then(function (r) {
@@ -8032,7 +8049,7 @@ async function applyPointsPromoCode() {
         if (resultEl) {
           resultEl.innerHTML = '<p class="muted">' + (promoTitle ? 'You qualify for "' + escapeHtml(promoTitle) + '" — ' : '') + 'sending a verification link…</p>';
         }
-        waitForTurnstileToken(function (verifyTurnstileToken) {
+        getFreshTurnstileToken(function (verifyTurnstileToken) {
           apiFetch('/promotions/verify-request', {
             method: 'POST', body: { promoId: promoId, email: email, turnstileToken: verifyTurnstileToken },
           }).then(function (vr) {
@@ -8780,33 +8797,29 @@ document.addEventListener('submit', async function (e) {
   } else if (act === 'redeem-submit') {
     e.preventDefault();
     var code = e.target.code.value.trim();
-    var turnstileToken = '';
-    try { turnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { turnstileToken = ''; }
-    try {
-      var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
-      setToken(res.token);
-      // Redeem is reached via a hash-only route (#/redeem) while location.pathname stays whatever
-      // it already was (often "/", since redeem is deliberately track-agnostic -- see route()'s own
-      // comment on this). Just setting location.hash + calling renderTrackApp() directly used to
-      // race the browser's own async hashchange event: hashchange still fires route(), which
-      // resolves the current track from PATHNAME (activeTrackForPath()), not state.examType/hash --
-      // so on a still-"/" pathname it fell through to renderHub(), clobbering the correct render a
-      // moment after it happened. Net effect: redeeming never visibly landed on the code's track.
-      // A real navigation to the track's own path fixes this at the root -- pathname now matches,
-      // so even a hashchange-triggered route() resolves correctly. The token survives (localStorage,
-      // not an in-memory var), and the normal boot sequence picks it up on the fresh page load.
-      location.href = redeemDestinationUrl(res.examType);
-    } catch (err) {
-      renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
-        err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
-    }
+    getFreshTurnstileToken(async function (turnstileToken) {
+      try {
+        var res = await apiFetch('/redeem', { method: 'POST', body: { code: code, turnstileToken: turnstileToken } });
+        setToken(res.token);
+        // Redeem is reached via a hash-only route (#/redeem) while location.pathname stays whatever
+        // it already was (often "/", since redeem is deliberately track-agnostic -- see route()'s own
+        // comment on this). Just setting location.hash + calling renderTrackApp() directly used to
+        // race the browser's own async hashchange event: hashchange still fires route(), which
+        // resolves the current track from PATHNAME (activeTrackForPath()), not state.examType/hash --
+        // so on a still-"/" pathname it fell through to renderHub(), clobbering the correct render a
+        // moment after it happened. Net effect: redeeming never visibly landed on the code's track.
+        // A real navigation to the track's own path fixes this at the root -- pathname now matches,
+        // so even a hashchange-triggered route() resolves correctly. The token survives (localStorage,
+        // not an in-memory var), and the normal boot sequence picks it up on the fresh page load.
+        location.href = redeemDestinationUrl(res.examType);
+      } catch (err) {
+        renderRedeem(err.data && err.data.error === 'code_expired' ? 'This code has expired.' :
+          err.data && err.data.error === 'code_revoked' ? 'This code is no longer valid.' : 'Invalid code.');
+      }
+    });
   } else if (act === 'refer-submit') {
     e.preventDefault();
     var f = e.target;
-    var referTurnstileToken = '';
-    try { referTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { referTurnstileToken = ''; }
 
     var friendRows = document.querySelectorAll('.referred-friend-row');
     var friends = [];
@@ -8822,108 +8835,110 @@ document.addEventListener('submit', async function (e) {
       return;
     }
 
-    try {
-      var inviteRes = await apiFetch('/referrals/invite', {
-        method: 'POST',
-        body: {
-          referrerEmail: f.referrerEmail.value.trim(),
-          referrerName: f.referrerName.value.trim() || undefined,
-          friends: friends,
-          turnstileToken: referTurnstileToken,
-        },
-      });
-      saveReferrerInfo(f.referrerName.value.trim(), f.referrerEmail.value.trim());
-      var sentResults = inviteRes.results.filter(function (r) { return r.status === 'sent'; });
-      var issueResults = inviteRes.results.filter(function (r) { return r.status !== 'sent'; });
-      var issueLabel = {
-        already_referred: 'already referred by someone', self: 'that\'s your own email',
-        invalid: 'missing an email', disposable_email: 'looks like a throwaway address',
-      };
-      var issuesHtml = issueResults.length
-        ? '<p class="muted">Couldn\'t send to:</p><ul class="muted">' + issueResults.map(function (r) {
-            return '<li>' + escapeHtml(r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
-          }).join('') + '</ul>'
-        : '';
-      appEl.innerHTML = '<h1>Thanks!</h1>' +
-        (sentResults.length
-          ? '<p class="muted">We\'ve emailed ' + sentResults.length + ' friend' + (sentResults.length === 1 ? '' : 's') +
-            ' to confirm — you\'ll earn points once each does.</p>'
-          : '') +
-        issuesHtml +
-        '<a class="btn-secondary hub-cta" href="#/refer">Refer more friends</a>';
-    } catch (err) {
-      var referErrCode = err.data && err.data.error;
-      var referMsg = referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
-        referErrCode === 'disposable_email' ? 'Please use a real, non-throwaway email address for yourself.' :
-        'Something went wrong. Please try again.';
-      renderReferForm();
-      var formEl = document.querySelector('form[data-act="refer-submit"]');
-      if (formEl) formEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + referMsg + '</p>');
-    }
+    // Fetched after the friends-list validation above (not before) so an invalid submit doesn't
+    // needlessly burn a reset()/re-challenge on the shared widget -- see getFreshTurnstileToken.
+    getFreshTurnstileToken(async function (referTurnstileToken) {
+      try {
+        var inviteRes = await apiFetch('/referrals/invite', {
+          method: 'POST',
+          body: {
+            referrerEmail: f.referrerEmail.value.trim(),
+            referrerName: f.referrerName.value.trim() || undefined,
+            friends: friends,
+            turnstileToken: referTurnstileToken,
+          },
+        });
+        saveReferrerInfo(f.referrerName.value.trim(), f.referrerEmail.value.trim());
+        var sentResults = inviteRes.results.filter(function (r) { return r.status === 'sent'; });
+        var issueResults = inviteRes.results.filter(function (r) { return r.status !== 'sent'; });
+        var issueLabel = {
+          already_referred: 'already referred by someone', self: 'that\'s your own email',
+          invalid: 'missing an email', disposable_email: 'looks like a throwaway address',
+        };
+        var issuesHtml = issueResults.length
+          ? '<p class="muted">Couldn\'t send to:</p><ul class="muted">' + issueResults.map(function (r) {
+              return '<li>' + escapeHtml(r.email || '(blank)') + ' — ' + (issueLabel[r.status] || 'error') + '</li>';
+            }).join('') + '</ul>'
+          : '';
+        appEl.innerHTML = '<h1>Thanks!</h1>' +
+          (sentResults.length
+            ? '<p class="muted">We\'ve emailed ' + sentResults.length + ' friend' + (sentResults.length === 1 ? '' : 's') +
+              ' to confirm — you\'ll earn points once each does.</p>'
+            : '') +
+          issuesHtml +
+          '<a class="btn-secondary hub-cta" href="#/refer">Refer more friends</a>';
+      } catch (err) {
+        var referErrCode = err.data && err.data.error;
+        var referMsg = referErrCode === 'rate_limited' ? 'Too many referrals sent today — try again tomorrow.' :
+          referErrCode === 'disposable_email' ? 'Please use a real, non-throwaway email address for yourself.' :
+          'Something went wrong. Please try again.';
+        renderReferForm();
+        var formEl = document.querySelector('form[data-act="refer-submit"]');
+        if (formEl) formEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + referMsg + '</p>');
+      }
+    });
   } else if (act === 'refund-claim-submit') {
     e.preventDefault();
     var refundForm = e.target;
-    var refundTurnstileToken = '';
-    try { refundTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { refundTurnstileToken = ''; }
     var claimType = refundForm.claimType.value;
-    try {
-      var claimRes = await apiFetch('/refunds/claim', {
-        method: 'POST',
-        body: {
-          code: refundForm.code.value.trim(),
-          email: refundForm.email.value.trim(),
-          claimType: claimType,
-          examDate: refundForm.examDate ? refundForm.examDate.value : undefined,
-          confirmationNote: refundForm.confirmationNote ? refundForm.confirmationNote.value.trim() : undefined,
-          notes: refundForm.notes.value.trim(),
-          turnstileToken: refundTurnstileToken,
-        },
-      });
-      appEl.innerHTML = '<h1>Request submitted</h1>' +
-        '<p class="muted">We\'ll review it and get back to you at the email you provided. Approved refunds ' +
-        'of $' + (claimRes.refundCents / 100).toFixed(2) + ' are processed directly through your original payment method.</p>' +
-        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
-    } catch (err) {
-      var refundErrCode = err.data && err.data.error;
-      var refundMsg =
-        refundErrCode === 'not_a_paid_purchase' ? 'That code wasn\'t a paid purchase (free/points-redeemed courses aren\'t eligible).' :
-        refundErrCode === 'already_claimed' ? 'A refund request already exists for that code.' :
-        refundErrCode === 'window_expired' ? 'That code is outside the eligibility window for this guarantee.' :
-        refundErrCode === 'code_not_found' ? 'We couldn\'t find that access code.' :
-        'Something went wrong. Please try again.';
-      renderRefundRequest();
-      var refundFormEl = document.querySelector('form[data-act="refund-claim-submit"]');
-      if (refundFormEl) refundFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + refundMsg + '</p>');
-    }
+    getFreshTurnstileToken(async function (refundTurnstileToken) {
+      try {
+        var claimRes = await apiFetch('/refunds/claim', {
+          method: 'POST',
+          body: {
+            code: refundForm.code.value.trim(),
+            email: refundForm.email.value.trim(),
+            claimType: claimType,
+            examDate: refundForm.examDate ? refundForm.examDate.value : undefined,
+            confirmationNote: refundForm.confirmationNote ? refundForm.confirmationNote.value.trim() : undefined,
+            notes: refundForm.notes.value.trim(),
+            turnstileToken: refundTurnstileToken,
+          },
+        });
+        appEl.innerHTML = '<h1>Request submitted</h1>' +
+          '<p class="muted">We\'ll review it and get back to you at the email you provided. Approved refunds ' +
+          'of $' + (claimRes.refundCents / 100).toFixed(2) + ' are processed directly through your original payment method.</p>' +
+          '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+      } catch (err) {
+        var refundErrCode = err.data && err.data.error;
+        var refundMsg =
+          refundErrCode === 'not_a_paid_purchase' ? 'That code wasn\'t a paid purchase (free/points-redeemed courses aren\'t eligible).' :
+          refundErrCode === 'already_claimed' ? 'A refund request already exists for that code.' :
+          refundErrCode === 'window_expired' ? 'That code is outside the eligibility window for this guarantee.' :
+          refundErrCode === 'code_not_found' ? 'We couldn\'t find that access code.' :
+          'Something went wrong. Please try again.';
+        renderRefundRequest();
+        var refundFormEl = document.querySelector('form[data-act="refund-claim-submit"]');
+        if (refundFormEl) refundFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + refundMsg + '</p>');
+      }
+    });
   } else if (act === 'contact-submit') {
     e.preventDefault();
     var contactForm = e.target;
-    var contactTurnstileToken = '';
-    try { contactTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { contactTurnstileToken = ''; }
-    try {
-      await apiFetch('/contact', {
-        method: 'POST',
-        body: {
-          name: contactForm.name.value.trim() || undefined,
-          email: contactForm.email.value.trim(),
-          message: contactForm.message.value.trim(),
-          turnstileToken: contactTurnstileToken,
-        },
-      });
-      appEl.innerHTML = '<h1>Message sent</h1>' +
-        '<p class="muted">Thanks for reaching out — we\'ll reply to your email as soon as we can.</p>' +
-        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
-    } catch (err) {
-      var contactErrCode = err.data && err.data.error;
-      var contactMsg = contactErrCode === 'contact_not_configured' || contactErrCode === 'send_failed'
-        ? 'Sorry, something went wrong on our end sending this — please try again shortly.'
-        : 'Something went wrong. Please try again.';
-      renderContact();
-      var contactFormEl = document.querySelector('form[data-act="contact-submit"]');
-      if (contactFormEl) contactFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + contactMsg + '</p>');
-    }
+    getFreshTurnstileToken(async function (contactTurnstileToken) {
+      try {
+        await apiFetch('/contact', {
+          method: 'POST',
+          body: {
+            name: contactForm.name.value.trim() || undefined,
+            email: contactForm.email.value.trim(),
+            message: contactForm.message.value.trim(),
+            turnstileToken: contactTurnstileToken,
+          },
+        });
+        appEl.innerHTML = '<h1>Message sent</h1>' +
+          '<p class="muted">Thanks for reaching out — we\'ll reply to your email as soon as we can.</p>' +
+          '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+      } catch (err) {
+        var contactErrCode = err.data && err.data.error;
+        var contactMsg = contactErrCode === 'contact_not_configured' || contactErrCode === 'send_failed'
+          ? 'Sorry, something went wrong on our end sending this — please try again shortly.'
+          : 'Something went wrong. Please try again.';
+        renderContact();
+        var contactFormEl = document.querySelector('form[data-act="contact-submit"]');
+        if (contactFormEl) contactFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">' + contactMsg + '</p>');
+      }
+    });
   } else if (act === 'waitlist-join') {
     e.preventDefault();
     var waitlistForm = e.target;
@@ -8944,28 +8959,27 @@ document.addEventListener('submit', async function (e) {
   } else if (act === 'testimonial-submit') {
     e.preventDefault();
     var testimonialForm = e.target;
-    var testimonialTurnstileToken = '';
-    try { testimonialTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { testimonialTurnstileToken = ''; }
-    try {
-      await apiFetch('/testimonials/submit', {
-        method: 'POST',
-        body: {
-          author: testimonialForm.author.value.trim(),
-          email: testimonialForm.email.value.trim() || undefined,
-          examType: testimonialForm.examType.value,
-          quote: testimonialForm.quote.value.trim(),
-          turnstileToken: testimonialTurnstileToken,
-        },
-      });
-      appEl.innerHTML = '<h1>Thank you!</h1>' +
-        '<p class="muted">Your testimonial has been submitted for review — thanks for taking the time to share it.</p>' +
-        '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
-    } catch (err) {
-      renderTestimonialForm();
-      var testimonialFormEl = document.querySelector('form[data-act="testimonial-submit"]');
-      if (testimonialFormEl) testimonialFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">Something went wrong. Please try again.</p>');
-    }
+    getFreshTurnstileToken(async function (testimonialTurnstileToken) {
+      try {
+        await apiFetch('/testimonials/submit', {
+          method: 'POST',
+          body: {
+            author: testimonialForm.author.value.trim(),
+            email: testimonialForm.email.value.trim() || undefined,
+            examType: testimonialForm.examType.value,
+            quote: testimonialForm.quote.value.trim(),
+            turnstileToken: testimonialTurnstileToken,
+          },
+        });
+        appEl.innerHTML = '<h1>Thank you!</h1>' +
+          '<p class="muted">Your testimonial has been submitted for review — thanks for taking the time to share it.</p>' +
+          '<a class="btn-secondary hub-cta" href="/">Back to home</a>';
+      } catch (err) {
+        renderTestimonialForm();
+        var testimonialFormEl = document.querySelector('form[data-act="testimonial-submit"]');
+        if (testimonialFormEl) testimonialFormEl.insertAdjacentHTML('beforebegin', '<p class="error-text">Something went wrong. Please try again.</p>');
+      }
+    });
   } else if (act === 'report-issue-submit') {
     e.preventDefault();
     var reportIssueForm = e.target;
@@ -9606,24 +9620,27 @@ document.addEventListener('click', async function (e) {
     }
   } else if (act === 'redeem-points') {
     var redeemEmail = el.getAttribute('data-email');
-    var redeemTurnstileToken = '';
-    try { redeemTurnstileToken = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }
-    catch (ignored) { redeemTurnstileToken = ''; }
     var pointsResultEl = document.getElementById('points-result');
-    try {
-      await apiFetch('/points/redeem', {
-        method: 'POST', body: { email: redeemEmail, examType: state.examType, turnstileToken: redeemTurnstileToken },
-      });
-      // Doesn't redeem instantly -- a confirmation link goes to that email first, so only
-      // someone who actually controls the inbox can complete the redemption.
-      if (pointsResultEl) pointsResultEl.innerHTML =
-        '<p class="result-correct">Check ' + escapeHtml(redeemEmail) + ' for a confirmation link — click it to get your code.</p>';
-    } catch (err) {
-      var redeemErrCode = err.data && err.data.error;
-      var redeemMsg = redeemErrCode === 'insufficient_points' ? 'Your points balance changed — recheck it above.' :
-        'Could not redeem — try again shortly.';
-      if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">' + redeemMsg + '</p>';
-    }
+    // Shares the buy page's single Turnstile widget with checkout/promo-code, so it needs the
+    // same reset()-if-already-spent handling as those -- e.g. a visitor who already interacted
+    // with checkout before clicking "Email me a redemption link" would otherwise resend the same
+    // token checkout just spent.
+    getFreshTurnstileToken(async function (redeemTurnstileToken) {
+      try {
+        await apiFetch('/points/redeem', {
+          method: 'POST', body: { email: redeemEmail, examType: state.examType, turnstileToken: redeemTurnstileToken },
+        });
+        // Doesn't redeem instantly -- a confirmation link goes to that email first, so only
+        // someone who actually controls the inbox can complete the redemption.
+        if (pointsResultEl) pointsResultEl.innerHTML =
+          '<p class="result-correct">Check ' + escapeHtml(redeemEmail) + ' for a confirmation link — click it to get your code.</p>';
+      } catch (err) {
+        var redeemErrCode = err.data && err.data.error;
+        var redeemMsg = redeemErrCode === 'insufficient_points' ? 'Your points balance changed — recheck it above.' :
+          'Could not redeem — try again shortly.';
+        if (pointsResultEl) pointsResultEl.innerHTML = '<p class="error-text">' + redeemMsg + '</p>';
+      }
+    });
   }
 });
 

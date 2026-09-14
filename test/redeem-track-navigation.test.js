@@ -19,7 +19,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { bootApp, settle } = require('../test-support/boot-app');
+const { bootApp, settle, makeFakeTurnstile } = require('../test-support/boot-app');
 
 // Both tests need a real, currently-active, state-scoped track to redeem "into" -- picked from the
 // real catalog rather than hardcoded, so this never drifts stale as tracks are added/retired.
@@ -68,6 +68,15 @@ test('submitting the redeem form completes without error and stores the returned
     fetchOverrides: [
       ['/redeem', { token: 'test-token-abc', examType: track.examType }],
     ],
+    // redeem-submit now goes through app.js's shared getFreshTurnstileToken()/waitForTurnstileToken()
+    // helpers (see the redeem/refer/refund/contact/testimonial fix alongside the buy-page
+    // token-reuse bug) -- without a real Turnstile stub, window.turnstileReady never goes true and
+    // the poll would run its full ~10s of retries before giving up.
+    windowSetup(win) {
+      const { stub } = makeFakeTurnstile();
+      win.turnstileReady = true;
+      win.turnstile = stub;
+    },
   });
   t.after(() => step1.dom.window.close());
 
