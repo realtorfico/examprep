@@ -7406,7 +7406,8 @@ function drawBuyForm(pricing, giftIntent) {
     // paying?". Posts to /buy/reminder -- see that endpoint's own comment for why this is a
     // lightweight, separate capture from the real checkout-intent tracking.
     '<div class="card buy-reminder-card" id="buy-reminder-card">' +
-    '<p class="muted buy-reminder-intro">Not ready today? Leave your email and we\'ll send a one-time reminder.</p>' +
+    '<p class="muted buy-reminder-intro">Not ready today? Leave your email and we\'ll send a one-time reminder ' +
+    '— we may also let you know about promos and sale events.</p>' +
     '<form class="buy-reminder-form" data-act="buy-reminder-submit">' +
     '<input type="email" name="email" placeholder="you@example.com" required>' +
     '<button class="btn-secondary btn-sm" type="submit">Remind me</button>' +
@@ -7556,6 +7557,85 @@ function drawBuyForm(pricing, giftIntent) {
   }
   loadStripeSdk(function () { mountStripePaymentElement(); });
 }
+
+// Shared by both the passive "Not ready today?" card above and the exit-intent modal below --
+// same endpoint/request shape; only what happens on success differs (the card swaps its own text
+// in place, the modal closes itself).
+async function submitBuyReminder(email, statusEl, btn, onSuccess) {
+  if (!email) return;
+  if (btn) btn.disabled = true;
+  try {
+    await apiFetch('/buy/reminder', { method: 'POST', body: { email: email, examType: state.examType } });
+    onSuccess();
+  } catch (err) {
+    if (btn) btn.disabled = false;
+    if (statusEl) { statusEl.hidden = false; statusEl.textContent = 'Something went wrong. Please try again.'; }
+  }
+}
+
+// ---- Buy-page exit-intent capture --------------------------------------
+// The passive buy-reminder-card above is opt-in and easy to miss entirely -- a visitor who never
+// notices it, never focuses the real payment form (so never trips mountStripePaymentElement's own
+// checkout_intents tracking either), and just closes the tab leaves with nothing captured. This
+// adds an active nudge: when the mouse leaves the viewport through the TOP -- the standard "heading
+// for the tab bar / back button / address bar / the X" exit-intent signal -- show a one-time modal
+// reusing the same /buy/reminder endpoint (and its 'exit_capture' checkout_intents row) the passive
+// card already uses. document's own 'mouseleave' only fires on a genuine viewport exit, never while
+// hovering or clicking something still inside the page, so an ordinary click on a same-site link or
+// the sticky header nav (also near the top) never triggers this -- deliberately NOT hooked to any
+// in-app navigation/route() event, only to real cursor-leaves-the-browser movement.
+// Desktop-only by nature (no mouse to read on mobile) -- deliberately not extended to a mobile
+// heuristic (or to any other page) yet; see project memory for why this stays buy-page-only.
+var EXIT_INTENT_SESSION_KEY = 'examprep_buy_exit_intent_shown';
+
+function exitIntentAlreadyShownThisSession() {
+  try { return !!sessionStorage.getItem(EXIT_INTENT_SESSION_KEY); } catch (ignored) { return false; } // private mode etc.
+}
+
+function maybeShowExitIntentModal(e) {
+  if (e.clientY > 0) return; // only the "leaving via the top" case
+  if (!document.getElementById('buy-reminder-card')) return; // not currently on the buy page
+  if (document.getElementById('exit-intent-modal')) return; // already showing
+  if (exitIntentAlreadyShownThisSession()) return;
+  showExitIntentModal();
+}
+
+function showExitIntentModal() {
+  try { sessionStorage.setItem(EXIT_INTENT_SESSION_KEY, '1'); } catch (ignored) { /* private mode etc. */ }
+  var buyEmailEl = document.getElementById('buy-email');
+  var prefillEmail = buyEmailEl ? buyEmailEl.value.trim() : '';
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="exit-intent-overlay" id="exit-intent-modal">' +
+    '<div class="card exit-intent-card">' +
+    '<button class="exit-intent-dismiss" type="button" data-act="dismiss-exit-intent" aria-label="Dismiss">✕</button>' +
+    '<p class="exit-intent-title">Wait — don\'t lose your spot</p>' +
+    '<p class="muted">Leave your email and we\'ll send a one-time reminder — we may also let you know about ' +
+    'promos and sale events.</p>' +
+    '<form class="exit-intent-form" data-act="exit-intent-submit">' +
+    '<input type="email" name="email" placeholder="you@example.com" value="' + escapeHtml(prefillEmail) + '" required>' +
+    '<button class="btn-primary btn-sm" type="submit">Remind me</button>' +
+    '</form>' +
+    '<p class="exit-intent-status error-text" id="exit-intent-status" hidden></p>' +
+    '</div>' +
+    '</div>');
+}
+
+function closeExitIntentModal() {
+  var modal = document.getElementById('exit-intent-modal');
+  if (modal) modal.remove();
+}
+
+document.addEventListener('mouseleave', maybeShowExitIntentModal);
+// Backdrop click only -- a click on the dismiss button itself goes through the generic
+// data-act click dispatcher below (act === 'dismiss-exit-intent'), same as every other button in
+// the app. e.target === the overlay element itself only when the click lands on the dimmed
+// backdrop directly, never when it lands on (and bubbles up from) the card inside it.
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'exit-intent-modal') closeExitIntentModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('exit-intent-modal')) closeExitIntentModal();
+});
 
 // Lets someone comparison-shop other active tracks' pricing without leaving the buy flow --
 // deliberately just a browse/switch list, not a cart: each account/purchase is still scoped to
@@ -9034,24 +9114,21 @@ document.addEventListener('submit', async function (e) {
   } else if (act === 'buy-reminder-submit') {
     e.preventDefault();
     var buyReminderForm = e.target;
-    var buyReminderStatusEl = document.getElementById('buy-reminder-status');
-    var buyReminderBtn = buyReminderForm.querySelector('button[type="submit"]');
-    var buyReminderEmail = buyReminderForm.email.value.trim();
-    if (!buyReminderEmail) return;
-    if (buyReminderBtn) buyReminderBtn.disabled = true;
-    try {
-      await apiFetch('/buy/reminder', {
-        method: 'POST',
-        body: { email: buyReminderEmail, examType: state.examType },
-      });
-      buyReminderForm.innerHTML = '<p class="muted">We\'ll send you a reminder.</p>';
-    } catch (err) {
-      if (buyReminderBtn) buyReminderBtn.disabled = false;
-      if (buyReminderStatusEl) {
-        buyReminderStatusEl.hidden = false;
-        buyReminderStatusEl.textContent = 'Something went wrong. Please try again.';
-      }
-    }
+    await submitBuyReminder(
+      buyReminderForm.email.value.trim(),
+      document.getElementById('buy-reminder-status'),
+      buyReminderForm.querySelector('button[type="submit"]'),
+      function () { buyReminderForm.innerHTML = '<p class="muted">We\'ll send you a reminder.</p>'; }
+    );
+  } else if (act === 'exit-intent-submit') {
+    e.preventDefault();
+    var exitIntentForm = e.target;
+    await submitBuyReminder(
+      exitIntentForm.email.value.trim(),
+      document.getElementById('exit-intent-status'),
+      exitIntentForm.querySelector('button[type="submit"]'),
+      closeExitIntentModal
+    );
   }
 });
 
@@ -9145,6 +9222,8 @@ document.addEventListener('click', async function (e) {
     toggleReportIssuePanel();
   } else if (act === 'toggle-suggestion') {
     toggleSuggestionPanel();
+  } else if (act === 'dismiss-exit-intent') {
+    closeExitIntentModal();
   } else if (act === 'listen') {
     speak(questionReadText(state.question));
   } else if (act === 'answer') {

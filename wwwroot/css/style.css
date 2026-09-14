@@ -678,6 +678,30 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .buy-reminder-status { margin: 0; font-size: 0.8rem; color: var(--muted); }
 
+/* Exit-intent modal (see maybeShowExitIntentModal in app.js) -- same email-capture idea as
+   .buy-reminder-card above, just actively surfaced instead of waiting to be noticed. z-index above
+   #site-header (40) and the corner widgets (50) so it sits on top of everything. */
+.exit-intent-overlay {
+  position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, black 55%, transparent); padding: 1rem;
+}
+.exit-intent-card {
+  position: relative; max-width: 26rem; width: 100%; text-align: center;
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.exit-intent-dismiss {
+  position: absolute; top: 0.6rem; right: 0.7rem; background: transparent; border: none;
+  color: var(--muted); cursor: pointer; font-size: 1rem; line-height: 1; padding: 0.2rem;
+}
+.exit-intent-dismiss:hover { color: var(--fg); }
+.exit-intent-title { margin: 0.2rem 0 0; font-weight: 700; font-size: 1.1rem; }
+.exit-intent-form { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.3rem; }
+.exit-intent-form input {
+  flex: 1; min-width: 10rem; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface-2); color: var(--fg); padding: 0.5rem 0.7rem; font-size: 0.88rem;
+}
+.exit-intent-status { margin: 0; }
+
 /* Post-purchase one-time nudge for whoever skipped buy-referral-source-wrap at checkout -- same
    plain/low-key treatment as .buy-reminder-card, for the same reason (a secondary ask, not
    competing with the real post-purchase CTAs). */
