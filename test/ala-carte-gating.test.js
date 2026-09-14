@@ -10,7 +10,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { bootApp, settle } = require('../test-support/boot-app');
+const { bootApp, settle, waitFor } = require('../test-support/boot-app');
 
 const CA_CDL_TOPICS = {
   gk: 'General Knowledge (CDL Rules, Safe Driving & Cargo)',
@@ -209,4 +209,36 @@ test('Progress: the per-topic table shows a locked row for an un-owned topic, no
 
   const gkRow = findRow(document, CA_CDL_TOPICS.gk);
   assert.doesNotMatch(gkRow.textContent, /full track access/i, 'the owned topic row must show real stats, not a lock state');
+});
+
+// ---- Track landing page à la carte note ------------------------------------
+
+test('Track landing page: CA CDL shows a note pointing to à la carte purchase', async (t) => {
+  const { dom, document } = await bootApp({
+    url: 'https://passexamhq.com/cdl/ca',
+    fetchOverrides: [
+      ['/track-key-breakdown', { items: [{ label: CA_CDL_TOPICS.gk, declared_pct: 48, sort_order: 0 }] }],
+    ],
+  });
+  t.after(() => dom.window.close());
+
+  const wrap = document.getElementById('track-landing-ala-carte-note-wrap');
+  await waitFor(() => wrap.textContent.trim().length > 0);
+  const link = wrap.querySelector('a[href="#/buy"]');
+  assert.ok(link, 'the note must link to the buy page, not just mention the feature');
+  assert.match(wrap.textContent, /Buy just what you need/i);
+});
+
+test('Track landing page: a track with no track_key_breakdown rows shows no à la carte note', async (t) => {
+  const { dom, document } = await bootApp({
+    url: 'https://passexamhq.com/driver/ca',
+    fetchOverrides: [
+      ['/track-key-breakdown', { items: [] }],
+    ],
+  });
+  t.after(() => dom.window.close());
+  await settle();
+
+  const wrap = document.getElementById('track-landing-ala-carte-note-wrap');
+  assert.equal(wrap.textContent.trim(), '', 'no track_key_breakdown rows means no note, unchanged from before this feature existed');
 });

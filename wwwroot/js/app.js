@@ -6554,7 +6554,7 @@ function renderTrackLanding() {
       heroOverride.bullets.map(function (b) { return '<li>✓ ' + escapeHtml(b) + '</li>'; }).join('') +
       '</ul>' : '') +
     '<div class="buy-layout">' +
-    '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '<div id="track-landing-blogpost-wrap"></div>' + '</div></div>' +
+    '<div class="buy-value-col"><div class="card">' + specsHtml + trackResourceStatsHtml(exam.examType) + breakdownHtml + '<div id="track-landing-ala-carte-note-wrap"></div>' + '<div id="track-landing-blogpost-wrap"></div>' + '</div></div>' +
     '<div class="card">' +
     '<div id="track-landing-promotions-wrap" class="promotions-wrap"></div>' +
     '<div class="exam-track-price" id="landing-price">…</div>' +
@@ -6601,6 +6601,7 @@ function renderTrackLanding() {
     if (el) el.textContent = '';
   });
   loadOtherTracksPricing();
+  fillTrackLandingAlaCarteNote(exam.examType);
   fillTrackQuestionCount(exam.examType);
   fillTrackLandingResourcePreview(exam.examType);
   loadTrackLandingSampleQuestion(exam);
@@ -6622,6 +6623,23 @@ function renderTrackLanding() {
     var wrap = document.getElementById('track-landing-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
   }).catch(function () { /* best-effort -- page still works without it */ });
+}
+
+// À la carte awareness note under the Key Breakdown section -- see project memory
+// project_ca_cdl_topic_purchase_pilot. Deliberately just a one-line pointer to #/buy, not a real
+// price quote: this landing page is the highest-traffic unauthenticated surface site-wide, so a
+// live /topic-pricing fetch here would add a DB read to every single pageview to price topics most
+// visitors won't buy individually. Best-effort/silent on failure or on tracks without
+// track_key_breakdown rows (every track except CA CDL today) -- the wrap div just stays empty,
+// same as before this feature existed.
+function fillTrackLandingAlaCarteNote(examType) {
+  apiFetch('/track-key-breakdown?examType=' + encodeURIComponent(examType)).then(function (res) {
+    if (state.examType !== examType) return; // navigated away
+    var wrap = document.getElementById('track-landing-ala-carte-note-wrap');
+    if (!wrap || !(res.items || []).length) return;
+    wrap.innerHTML = '<p class="muted track-landing-ala-carte-note">Only need certain topics? ' +
+      '<a href="#/buy">Buy just what you need →</a></p>';
+  }).catch(function () { /* best-effort -- note just stays absent */ });
 }
 
 // Patches in the TRACK_CONTENT-derived pieces (official info link, generic description, real

@@ -1238,6 +1238,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    list styling but needs its own top margin since it follows a paragraph here, not a price card. */
 .track-hero-trust-list { margin-top: 1rem; margin-bottom: 1.4rem; max-width: 46ch; }
 .track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
+.track-landing-ala-carte-note { font-size: 0.78rem; margin: 0.6rem 0 0; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }
 .track-landing-preview-section h2 { margin-bottom: 0.3rem; }
