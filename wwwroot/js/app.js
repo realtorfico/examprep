@@ -17,13 +17,27 @@ var state = { question: null, answered: null, examType: '', quizDifficulty: loca
 // token-scoped server-side), but the page chrome (track name, tab state) would show the WRONG
 // track, confusingly. null = not yet loaded, or not logged in.
 var accountExamType = null;
+// null = full track access (every existing account, and the default for every non-à-la-carte
+// purchase) -- an array of track_key_breakdown label strings only for an à la carte topic
+// purchaser. See ownedTopicsFor in the API (same shape, same meaning) -- this is that same value,
+// just surfaced to the client so pages can gate/lock content by topic ownership (Resources,
+// Progress, the Exam/Weak Spots tab lock).
+var accountOwnedTopics = null;
 function loadAccountExamType() {
-  if (!getToken()) { accountExamType = null; return Promise.resolve(null); }
-  return apiFetch('/prefs').then(function (p) { accountExamType = p.examType; return accountExamType; })
-    .catch(function () { return accountExamType; }); // best-effort -- a failed fetch shouldn't block boot
+  if (!getToken()) { accountExamType = null; accountOwnedTopics = null; return Promise.resolve(null); }
+  return apiFetch('/prefs').then(function (p) {
+    accountExamType = p.examType;
+    accountOwnedTopics = p.ownedTopics || null;
+    return accountExamType;
+  }).catch(function () { return accountExamType; }); // best-effort -- a failed fetch shouldn't block boot
 }
 // True only when logged in AND that login is for the track currently being viewed.
 function isLoggedInForCurrentTrack() { return !!getToken() && accountExamType === state.examType; }
+// True only for a logged-in, à la carte (partial-topic) account viewing its own track -- distinct
+// from isLoggedInForCurrentTrack, which is also true for a full-access account. Callers that need
+// to gate/lock content by ownership should check this, not just accountOwnedTopics directly, so a
+// stale accountOwnedTopics value from a DIFFERENT track's earlier login can never leak in.
+function isPartialOwnerOfCurrentTrack() { return isLoggedInForCurrentTrack() && !!accountOwnedTopics; }
 var QUIZ_DIFFICULTIES = [['', 'All'], ['easy', 'Easy'], ['moderate', 'Moderate'], ['hard', 'Hard'], ['extremely_hard', 'Extremely Hard']];
 // Off by default -- matches pre-existing behavior unless the user opts in. Persisted like the
 // difficulty filter. quizRenderToken invalidates any pending auto-advance timer as soon as a new
@@ -5281,12 +5295,19 @@ function renderTabs(active) {
   // guard in renderTrackApp). Deliberately isLoggedInForCurrentTrack(), not just getToken() -- see
   // its definition for why (an account bound to one track viewing a different track's route).
   var loggedIn = isLoggedInForCurrentTrack();
+  // Exam and Weak Spots are both full simulations of the real, complete exam -- not a fair test
+  // (and, per handleExamStart, not actually servable) for an à la carte account that only owns
+  // some of the track's topics. Same "show but lock, never hide" treatment as the plain
+  // logged-out case below, just a second reason for the SAME two tabs specifically.
+  var examModeLocked = { exam: true, toughest45: true };
+  var partialOwner = isPartialOwnerOfCurrentTrack();
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Weak Spots'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">' + escapeHtml((trackByExamType(state.examType) || {}).shortName || '') + '</div>' : '';
   return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
-    var locked = gated[t[0]] && !loggedIn;
-    return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') + '>' +
+    var locked = (gated[t[0]] && !loggedIn) || (examModeLocked[t[0]] && partialOwner);
+    return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') +
+      (locked && partialOwner ? ' title="Requires full track access"' : '') + '>' +
       (locked ? '🔒 ' : '') + t[1] + '</a>';
   }).join('') + '</nav>';
 }
@@ -5658,7 +5679,14 @@ async function renderResources() {
 
   resourcesOpenIndex = null;
   resourcesRowsCache = items.map(function (r, i) {
-    var unlocked = loggedIn || !!r.free;
+    // À la carte account: a resource tagged with a topic they don't own is locked even though
+    // they're logged in, same "show all, lock what's ineligible" treatment as everywhere else in
+    // this feature -- resourcesRowsCache already drives a real badge + "Unlock →" CTA for the
+    // logged-out case, so folding topic ownership in here is all that's needed; nothing else about
+    // this row's rendering has to change. Untagged/"General Reference" resources (r.topic falsy)
+    // aren't tied to any purchasable topic, so they're never gated by ownership.
+    var ownsTopic = !accountOwnedTopics || !r.topic || accountOwnedTopics.indexOf(r.topic) !== -1;
+    var unlocked = (loggedIn && ownsTopic) || !!r.free;
     var url = unlocked ? (r.url || (r.file ? (API_BASE + signedUrls[r.file]) : null)) : null;
     return {
       index: i, title: r.title, type: r.type, topic: r.topic || 'General Reference', desc: r.desc,
@@ -6103,6 +6131,14 @@ function progressTopicsTableHtml() {
   var visible = truncated ? sorted.slice(0, PROGRESS_TOPICS_COLLAPSED_COUNT) : sorted;
   var arrow = function (k) { return key === k ? (dir === 'asc' ? ' ▲' : ' ▼') : ''; };
   var rows = visible.map(function (t) {
+    // À la carte account viewing a topic they don't own -- shown (never hidden, same convention
+    // as the Resources tab and the tab bar's own locked-but-visible treatment), but with a lock
+    // icon and no real stats instead of a misleading 0%/0 row, since they can never have answered
+    // any of these questions in the first place.
+    if (accountOwnedTopics && accountOwnedTopics.indexOf(t.topic) === -1) {
+      return '<tr class="progress-row-locked"><td>🔒 ' + t.topic + '</td>' +
+        '<td colspan="3" class="muted">Requires full track access</td></tr>';
+    }
     var pct = progressTopicPct(t);
     var coverage = progressTopicCoveragePct(t);
     var rowCls = pct < progressAccuracyPassPct ? 'progress-row-low' : 'progress-row-good';
@@ -6238,9 +6274,18 @@ async function renderProgress() {
 
   // Overall coverage across every topic in the exam (sum of the same seen/topicTotal fields the
   // per-topic table uses) -- distinct questions ever attempted, not attempt count, so retrying a
-  // question you've already seen doesn't inflate it.
-  var totalSeen = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.seen || 0); }, 0);
-  var totalPossible = (p.byTopic || []).reduce(function (sum, t) { return sum + (t.topicTotal || 0); }, 0);
+  // question you've already seen doesn't inflate it. /progress itself always returns every topic
+  // in the track (server-side deliberately unscoped -- the per-topic table below needs the full
+  // list to show a locked row for each un-owned topic) -- an à la carte account's HEADLINE number
+  // scopes the sum down to just their owned topics here, client-side, so 100% is actually
+  // reachable. Without this, a partial buyer's Coverage denominator would include topics they can
+  // never see questions from, capping them below 100% forever even after mastering everything
+  // they're allowed to.
+  var coverageByTopic = accountOwnedTopics
+    ? (p.byTopic || []).filter(function (t) { return accountOwnedTopics.indexOf(t.topic) !== -1; })
+    : (p.byTopic || []);
+  var totalSeen = coverageByTopic.reduce(function (sum, t) { return sum + (t.seen || 0); }, 0);
+  var totalPossible = coverageByTopic.reduce(function (sum, t) { return sum + (t.topicTotal || 0); }, 0);
   var coveragePct = totalPossible ? Math.round((100 * totalSeen) / totalPossible) : 0;
   if (typeof p.accuracyPassPct === 'number') progressAccuracyPassPct = p.accuracyPassPct;
   if (typeof p.coveragePassPct === 'number') progressCoveragePassPct = p.coveragePassPct;
@@ -8081,7 +8126,8 @@ function renderRefundRequest() {
     '<span><strong>Pass or ' + refundFailurePercent + '% of Your Money Back</strong><br><span class="muted">' + refundFailurePercent + '% refund if you took and failed the real exam.</span></span></label>' +
     '</div>' +
     '<p class="muted refund-failure-caveat">This option only applies to pass/fail licensing exams (Notary, Real Estate, Driver, CDL, Motorcycle, Boating, etc.). ' +
-    'It doesn\'t apply to our scored, composite national exams — ACT, DAT, CLT, or OAT — since there\'s no "failing" a test with no pass/fail threshold.</p>' +
+    'It doesn\'t apply to our scored, composite national exams — ACT, DAT, CLT, or OAT — since there\'s no "failing" a test with no pass/fail threshold. It also ' +
+    'doesn\'t apply to a purchase of specific topics only, rather than full track access — the 7-day guarantee above still applies either way.</p>' +
     '<div id="refund-failure-fields" class="refund-failure-fields">' +
     '<label class="muted buy-email-label">Exam date</label>' +
     '<input type="date" name="examDate">' +
@@ -8520,6 +8566,19 @@ function setupMic() {
   };
 }
 
+// À la carte account, reaching an exam-simulation route directly (bookmark/back-button/typed URL,
+// not just the tab bar's own 🔒). Points at #/buy rather than a track-specific "upgrade" link --
+// there's no dedicated upgrade flow yet (the buy page doesn't know it's showing an "add the rest"
+// offer to an existing partial owner), just the same general buy page every other visitor sees.
+function renderExamRequiresFullAccess(mode) {
+  appEl.innerHTML = renderTabs(mode) +
+    '<h1>' + (mode === 'toughest45' ? 'Weak Spots' : 'Exam') + '</h1>' +
+    '<p class="muted page-intro-text">Your purchase covers specific topics only. ' +
+    (mode === 'toughest45' ? 'Weak Spots drills' : 'The timed exam simulates') +
+    ' the real, complete exam across every topic, so it requires full track access.</p>' +
+    '<a class="btn-primary hub-cta" href="#/buy">See full track access →</a>';
+}
+
 // ---- Routing --------------------------------------------------------------
 
 async function renderTrackApp() {
@@ -8540,6 +8599,19 @@ async function renderTrackApp() {
   // (or logged in for a different track) all land on the same consolidated sales page now --
   // see renderTrackLanding().
   if (!isLoggedInForCurrentTrack()) { renderTrackLanding(); return; }
+  // Same reasoning as renderTabs' own examModeLocked -- an à la carte account can reach every
+  // other authenticated view (Quiz, Progress), just not either exam-simulation mode. Checked here
+  // too, not just the tab bar's 🔒, since a direct link/bookmark/back-button can reach these
+  // routes without ever going through the tab bar at all -- this is the real gate, the tab lock
+  // is just a visual hint. Server-side, handleExamStart enforces the same restriction independently
+  // (see project memory project_ca_cdl_topic_purchase_pilot) -- this client check exists purely
+  // for UX (a clear message instead of a confusing failed API call), never as the actual boundary.
+  var examLikeView = view === 'exam' || view === 'exam-history' || view.indexOf('exam-history/') === 0 ||
+    view === 'toughest45' || view === 'toughest45-history' || view.indexOf('toughest45-history/') === 0;
+  if (examLikeView && isPartialOwnerOfCurrentTrack()) {
+    renderExamRequiresFullAccess(view.indexOf('toughest45') === 0 ? 'toughest45' : 'standard');
+    return;
+  }
   if (view === 'quiz') await renderQuiz();
   else if (view === 'exam') await renderExam('standard');
   else if (view === 'exam-history') await renderExamHistory('standard');

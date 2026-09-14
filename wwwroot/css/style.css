@@ -558,6 +558,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .exam-attempt-score-passed { color: var(--correct); font-weight: 700; }
 .progress-row-low { color: var(--incorrect); font-weight: 700; }
 .progress-row-good { color: var(--correct); font-weight: 700; }
+/* À la carte account viewing a topic they don't own (see progressTopicsTableHtml in app.js) --
+   grayed but still fully visible, same "show but lock, never hide" convention as the tab bar. */
+.progress-row-locked { color: var(--muted); opacity: 0.7; }
 
 nav.tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 nav.tabs a {
