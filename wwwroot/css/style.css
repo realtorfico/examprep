@@ -677,6 +677,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-topic-mode-option { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.9rem; cursor: pointer; }
 .buy-topic-checkboxes { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1.6rem; }
 .buy-topic-option { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; }
+.buy-topic-price { margin-left: auto; font-weight: 600; white-space: nowrap; }
 .buy-topic-note { margin: 0; font-size: 0.78rem; }
 
 /* Deliberately plain/low-key (no gold highlight like .buy-guarantee-card) -- an optional, secondary

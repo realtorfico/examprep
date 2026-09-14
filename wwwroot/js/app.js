@@ -7375,6 +7375,7 @@ var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification 
 var buyKeyBreakdown = [];
 var buySelectedTopics = null;
 var buyTopicPricingTotalCents = null; // last server-quoted à la carte total (null = not yet quoted)
+var buyTopicPriceByLabel = {}; // label -> priceCents, one up-front /topic-pricing?topics=<all labels> call so the picker can show each topic's real price before the buyer checks anything, not just the running total after they start selecting
 
 // giftIntent starts the gift checkbox pre-checked -- driven by the hash (#/buy-gift vs #/buy, see
 // renderTrackApp) rather than a module var, since the #/gift landing page's track links change the
@@ -7404,15 +7405,31 @@ function renderBuy(giftIntent) {
     var p = results[0];
     buyPricing = p;
     buyKeyBreakdown = results[2].items || [];
-    drawBuyForm(p, giftIntent);
-    // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
-    // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
-    // cached singleton) so this stays correct even if the surrounding code is ever reordered.
-    Promise.all([apiFetch('/promotions?placement=checkout'), loadSiteConfig()]).then(function (results) {
-      var r = results[0];
-      var wrap = document.getElementById('checkout-promotions-wrap');
-      if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
-    }).catch(function () { /* best-effort */ });
+    // One up-front, all-topics quote so the picker can show a real per-topic price next to each
+    // checkbox before the buyer selects anything (rather than only a running total once they've
+    // started checking boxes) -- each topic's price is independently derived from its own
+    // declared_pct (see computeTopicPricing server-side), so pricing the full set here and pricing
+    // a subset later via refreshBuyTopicPricing always agree. Best-effort: if this fails, the
+    // picker still works, it just shows topics without a price next to them.
+    var topicPricePromise = buyKeyBreakdown.length
+      ? apiFetch('/topic-pricing?examType=' + encodeURIComponent(state.examType) + '&topics=' + encodeURIComponent(JSON.stringify(buyKeyBreakdown.map(function (t) { return t.label; }))))
+          .then(function (r) {
+            buyTopicPriceByLabel = {};
+            (r.items || []).forEach(function (i) { buyTopicPriceByLabel[i.label] = i.priceCents; });
+          })
+          .catch(function () { buyTopicPriceByLabel = {}; })
+      : Promise.resolve();
+    topicPricePromise.then(function () {
+      drawBuyForm(p, giftIntent);
+      // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
+      // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
+      // cached singleton) so this stays correct even if the surrounding code is ever reordered.
+      Promise.all([apiFetch('/promotions?placement=checkout'), loadSiteConfig()]).then(function (results) {
+        var r = results[0];
+        var wrap = document.getElementById('checkout-promotions-wrap');
+        if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
+      }).catch(function () { /* best-effort */ });
+    });
   }).catch(function () {
     appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p>Could not load pricing. Try again shortly.</p>';
   });
@@ -7478,9 +7495,11 @@ function buyTopicPickerHtml() {
   var alaCarte = buySelectedTopics !== null;
   var optionsHtml = buyKeyBreakdown.map(function (t) {
     var checked = alaCarte && buySelectedTopics.indexOf(t.label) !== -1;
+    var priceCents = buyTopicPriceByLabel[t.label];
+    var priceHtml = priceCents != null ? ' <span class="buy-topic-price">$' + (priceCents / 100).toFixed(2) + '</span>' : '';
     return '<label class="buy-topic-option"><input type="checkbox" class="buy-topic-checkbox" data-act="toggle-buy-topic" value="' +
       escapeHtml(t.label) + '"' + (checked ? ' checked' : '') + '> ' + escapeHtml(t.label) +
-      ' <span class="muted">(' + t.declared_pct + '% of the real exam)</span></label>';
+      ' <span class="muted">(' + t.declared_pct + '% of the real exam)</span>' + priceHtml + '</label>';
   }).join('');
   return '<div class="card buy-topic-picker">' +
     '<label class="buy-topic-mode-option"><input type="radio" name="buyMode" data-act="change-buy-mode" value="full"' + (alaCarte ? '' : ' checked') + '> Full track access <span class="muted">(best value)</span></label>' +

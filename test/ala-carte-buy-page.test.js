@@ -71,6 +71,32 @@ test('CA CDL shows the topic picker, defaulting to "Full track access" selected'
   assert.ok(picker.querySelector('.buy-topic-checkboxes').hidden, 'topic checkboxes stay hidden until "Choose specific topics" is picked');
 });
 
+test('each topic checkbox shows its own real server-quoted price up front, before anything is selected', async (t) => {
+  const GK = CA_CDL_BREAKDOWN.items[0].label;
+  const VIP = CA_CDL_BREAKDOWN.items[3].label;
+  const { dom, document } = await bootBuyPage([
+    ['/track-key-breakdown', CA_CDL_BREAKDOWN],
+    ['/topic-pricing', (href) => {
+      const parsedTopics = JSON.parse(new URL(href, 'https://x').searchParams.get('topics'));
+      assert.deepEqual(parsedTopics, CA_CDL_BREAKDOWN.items.map((i) => i.label), 'the up-front quote must cover every topic on the track, not just one');
+      return { totalCents: 5697, items: [
+        { label: GK, priceCents: 2199 },
+        { label: CA_CDL_BREAKDOWN.items[1].label, priceCents: 1499 },
+        { label: CA_CDL_BREAKDOWN.items[2].label, priceCents: 1499 },
+        { label: VIP, priceCents: 999 },
+      ] };
+    }],
+  ]);
+  t.after(() => dom.window.close());
+  await waitFor(() => document.getElementById('stripe-payment-element') !== null);
+
+  const options = Array.from(document.querySelectorAll('.buy-topic-option'));
+  const gkOption = options.find((o) => o.textContent.indexOf(GK) !== -1);
+  const vipOption = options.find((o) => o.textContent.indexOf(VIP) !== -1);
+  assert.match(gkOption.querySelector('.buy-topic-price').textContent, /\$21\.99/);
+  assert.match(vipOption.querySelector('.buy-topic-price').textContent, /\$9\.99/, 'the price-floor topic must show its real floored price, not a proportional one');
+});
+
 test('selecting a topic fetches a real server-quoted price and sends it (not a full-price mount) to /stripe/create-intent', async (t) => {
   const createIntentCalls = [];
   const GK = CA_CDL_BREAKDOWN.items[0].label;
