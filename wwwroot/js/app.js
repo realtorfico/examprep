@@ -7761,7 +7761,7 @@ async function submitBuyReminder(email, statusEl, btn, onSuccess) {
 //    explicit typed-email + submit click, same as every other path into this modal -- nothing is
 //    ever captured passively.
 var EXIT_INTENT_SESSION_KEY = 'examprep_buy_exit_intent_shown';
-var BUY_PAGE_NUDGE_DWELL_MS = 20000;
+var BUY_PAGE_NUDGE_DWELL_MS = 30000;
 var buyPageNudgeTimer = null;
 
 function exitIntentAlreadyShownThisSession() {
