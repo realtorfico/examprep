@@ -6637,7 +6637,7 @@ function fillTrackLandingAlaCarteNote(examType) {
     if (state.examType !== examType) return; // navigated away
     var wrap = document.getElementById('track-landing-ala-carte-note-wrap');
     if (!wrap || !(res.items || []).length) return;
-    wrap.innerHTML = '<p class="muted track-landing-ala-carte-note">Only need certain topics? ' +
+    wrap.innerHTML = '<p class="track-landing-ala-carte-note">💡 Only need certain topics? ' +
       '<a href="#/buy">Buy just what you need →</a></p>';
   }).catch(function () { /* best-effort -- note just stays absent */ });
 }

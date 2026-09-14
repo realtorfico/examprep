@@ -1238,7 +1238,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    list styling but needs its own top margin since it follows a paragraph here, not a price card. */
 .track-hero-trust-list { margin-top: 1rem; margin-bottom: 1.4rem; max-width: 46ch; }
 .track-landing-official-inline { font-size: 0.72rem; margin: 0.5rem 0 0; }
-.track-landing-ala-carte-note { font-size: 0.78rem; margin: 0.6rem 0 0; }
+/* Deliberately a highlighted callout, not a plain muted footnote (2026-09-14, first cut read as
+   too subdued to notice next to the Key Breakdown percentages) -- same gold/highlight accent as
+   .freshness-badge so it reads as a real trust/value signal rather than fine print. */
+.track-landing-ala-carte-note {
+  font-size: 0.85rem; margin: 0.75rem 0 0; padding: 0.55rem 0.8rem; border-radius: 8px;
+  background: color-mix(in srgb, var(--highlight) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--highlight) 40%, transparent);
+}
+.track-landing-ala-carte-note a { font-weight: 700; }
 .track-landing-disclaimer { font-size: 0.72rem; margin-top: 0.75rem; }
 .track-landing-preview-section { margin-top: 2rem; }
 .track-landing-preview-section h2 { margin-bottom: 0.3rem; }
