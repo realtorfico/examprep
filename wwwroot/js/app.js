@@ -5241,18 +5241,24 @@ function renderTurnstileWidget(attemptsLeft) {
   attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s of retrying, then give up quietly
   if (window.turnstileReady && window.turnstile) {
     var el = document.querySelector('#turnstile-container');
-    if (el) window.turnstile.render(el, {
-      sitekey: TURNSTILE_SITE_KEY,
-      theme: resolvedColorScheme(),
-      // Buy page only: waitForTurnstileToken gives up after ~10s and fails the payment element
-      // closed ("Could not load payment options") if the challenge hasn't resolved by then --
-      // without this, a slow/late Turnstile success never gets picked back up. Re-mounting here
-      // the moment the token actually lands fixes that without touching the other pages that
-      // share this same widget (redeem/refer/refund/contact all poll fresh on their own submit).
-      callback: function () {
-        if (document.getElementById('stripe-payment-element')) mountStripePaymentElement();
-      },
-    });
+    if (el) {
+      turnstileWidgetId = window.turnstile.render(el, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: resolvedColorScheme(),
+        // Buy page only: waitForTurnstileToken gives up after ~10s and fails the payment element
+        // closed ("Could not load payment options") if the challenge hasn't resolved by then --
+        // without this, a slow/late Turnstile success never gets picked back up. Re-mounting here
+        // the moment the token actually lands fixes that without touching the other pages that
+        // share this same widget (redeem/refer/refund/contact all poll fresh on their own submit).
+        callback: function () {
+          if (document.getElementById('stripe-payment-element')) mountStripePaymentElement();
+        },
+      });
+      // A fresh render always means a fresh, never-yet-sent token -- clear this immediately
+      // (rather than only from inside the callback above) so mountStripePaymentElement doesn't
+      // mistake a leftover flag from a *previous* widget/page for this brand-new one being spent.
+      turnstileTokenConsumed = false;
+    }
   } else if (attemptsLeft > 0 && document.querySelector('#turnstile-container')) {
     setTimeout(function () { renderTurnstileWidget(attemptsLeft - 1); }, 200);
   }
@@ -7609,14 +7615,23 @@ var stripeElementsObj = null; // current Elements group, re-created whenever the
 // Guards against overlapping mountStripePaymentElement() calls stomping each other. On initial
 // load there are TWO independent triggers -- loadStripeSdk's own callback, and Turnstile's resolve
 // callback (added specifically to retry a mount that gave up before Turnstile finished, see
-// renderTurnstileWidget) -- that can both fire close together. Turnstile tokens are single-use
-// server-side, but window.turnstile.getResponse() keeps returning the same cached string after
-// it's been spent, so a second concurrent call unknowingly resubmits an already-consumed token,
-// gets rejected, and its error handler would otherwise overwrite the FIRST call's already-mounted,
-// working payment form with the generic "Could not load payment options" message. Only the most
-// recently *invoked* call is allowed to touch the DOM/state -- a stale call's result (success or
-// failure) is dropped once a newer call has started.
+// renderTurnstileWidget) -- that can both fire close together. Only the most recently *invoked*
+// call is allowed to touch the DOM/state -- a stale call's result (success or failure) is dropped
+// once a newer call has started.
 var stripeMountSeq = 0;
+// Turnstile tokens are single-use server-side, but window.turnstile.getResponse() keeps returning
+// the same cached string after it's been spent -- true even for a plain SEQUENTIAL re-mount (not
+// just the concurrent case stripeMountSeq guards against), e.g. the buyer edits their email 10
+// seconds after the form's initial mount already used the token. Without this flag every such
+// edit resent the spent token, got turnstile_failed, and mountStripePaymentElement's own catch-all
+// wiped the already-working payment form with "Could not load payment options" -- confirmed live
+// via checkout_intents (written from inside this same function, keyed on a typed email) sitting at
+// zero rows in production despite real completed purchases. Set true the moment a real token is
+// about to be sent (send-time, not response-time -- the outcome doesn't matter, Cloudflare marks
+// it spent either way); cleared back to false by renderTurnstileWidget the moment a fresh token
+// actually lands.
+var turnstileTokenConsumed = false;
+var turnstileWidgetId = null; // set by renderTurnstileWidget, needed to reset() this specific widget
 
 // Fetches a fresh PaymentIntent (reflecting the current email/points-checkbox state -- same
 // "just-in-time, always current" idea as PayPal's createOrder callback, just triggered by
@@ -7629,11 +7644,19 @@ function mountStripePaymentElement() {
     el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
     return;
   }
+  // Force a fresh token instead of resending an already-spent one -- reset() re-runs the challenge
+  // in the background (invisible for the vast majority of legitimate traffic) and its own
+  // callback (see renderTurnstileWidget) re-invokes this function once a real unused token lands.
+  if (turnstileTokenConsumed && window.turnstile && turnstileWidgetId != null) {
+    window.turnstile.reset(turnstileWidgetId);
+    return;
+  }
   var payBtn = document.getElementById('stripe-pay-button');
   if (payBtn) payBtn.disabled = true;
   var mySeq = ++stripeMountSeq;
   waitForTurnstileToken(function (turnstileToken) {
     if (mySeq !== stripeMountSeq) return; // superseded by a newer call while we waited on Turnstile
+    if (turnstileToken) turnstileTokenConsumed = true;
     var emailEl = document.getElementById('buy-email');
     var email = emailEl && emailEl.value.trim() ? emailEl.value.trim() : undefined;
     var applyCheckbox = document.getElementById('apply-points-checkbox');
