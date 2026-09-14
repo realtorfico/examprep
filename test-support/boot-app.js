@@ -59,15 +59,20 @@ function defaultTrackRegistryResponse(window) {
 
 function makeFetchStub(overrides, window) {
   overrides = overrides || [];
-  return async function fetchStub(url) {
+  return async function fetchStub(url, options) {
     var href = typeof url === 'string' ? url : String(url);
     for (var i = 0; i < overrides.length; i++) {
       var matcher = overrides[i][0];
       var responder = overrides[i][1];
       var matches = typeof matcher === 'string' ? href.indexOf(matcher) !== -1 : matcher.test(href);
       if (matches) {
-        var body = typeof responder === 'function' ? responder(href) : responder;
-        return { ok: true, status: 200, json: async function () { return body; } };
+        // responder(href, options) -- options is the real fetch() init object (method/headers/body),
+        // so a responder can inspect what was actually POSTed, or return {status, body} instead of a
+        // plain body to simulate a non-200 response (e.g. { status: 400, body: { error: '...' } }).
+        var result = typeof responder === 'function' ? responder(href, options) : responder;
+        var status = (result && typeof result === 'object' && 'status' in result && 'body' in result) ? result.status : 200;
+        var body = (result && typeof result === 'object' && 'status' in result && 'body' in result) ? result.body : result;
+        return { ok: status >= 200 && status < 300, status: status, json: async function () { return body; } };
       }
     }
     if (href.indexOf('/track-registry') !== -1) {
@@ -85,7 +90,11 @@ function makeFetchStub(overrides, window) {
 // the way real localStorage (unlike a fresh JSDOM instance's) actually would.
 // fetchOverrides: array of [matcher, responseBody-or-fn] pairs, checked in order -- see
 // makeFetchStub above.
-async function bootApp({ url, cookie, localStorageItems, fetchOverrides }) {
+// windowSetup: optional (window) => void, run AFTER cookie/localStorage seeding but BEFORE any
+// script file evals -- for stubbing a third-party global (window.Stripe, window.turnstile) that
+// app.js reads synchronously during its own top-level/boot-time code, which is too late to stub
+// once eval has already started reading it.
+async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup }) {
   const dom = new JSDOM(SHELL_HTML, { url: url, runScripts: 'dangerously', pretendToBeVisual: true });
   const window = dom.window;
   // path=/ must match exactly what setStateCookie() itself always writes -- a cookie set with a
@@ -98,6 +107,7 @@ async function bootApp({ url, cookie, localStorageItems, fetchOverrides }) {
   }
   window.fetch = makeFetchStub(fetchOverrides, window);
   window.navigator.sendBeacon = function () { return true; };
+  if (windowSetup) windowSetup(window);
 
   for (const file of SCRIPT_FILES) {
     const src = fs.readFileSync(path.join(JS_DIR, file), 'utf8');

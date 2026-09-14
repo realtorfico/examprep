@@ -5250,13 +5250,23 @@ function renderTurnstileWidget(attemptsLeft) {
         // without this, a slow/late Turnstile success never gets picked back up. Re-mounting here
         // the moment the token actually lands fixes that without touching the other pages that
         // share this same widget (redeem/refer/refund/contact all poll fresh on their own submit).
+        // This callback also fires again every time turnstile.reset() produces a fresh token (see
+        // mountStripePaymentElement's own reset() call) -- NOT just once at initial render -- so
+        // turnstileTokenConsumed must be cleared here, not only right after render() below. Missing
+        // this the first time around (commit d430685) meant it never got cleared after a reset,
+        // and mountStripePaymentElement kept re-entering the reset branch forever on every future
+        // call instead of ever actually re-mounting -- caught by a follow-up code review before any
+        // real damage (the stale, pre-edit payment element it left visible/clickable meanwhile was
+        // never actually paid against).
         callback: function () {
+          turnstileTokenConsumed = false;
           if (document.getElementById('stripe-payment-element')) mountStripePaymentElement();
         },
       });
-      // A fresh render always means a fresh, never-yet-sent token -- clear this immediately
-      // (rather than only from inside the callback above) so mountStripePaymentElement doesn't
-      // mistake a leftover flag from a *previous* widget/page for this brand-new one being spent.
+      // Also clear immediately here for the initial render, before any token exists yet -- so a
+      // mountStripePaymentElement call that races ahead of the very first callback firing (e.g.
+      // loadStripeSdk's own independent trigger) doesn't mistake a leftover flag from a *previous*
+      // widget/page for this brand-new one being spent.
       turnstileTokenConsumed = false;
     }
   } else if (attemptsLeft > 0 && document.querySelector('#turnstile-container')) {
@@ -7644,14 +7654,20 @@ function mountStripePaymentElement() {
     el.innerHTML = '<p class="muted">Payments aren\'t configured yet.</p>';
     return;
   }
+  var payBtn = document.getElementById('stripe-pay-button');
   // Force a fresh token instead of resending an already-spent one -- reset() re-runs the challenge
   // in the background (invisible for the vast majority of legitimate traffic) and its own
-  // callback (see renderTurnstileWidget) re-invokes this function once a real unused token lands.
+  // callback (see renderTurnstileWidget) re-invokes this function once a real unused token lands,
+  // at which point turnstileTokenConsumed is false again and the block below runs normally.
+  // Disable the pay button meanwhile -- without this, the STALE payment element from before the
+  // edit (old price/promo/points state) stays visible and clickable while the fresh token is still
+  // in flight, so a buyer who edits something and clicks Pay before the remount lands could be
+  // charged the pre-edit amount.
   if (turnstileTokenConsumed && window.turnstile && turnstileWidgetId != null) {
+    if (payBtn) payBtn.disabled = true;
     window.turnstile.reset(turnstileWidgetId);
     return;
   }
-  var payBtn = document.getElementById('stripe-pay-button');
   if (payBtn) payBtn.disabled = true;
   var mySeq = ++stripeMountSeq;
   waitForTurnstileToken(function (turnstileToken) {
