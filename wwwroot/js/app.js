@@ -9693,19 +9693,23 @@ document.addEventListener('keydown', function (e) {
 // it in the background and compare app.js's cache-bust version; if it changed, show a dismissible
 // banner with a Refresh button rather than force-reloading (which could interrupt something like
 // an in-progress mock exam, even though exam state itself would survive the reload).
+// Matches both /js/app.js (unminified) and /js/app.min.js (what index.html actually serves in
+// production, per scripts/build-minified-js.js) -- this used to only match the former, so the
+// banner's version compare always saw current===latest===null and silently never fired.
+var APP_JS_VERSION_RE = /\/js\/app(?:\.min)?\.js\?v=(\d+)/;
 var UPDATE_CHECK_INTERVAL_MS = 15 * 60 * 1000;
 var updateBannerDismissed = false;
 
 function currentAppJsVersion() {
-  var el = document.querySelector('script[src*="/js/app.js"]');
-  var m = el && el.src.match(/[?&]v=(\d+)/);
+  var el = document.querySelector('script[src*="/js/app"]');
+  var m = el && el.src.match(APP_JS_VERSION_RE);
   return m ? m[1] : null;
 }
 
 function checkForUpdate() {
   if (updateBannerDismissed || document.getElementById('update-available-banner')) return;
   fetch('/', { cache: 'no-store' }).then(function (res) { return res.text(); }).then(function (html) {
-    var m = html.match(/\/js\/app\.js\?v=(\d+)/);
+    var m = html.match(APP_JS_VERSION_RE);
     var latest = m ? m[1] : null;
     var current = currentAppJsVersion();
     if (!latest || !current || latest === current) return;

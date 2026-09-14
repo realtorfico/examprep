@@ -72,13 +72,20 @@ function makeFetchStub(overrides, window) {
         var result = typeof responder === 'function' ? responder(href, options) : responder;
         var status = (result && typeof result === 'object' && 'status' in result && 'body' in result) ? result.status : 200;
         var body = (result && typeof result === 'object' && 'status' in result && 'body' in result) ? result.body : result;
-        return { ok: status >= 200 && status < 300, status: status, json: async function () { return body; } };
+        return {
+          ok: status >= 200 && status < 300, status: status,
+          json: async function () { return body; },
+          // A responder returning a raw HTML/text string (e.g. simulating index.html for
+          // checkForUpdate's res.text() call) is returned as-is; anything else is JSON-stringified
+          // so .text() still gives back something coherent instead of "[object Object]".
+          text: async function () { return typeof body === 'string' ? body : JSON.stringify(body); },
+        };
       }
     }
     if (href.indexOf('/track-registry') !== -1) {
       return { ok: true, status: 200, json: async function () { return defaultTrackRegistryResponse(window); } };
     }
-    return { ok: true, status: 200, json: async function () { return {}; } };
+    return { ok: true, status: 200, json: async function () { return {}; }, text: async function () { return ''; } };
   };
 }
 
