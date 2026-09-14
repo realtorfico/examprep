@@ -670,6 +670,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .buy-guarantee-item p { margin: 0.25rem 0 0; font-size: 0.85rem; }
 .buy-guarantee-footnote { margin: 0; font-size: 0.78rem; }
 
+/* À la carte topic picker (see buyTopicPickerHtml in app.js) -- plain/low-key like
+   .buy-reminder-card, since "Full track access" (pre-selected) stays the visually primary path;
+   this is an alternative to opt into, not a second competing CTA. */
+.buy-topic-picker { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem 1rem; }
+.buy-topic-mode-option { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.9rem; cursor: pointer; }
+.buy-topic-checkboxes { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1.6rem; }
+.buy-topic-option { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; }
+.buy-topic-note { margin: 0; font-size: 0.78rem; }
+
 /* Deliberately plain/low-key (no gold highlight like .buy-guarantee-card) -- an optional, secondary
    offer, not a second CTA competing with the real purchase flow. */
 .buy-reminder-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.9rem 1rem; }

@@ -7360,6 +7360,22 @@ var buyPromoCode = null; // the code last confirmed valid by the server (or null
 var buyPromoDiscountCents = 0; // set from the server's response once a code is confirmed valid
 var buyPromoVerifySentKey = null; // "<promoId or code>:<email>" a verification link was already sent for, to avoid re-sending on repeat blur
 
+// À la carte topic purchase (pilot: CA CDL) -- see project memory
+// project_ca_cdl_topic_purchase_pilot. buyKeyBreakdown is this track's declared topics (from
+// GET /track-key-breakdown); an empty array means the feature isn't offered for this track at all
+// (every track except CA CDL today), in which case none of the topic-picker UI renders and the
+// page is byte-for-byte what it was before this feature existed. buySelectedTopics is null for
+// "full track access" (the default on every fresh render) or an array of chosen topic labels once
+// the buyer switches to "Choose specific topics" -- deliberately NOT persisted across a fresh
+// drawBuyForm call (reset alongside buyPromoCode), same "start clean" reasoning as every other
+// buy-page selection. No promo codes or referral points for à la carte purchases in this first
+// version (real complexity on the highest-risk part of the site -- deferred, see project memory),
+// and no gift option (a gift code has no `users` row -- and therefore nowhere to put
+// owned_topics_json -- until the recipient redeems it later via the separate /redeem flow).
+var buyKeyBreakdown = [];
+var buySelectedTopics = null;
+var buyTopicPricingTotalCents = null; // last server-quoted à la carte total (null = not yet quoted)
+
 // giftIntent starts the gift checkbox pre-checked -- driven by the hash (#/buy-gift vs #/buy, see
 // renderTrackApp) rather than a module var, since the #/gift landing page's track links change the
 // URL's PATHNAME too (a real page load, not just a hash change on the same page -- this SPA has no
@@ -7377,9 +7393,17 @@ function renderBuy(giftIntent) {
   appEl.innerHTML = '<h1>Get Instant Access</h1><p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p><p class="muted">Loading price…</p>';
   clearTimeout(checkoutStartedTimer);
   checkoutStartedTimer = setTimeout(function () { trackEvent('checkout_started', state.examType); }, 300);
-  Promise.all([apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)), loadSiteConfig()]).then(function (results) {
+  Promise.all([
+    apiFetch('/pricing?examType=' + encodeURIComponent(state.examType)),
+    loadSiteConfig(),
+    // Empty items = this track doesn't offer à la carte topic purchase yet (every track except
+    // CA CDL today) -- best-effort, a failed fetch just means "not offered" rather than blocking
+    // checkout over an unrelated, optional feature.
+    apiFetch('/track-key-breakdown?examType=' + encodeURIComponent(state.examType)).catch(function () { return { items: [] }; }),
+  ]).then(function (results) {
     var p = results[0];
     buyPricing = p;
+    buyKeyBreakdown = results[2].items || [];
     drawBuyForm(p, giftIntent);
     // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
     // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
@@ -7394,12 +7418,85 @@ function renderBuy(giftIntent) {
   });
 }
 
+// The order-summary card's content depends on the current à la carte selection (full track vs.
+// some topics), so it's split out and re-rendered in place (see updateBuyModeUI) rather than
+// requiring a full drawBuyForm re-render every time the buyer toggles a topic checkbox.
+function buyOrderSummaryInnerHtml(pricing, trackTitle) {
+  // buySelectedTopics !== null means "à la carte mode is selected" -- NOT buySelectedTopics.length,
+  // which would be falsy (0) for the real, valid "topics mode chosen, nothing checked yet" state
+  // and incorrectly fall back to showing full-track pricing/copy for that state.
+  var alaCarte = buySelectedTopics !== null;
+  var priceLabel = alaCarte
+    ? (buyTopicPricingTotalCents != null ? '$' + (buyTopicPricingTotalCents / 100).toFixed(2) : '—')
+    : '$' + (pricing.priceCents / 100).toFixed(2);
+  var accessLabel = alaCarte ? buySelectedTopics.length + ' of ' + buyKeyBreakdown.length + ' Topics' : 'Full Access';
+  return '<div class="buy-order-summary-top"><span>' + escapeHtml(trackTitle) + ' — ' + accessLabel + '</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
+    (alaCarte ? '' : '<p class="buy-promo-note">🔥 Promotional price — increasing soon</p>') +
+    '<p class="muted">One-time payment, instant access — no subscription.</p>' +
+    '<ul class="buy-feature-list">' +
+    (alaCarte
+      // Honest about what's NOT included -- Mock Exam/Weak Spots require full access (see
+      // handleExamStart's own server-side enforcement), and misrepresenting that here would be
+      // exactly the kind of overpromise this project has deliberately avoided elsewhere.
+      ? '<li>✓ Practice questions for your chosen topics</li>' +
+        '<li>✓ Voice-enabled practice</li>' +
+        '<li>✓ Progress tracking</li>' +
+        '<li>✓ Study resources for your chosen topics</li>' +
+        '<li>✓ Lifetime access</li>' +
+        '<li class="muted">✕ Timed Mock Exam &amp; Weak Spots (require full access)</li>'
+      : '<li>✓ Full practice question bank</li>' +
+        '<li>✓ Voice-enabled practice</li>' +
+        '<li>✓ Timed mock exam simulation</li>' +
+        '<li>✓ Progress tracking</li>' +
+        '<li>✓ Study resource library</li>' +
+        '<li>✓ Lifetime access</li>') +
+    '</ul>';
+}
+
+// Same split-out-for-live-update reasoning as buyOrderSummaryInnerHtml above -- an à la carte
+// selection never shows the "Pass or X%" guarantee (see project memory for why: the guarantee's
+// premise, "used our full prep material and still failed the real exam", doesn't hold for a buyer
+// who only studied some of the real exam's topics -- handleRefundClaimSubmit enforces this
+// server-side; this is just matching UI so the option never looks available in the first place).
+function buyGuaranteeInnerHtml(track) {
+  return (track && track.passPercent != null && buySelectedTopics === null
+    ? '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
+      '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
+      '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>'
+    : '<div class="buy-guarantee-item"><strong>🛡️ 7-Day Refund Guarantee</strong>' +
+      '<p class="muted">Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>') +
+  '<p class="muted buy-guarantee-footnote"><a href="#/refund">Refund request →</a></p>';
+}
+
+// À la carte topic-purchase picker -- renders nothing at all for any track without
+// track_key_breakdown rows (every track except CA CDL today, see buyKeyBreakdown's own comment),
+// so the page is unchanged for the other ~89 tracks. "Full track access" stays the pre-selected,
+// visually primary option (radio, not a toggle a buyer has to notice) -- à la carte is an
+// alternative to opt INTO, not the default.
+function buyTopicPickerHtml() {
+  if (!buyKeyBreakdown.length) return '';
+  var alaCarte = buySelectedTopics !== null;
+  var optionsHtml = buyKeyBreakdown.map(function (t) {
+    var checked = alaCarte && buySelectedTopics.indexOf(t.label) !== -1;
+    return '<label class="buy-topic-option"><input type="checkbox" class="buy-topic-checkbox" data-act="toggle-buy-topic" value="' +
+      escapeHtml(t.label) + '"' + (checked ? ' checked' : '') + '> ' + escapeHtml(t.label) +
+      ' <span class="muted">(' + t.declared_pct + '% of the real exam)</span></label>';
+  }).join('');
+  return '<div class="card buy-topic-picker">' +
+    '<label class="buy-topic-mode-option"><input type="radio" name="buyMode" data-act="change-buy-mode" value="full"' + (alaCarte ? '' : ' checked') + '> Full track access <span class="muted">(best value)</span></label>' +
+    '<label class="buy-topic-mode-option"><input type="radio" name="buyMode" data-act="change-buy-mode" value="topics"' + (alaCarte ? ' checked' : '') + '> Choose specific topics only</label>' +
+    '<div class="buy-topic-checkboxes"' + (alaCarte ? '' : ' hidden') + '>' + optionsHtml + '</div>' +
+    (alaCarte ? '<p class="muted buy-topic-note">Timed Mock Exam and Weak Spots require full access. Promo codes and referral points aren\'t available for topic-only purchases.</p>' : '') +
+    '</div>';
+}
+
 function drawBuyForm(pricing, giftIntent) {
-  var priceLabel = '$' + (pricing.priceCents / 100).toFixed(2);
   var track = trackByExamType(state.examType);
   var trackTitle = (track || {}).title || 'PassExamHQ';
   buyPromoCode = null;
   buyPromoDiscountCents = 0;
+  buySelectedTopics = null; // fresh render -- always starts at "full track access", same reset discipline as buyPromoCode above
+  buyTopicPricingTotalCents = null;
   var breadcrumbHtml = '<nav class="track-landing-breadcrumb" aria-label="Breadcrumb"><a href="/">Exams</a> / ' +
     (track ? '<a href="/' + kindSlug(track.examKind) + '">' + escapeHtml(track.examKind) + '</a> / ' : '') +
     // Falls back to trackTitle both when there's no state_code at all AND when it's the 'US'
@@ -7415,35 +7512,13 @@ function drawBuyForm(pricing, giftIntent) {
     '<p class="buy-track-subtitle">' + escapeHtml(trackTitle) + '</p>' +
     '<div class="buy-layout">' +
     '<div class="buy-value-col">' +
-    '<div class="card buy-order-summary">' +
-    '<div class="buy-order-summary-top"><span>' + escapeHtml(trackTitle) + ' — Full Access</span><span class="buy-order-price">' + priceLabel + '</span></div>' +
-    '<p class="buy-promo-note">🔥 Promotional price — increasing soon</p>' +
-    '<p class="muted">One-time payment, instant access — no subscription.</p>' +
-    '<ul class="buy-feature-list">' +
-    '<li>✓ Full practice question bank</li>' +
-    '<li>✓ Voice-enabled practice</li>' +
-    '<li>✓ Timed mock exam simulation</li>' +
-    '<li>✓ Progress tracking</li>' +
-    '<li>✓ Study resource library</li>' +
-    '<li>✓ Lifetime access</li>' +
-    '</ul>' +
-    '</div>' +
+    '<div class="card buy-order-summary" id="buy-order-summary-wrap">' + buyOrderSummaryInnerHtml(pricing, trackTitle) + '</div>' +
+    buyTopicPickerHtml() +
     // Moved below the track name/price card (was above it, right under the page title) --
     // per-user request, so the discount promos read as "here's how to save on what you just saw
     // the price of" rather than competing with the page title for first attention.
     '<div id="checkout-promotions-wrap" class="promotions-wrap"></div>' +
-    '<div class="card buy-guarantee-card">' +
-    // track.passPercent is null for a scored, non-pass/fail national exam (ACT/DAT/CLT/OAT) --
-    // there's no "fail the real exam" to refund against for those, so this shows only the
-    // always-valid 7-day refund instead of the pass-or-X%-back claim.
-    (track && track.passPercent != null
-      ? '<div class="buy-guarantee-item"><strong>🎯 Pass or ' + refundFailurePercent + '% of Your Money Back</strong>' +
-        '<p class="muted">Take the real exam and don\'t pass? Get ' + refundFailurePercent + '% of your money back ' +
-        '(as long as you maintain a minimum of ' + progressAccuracyPassPct + '% Accuracy and ' + progressCoveragePassPct + '% Coverage).</p></div>'
-      : '<div class="buy-guarantee-item"><strong>🛡️ 7-Day Refund Guarantee</strong>' +
-        '<p class="muted">Not what you expected? Get a full refund within 7 days of purchase, no questions asked.</p></div>') +
-    '<p class="muted buy-guarantee-footnote"><a href="#/refund">Refund request →</a></p>' +
-    '</div>' +
+    '<div class="card buy-guarantee-card" id="buy-guarantee-wrap">' + buyGuaranteeInnerHtml(track) + '</div>' +
     // Opt-in "not ready today" capture, added 2026-09-11 -- real Visitors data showed several buy-
     // page visitors bouncing in well under a minute, too fast to have reached the real payment
     // form below. A plain, honest reminder offer (no discount/urgency claim), deliberately its own
@@ -7538,7 +7613,10 @@ function drawBuyForm(pricing, giftIntent) {
     '<div id="buy-promo-result"></div>' +
     '</div>' +
     '</div>' +
-    '<p class="buy-total-line">Total: <span id="buy-total">' + priceLabel + '</span></p>' +
+    // Placeholder only -- updateBuyTotalDisplay() (called once mountStripePaymentElement's initial
+    // quote lands) is what actually keeps this in sync going forward. Always the full price here,
+    // never the à la carte branch, since buySelectedTopics is always reset to null just above.
+    '<p class="buy-total-line">Total: <span id="buy-total">$' + (pricing.priceCents / 100).toFixed(2) + '</span></p>' +
     '<div id="turnstile-container"></div>' +
     '<p class="muted stripe-card-note">💳 Pay by card, Apple Pay, or Google Pay — whichever your device supports shows up automatically below.</p>' +
     '<form id="stripe-payment-form" data-act="stripe-pay-submit">' +
@@ -7742,6 +7820,13 @@ function loadOtherTracksPricing() {
 function updateBuyTotalDisplay() {
   var totalEl = document.getElementById('buy-total');
   if (!totalEl || !buyPricing) return;
+  // À la carte mode has no promo/points math to run -- just the server-quoted topics total (or a
+  // dash before the first live quote lands, e.g. right after switching modes or before any topic
+  // is checked yet).
+  if (buySelectedTopics !== null) {
+    totalEl.textContent = buyTopicPricingTotalCents != null ? '$' + (buyTopicPricingTotalCents / 100).toFixed(2) : '—';
+    return;
+  }
   var checkbox = document.getElementById('apply-points-checkbox');
   var applying = !!(checkbox && checkbox.checked);
   var pointsAvailable = checkbox ? Number(checkbox.getAttribute('data-points-available') || 0) : 0;
@@ -7763,6 +7848,67 @@ function updateBuyTotalDisplay() {
   if (buyPromoDiscountCents > 0) noteParts.push('promo -$' + (buyPromoDiscountCents / 100).toFixed(2));
   if (applying) noteParts.push(pointsApplied + ' points applied');
   totalEl.textContent = '$' + (finalCents / 100).toFixed(2) + (noteParts.length ? ' (' + noteParts.join(', ') + ')' : '');
+}
+
+// Re-renders the parts of the buy page whose content depends on the current à la carte selection
+// (order summary, guarantee card, gift-toggle visibility) in place -- called after every mode/topic
+// checkbox change, same "patch the DOM in place rather than re-running drawBuyForm" idiom the rest
+// of this page already uses for promo/points changes.
+function updateBuyModeUI() {
+  var track = trackByExamType(state.examType);
+  var trackTitle = (track || {}).title || 'PassExamHQ';
+  var summaryWrap = document.getElementById('buy-order-summary-wrap');
+  if (summaryWrap) summaryWrap.innerHTML = buyOrderSummaryInnerHtml(buyPricing, trackTitle);
+  var guaranteeWrap = document.getElementById('buy-guarantee-wrap');
+  if (guaranteeWrap) guaranteeWrap.innerHTML = buyGuaranteeInnerHtml(track);
+  // No gift option for à la carte purchases (see buySelectedTopics' own comment for why) -- hide
+  // the toggle entirely rather than leaving a checkbox visible that would just be ignored. Mode
+  // selection (buySelectedTopics !== null), not .length -- must hide immediately on switching to
+  // "Choose specific topics", not only once the buyer has actually checked one.
+  var alaCarte = buySelectedTopics !== null;
+  var giftToggleLabel = document.querySelector('.buy-gift-toggle');
+  if (giftToggleLabel) giftToggleLabel.hidden = alaCarte;
+  // No promo codes or referral points for à la carte purchases either -- same reasoning.
+  var secondaryActionsRow = document.querySelector('.buy-secondary-actions-row');
+  if (secondaryActionsRow) secondaryActionsRow.hidden = alaCarte;
+  updateBuyTotalDisplay();
+}
+
+// Fetches a fresh server-authoritative à la carte price whenever the topic selection changes (or
+// clears it and reverts to the full-price mount when switching back to "Full track access") --
+// mirrors how a promo/points change already triggers a fresh mountStripePaymentElement() call, so
+// the actual PaymentIntent amount is always recomputed server-side (see computeTopicPricing),
+// never trusted from anything cached client-side.
+function refreshBuyTopicPricing() {
+  if (buySelectedTopics === null) {
+    // Reverted to "Full track access" -- back to the normal full-price mount.
+    buyTopicPricingTotalCents = null;
+    updateBuyModeUI();
+    mountStripePaymentElement();
+    return;
+  }
+  updateBuyModeUI(); // shows the "—" placeholder immediately, before anything below resolves
+  if (!buySelectedTopics.length) {
+    // "Choose specific topics" is selected but nothing's checked yet -- distinct from the null
+    // case above: there's genuinely nothing to charge, so the payment element must NOT stay
+    // mounted at (or silently fall back to) the full price -- that would let a buyer who hasn't
+    // picked anything still click Pay and be charged for the whole track.
+    buyTopicPricingTotalCents = null;
+    var el = document.getElementById('stripe-payment-element');
+    if (el) el.innerHTML = '<p class="muted">Select at least one topic above.</p>';
+    var payBtn = document.getElementById('stripe-pay-button');
+    if (payBtn) payBtn.disabled = true;
+    return;
+  }
+  apiFetch('/topic-pricing?examType=' + encodeURIComponent(state.examType) + '&topics=' + encodeURIComponent(JSON.stringify(buySelectedTopics)))
+    .then(function (r) {
+      buyTopicPricingTotalCents = r.totalCents;
+      updateBuyModeUI();
+      mountStripePaymentElement();
+    }).catch(function () {
+      buyTopicPricingTotalCents = null;
+      updateBuyModeUI();
+    });
 }
 
 var stripeObj = null;         // the Stripe(publishableKey) instance, created once and reused
@@ -7817,6 +7963,16 @@ function mountStripePaymentElement() {
     return;
   }
   var payBtn = document.getElementById('stripe-pay-button');
+  // "Choose specific topics" is selected but nothing's checked yet -- this function has other
+  // trigger points besides refreshBuyTopicPricing (email blur/input, the initial Stripe-SDK-ready
+  // callback, Turnstile's own resolve callback), any of which could fire while in this state.
+  // There is genuinely nothing to charge, so this must never fall through to mounting a payable
+  // full-price element -- same guard as refreshBuyTopicPricing's own empty-array branch.
+  if (buySelectedTopics && !buySelectedTopics.length) {
+    el.innerHTML = '<p class="muted">Select at least one topic above.</p>';
+    if (payBtn) payBtn.disabled = true;
+    return;
+  }
   // Force a fresh token instead of resending an already-spent one -- reset() re-runs the challenge
   // in the background (invisible for the vast majority of legitimate traffic) and its own
   // callback (see renderTurnstileWidget) re-invokes this function once a real unused token lands,
@@ -7841,7 +7997,7 @@ function mountStripePaymentElement() {
     var applyPoints = !!(applyCheckbox && applyCheckbox.checked);
     var promoResultEl = document.getElementById('buy-promo-result');
     apiFetch('/stripe/create-intent', {
-      method: 'POST', body: { examType: state.examType, turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined },
+      method: 'POST', body: { examType: state.examType, turnstileToken: turnstileToken, email: email, applyPoints: applyPoints, promoCode: buyPromoCode || undefined, topics: (buySelectedTopics && buySelectedTopics.length) ? buySelectedTopics : undefined },
     }).then(function (r) {
       if (mySeq !== stripeMountSeq) return; // a newer call already mounted its own result -- don't clobber it
       buyPromoDiscountCents = r.promoDiscountCents || 0;
@@ -9228,6 +9384,31 @@ document.addEventListener('change', function (e) {
   if (e.target && e.target.name === 'claimType') {
     var failureFields = document.getElementById('refund-failure-fields');
     if (failureFields) failureFields.classList.toggle('shown', e.target.value === 'exam_failure_50pct');
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-buy-mode') {
+    if (e.target.value === 'topics') {
+      if (!buySelectedTopics) buySelectedTopics = [];
+      // Gift + à la carte can't combine (see buySelectedTopics' own comment) -- force-clear the
+      // gift checkbox if it was checked before switching modes, so it can't silently stay checked
+      // while hidden and reach submitStripePayment as isGift:true.
+      var giftCheckboxEl = document.getElementById('buy-gift-checkbox');
+      if (giftCheckboxEl && giftCheckboxEl.checked) {
+        giftCheckboxEl.checked = false;
+        var giftFieldsEl = document.getElementById('buy-gift-fields');
+        if (giftFieldsEl) giftFieldsEl.hidden = true;
+      }
+    } else {
+      buySelectedTopics = null;
+    }
+    var checkboxesWrap = document.querySelector('.buy-topic-checkboxes');
+    if (checkboxesWrap) checkboxesWrap.hidden = e.target.value !== 'topics';
+    refreshBuyTopicPricing();
+  } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'toggle-buy-topic') {
+    if (!buySelectedTopics) buySelectedTopics = [];
+    var topicLabel = e.target.value;
+    var topicIdx = buySelectedTopics.indexOf(topicLabel);
+    if (e.target.checked && topicIdx === -1) buySelectedTopics.push(topicLabel);
+    else if (!e.target.checked && topicIdx !== -1) buySelectedTopics.splice(topicIdx, 1);
+    refreshBuyTopicPricing();
   } else if (e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'change-exam-age-category') {
     examAgeCategoryOverride = e.target.value;
     renderExamIntro(examState.mode); // re-fetches /exam/config with the new override to refresh the bullets
