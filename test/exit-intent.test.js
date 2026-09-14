@@ -1,14 +1,21 @@
 // Regression tests for the buy-page exit-intent email capture (wwwroot/js/app.js,
-// maybeShowExitIntentModal/showExitIntentModal/closeExitIntentModal) -- added because the passive
-// "Not ready today?" card (buy-reminder-card) is opt-in and easy to miss, so a visitor who reaches
-// the buy page, never types an email, and just closes the tab leaves with nothing captured. This
-// shows an active modal the moment the cursor leaves the viewport through the top (the standard
-// exit-intent signal), reusing the same /buy/reminder endpoint the passive card already uses.
+// maybeShowExitIntentModal/maybeShowBuyPageNudge/showExitIntentModal/closeExitIntentModal) --
+// added because the passive "Not ready today?" card (buy-reminder-card) is opt-in and easy to
+// miss, so a visitor who reaches the buy page, never types an email, and just closes the tab
+// leaves with nothing captured. Shows an active modal via two independent triggers sharing the
+// same gate: the cursor leaving the viewport through the top (desktop's exit-intent signal), and a
+// dwell timer (mobile's real gap, since there's no mouse signal to read there -- see
+// BUY_PAGE_NUDGE_DWELL_MS's own comment for why a back-button trap and a passive sendBeacon
+// capture were both ruled out first). Both reuse the same /buy/reminder endpoint the passive card
+// already uses.
 //
 // Real mouse movement toward the browser chrome can't be simulated in jsdom, so these tests
 // dispatch a synthetic 'mouseleave' with clientY set instead -- that's the exact (and only) signal
-// the handler reads, so this covers the real gating logic: only on the buy page, only once per
-// session, and the modal's own submit/dismiss wiring.
+// the handler reads. Real 20-second waits aren't practical in a test either, so the dwell-timer
+// test intercepts window.setTimeout to grab the actual scheduled callback and invoke it directly,
+// rather than mocking time globally (which wouldn't reach jsdom's separate window realm anyway).
+// Together these cover the real gating logic: only on the buy page, only once per session
+// regardless of which trigger fires first, and the modal's own submit/dismiss wiring.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -62,6 +69,39 @@ test('only shows once per session even across repeated exit-intent signals', asy
 
   fireMouseLeave(window, 0);
   assert.equal(document.getElementById('exit-intent-modal'), null, 'sessionStorage should suppress a second show this session');
+});
+
+test('drawBuyForm schedules a dwell timer that shows the same modal when it fires', async (t) => {
+  const scheduled = [];
+  const { dom, window, document } = await bootAtBuyPage({
+    windowSetup(win) {
+      var realSetTimeout = win.setTimeout.bind(win);
+      win.setTimeout = function (fn, delay) {
+        scheduled.push({ fn: fn, delay: delay });
+        return realSetTimeout(fn, delay);
+      };
+    },
+  });
+  t.after(() => dom.window.close());
+
+  const dwellTimer = scheduled.find(function (s) { return s.delay === window.BUY_PAGE_NUDGE_DWELL_MS; });
+  assert.ok(dwellTimer, 'drawBuyForm should schedule a timer at BUY_PAGE_NUDGE_DWELL_MS');
+  assert.equal(document.getElementById('exit-intent-modal'), null, 'should not show before the dwell timer fires');
+
+  dwellTimer.fn(); // simulate the timer firing without waiting the real 20s
+  assert.ok(document.getElementById('exit-intent-modal'), 'dwell timer should show the same modal the mouseleave trigger shows');
+});
+
+test('the dwell timer respects the same once-per-session gate as the mouseleave trigger', async (t) => {
+  const { dom, window, document } = await bootAtBuyPage();
+  t.after(() => dom.window.close());
+
+  fireMouseLeave(window, 0); // mouseleave fires first and sets the session flag
+  assert.ok(document.getElementById('exit-intent-modal'));
+
+  window.maybeShowBuyPageNudge(); // dwell timer's own target function, called directly
+  assert.ok(document.getElementById('exit-intent-modal'), 'should not have closed or duplicated the already-open modal');
+  assert.equal(document.querySelectorAll('#exit-intent-modal').length, 1);
 });
 
 test('prefills the modal email from the buy page\'s own email field, if already typed', async (t) => {

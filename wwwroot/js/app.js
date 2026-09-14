@@ -7556,6 +7556,12 @@ function drawBuyForm(pricing, giftIntent) {
     return;
   }
   loadStripeSdk(function () { mountStripePaymentElement(); });
+  // Dwell-timer trigger for maybeShowBuyPageNudge (see that function's own comment) -- started
+  // here, once the buy-reminder-card this checks for actually exists in the DOM. Cleared first in
+  // case drawBuyForm ever re-runs for the same page-view (e.g. a giftIntent re-render), so a stray
+  // earlier timer can't fire a duplicate check on top of a fresh one.
+  clearTimeout(buyPageNudgeTimer);
+  buyPageNudgeTimer = setTimeout(maybeShowBuyPageNudge, BUY_PAGE_NUDGE_DWELL_MS);
 }
 
 // Shared by both the passive "Not ready today?" card above and the exit-intent modal below --
@@ -7577,27 +7583,41 @@ async function submitBuyReminder(email, statusEl, btn, onSuccess) {
 // The passive buy-reminder-card above is opt-in and easy to miss entirely -- a visitor who never
 // notices it, never focuses the real payment form (so never trips mountStripePaymentElement's own
 // checkout_intents tracking either), and just closes the tab leaves with nothing captured. This
-// adds an active nudge: when the mouse leaves the viewport through the TOP -- the standard "heading
-// for the tab bar / back button / address bar / the X" exit-intent signal -- show a one-time modal
-// reusing the same /buy/reminder endpoint (and its 'exit_capture' checkout_intents row) the passive
-// card already uses. document's own 'mouseleave' only fires on a genuine viewport exit, never while
-// hovering or clicking something still inside the page, so an ordinary click on a same-site link or
-// the sticky header nav (also near the top) never triggers this -- deliberately NOT hooked to any
-// in-app navigation/route() event, only to real cursor-leaves-the-browser movement.
-// Desktop-only by nature (no mouse to read on mobile) -- deliberately not extended to a mobile
-// heuristic (or to any other page) yet; see project memory for why this stays buy-page-only.
+// adds an active nudge, shown via two independent triggers that share the same modal/endpoint/
+// once-per-session gate:
+// 1. Desktop: the mouse leaves the viewport through the TOP -- the standard "heading for the tab
+//    bar / back button / address bar / the X" exit-intent signal. document's own 'mouseleave' only
+//    fires on a genuine viewport exit, never while hovering or clicking something still inside the
+//    page, so an ordinary click on a same-site link or the sticky header nav (also near the top)
+//    never triggers this -- deliberately NOT hooked to any in-app navigation/route() event, only to
+//    real cursor-leaves-the-browser movement.
+// 2. Any device (mobile's real gap, since there's no mouse signal to read there): a dwell timer --
+//    still on the buy page BUY_PAGE_NUDGE_DWELL_MS after it loaded without having submitted
+//    payment. Two alternatives were deliberately ruled out first: a `popstate`/back-button
+//    interception (a well-known dark pattern -- trapping the back button so it doesn't do what the
+//    visitor expects -- and unreliable on iOS Safari's swipe-back gesture specifically anyway), and
+//    a fully passive sendBeacon capture of whatever's typed in #buy-email on tab-hide (silently
+//    transmitting PII the visitor never explicitly submitted). The dwell timer still requires an
+//    explicit typed-email + submit click, same as every other path into this modal -- nothing is
+//    ever captured passively.
 var EXIT_INTENT_SESSION_KEY = 'examprep_buy_exit_intent_shown';
+var BUY_PAGE_NUDGE_DWELL_MS = 20000;
+var buyPageNudgeTimer = null;
 
 function exitIntentAlreadyShownThisSession() {
   try { return !!sessionStorage.getItem(EXIT_INTENT_SESSION_KEY); } catch (ignored) { return false; } // private mode etc.
 }
 
-function maybeShowExitIntentModal(e) {
-  if (e.clientY > 0) return; // only the "leaving via the top" case
+function maybeShowBuyPageNudge() {
   if (!document.getElementById('buy-reminder-card')) return; // not currently on the buy page
   if (document.getElementById('exit-intent-modal')) return; // already showing
   if (exitIntentAlreadyShownThisSession()) return;
   showExitIntentModal();
+}
+
+function maybeShowExitIntentModal(e) {
+  if (e.clientY > 0) return; // only the "leaving via the top" case
+  maybeShowBuyPageNudge();
 }
 
 function showExitIntentModal() {
