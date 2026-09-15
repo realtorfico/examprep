@@ -3620,7 +3620,7 @@ var HUB_EXAMS_CONTENT = [
     examType: 'nm_cdl',
     title: 'New Mexico CDL (Commercial Driver\'s License) Exam & Endorsements', category: 'Driver & Vehicle Safety (DMV)', route: '/cdl/nm',
     duration: '60 Minutes', questions: '50 Multiple Choice (General Knowledge -- AAMVA/Federal-Standard Format, Item Count Not Independently Published by NM MVD)', passScore: '40/50 Correct (80% -- CONFIRMED Directly in the NM CDL Manual: \'A passing score is 80% or higher\')',
-    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control & Cargo/Passenger Safety', '29%'], ['Driving Safely (General Safe Driving Practices)', '18%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '24%'], ['Hazardous Materials', '18%'], ['School Bus', '11%']],
+    breakdown: [['CDL Licensing, Vehicle Inspection, Basic Control/On-Road & Cargo/Passenger Safety', '29%'], ['Driving Safely (General Safe Driving Practices)', '18%'], ['Air Brakes, Combination Vehicles, Doubles/Triples & Tank Vehicles', '24%'], ['Hazardous Materials', '18%'], ['School Bus', '11%']],
   },
   {
     examType: 'nv_cdl',
