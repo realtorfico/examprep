@@ -322,10 +322,21 @@ function closeHeaderMenuIfOpen() {
 // needs a /promotions fetch, same progressive-enhancement pattern as the hub's own promo wrap.
 // renderSiteHeader() only runs a handful of times per session (boot, login/logout, theme toggle),
 // not per route change, so this fetch is cheap.
+//
+// Scoped to the current pathname's category (/cdl, /cdl/ca, ...) so a kind-scoped promo (e.g. the
+// CDL-only first-time-customer code) shows in the ribbon on that category's pages and nowhere
+// else -- category/track pages are real page loads, not in-app route changes, so the pathname
+// read once here stays accurate. Kind-scoped promos sort first (admin sort_order), so they take
+// the ribbon's single slot on their own pages. The ribbon's height is already reserved (CLS fix),
+// so swapping which promo fills it causes no layout shift.
+function promotionsPath(placement, kind) {
+  return '/promotions?placement=' + placement + (kind ? '&kind=' + encodeURIComponent(kind) : '');
+}
 function fillPromoRibbon() {
   var wrap = document.getElementById('promo-ribbon-wrap');
   if (!wrap) return;
-  Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
+  var pathKind = kindFromSlug((location.pathname.split('/')[1] || '').toLowerCase());
+  Promise.all([apiFetch(promotionsPath('home', pathKind)), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var dismissedIds = getDismissedPromoIds();
     var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
@@ -4652,6 +4663,7 @@ function renderCategoryPage(kind) {
     trustStripHtml() +
     '<div id="category-feature-tiles-wrap">' + categoryFeatureTilesHtml(content && content.featureTiles) + '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
+    '<div id="category-promotions-wrap" class="promotions-wrap"></div>' +
     '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
     categorySampleWidgetHtml() +
     '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
@@ -4667,6 +4679,21 @@ function renderCategoryPage(kind) {
   });
   fillCategoryArticleCount(kind, tracks);
   fillCategoryContent(kind, slug, repTrack);
+  fillCategoryPromotions(kind);
+}
+
+// Full promo card(s) for promos scoped to THIS category only (e.g. the CDL-only first-time-customer
+// code), right above the track card where the buying decision happens. Unscoped sitewide promos are
+// deliberately left out -- they already get the header ribbon, and adding them here would put a new
+// card (and a new async layout shift) on every category page, not just the ones with their own promo.
+// Sits well below the hero, so an async fill here doesn't shift above-the-fold content.
+function fillCategoryPromotions(kind) {
+  Promise.all([apiFetch(promotionsPath('home', kind)), loadSiteConfig()]).then(function (results) {
+    if (!categoryPageState || categoryPageState.kind !== kind) return; // navigated away
+    var scoped = (results[0].promotions || []).filter(function (p) { return p.requiredTrackKind === kind; });
+    var wrap = document.getElementById('category-promotions-wrap');
+    if (wrap && scoped.length) wrap.innerHTML = promoBannersHtml(scoped, false);
+  }).catch(function () { /* best-effort -- page still works without it */ });
 }
 
 // Patches in the /category-content-derived copy (hero headline/subhead, feature tiles,
@@ -6617,8 +6644,9 @@ function renderTrackLanding() {
     if (wrap) wrap.innerHTML = categoryTestimonialsHtml(content && content.testimonials);
   }).catch(function () { /* best-effort -- section just stays empty */ });
   // Same "home" promos the hub shows -- this page IS the funnel entry point for this specific
-  // track, so a discount visible on the unscoped hub should be visible here too.
-  Promise.all([apiFetch('/promotions?placement=home'), loadSiteConfig()]).then(function (results) {
+  // track, so a discount visible on the unscoped hub should be visible here too -- plus any promo
+  // scoped to this track's kind (e.g. the CDL-only first-time-customer code).
+  Promise.all([apiFetch(promotionsPath('home', exam.examKind)), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var wrap = document.getElementById('track-landing-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
@@ -7442,7 +7470,7 @@ function renderBuy(giftIntent) {
       // loadSiteConfig() is already resolved by this point -- it's one of the two promises this
       // whole .then() is chained off of (Promise.all above) -- but call it again anyway (cheap,
       // cached singleton) so this stays correct even if the surrounding code is ever reordered.
-      Promise.all([apiFetch('/promotions?placement=checkout'), loadSiteConfig()]).then(function (results) {
+      Promise.all([apiFetch(promotionsPath('checkout', (trackByExamType(state.examType) || {}).examKind)), loadSiteConfig()]).then(function (results) {
         var r = results[0];
         var wrap = document.getElementById('checkout-promotions-wrap');
         if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
@@ -8115,7 +8143,8 @@ function mountStripePaymentElement() {
         return;
       }
       if (errCode === 'invalid_promo_code' || errCode === 'promo_email_domain_required' ||
-          errCode === 'promo_first_purchase_only_email_required' || errCode === 'promo_not_first_purchase') {
+          errCode === 'promo_first_purchase_only_email_required' || errCode === 'promo_not_first_purchase' ||
+          errCode === 'promo_wrong_track_kind') {
         buyPromoCode = null;
         buyPromoDiscountCents = 0;
         updateBuyTotalDisplay();
@@ -8126,7 +8155,9 @@ function mountStripePaymentElement() {
             : errCode === 'promo_first_purchase_only_email_required'
             ? '<p class="error-text">This promo is for first-time buyers — enter your email above first, then click Apply again.</p>'
             : errCode === 'promo_not_first_purchase'
-            ? '<p class="error-text">This promo is for first-time buyers only, and that email already has access.</p>'
+            ? '<p class="error-text">This promo is for first-time buyers only, and that email has already purchased with us.</p>'
+            : errCode === 'promo_wrong_track_kind'
+            ? '<p class="error-text">This promo code is only valid for ' + escapeHtml(err.data.requiredTrackKind) + ' tracks.</p>'
             : '<p class="error-text">That promo code isn\'t valid or has expired.</p>';
         }
         mountStripePaymentElement();
