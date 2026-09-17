@@ -271,8 +271,28 @@
     };
   }
 
+  // Theme toggle: writes the same localStorage key app.js reads ('examprep_theme'), so a choice made
+  // here carries to the rest of the site and back. theme-init.js applies it before paint next time.
+  function wireTheme() {
+    var btn = document.getElementById('theme');
+    if (!btn) return;
+    var sync = function () {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.textContent = dark ? '☀️' : '🌙';
+      btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    };
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('examprep_theme', next); } catch (e) { /* private mode */ }
+      sync();
+    });
+    sync();
+  }
+
   function start() {
     started = true;
+    wireTheme();
     var select = document.getElementById('state');
     if (!select) return;
     select.addEventListener('change', function () { renderState(select.value); });

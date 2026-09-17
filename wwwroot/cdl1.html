@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- data-theme="light" up front: the app defaults to light (loadLocalPrefs in app.js), and :root's
+     own default is dark, so without this an OS-dark visitor would paint dark and then flip when the
+     saved preference is read. theme-init.js applies a real saved choice before first paint. -->
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +19,10 @@
      2KB on the wire). It first shipped blocking on hero.css + the whole 86KB style.min.css, which
      cost it ~630ms of first paint for rules it does not use. Everything on the page is already in
      the HTML, so there is no JS render to wait for -- blocking here is correct, being big was not. -->
-<link rel="stylesheet" href="/css/cdl1.min.css?v=5">
+<!-- Blocking on purpose and deliberately tiny (~0.2KB): it reads the same localStorage key app.js
+     uses, so a visitor who chose dark elsewhere on the site gets dark on the FIRST paint here. -->
+<script src="/js/theme-init.js?v=1"></script>
+<link rel="stylesheet" href="/css/cdl1.min.css?v=6">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -26,7 +32,7 @@
 <!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
      Deferred scripts execute in document order, so the other way round throws and the per-state
      facts and coverage bars silently never render. -->
-<script defer src="/js/cdl1.js?v=7"></script>
+<script defer src="/js/cdl1.js?v=8"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
 </head>
 <body class="t1">
@@ -46,7 +52,10 @@
     </span>
     <span class="t1-logo-word">PassExam<span class="t1-logo-accent">HQ</span></span>
   </a>
-  <span class="t1-bar-note">All 50 states · One-time purchase</span>
+  <span class="t1-bar-right">
+    <span class="t1-bar-note">All 50 states · One-time purchase</span>
+    <button class="t1-theme" type="button" id="theme" aria-label="Switch to dark mode">🌙</button>
+  </span>
 </header>
 
 <main class="t1-main">
@@ -55,10 +64,14 @@
        straight from the review -- is this my state, what does the test look like, what's covered,
        can I try it and what does it cost. -->
   <section class="t1-hero">
+    <div class="t1-hero-copy">
     <p class="t1-kicker">Commercial driver's license · <span id="kicker-state">California</span></p>
     <h1>CDL Exam Prep</h1>
     <p class="t1-sub">Pass your state's CDL knowledge test with real practice questions built from your own state's official CDL handbook — all 50 states, instant access, one-time purchase.</p>
 
+    </div>
+
+    <div class="t1-hero-spec">
     <div class="t1-state">
       <label for="state">Your state</label>
       <select id="state" name="state" autocomplete="address-level1">
@@ -96,6 +109,8 @@
       <li>HazMat</li><li>Passenger</li><li>School bus</li><li>Tanker</li>
     </ul>
 
+    </div>
+
     <div class="t1-cta">
       <a class="btn-primary t1-btn" href="#sample">Answer a free question now</a>
       <p class="t1-price-line">
@@ -109,6 +124,8 @@
       Written from the <span id="seal-state">California</span> CDL handbook — not a generic question bank.
     </p>
   </section>
+
+  <div class="t1-grid">
 
   <!-- The sample question, immediately after the hero rather than three screens down. Filled from
        /api/sample, preferring a General Knowledge question: it is 48% of the bank and every
@@ -198,6 +215,7 @@
     </blockquote>
   </section>
 
+  </div>
 </main>
 
 <!-- Same buy action as the hero's price link, pinned once the hero scrolls away (phones only). -->

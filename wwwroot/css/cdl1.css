@@ -241,3 +241,55 @@ body.t1 { background: var(--bg); color: var(--fg); }
 .t1-resources a { color: var(--accent); }
 .t1-updated { margin: 1rem 0 0; font-size: 0.8rem; color: var(--muted); }
 .t1-updated strong { color: var(--fg); }
+
+/* --- theme toggle ----------------------------------------------------------------------------- */
+.t1-bar-right { display: flex; align-items: center; gap: 0.7rem; }
+.t1-theme {
+  width: 2rem; height: 2rem; border-radius: 50%; padding: 0; line-height: 1;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--fg);
+  font-size: 0.9rem; cursor: pointer;
+}
+.t1-theme:hover { border-color: var(--accent); }
+
+/* --- desktop: use the horizontal space ---------------------------------------------------------
+   Mobile-first everywhere above; these are the only wide-screen rules. The page stays a single
+   column until there is real room for two, then the hero splits (pitch left, the exam's own spec
+   right) and the cards pair up so a desktop visitor sees the sample question and what they get on
+   one screen instead of scrolling a phone layout stretched wide. */
+@media (min-width: 900px) {
+  .t1-main { max-width: 68rem; padding-bottom: 2rem; }
+
+  .t1-hero {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2rem;
+    align-items: start; padding: 2.2rem 2.2rem 2rem;
+  }
+  .t1-hero-copy { min-width: 0; }
+  .t1-hero-spec { min-width: 0; }
+  /* The facts/endorsements column gets its own panel edge so the split reads as deliberate. */
+  .t1-hero-spec {
+    padding: 1.1rem 1.15rem 1.25rem; border-radius: var(--radius-2xl);
+    background: color-mix(in srgb, black 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-deep-foreground) 14%, transparent);
+  }
+  .t1-hero-spec .t1-facts { grid-template-columns: 1fr; margin-top: 0; }
+  .t1-hero-spec .t1-facts > div {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+    background: color-mix(in srgb, black 22%, transparent);
+  }
+  .t1-hero-spec .t1-facts dd { margin: 0; text-align: right; }
+  .t1-hero h1 { font-size: 3.2rem; }
+  .t1-sub { font-size: 1.05rem; }
+
+  /* Cards in two columns, with the wide ones spanning both. */
+  .t1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-items: start; margin-top: 1.1rem; }
+  .t1-grid > * { margin-top: 0; }
+  .t1-grid > .t1-testimonials { grid-column: 1 / -1; margin-top: 0; }
+  #sample { grid-row: span 2; }
+
+  .t1-inv { grid-template-columns: repeat(4, 1fr); }
+  .t1-bars li { grid-template-columns: 1fr 5rem 3rem; }
+  .t1-bar-track { grid-column: auto; }
+}
+@media (min-width: 1200px) {
+  .t1-hero h1 { font-size: 3.6rem; }
+}

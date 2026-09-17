@@ -41,9 +41,13 @@ test('the prototype is noindex and points its canonical at the real page', () =>
 
 // ---- Nothing blocks the first paint but CSS ---------------------------------------------------
 
-test('no script blocks rendering', () => {
+test('only the theme init blocks rendering', () => {
+  // theme-init.js is the one deliberate exception: it has to run before the first paint or a
+  // visitor who chose dark sees the page flip. It's ~0.2KB and its size is capped by its own test.
+  // Everything else must be deferred -- the page's content is all in the HTML already.
   const scripts = PAGE.match(/<script[^>]*>/g) || [];
   for (const tag of scripts) {
+    if (/theme-init\.js/.test(tag)) continue;
     assert.ok(/\bdefer\b|\basync\b/.test(tag), 'render-blocking script on the prototype: ' + tag);
   }
 });
@@ -76,6 +80,41 @@ test('both fonts are preloaded here too', () => {
   assert.match(PAGE, /<link rel="preload" as="font"[^>]*inter-var-subset/, 'see index.html for the measurements behind this');
   assert.match(PAGE, /<link rel="preload" as="font"[^>]*fraunces-var-subset/);
   assert.ok(INDEX.includes('inter-var-subset'), 'and the live page should still preload them');
+});
+
+// ---- Theme and layout --------------------------------------------------------------------------
+
+test('the page renders light by default, like the app', () => {
+  // :root's own default is dark; the app defaults to light (loadLocalPrefs). Without the attribute
+  // an OS-dark visitor paints dark here and light on every other page.
+  assert.match(PAGE, /<html lang="en" data-theme="light">/);
+});
+
+test('a saved dark choice applies before the first paint', () => {
+  const init = fs.readFileSync(path.join(WWWROOT, 'js', 'theme-init.js'), 'utf8');
+  assert.match(PAGE, /<script src="\/js\/theme-init\.js\?v=\d+"><\/script>/, 'it has to block: applying the theme after paint is a visible flip');
+  assert.match(init, /examprep_theme/, 'must read the same key app.js uses, or the choice does not carry across pages');
+  assert.match(init, /try \{/, 'localStorage throws in private mode -- the light default has to stand');
+  assert.ok(init.length < 800, 'theme-init.js is on the critical path: ' + init.length + ' bytes');
+});
+
+test('the toggle writes the shared preference', () => {
+  assert.match(PAGE, /id="theme"/);
+  assert.match(PAGE_JS, /localStorage\.setItem\('examprep_theme'/);
+});
+
+test('the layout is mobile-first, widening only at real desktop widths', () => {
+  const css = fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.css'), 'utf8');
+  // Base rules must carry no min-width assumptions: the only wide rules live in min-width blocks.
+  assert.match(css, /@media \(min-width: 900px\)/, 'the desktop layout should start at 900px');
+  assert.match(css, /\.t1-main \{ max-width: 68rem/, 'and use the horizontal space, not stretch a phone column');
+  assert.match(css, /\.t1-hero \{\s*display: grid; grid-template-columns: 1\.15fr 0\.85fr/, 'the hero should split into pitch and spec columns');
+  assert.match(css, /\.t1-grid \{ display: grid; grid-template-columns: 1fr 1fr/, 'and the cards should pair up');
+  // The phone-only pieces stay phone-only.
+  assert.match(css, /@media \(max-width: 680px\) \{ \.t1-sticky \{ display: flex/);
+  assert.match(PAGE, /<div class="t1-grid">/, 'the cards need the grid wrapper');
+  assert.match(PAGE, /class="t1-hero-copy"/);
+  assert.match(PAGE, /class="t1-hero-spec"/);
 });
 
 // ---- What a CDL candidate came for, in the HTML itself ----------------------------------------
