@@ -218,3 +218,22 @@ body.t1 { background: var(--bg); color: var(--fg); }
 .t1-foot { max-width: 42rem; margin: 1.8rem auto 0; padding: 1.2rem 1rem 2rem; border-top: 1px solid var(--border); }
 .t1-foot p { margin: 0.35rem 0 0; font-size: 0.76rem; color: var(--muted); }
 .t1-foot a { color: var(--muted); }
+
+/* --- what-you-get card ------------------------------------------------------------------------ */
+/* The per-state inventory the track page shows before checkout -- real numbers for THIS state,
+   unlike the sitewide stats band the review cut from /cdl. */
+.t1-inv { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.9rem 0 0; padding: 0; }
+.t1-inv li {
+  padding: 0.6rem 0.7rem; border-radius: var(--radius-lg);
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.t1-inv strong { display: block; font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; line-height: 1.1; color: var(--highlight); }
+.t1-inv span { display: block; margin-top: 0.15rem; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.t1-included { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.t1-included li { position: relative; padding-left: 1.4rem; font-size: 0.89rem; line-height: 1.4; }
+.t1-included li::before {
+  content: '✓'; position: absolute; left: 0; top: -0.05rem;
+  color: var(--correct); font-weight: 700;
+}
+.t1-alt { margin-top: 1rem; line-height: 1.6; }

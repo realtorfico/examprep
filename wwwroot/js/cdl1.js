@@ -65,6 +65,20 @@
       : '';
     return '<a href="' + escapeHtml(buyHref(currentState)) + '">' + escapeHtml(promo.title) + '</a>' + code;
   }
+  // Per-state inventory for the "what you get" card: the questions count comes from
+  // /api/questions/counts and the rest from /api/resources/catalog?counts=1, the same two endpoints
+  // the track page reads. A track with nothing recorded shows a dash -- claiming "0 audio lessons"
+  // would be worse than saying nothing.
+  function inventoryFor(stateCode, counts, questionCount) {
+    var row = (counts || {})[String(stateCode).toLowerCase() + '_cdl'] || {};
+    var dash = function (n) { return n ? String(n) : '—'; };
+    return {
+      questions: dash(questionCount),
+      tables: dash(row.tables),
+      decks: row.decks ? String(row.decks) + (row.cards ? ' (' + row.cards + ' cards)' : '') : '—',
+      audio: dash(row.audio),
+    };
+  }
   function formatPrice(cents) {
     return '$' + (cents / 100).toFixed(2);
   }
@@ -74,6 +88,7 @@
   // assertion on the markup, so the renderer itself is exercised directly.
   window.renderStateForTest = function (stateCode) { renderState(stateCode); };
   window.promoBandHtml = promoBandHtml;
+  window.inventoryFor = inventoryFor;
   window.stateFactsText = stateFactsText;
   window.buyHref = buyHref;
   window.formatPrice = formatPrice;
@@ -93,7 +108,7 @@
       text('fact-time', entry.duration);
       renderBars(entry.breakdown || []);
     }
-    ['buy', 'buy2', 'buy3'].forEach(function (id) {
+    ['buy', 'buy2', 'buy3', 'buy-topics'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.setAttribute('href', buyHref(stateCode));
     });
@@ -128,17 +143,37 @@
       .catch(function () { /* the server-rendered price stays */ });
   }
 
+  // Both responses are cached per page load: switching state re-renders from them without refetching.
+  var questionCounts = null;
+  var resourceCounts = null;
   function loadCount(stateCode) {
+    var name = STATE_NAMES[stateCode] || stateCode;
+    if (questionCounts) return renderCounts(stateCode, name);
     fetch('/api/questions/counts')
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        var examType = stateCode.toLowerCase() + '_cdl';
-        var row = (d.counts || []).filter(function (c) { return c.exam_type === examType; })[0];
-        if (!row) return;
-        var name = STATE_NAMES[stateCode] || stateCode;
-        text('sample-count-line', row.count.toLocaleString() + ' more ' + name + ' questions are waiting.');
+        questionCounts = {};
+        (d.counts || []).forEach(function (c) { questionCounts[c.exam_type] = c.count; });
+        renderCounts(stateCode, name);
       })
       .catch(function () {});
+    fetch('/api/resources/catalog?counts=1')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { resourceCounts = d && d.counts; renderCounts(stateCode, STATE_NAMES[currentState] || currentState); })
+      .catch(function () {});
+  }
+
+  function renderCounts(stateCode, name) {
+    var examType = String(stateCode).toLowerCase() + '_cdl';
+    var count = questionCounts && questionCounts[examType];
+    if (count) text('sample-count-line', count.toLocaleString() + ' more ' + name + ' questions are waiting.');
+    var inv = inventoryFor(stateCode, resourceCounts, count);
+    text('inv-questions', inv.questions);
+    text('inv-tables', inv.tables);
+    text('inv-decks', inv.decks);
+    text('inv-audio', inv.audio);
+    text('included-state', name);
+    text('included-state2', name);
   }
 
   // One request, once: the promo is the same for the whole category, so switching state doesn't

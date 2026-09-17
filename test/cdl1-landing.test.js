@@ -113,6 +113,73 @@ test('the free sample and the topic breakdown are both present', () => {
   assert.match(PAGE, /id="breakdown"/);
 });
 
+// ---- What the track page carries before checkout ---------------------------------------------
+
+// /cdl1's buy links go straight to #/buy, skipping /cdl/ca, so everything that page says before
+// taking money has to be said here instead. Taken from the live /cdl/ca (2026-09-17): the real
+// per-state inventory (467 questions, 5 quick-fact tables, 3 flashcard decks of 30 cards, 3 audio
+// lessons), what access actually includes, the à la carte alternative, the student discount, the
+// refund terms in full, and the agency disclaimer.
+test('it says what access includes', () => {
+  for (const claim of [
+    /unlimited practice/i,
+    /mock exam/i,
+    /Weak Spots/i,
+    /[Vv]oice/,
+    /progress/i,
+  ]) {
+    assert.match(PAGE, claim, 'missing an included-feature claim the track page makes: ' + claim);
+  }
+});
+
+test('it shows the real per-state inventory, not sitewide totals', () => {
+  assert.match(PAGE, /id="inv-questions"/);
+  assert.match(PAGE, /id="inv-tables"/);
+  assert.match(PAGE, /id="inv-decks"/);
+  assert.match(PAGE, /id="inv-audio"/);
+  // Filled from the same endpoints the track page uses, keyed by examType.
+  assert.match(PAGE_JS, /resources\/catalog\?counts=1/);
+  assert.match(PAGE_JS, /questions\/counts/);
+});
+
+test('the inventory renderer reads the real API shape', () => {
+  const { inventoryFor } = loadHelpers();
+  const counts = { ca_cdl: { tables: 5, decks: 3, cards: 30, audio: 3, video: 0 } };
+  const inv = inventoryFor('CA', counts, 467);
+  assert.equal(inv.questions, '467');
+  assert.equal(inv.tables, '5');
+  assert.equal(inv.decks, '3 (30 cards)');
+  assert.equal(inv.audio, '3');
+  // A track with nothing recorded shows a dash rather than a zero-claim.
+  const empty = inventoryFor('AK', { ak_cdl: { tables: 0, decks: 0, cards: 0, audio: 0 } }, 0);
+  assert.equal(empty.tables, '—');
+  assert.equal(empty.audio, '—');
+});
+
+test('the cheaper per-topic option is not hidden', () => {
+  // The track page offers "Only need certain topics? Buy just what you need" -- sending everyone
+  // straight to full-price checkout without it is the kind of omission that reads as a dark pattern.
+  assert.match(PAGE, /only need certain topics/i);
+  assert.match(PAGE, /id="buy-topics"/);
+});
+
+test('the student discount is mentioned', () => {
+  assert.match(PAGE, /\.edu/);
+  assert.match(PAGE, /\$5/);
+});
+
+test('the refund terms are stated in full, not rounded off', () => {
+  // "50% back" alone leaves out the condition the track page states: you have to sit the real exam
+  // within 180 days.
+  assert.match(PAGE, /180 days/);
+  assert.match(PAGE, /7-day/i);
+});
+
+test('the agency disclaimer is present', () => {
+  assert.match(PAGE, /[Nn]ot affiliated/);
+  assert.match(PAGE, /FMCSA/);
+});
+
 // ---- And what the review said to cut ----------------------------------------------------------
 
 test('the sitewide vanity stats band is gone', () => {

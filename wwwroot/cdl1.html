@@ -16,7 +16,7 @@
      2KB on the wire). It first shipped blocking on hero.css + the whole 86KB style.min.css, which
      cost it ~630ms of first paint for rules it does not use. Everything on the page is already in
      the HTML, so there is no JS render to wait for -- blocking here is correct, being big was not. -->
-<link rel="stylesheet" href="/css/cdl1.min.css?v=2">
+<link rel="stylesheet" href="/css/cdl1.min.css?v=3">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -26,7 +26,7 @@
 <!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
      Deferred scripts execute in document order, so the other way round throws and the per-state
      facts and coverage bars silently never render. -->
-<script defer src="/js/cdl1.js?v=4"></script>
+<script defer src="/js/cdl1.js?v=5"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
 </head>
 <body class="t1">
@@ -135,12 +135,39 @@
     <ul class="t1-bars" id="bars"></ul>
   </section>
 
+  <!-- Everything the track page (/cdl/ca) says before it takes money. /cdl1's buy links skip that
+       page, so the substance behind the price has to be here: the real per-state inventory, what
+       access includes, the cheaper per-topic route, and the student discount. Numbers are filled
+       from the same endpoints the track page uses; the dashes are the honest placeholder for a
+       track with nothing recorded. -->
+  <section class="t1-card" id="included">
+    <span class="t1-card-kicker">What you get</span>
+    <h2>Inside <span id="included-state">California</span> CDL access</h2>
+    <ul class="t1-inv">
+      <li><strong id="inv-questions">467</strong><span>practice questions</span></li>
+      <li><strong id="inv-tables">5</strong><span>quick-fact tables</span></li>
+      <li><strong id="inv-decks">3 (30 cards)</strong><span>flashcard decks</span></li>
+      <li><strong id="inv-audio">3</strong><span>audio lessons</span></li>
+    </ul>
+    <ul class="t1-included">
+      <li>Full question bank, unlimited practice</li>
+      <li>Timed mock exam and Weak Spots drills</li>
+      <li>Voice-enabled answering and read-aloud</li>
+      <li>Per-topic progress tracking</li>
+      <li>Updated for current <span id="included-state2">California</span> and federal CDL rules</li>
+    </ul>
+    <p class="t1-muted t1-alt">
+      Only need certain topics? <a id="buy-topics" href="/cdl/ca#/buy">Buy just what you need →</a><br>
+      Students save $5 with a .edu email at checkout — no code needed.
+    </p>
+  </section>
+
   <section class="t1-card t1-guarantee">
     <span class="t1-card-kicker">No-risk</span>
     <h2>Two guarantees</h2>
     <div class="t1-guarantee-row">
       <span class="t1-guarantee-icon" aria-hidden="true">🛡️</span>
-      <p><strong>Pass or 50% back.</strong> Finish your track, sit the real exam, and if you don't pass we refund half.</p>
+      <p><strong>Pass or 50% back.</strong> Finish your track, sit the real exam within 180 days, and if you don't pass we refund half of what you paid.</p>
     </div>
     <div class="t1-guarantee-row">
       <span class="t1-guarantee-icon" aria-hidden="true">↩️</span>
@@ -169,7 +196,7 @@
 </div>
 
 <footer class="t1-foot">
-  <p>Built from each state's official CDL handbook. Not affiliated with any state agency or the FMCSA.</p>
+  <p>Built from each state's official CDL handbook. Not affiliated with, authorized by, sponsored by, or endorsed by any state licensing agency or the FMCSA.</p>
   <p><a href="/cdl">Current CDL page</a> · <a href="/privacy">Privacy</a> · <a href="/cdl#/guarantee">Guarantee</a></p>
 </footer>
 
