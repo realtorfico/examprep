@@ -128,7 +128,7 @@
     var entry = entryFor(stateCode);
     var name = STATE_NAMES[stateCode] || stateCode;
     currentState = stateCode;
-    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state', 'resources-state', 'price-state'].forEach(function (id) { text(id, name); });
+    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state', 'resources-state'].forEach(function (id) { text(id, name); });
     if (entry) {
       text('fact-questions', entry.questions);
       text('fact-pass', entry.passScore);
@@ -168,7 +168,7 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d || !d.priceCents) return;
-        ['price', 'price2', 'price3'].forEach(function (id) { text(id, formatPrice(d.priceCents)); });
+        ['price', 'price3'].forEach(function (id) { text(id, formatPrice(d.priceCents)); });
       })
       .catch(function () { /* the server-rendered price stays */ });
   }

@@ -176,9 +176,14 @@ test('the price is stated after the free question, not in the hero', () => {
   assert.match(hero, /one time, no subscription/i, 'the hero should still be clear that it is not a subscription');
   assert.match(hero, /id="buy"/, 'and still link to the buy page for anyone who wants the number now');
 
-  const after = PAGE.slice(PAGE.indexOf('id="sample-after"'));
+  // Just the revealed block, not the rest of the page: the pinned bar further down carries the
+  // price too, and counting that would make this assertion meaningless.
+  const blockStart = PAGE.indexOf('id="sample-after"');
+  const after = PAGE.slice(blockStart, PAGE.indexOf('</p>', blockStart));
   assert.match(after, /id="price"/, 'the price belongs in the block revealed after answering');
   assert.match(after, /one time/i);
+  // Said once: the figure lives on the button, not in a sentence sitting next to the button.
+  assert.equal((after.match(/\$36\.99/g) || []).length, 1, 'the price is stated twice in the same block');
 });
 
 test('the pinned bar carries the price, so it only appears after the question too', () => {
