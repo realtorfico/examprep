@@ -791,6 +791,25 @@ function renderSuggestionWidget() {
     '</div>';
 }
 
+// On phones the 💡 and 🐞 floating buttons sat on top of the ad landing page's hero text. CSS keeps them
+// hidden under 600px until <html> has .past-first-screen: set once the visitor scrolls past half a
+// screen or navigates in-app (so a short page that never scrolls still gets them), and never removed.
+// Added 2026-09-17, see test/ad-landing-first-screen.test.js.
+function markPastFirstScreen() {
+  document.documentElement.classList.add('past-first-screen');
+}
+function watchPastFirstScreen() {
+  function onScroll() {
+    if (window.scrollY > window.innerHeight / 2) {
+      markPastFirstScreen();
+      window.removeEventListener('scroll', onScroll);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('hashchange', markPastFirstScreen);
+  window.addEventListener('popstate', markPastFirstScreen);
+}
+
 function toggleSuggestionPanel() {
   suggestionOpen = !suggestionOpen;
   var panelEl = document.getElementById('suggestion-panel');
@@ -799,13 +818,19 @@ function toggleSuggestionPanel() {
 
 // ---- Site news banner ------------------------------------------------------
 // Dismissible via localStorage keyed by id, so a future announcement (new id) reappears
-// for everyone even if they dismissed an older one. Rendered on the hub (home page) and
-// inside the notary app's tab bar (renderTabs) so both new visitors and existing users see it.
+// for everyone even if they dismissed an older one. Rendered on the hub, category pages and
+// track tab bars (renderTabs), but only where it's relevant: `kind` scopes it to that
+// category's pages (null = sitewide). Scoped 2026-09-17 -- this Notary announcement was the
+// first thing a phone visitor saw on the CDL ad landing page, above the CDL headline, while
+// Google Ads rated that page's landing experience Below average (see
+// test/ad-landing-first-screen.test.js).
 var SITE_NEWS = {
   id: 'notary-500-2026-08',
+  kind: 'Notary',
   text: '🎉 Big update: 500+ new California Notary practice questions just added — the bank has nearly tripled to 750+ questions!',
 };
-function renderNewsBanner() {
+function renderNewsBanner(pageKind) {
+  if (SITE_NEWS.kind && SITE_NEWS.kind !== pageKind) return '';
   if (localStorage.getItem('examprep_news_dismissed') === SITE_NEWS.id) return '';
   return '<div class="news-flash-banner" data-news-id="' + SITE_NEWS.id + '">' +
     '<span class="news-flash-badge">New</span>' +
@@ -4631,13 +4656,21 @@ function renderCategoryPage(kind) {
   var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
 
   appEl.innerHTML =
-    renderNewsBanner() +
+    renderNewsBanner(kind) +
     '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
     '<span class="section-eyebrow">' + escapeHtml(kind) + '</span>' +
     (examTypeHasIntlExposure(slug) ? internationalBadgeHtml() : '') +
     '<h1 id="category-hero-headline">' + escapeHtml(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + escapeHtml(subhead) + '</p>' +
+    // Mobile-only (CSS shows it under 600px): a practice button on the first screen of the ad landing
+    // page, right under the subheadline -- on a phone the "Try Free Sample" button below sits under the
+    // badges, state banner and state picker, well past the first screen. That one gets
+    // .hub-hero-btn-late so mobile shows the button once, here. Added 2026-09-17, see
+    // test/ad-landing-first-screen.test.js.
+    '<div class="hub-hero-cta hub-hero-cta-early">' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
+    '</div>' +
     '<div class="hub-trust-badges">' +
     '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
     '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
@@ -4654,7 +4687,7 @@ function renderCategoryPage(kind) {
     (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
     (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
     '<div class="hub-hero-cta">' +
-    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
+    '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>' +
     '</div>' +
@@ -5331,7 +5364,7 @@ function renderTabs(active) {
   var gated = { quiz: true, exam: true, toughest45: true, progress: true };
   var tabs = [['resources', 'Resources'], ['quiz', 'Quiz'], ['exam', 'Exam'], ['toughest45', 'Weak Spots'], ['progress', 'Progress'], ['info', 'Info']];
   var trackHeading = loggedIn ? '<div class="track-heading">' + escapeHtml((trackByExamType(state.examType) || {}).shortName || '') + '</div>' : '';
-  return renderNewsBanner() + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
+  return renderNewsBanner((trackByExamType(state.examType) || {}).examKind) + trackHeading + '<nav class="tabs">' + tabs.map(function (t) {
     var locked = (gated[t[0]] && !loggedIn) || (examModeLocked[t[0]] && partialOwner);
     return '<a href="#/' + t[0] + '"' + (active === t[0] ? ' aria-current="page"' : '') +
       (locked && partialOwner ? ' title="Requires full track access"' : '') + '>' +
@@ -10174,10 +10207,14 @@ setInterval(function () { if (document.visibilityState === 'visible') checkForUp
   renderHelpChatWidget(); // outside appEl -- rendered once here only, so it survives every route() re-render
   renderReportIssueWidget(); // same reasoning -- outside appEl, rendered once, survives every route() re-render
   renderSuggestionWidget(); // same reasoning -- outside appEl, rendered once, survives every route() re-render
+  watchPastFirstScreen();
   // Deep link from sendSuggestionRequestEmails' "what do you think?" email (examprep-api) --
   // auto-open the panel so a customer who clicks through lands directly in it, not just on the
   // homepage having to go find the button themselves.
-  if (new URLSearchParams(location.search).get('feedback') === '1') toggleSuggestionPanel();
+  if (new URLSearchParams(location.search).get('feedback') === '1') {
+    markPastFirstScreen();
+    toggleSuggestionPanel();
+  }
   // Must know which track the token (if any) actually belongs to, AND have the real
   // track_registry identity data (kind/state/short_name/active for all 244 tracks, including any
   // admin "pull from sale" toggle -- active lives directly on the registry row now, no separate

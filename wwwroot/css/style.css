@@ -1136,6 +1136,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   padding: 0.3rem 0.7rem; border-radius: 999px;
 }
 .hub-hero-cta { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0.75rem; margin-top: 1.25rem; }
+/* Category pages: on phones the practice button moves up to right under the subheadline, onto the first
+   screen of the ad landing page; the later "Try Free Sample" duplicate is hidden there. Desktop unchanged.
+   2026-09-17, see test/ad-landing-first-screen.test.js. */
+.hub-hero-cta-early { display: none; }
+@media (max-width: 600px) {
+  .hub-hero-cta-early { display: flex; margin-top: 1rem; }
+  .hub-hero-btn-late { display: none; }
+}
 /* Category page's 2nd hero CTA is wrapped in a plain div so pick-category-state can swap it --
    without display:contents that div (not styled as a button itself) becomes the flex item instead
    of the button/link inside it, leaving the anchor's own padding/border out of the flex sizing and
@@ -2214,4 +2222,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (max-width: 480px) {
   #suggestion-root { left: 0.6rem; bottom: calc(0.6rem + 3.4rem + 0.6rem); }
   .suggestion-panel { width: calc(100vw - 1.2rem); }
+}
+/* On phones the 💡 and 🐞 buttons covered the hero text on the visitor's first screen -- hidden until
+   app.js marks <html> .past-first-screen (scrolled past half a screen, or navigated in-app). Only the
+   toggle buttons: an opened panel always shows. The 💬 help chat is not affected. 2026-09-17. */
+@media (max-width: 600px) {
+  html:not(.past-first-screen) .report-issue-toggle,
+  html:not(.past-first-screen) .suggestion-toggle { display: none; }
 }
