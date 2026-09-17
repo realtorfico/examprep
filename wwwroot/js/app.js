@@ -64,6 +64,9 @@ var examDiscardConfirmPending = false; // in-page confirmation for "discard this
 var sampleState = { questions: null, index: 0, selected: null, answered: null, examType: null };
 var recognition = null;
 var isRecording = false;
+// Per listening session, so onend can tell "ended with nothing heard" from "already said something".
+var voiceGotResult = false;
+var voiceGotError = false;
 
 // Donut/ring progress indicator (ported from v0Design's RadialProgress). Dasharray/offset and
 // width/height go on as real SVG attributes, not inline style -- CSP (style-src 'self') blocks
@@ -8866,6 +8869,31 @@ function drawSampleQuestion() {
 
 // ---- Speech recognition (voice answer picker) ------------------------------
 
+// Which answer the recognizer's text names, matched word by word. Speech engines write a spoken letter as a
+// word surprisingly often ("see"/"sea" -> C, "bee"/"be" -> B, "hey"/"eh" -> A, "dee" -> D), and the previous
+// substring matching mangled ordinary words as well: "second" and "third" contain c/d, "number four" matched b
+// inside "number". Returns 'A'-'D', 'ambiguous' when one utterance names more than one letter (never guess
+// between them), or null. See test/voice-answer.test.js.
+var VOICE_ANSWER_WORDS = {
+  a: 'A', ay: 'A', eh: 'A', hey: 'A', first: 'A', one: 'A', 1: 'A',
+  b: 'B', be: 'B', bee: 'B', second: 'B', two: 'B', 2: 'B',
+  c: 'C', see: 'C', sea: 'C', cee: 'C', si: 'C', third: 'C', three: 'C', 3: 'C',
+  d: 'D', dee: 'D', fourth: 'D', four: 'D', 4: 'D',
+};
+// Trusted only as the WHOLE utterance -- inside a sentence these are ordinary words, not answers.
+var VOICE_ANSWER_SOLO_WORDS = { the: 'D', to: 'B', too: 'B', for: 'D' };
+function voiceAnswerChoice(transcript) {
+  var words = String(transcript || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ');
+  if (words.length === 1 && VOICE_ANSWER_SOLO_WORDS[words[0]]) return VOICE_ANSWER_SOLO_WORDS[words[0]];
+  var found = [];
+  words.forEach(function (w) {
+    var letter = VOICE_ANSWER_WORDS[w];
+    if (letter && found.indexOf(letter) === -1) found.push(letter);
+  });
+  if (found.length === 1) return found[0];
+  return found.length > 1 ? 'ambiguous' : null;
+}
+
 function setupMic() {
   var micBtn = document.querySelector('[data-act="mic-toggle"]');
   if (!micBtn) return;
@@ -8878,21 +8906,37 @@ function setupMic() {
   recognition = new SpeechRecognition();
   recognition.continuous = false;
   recognition.lang = 'en-US';
+  // Reads the alternatives the recognizer offers (maxAlternatives below) and takes the first one that names
+  // exactly one answer -- so a mis-transcribed first guess ("sealed") can still resolve from a later one ("c").
+  // Never silent: an utterance naming two letters, or none, says so instead of looking like nothing happened.
   recognition.onresult = function (event) {
-    var transcript = event.results[0][0].transcript.toLowerCase();
-    var box = document.getElementById('mic-transcript');
-    if (box) box.textContent = 'You said: "' + transcript + '"';
-    var map = { a: 'A', 'option a': 'A', first: 'A', b: 'B', 'option b': 'B', second: 'B', c: 'C', 'option c': 'C', third: 'C', d: 'D', 'option d': 'D', fourth: 'D' };
+    var alternatives = event.results[0];
+    var heard = alternatives[0] ? alternatives[0].transcript : '';
     var picked = null;
-    Object.keys(map).forEach(function (phrase) {
-      if (transcript.indexOf(phrase) !== -1) picked = map[phrase];
-    });
+    var sawAmbiguous = false;
+    for (var i = 0; i < alternatives.length && !picked; i++) {
+      var choice = voiceAnswerChoice(alternatives[i].transcript);
+      if (choice === 'ambiguous') sawAmbiguous = true;
+      else if (choice) { picked = choice; heard = alternatives[i].transcript; }
+    }
+    voiceGotResult = true;
+    var box = document.getElementById('mic-transcript');
+    if (box) {
+      box.textContent = picked
+        ? 'You said: "' + heard + '"'
+        : sawAmbiguous
+        ? 'Heard "' + heard + '" — say just one letter: A, B, C, or D.'
+        : 'Heard "' + heard + '", which isn\'t an answer. Say A, B, C, or D.';
+    }
     if (picked) submitAnswer(picked);
   };
+  recognition.maxAlternatives = 5;
+  recognition.onstart = function () { voiceGotResult = false; voiceGotError = false; };
   // Without this a refused or failed start just silently reset the button -- which is how Chrome blocking the
   // microphone through the site's own Permissions-Policy header went unnoticed from launch until 2026-09-17.
   // onend still resets the button. See test/voice-answer.test.js.
   recognition.onerror = function (event) {
+    voiceGotError = true;
     var box = document.getElementById('mic-transcript');
     if (!box || event.error === 'aborted') return;
     box.textContent = (event.error === 'not-allowed' || event.error === 'service-not-allowed')
@@ -8904,6 +8948,12 @@ function setupMic() {
   recognition.onend = function () {
     isRecording = false;
     if (micBtn) { micBtn.textContent = '🎙️ Voice Answer'; micBtn.classList.remove('listening'); }
+    // A session can end with neither a result nor an error (nothing usable heard). Without this the button just
+    // flipped back to "Voice Answer" and looked like it had done nothing -- exactly what was reported 2026-09-17.
+    var box = document.getElementById('mic-transcript');
+    if (!voiceGotResult && !voiceGotError && box && !box.textContent) {
+      box.textContent = 'Didn\'t catch that. Tap Voice Answer and say A, B, C, or D.';
+    }
   };
 }
 
@@ -9771,6 +9821,10 @@ document.addEventListener('click', async function (e) {
       isRecording = true;
       el.textContent = '🎙️ Listening…';
       el.classList.add('listening');
+      voiceGotResult = false;
+      voiceGotError = false;
+      var micTranscriptEl = document.getElementById('mic-transcript');
+      if (micTranscriptEl) micTranscriptEl.textContent = ''; // clear the previous attempt's message
       recognition.start();
     } else {
       recognition.stop();

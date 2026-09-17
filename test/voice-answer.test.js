@@ -118,3 +118,91 @@ test('any other recognition failure says voice input is not working and points t
   r.onerror({ error: 'network' });
   assert.match(transcript(document), /tap an answer/i);
 });
+
+// ---- What the recognizer heard -> which answer -----------------------------------------------------
+// Reported 2026-09-17: the button said "Listening…" but speaking a letter did nothing. Speech engines write a
+// spoken letter as a word ("see"/"sea" for C, "bee" for B, "hey" for A, "dee" for D), and the old matcher looked
+// for a letter ANYWHERE in the transcript -- so "see"/"the" matched nothing, "sea" picked A, and "number four"
+// picked B because "number" contains a b. Matching is now word-by-word, and nothing is ever silent.
+
+// Fires a result the way the browser does: results[0] is the alternatives list for one utterance.
+function hear(r, ...alternatives) {
+  r.onresult({ results: [Object.assign(alternatives.map((transcript) => ({ transcript })), { length: alternatives.length })] });
+}
+
+const HEARD = [
+  ['A', 'a'], ['A', 'A.'], ['A', 'hey'], ['A', 'eh'], ['A', 'ay'], ['A', 'option a'], ['A', 'first'],
+  ['B', 'b'], ['B', 'be'], ['B', 'bee'], ['B', 'option B'], ['B', 'second'], ['B', 'letter b'],
+  ['C', 'c'], ['C', 'see'], ['C', 'sea'], ['C', 'cee'], ['C', 'option c'], ['C', 'third'], ['C', 'the answer is c'],
+  ['D', 'd'], ['D', 'dee'], ['D', 'the'], ['D', 'answer D'], ['D', 'fourth'], ['D', 'number four'],
+];
+
+for (const [expected, heard] of HEARD) {
+  test(`heard "${heard}" -> answer ${expected}`, async (t) => {
+    const answers = [];
+    const { document, recognition } = await bootQuiz(t, answers);
+    micButton(document).click();
+    hear(recognition(), heard);
+    await waitFor(() => answers.length === 1);
+    assert.equal(answers[0].choice, expected);
+    assert.match(transcript(document), new RegExp(heard.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), 'shows what was heard');
+    await waitFor(() => document.querySelector('.explanation-box'));
+    await settle();
+  });
+}
+
+test('a later alternative is used when the first one is not an answer', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  hear(recognition(), 'sealed', 'c');
+  await waitFor(() => answers.length === 1);
+  assert.equal(answers[0].choice, 'C');
+  await waitFor(() => document.querySelector('.explanation-box'));
+  await settle();
+});
+
+test('two different letters in one utterance submits nothing and asks for one letter', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  hear(recognition(), 'a or b');
+  await settle();
+  assert.deepEqual(answers, [], 'never guesses between two letters');
+  assert.match(transcript(document), /a or b/i, 'shows what was heard');
+  assert.match(transcript(document), /just one|only one/i);
+});
+
+test('speech that is not an answer at all is reported, not ignored', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  hear(recognition(), 'what is the speed limit');
+  await settle();
+  assert.deepEqual(answers, []);
+  assert.match(transcript(document), /what is the speed limit/i);
+  assert.match(transcript(document), /say A, B, C, or D/i);
+});
+
+test('listening that ends with nothing heard says so (no error event, no result)', async (t) => {
+  const { document, recognition } = await bootQuiz(t, []);
+  micButton(document).click();
+  recognition().onend();
+  await settle();
+  assert.match(transcript(document), /catch that|didn't hear/i);
+  assert.equal(micButton(document).textContent, '🎙️ Voice Answer');
+});
+
+test('guard: after a voice answer the mic zone gives way to the explanation, and onend adds no stray message', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  const r = recognition();
+  hear(r, 'c');
+  await waitFor(() => answers.length === 1);
+  await waitFor(() => document.querySelector('.explanation-box'));
+  r.onend(); // the browser ends the session after the result; the mic zone is gone by now
+  await settle();
+  assert.equal(document.getElementById('mic-transcript'), null, 'answered question shows no mic zone');
+  assert.equal(micButton(document), null);
+});
