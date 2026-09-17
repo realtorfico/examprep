@@ -2181,10 +2181,15 @@ function sentenceKindLabel(kind) {
 // two), so it's on screen in the first second. A CMS value would arrive ~2s later via
 // fillCategoryContent() and rewrite the headline under the visitor -- hero_headline/hero_subhead
 // are null for cdl in the API today, and should stay null while this override exists.
+// kicker/seal are optional and only earn their place where they say something the H1 doesn't: CDL's
+// kicker spells out the acronym, and its seal names the source of the questions. A kicker that just
+// repeats the headline is the eyebrow this hero already had removed on 2026-09-17.
 var CATEGORY_HERO_COPY = {
   cdl: {
     headline: 'CDL Exam Prep',
     subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
+    kicker: 'Commercial driver\'s license',
+    seal: 'Written from your state\'s official CDL handbook — not a generic question bank.',
   },
 };
 
@@ -3083,6 +3088,9 @@ function renderCategoryPage(kind) {
     // already says the same words, costing a line of the phone's first screen for no information.
     // Removed 2026-09-17 with the first-paint work; _worker.js's SSR hero matches.
     (examTypeHasIntlExposure(slug) ? internationalBadgeHtml() : '') +
+    // Only where CATEGORY_HERO_COPY supplies one -- see that map's comment on why a kicker that
+    // repeats the headline is not worth a line.
+    (override && override.kicker ? '<p class="hub-hero-kicker">' + escapeHtml(override.kicker) + '</p>' : '') +
     '<h1 id="category-hero-headline">' + escapeHtml(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + escapeHtml(subhead) + '</p>' +
     // Mobile-only (CSS shows it under 600px): a practice button on the first screen of the ad landing
@@ -3092,7 +3100,15 @@ function renderCategoryPage(kind) {
     // test/ad-landing-first-screen.test.js.
     '<div class="hub-hero-cta hub-hero-cta-early">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
-    '</div>';
+    '</div>' +
+    // Deliberately state-free wording ("your state's"), so the server and the client render the
+    // same sentence -- the worker doesn't know the state, and swapping in a state name after boot
+    // would reflow this line.
+    (override && override.seal
+      ? '<p class="hub-hero-seal">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8.5 12.2 11 14.6l4.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
+        '<span>' + escapeHtml(override.seal) + '</span></p>'
+      : '');
 
   // Everything below the server-rendered top, still inside .hub-hero-copy: the badges, the state
   // banner and picker, the waitlist prompt and the later CTA. All of it depends on runtime data the
@@ -3150,7 +3166,7 @@ function renderCategoryPage(kind) {
   } else {
     appEl.innerHTML =
       renderNewsBanner(kind) +
-      '<div class="hub-hero">' +
+      '<div class="hub-hero hub-hero-panel">' +
       '<div class="hub-hero-copy">' + heroTopHtml + heroCopyRestHtml + '</div>' +
       heroStatsHtml +
       '</div>' +

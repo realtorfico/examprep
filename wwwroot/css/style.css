@@ -2238,3 +2238,40 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   html:not(.past-first-screen) .report-issue-toggle,
   html:not(.past-first-screen) .suggestion-toggle { display: none; }
 }
+
+/* --- Category hero panel ----------------------------------------------------------------------
+   The category landing hero (/cdl and friends) as a deep-navy panel with gold accents, ported from
+   the /cdl1 prototype after the 2026-09-17 review: the flat cream hero read as text on a page
+   rather than a product. Scoped to .hub-hero-panel, NOT .hub-hero -- the homepage hero
+   (renderHub) shares those classes and is deliberately left alone.
+   These rules are part of hero.css (the blocking first-paint sheet), so keep them to the panel
+   itself; anything below the fold belongs in style.css only. */
+.hub-hero-panel {
+  position: relative; overflow: hidden;
+  margin: 1rem 0 0; padding: 1.6rem 1.25rem 1.5rem;
+  border-radius: var(--radius-3xl);
+  background:
+    radial-gradient(ellipse 520px 320px at 105% -10%, color-mix(in srgb, var(--highlight) 30%, transparent), transparent 70%),
+    linear-gradient(160deg, var(--accent-deep), color-mix(in srgb, var(--accent-deep) 70%, black));
+  color: var(--accent-deep-foreground);
+  box-shadow: 0 24px 48px -28px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.hub-hero-panel h1 { color: inherit; }
+.hub-hero-panel p { color: color-mix(in srgb, var(--accent-deep-foreground) 82%, transparent); }
+/* Spells out what the headline abbreviates -- only rendered where CATEGORY_HERO_COPY provides it. */
+.hub-hero-kicker {
+  margin: 0 0 0.6rem; font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.09em; color: var(--highlight);
+}
+.hub-hero-panel .hub-hero-kicker { color: var(--highlight); }
+/* Gold CTA on the navy panel: the one bold element, so it reads as the single next step. */
+.hub-hero-panel .btn-primary {
+  background: var(--highlight); color: var(--highlight-foreground);
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--highlight) 70%, transparent);
+}
+.hub-hero-seal {
+  display: flex; align-items: center; gap: 0.5rem; margin: 0.9rem 0 0;
+  font-size: 0.76rem; line-height: 1.35;
+}
+.hub-hero-panel .hub-hero-seal { color: color-mix(in srgb, var(--accent-deep-foreground) 72%, transparent); }
+.hub-hero-seal svg { flex-shrink: 0; }

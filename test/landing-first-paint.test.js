@@ -232,6 +232,36 @@ test('the CDL hero uses its own headline and subhead', async (t) => {
   assert.equal(document.getElementById('category-hero-subhead').textContent.trim(), CDL_SUBHEAD);
 });
 
+test('the category hero is a panel, and the homepage hero is left alone', async (t) => {
+  // Ported from the /cdl1 prototype on 2026-09-17: the flat cream hero read as text on a page
+  // rather than a product. Scoped to .hub-hero-panel because renderHub (the homepage) shares
+  // .hub-hero and was deliberately not part of this change.
+  const server = categoryHeroHtml('cdl');
+  assert.match(server, /class="hub-hero hub-hero-panel"/, 'the server hero should carry the panel variant');
+  assert.match(server, /class="hub-hero-kicker">Commercial driver's license</, 'the kicker spells out what the H1 abbreviates');
+  assert.match(server, /class="hub-hero-seal"/, 'and the seal names where the questions come from');
+
+  const { document } = await bootCategory(t, 'cdl');
+  assert.ok(document.querySelector('.hub-hero.hub-hero-panel'), 'the client render should match');
+  assert.ok(document.querySelector('.hub-hero-kicker'));
+  assert.ok(document.querySelector('.hub-hero-seal'));
+
+  // The panel rules have to be in the blocking sheet or the first paint is an unstyled hero.
+  const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
+  for (const rule of ['.hub-hero-panel', '.hub-hero-kicker', '.hub-hero-seal']) {
+    assert.ok(heroCss.includes(rule), 'hero.css should carry ' + rule);
+  }
+  assert.ok(!/\.hub-hero\s*\{[^}]*radial-gradient/.test(STYLE_CSS), 'the panel background must not be attached to plain .hub-hero -- that is the homepage hero too');
+});
+
+test('a category without its own copy gets no empty kicker or seal', async (t) => {
+  const server = categoryHeroHtml('notary');
+  assert.ok(!server.includes('hub-hero-kicker'), 'a kicker that repeats the headline is not worth a line');
+  assert.ok(!server.includes('hub-hero-seal'));
+  const { document } = await bootCategory(t, 'notary');
+  assert.equal(document.querySelector('.hub-hero-kicker'), null);
+});
+
 test('the server renders CDL\'s own copy too', () => {
   const server = categoryHeroHtml('cdl');
   assert.equal(tagText(server, 'category-hero-headline'), 'CDL Exam Prep');
@@ -251,12 +281,9 @@ test('other categories keep the generic per-kind copy', async (t) => {
 // difference), so the browser recorded a NEW, larger LCP candidate at ~3.6s -- same words, same
 // place, different DOM node. Measured on /cdl: LCP 3.2-4.4s in most runs, 1.2s when the two boxes
 // happened to come out the same size, which is why it looked intermittent.
-const SSR_HERO = '<div class="hub-hero" data-ssr-hero="1"><div class="hub-hero-copy">' +
-  '<h1 id="category-hero-headline">CDL Exam Prep</h1>' +
-  '<p id="category-hero-subhead">' + CDL_SUBHEAD + '</p>' +
-  '<div class="hub-hero-cta hub-hero-cta-early">' +
-  '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
-  '</div></div></div>';
+// The worker's own output, not a hand-copy: a copy goes stale the moment the hero changes, and
+// then this test stops testing hydration and starts testing last week's markup.
+const SSR_HERO = categoryHeroHtml('cdl');
 
 async function bootWithSsrHero(t, slug) {
   const booted = await bootApp({ url: 'https://passexamhq.com/' + slug, appHtml: SSR_HERO });

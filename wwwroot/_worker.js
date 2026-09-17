@@ -1283,8 +1283,14 @@ const CATEGORY_HERO_COPY = {
   cdl: {
     headline: 'CDL Exam Prep',
     subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
+    kicker: 'Commercial driver\'s license',
+    seal: 'Written from your state\'s official CDL handbook — not a generic question bank.',
   },
 };
+const HERO_SEAL_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+  '<path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>' +
+  '<path d="M8.5 12.2 11 14.6l4.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>' +
+  '</svg>';
 function categoryHeroHtml(slug) {
   const kind = CATEGORY_HERO[slug];
   if (!kind) return '';
@@ -1296,14 +1302,18 @@ function categoryHeroHtml(slug) {
   // data-ssr-hero marks this markup as the server's: app.js keeps these nodes and fills in around
   // them rather than replacing #app wholesale, then removes the attribute. Replacing them made the
   // browser record a second, larger LCP candidate at ~3.6s for the same words in the same place.
-  return '<div class="hub-hero" data-ssr-hero="1">' +
+  return '<div class="hub-hero hub-hero-panel" data-ssr-hero="1">' +
     '<div class="hub-hero-copy">' +
     (HERO_INTL_SLUGS[slug] ? '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍 International</span>' : '') +
+    (override && override.kicker ? '<p class="hub-hero-kicker">' + heroEscape(override.kicker) + '</p>' : '') +
     '<h1 id="category-hero-headline">' + heroEscape(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + heroEscape(subhead) + '</p>' +
     '<div class="hub-hero-cta hub-hero-cta-early">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
     '</div>' +
+    (override && override.seal
+      ? '<p class="hub-hero-seal">' + HERO_SEAL_SVG + '<span>' + heroEscape(override.seal) + '</span></p>'
+      : '') +
     '</div>' +
     '</div>';
 }
