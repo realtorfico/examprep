@@ -298,3 +298,26 @@ body.t1 { background: var(--bg); color: var(--fg); }
 @media (min-width: 1200px) {
   .t1-hero h1 { font-size: 3.6rem; }
 }
+
+/* --- state row -------------------------------------------------------------------------------- */
+/* Leads the spec panel, and gold-outlined while the state is only an example: a visitor from Texas
+   must not read California's price and question count as theirs. Drops to a plain row once the
+   state is confirmed (.is-confirmed, set by cdl1.js). */
+.t1-state {
+  display: grid; grid-template-columns: auto 1fr; gap: 0.45rem 0.6rem; align-items: center;
+  margin: 0 0 1.1rem; padding: 0.7rem 0.8rem 0.8rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--highlight);
+  background: color-mix(in srgb, var(--highlight) 12%, transparent);
+}
+.t1-state-badge {
+  grid-column: 1 / -1;
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--highlight);
+}
+.t1-state label { grid-column: 1; }
+.t1-state select { grid-column: 2; max-width: none; width: 100%; }
+.t1-state-note { grid-column: 1 / -1; margin: 0.1rem 0 0; font-size: 0.74rem; line-height: 1.35; color: color-mix(in srgb, var(--accent-deep-foreground) 76%, transparent); }
+.t1-state.is-confirmed { border-color: color-mix(in srgb, var(--accent-deep-foreground) 22%, transparent); background: color-mix(in srgb, black 20%, transparent); }
+.t1-state.is-confirmed .t1-state-badge { color: color-mix(in srgb, var(--accent-deep-foreground) 70%, transparent); }
+.t1-state.is-confirmed .t1-state-note { display: none; }

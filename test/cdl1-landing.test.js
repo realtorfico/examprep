@@ -82,6 +82,37 @@ test('both fonts are preloaded here too', () => {
   assert.ok(INDEX.includes('inter-var-subset'), 'and the live page should still preload them');
 });
 
+// ---- The state a visitor lands on --------------------------------------------------------------
+
+test('the state row leads the spec panel and says it is only an example', () => {
+  // A visitor from Texas must not read California's price, question count and pass mark as theirs.
+  // Static HTML can't geo-detect, so the shipped state is labelled a guess rather than implied.
+  assert.match(PAGE, /id="state-row"/);
+  assert.match(PAGE, /id="state-badge">❓ Example state</);
+  assert.match(PAGE, /California is shown as an example/);
+  const css = fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.css'), 'utf8');
+  assert.match(css, /\.t1-state \{[^}]*border: 1\.5px solid var\(--highlight\)/, 'it should be gold-outlined while unconfirmed');
+  assert.match(css, /\.t1-state\.is-confirmed/, 'and drop back to a plain row once the state is real');
+  // It has to come before the exam facts it qualifies.
+  assert.ok(PAGE.indexOf('id="state-row"') < PAGE.indexOf('id="facts"'));
+});
+
+test('the state comes from the ad URL, then the cookie, then a labelled example', () => {
+  const { detectState } = loadHelpers();
+  assert.deepEqual(detectState('?state=TX&gclid=abc', ''), { state: 'TX', source: 'url' });
+  assert.deepEqual(detectState('', 'foo=1; pxq_state=OH; bar=2'), { state: 'OH', source: 'cookie' });
+  // The URL wins: it's this click's own intent, the cookie is from some earlier visit.
+  assert.deepEqual(detectState('?state=tx', 'pxq_state=OH'), { state: 'TX', source: 'url' });
+  // Nothing usable -> a labelled example, never a silent claim.
+  assert.deepEqual(detectState('', ''), { state: 'CA', source: 'example' });
+  assert.deepEqual(detectState('?state=ZZ', 'pxq_state=QQ'), { state: 'CA', source: 'example' });
+});
+
+test('picking a state upgrades the badge', () => {
+  assert.match(PAGE_JS, /renderStateSource\('picked'\)/);
+  assert.match(PAGE_JS, /'📍 Your state' : '❓ Example state'/);
+});
+
 // ---- Theme and layout --------------------------------------------------------------------------
 
 test('the page renders light by default, like the app', () => {

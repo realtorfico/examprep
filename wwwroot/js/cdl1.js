@@ -52,6 +52,21 @@
     if (!entry) return '';
     return [entry.questions, entry.passScore, entry.duration].filter(Boolean).join(' · ');
   }
+  // Where the state on screen came from, in the order we can actually trust it:
+  //   'picked'  -- the visitor used the picker on this page
+  //   'url'     -- ?state=XX, which an ad URL can carry
+  //   'cookie'  -- pxq_state, set by the worker on a previous visit to the site
+  //   'example' -- nothing at all, so California is a labelled guess
+  // Static HTML can't geo-detect, which is exactly why the row says "example" rather than implying
+  // detection. When this page is ported into /cdl the worker's geo branch supplies a real default
+  // and the badge can say "based on your location", as the live banner does.
+  function detectState(search, cookie) {
+    var fromUrl = /[?&]state=([A-Za-z]{2})(?![A-Za-z])/.exec(String(search || ''));
+    if (fromUrl && STATE_NAMES[fromUrl[1].toUpperCase()]) return { state: fromUrl[1].toUpperCase(), source: 'url' };
+    var fromCookie = /(?:^|;\s*)pxq_state=([A-Za-z]{2})(?![A-Za-z])/.exec(String(cookie || ''));
+    if (fromCookie && STATE_NAMES[fromCookie[1].toUpperCase()]) return { state: fromCookie[1].toUpperCase(), source: 'cookie' };
+    return { state: 'CA', source: 'example' };
+  }
   function buyHref(stateCode) {
     return '/cdl/' + String(stateCode).toLowerCase() + '#/buy';
   }
@@ -89,6 +104,7 @@
   window.renderStateForTest = function (stateCode) { renderState(stateCode); };
   window.promoBandHtml = promoBandHtml;
   window.inventoryFor = inventoryFor;
+  window.detectState = detectState;
   window.stateFactsText = stateFactsText;
   window.buyHref = buyHref;
   window.formatPrice = formatPrice;
@@ -96,6 +112,17 @@
   // --- rendering --------------------------------------------------------------------------------
 
   function text(id, value) { var el = document.getElementById(id); if (el && value) el.textContent = value; }
+
+  // Confirmed = we know it, however we learned it. Only the untouched California default is an
+  // example, and it stays visibly labelled as one.
+  function renderStateSource(source) {
+    var row = document.getElementById('state-row');
+    var badge = document.getElementById('state-badge');
+    if (!row || !badge) return;
+    var confirmed = source !== 'example';
+    row.classList.toggle('is-confirmed', confirmed);
+    badge.textContent = confirmed ? '📍 Your state' : '❓ Example state';
+  }
 
   function renderState(stateCode) {
     var entry = entryFor(stateCode);
@@ -295,8 +322,14 @@
     wireTheme();
     var select = document.getElementById('state');
     if (!select) return;
-    select.addEventListener('change', function () { renderState(select.value); });
-    renderState(select.value || 'CA');
+    select.addEventListener('change', function () {
+      renderStateSource('picked');
+      renderState(select.value);
+    });
+    var detected = detectState(window.location && window.location.search, document.cookie);
+    select.value = detected.state;
+    renderStateSource(detected.source);
+    renderState(detected.state);
   }
 
   // Wait unless the document is fully done. A deferred script runs at "the end" of parsing, when

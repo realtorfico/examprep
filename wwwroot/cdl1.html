@@ -22,7 +22,7 @@
 <!-- Blocking on purpose and deliberately tiny (~0.2KB): it reads the same localStorage key app.js
      uses, so a visitor who chose dark elsewhere on the site gets dark on the FIRST paint here. -->
 <script src="/js/theme-init.js?v=1"></script>
-<link rel="stylesheet" href="/css/cdl1.min.css?v=7">
+<link rel="stylesheet" href="/css/cdl1.min.css?v=8">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -32,7 +32,7 @@
 <!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
      Deferred scripts execute in document order, so the other way round throws and the per-state
      facts and coverage bars silently never render. -->
-<script defer src="/js/cdl1.js?v=8"></script>
+<script defer src="/js/cdl1.js?v=9"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
 </head>
 <body class="t1">
@@ -72,7 +72,13 @@
     </div>
 
     <div class="t1-hero-spec">
-    <div class="t1-state">
+    <!-- The state row leads the spec panel and says what it actually knows. Static HTML can't
+         geo-detect, so it ships as an explicit example ("❓ Example state"); cdl1.js upgrades the
+         badge to "📍 Your state" once the state is real -- from ?state=XX on an ad URL, or the
+         pxq_state cookie the worker sets elsewhere on the site. Same honesty rule as the live
+         page's banner: never claim detection that didn't happen. -->
+    <div class="t1-state" id="state-row">
+      <span class="t1-state-badge" id="state-badge">❓ Example state</span>
       <label for="state">Your state</label>
       <select id="state" name="state" autocomplete="address-level1">
         <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option>
@@ -93,6 +99,7 @@
         <option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option>
         <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
       </select>
+      <p class="t1-state-note" id="state-note">California is shown as an example — pick your state to see its own exam, questions and price.</p>
     </div>
 
     <!-- The real exam's own format, from the same catalog the site renders everywhere else. Server
