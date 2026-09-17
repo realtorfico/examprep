@@ -47,6 +47,7 @@ const WWWROOT = path.join(__dirname, '..', 'wwwroot');
 const WORKER = fs.readFileSync(path.join(WWWROOT, '_worker.js'), 'utf8');
 const INDEX = fs.readFileSync(path.join(WWWROOT, 'index.html'), 'utf8');
 const STYLE_CSS = fs.readFileSync(path.join(WWWROOT, 'css', 'style.css'), 'utf8');
+const APP_JS_SRC = fs.readFileSync(path.join(WWWROOT, 'js', 'app.js'), 'utf8');
 const HERO_CSS_FILE = path.join(WWWROOT, 'css', 'hero.css');
 
 // _worker.js is an ES module (export default) inside a "type": "commonjs" package, so it can't be
@@ -355,6 +356,19 @@ test('the endorsements are named in the hero, not just as percentages further do
   for (const endorsement of ['Air brakes', 'Combination vehicles', 'Doubles/Triples', 'HazMat', 'Passenger', 'School bus', 'Tanker']) {
     assert.ok(chips.includes(endorsement), 'missing endorsement chip: ' + endorsement);
   }
+});
+
+test('the panel asks for a repaint when the resource counts have not landed yet', async (t) => {
+  // They are fetched at boot without gating the render, so on a first paint the map is usually
+  // empty. The old aggregate card got this repaint for free as a side effect of
+  // aggregateResourceStats(); this panel doesn't call it, and the dashes shipped to production
+  // before this test existed.
+  const { window } = await bootCategory(t, 'cdl');
+  assert.match(APP_JS_SRC, /if \(!Object\.keys\(RESOURCE_COUNTS\)\.length\) resourceCountsNeedRepaint = true;[\s\S]{0,400}category-inv-tables/,
+    'fillCategorySpecCounts must set the repaint flag before reading the counts');
+  assert.equal(typeof window.fillResourceCountSurfaces, 'function', 'and boot() must still have the repaint entry point');
+  assert.match(APP_JS_SRC, /categorySpecPanelHtml\(categoryPageState\.repTrack, kindSlug\(kind\)\)/,
+    'the repaint has to re-render THIS panel, not the card it replaced');
 });
 
 test('the inventory is per state, and a dash until it is known', async (t) => {

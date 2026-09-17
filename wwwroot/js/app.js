@@ -3038,6 +3038,11 @@ async function fillCategorySpecCounts(track) {
     var el = document.getElementById(id);
     if (el && value) el.textContent = String(value);
   };
+  // RESOURCE_COUNTS is fetched at boot without gating the render, so on a first paint it is usually
+  // still empty -- ask boot() to repaint the panel when it lands, or the materials stay dashed
+  // forever. The old aggregate card got this for free because aggregateResourceStats() set the flag
+  // as a side effect; this panel doesn't call it, which is exactly how the dashes shipped live.
+  if (!Object.keys(RESOURCE_COUNTS).length) resourceCountsNeedRepaint = true;
   var counts = RESOURCE_COUNTS[track.examType];
   if (counts) {
     set('category-inv-tables', counts.tables);
