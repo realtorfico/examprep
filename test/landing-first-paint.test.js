@@ -406,6 +406,26 @@ test('the emoji feature tiles are gone and testimonials are trimmed to two', asy
   assert.equal(document.querySelectorAll('.category-testimonial-card').length, 2, 'four quotes was a screen of them, three screens below the decision');
 });
 
+test('everything inside the navy panel is styled for a dark ground', () => {
+  // Found by screenshotting the live page after the port, not by any test here: components built
+  // against the old cream hero went unreadable on the panel. "View full California CDL track
+  // details →" and "Preview Free Resources →" were navy-on-navy, and the state banner's badge
+  // overlapped its own sentence.
+  for (const selector of [
+    '\\.hub-hero-panel \\.btn-secondary',
+    '\\.hub-hero-panel \\.btn-link',
+    '\\.hub-hero-panel \\.category-state-detected-banner',
+    '\\.hub-hero-panel \\.category-state-detected-text',
+    '\\.hub-hero-panel \\.category-state-select',
+    '\\.hub-hero-panel \\.category-waitlist-prompt',
+  ]) {
+    assert.match(STYLE_CSS, new RegExp(selector), 'nothing re-tints ' + selector.replace(/\\\\/g, '') + ' for the panel');
+  }
+  // The secondary buttons are in the first screen, so their fix has to be in the blocking sheet.
+  const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
+  assert.match(heroCss, /\.hub-hero-panel \.btn-secondary/, 'hero.css needs it too, or those links paint unreadable');
+});
+
 test('the coverage bars and eyebrows match the panel, without touching shared surfaces', () => {
   // Phase 3 of the port. The bars already existed -- this is the panel's treatment applied to them.
   assert.match(STYLE_CSS, /\.category-breakdown \.breakdown-bar-fill \{\s*background: linear-gradient\(90deg, var\(--accent\), var\(--highlight\)\)/);

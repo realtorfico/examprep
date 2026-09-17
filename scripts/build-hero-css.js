@@ -48,6 +48,8 @@ const HERO_SELECTORS = new Set([
   '.hub-hero-kicker',
   '.hub-hero-panel .hub-hero-kicker',
   '.hub-hero-panel .btn-primary',
+  '.hub-hero-panel .btn-secondary',
+  '.hub-hero-panel .btn-link',
   '.hub-hero-seal',
   '.hub-hero-panel .hub-hero-seal',
   '.hub-hero-seal svg',

@@ -2349,3 +2349,52 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-sample .section-eyebrow {
   font-size: 0.66rem; letter-spacing: 0.09em; color: var(--highlight);
 }
+
+/* --- Panel context fixes ----------------------------------------------------------------------
+   Caught in a screenshot of the live page after the port, not by any test: components that were
+   designed against the old cream hero and became unreadable or misaligned on the navy panel.
+
+   1. Secondary buttons/links inside the hero are navy-on-navy -- "View full California CDL track
+      details →" and "Preview Free Resources →" were effectively invisible. */
+.hub-hero-panel .btn-secondary {
+  color: var(--accent-deep-foreground);
+  border-color: color-mix(in srgb, var(--accent-deep-foreground) 42%, transparent);
+  background: color-mix(in srgb, var(--accent-deep-foreground) 8%, transparent);
+}
+.hub-hero-panel .btn-secondary:hover {
+  background: color-mix(in srgb, var(--accent-deep-foreground) 16%, transparent);
+  border-color: var(--highlight);
+}
+.hub-hero-panel .btn-link { color: var(--highlight); }
+
+/* 2. The state banner: its badge is absolutely-sized flex content that overlapped the sentence on
+      the panel, and its cream fill fought the navy. Stacked here (badge on its own row, like the
+      /cdl1 prototype's state row) and re-tinted for the dark ground. */
+.hub-hero-panel .category-state-detected-banner {
+  display: grid; gap: 0.4rem; align-items: start;
+  background: color-mix(in srgb, var(--highlight) 14%, transparent);
+  border-color: color-mix(in srgb, var(--highlight) 55%, transparent);
+}
+.hub-hero-panel .category-state-detected-text {
+  min-width: 0; font-weight: 500; line-height: 1.4;
+  color: color-mix(in srgb, var(--accent-deep-foreground) 88%, transparent);
+}
+.hub-hero-panel .category-state-detected-text strong { color: var(--accent-deep-foreground); }
+.hub-hero-panel .category-state-detected-badge { justify-self: start; }
+.hub-hero-panel .category-state-detected-banner--unknown {
+  background: color-mix(in srgb, black 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent-deep-foreground) 22%, transparent);
+}
+.hub-hero-panel .category-state-detected-banner--unknown .category-state-detected-badge {
+  background: color-mix(in srgb, var(--accent-deep-foreground) 24%, transparent);
+  color: var(--accent-deep-foreground);
+}
+
+/* 3. The state picker's label and the waitlist summary, same problem: dark text on the panel. */
+.hub-hero-panel .category-state-select-label { color: color-mix(in srgb, var(--accent-deep-foreground) 82%, transparent); }
+.hub-hero-panel .category-state-select {
+  background: color-mix(in srgb, black 22%, transparent); color: var(--accent-deep-foreground);
+  border-color: color-mix(in srgb, var(--accent-deep-foreground) 30%, transparent);
+}
+.hub-hero-panel .category-waitlist-prompt,
+.hub-hero-panel .category-waitlist-prompt summary { color: color-mix(in srgb, var(--accent-deep-foreground) 76%, transparent); }
