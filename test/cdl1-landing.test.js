@@ -156,11 +156,33 @@ test('the inventory renderer reads the real API shape', () => {
   assert.equal(empty.audio, '—');
 });
 
+test('the freshness stamp says updated, not verified', () => {
+  // The API's own comment is explicit that questionsUpdatedAt proves questions were added or
+  // changed that day, not that every existing question was re-read. The live track page is careful
+  // about this wording; so is this page.
+  assert.match(PAGE, /id="updated"/);
+  assert.match(PAGE, /last updated/i);
+  assert.ok(!/verified/i.test(PAGE), 'do not upgrade "updated" to "verified"');
+  assert.match(PAGE_JS, /questionsUpdatedAt/);
+  assert.match(PAGE, /<p class="t1-updated" id="updated" hidden>/, 'hidden until known -- an empty date would read as a broken claim');
+});
+
 test('the cheaper per-topic option is not hidden', () => {
   // The track page offers "Only need certain topics? Buy just what you need" -- sending everyone
   // straight to full-price checkout without it is the kind of omission that reads as a dark pattern.
   assert.match(PAGE, /only need certain topics/i);
   assert.match(PAGE, /id="buy-topics"/);
+});
+
+test('the free resources preview is linked, per state', () => {
+  // Real ungated content (#/resources signs the free-sample allowlist for anonymous visitors), so
+  // it's proof of quality rather than a locked teaser. Deliberately NOT the cheat-sheet article,
+  // which sends an ad click into a long read instead of a decision.
+  assert.match(PAGE, /id="resources"[^>]*href="\/cdl\/ca#\/resources"/);
+  assert.match(PAGE_JS, /'#\/resources'/, 'the link should follow the state picker');
+  assert.ok(!/Cheat Sheet/i.test(PAGE), 'the cheat-sheet article belongs on /cdl or the footer, not here');
+  // Not styled as another primary CTA.
+  assert.ok(!/id="resources"[^>]*btn-primary/.test(PAGE));
 });
 
 test('the student discount is mentioned', () => {

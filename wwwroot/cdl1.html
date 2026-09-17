@@ -16,7 +16,7 @@
      2KB on the wire). It first shipped blocking on hero.css + the whole 86KB style.min.css, which
      cost it ~630ms of first paint for rules it does not use. Everything on the page is already in
      the HTML, so there is no JS render to wait for -- blocking here is correct, being big was not. -->
-<link rel="stylesheet" href="/css/cdl1.min.css?v=3">
+<link rel="stylesheet" href="/css/cdl1.min.css?v=5">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -26,7 +26,7 @@
 <!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
      Deferred scripts execute in document order, so the other way round throws and the per-state
      facts and coverage bars silently never render. -->
-<script defer src="/js/cdl1.js?v=5"></script>
+<script defer src="/js/cdl1.js?v=7"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
 </head>
 <body class="t1">
@@ -121,6 +121,11 @@
     <p class="t1-question" id="sample-question"></p>
     <div class="t1-choices" id="sample-choices"></div>
     <p class="t1-explain" id="sample-explain" hidden></p>
+    <!-- Real, ungated content: #/resources signs the server's free-sample allowlist for anonymous
+         visitors (see renderResources() in app.js), so this is a working preview rather than a
+         locked teaser. Kept low-prominence next to the sample -- it is proof of quality, not a
+         second call to action competing with the buy CTA. -->
+    <p class="t1-muted t1-resources"><a id="resources" href="/cdl/ca#/resources">Preview the free <span id="resources-state">California</span> resources →</a></p>
     <p class="t1-sample-after" id="sample-after" hidden>
       <span id="sample-count-line"></span>
       <a class="btn-primary t1-btn" id="buy2" href="/cdl/ca#/buy">Get full access — <span id="price2">$36.99</span></a>
@@ -156,6 +161,12 @@
       <li>Per-topic progress tracking</li>
       <li>Updated for current <span id="included-state2">California</span> and federal CDL rules</li>
     </ul>
+    <!-- Freshness stamp, from the registry's MAX(questions.created_at) per track (5.5KB on the
+         wire, fetched after paint). Deliberately "last updated", not "last verified": the API's own
+         comment is explicit that this timestamp proves questions were added or changed that day, not
+         that every existing question was re-read. Starts hidden and appears in this card, below the
+         fold, so revealing it shifts nothing on screen. -->
+    <p class="t1-updated" id="updated" hidden>🔄 Question bank last updated <strong id="updated-date"></strong></p>
     <p class="t1-muted t1-alt">
       Only need certain topics? <a id="buy-topics" href="/cdl/ca#/buy">Buy just what you need →</a><br>
       Students save $5 with a .edu email at checkout — no code needed.

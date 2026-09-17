@@ -237,3 +237,7 @@ body.t1 { background: var(--bg); color: var(--fg); }
   color: var(--correct); font-weight: 700;
 }
 .t1-alt { margin-top: 1rem; line-height: 1.6; }
+.t1-resources { margin-top: 0.9rem; }
+.t1-resources a { color: var(--accent); }
+.t1-updated { margin: 1rem 0 0; font-size: 0.8rem; color: var(--muted); }
+.t1-updated strong { color: var(--fg); }

@@ -101,7 +101,7 @@
     var entry = entryFor(stateCode);
     var name = STATE_NAMES[stateCode] || stateCode;
     currentState = stateCode;
-    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state'].forEach(function (id) { text(id, name); });
+    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state', 'resources-state'].forEach(function (id) { text(id, name); });
     if (entry) {
       text('fact-questions', entry.questions);
       text('fact-pass', entry.passScore);
@@ -112,10 +112,13 @@
       var el = document.getElementById(id);
       if (el) el.setAttribute('href', buyHref(stateCode));
     });
+    var resources = document.getElementById('resources');
+    if (resources) resources.setAttribute('href', '/cdl/' + String(stateCode).toLowerCase() + '#/resources');
     loadPrice(stateCode);
     loadCount(stateCode);
     loadSample(stateCode);
     loadPromo();
+    loadRegistry(stateCode);
   }
 
   function renderBars(breakdown) {
@@ -174,6 +177,32 @@
     text('inv-audio', inv.audio);
     text('included-state', name);
     text('included-state2', name);
+  }
+
+  // The registry carries questionsUpdatedAt per track -- the only source for the freshness stamp
+  // (MAX(questions.created_at) server-side). It is not filterable by examType today, so this pulls
+  // all ~290 tracks: 70KB raw but 5.5KB on the wire, fetched after paint. If this page is adopted,
+  // an examType filter on /api/track-registry would be the tidier fix.
+  var registry = null;
+  function loadRegistry(stateCode) {
+    if (registry) return renderUpdated(stateCode);
+    fetch('/api/track-registry')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        registry = {};
+        ((d && d.tracks) || []).forEach(function (t) { registry[t.examType] = t; });
+        renderUpdated(currentState);
+      })
+      .catch(function () { /* the stamp stays hidden */ });
+  }
+
+  function renderUpdated(stateCode) {
+    var row = registry && registry[String(stateCode).toLowerCase() + '_cdl'];
+    var wrap = document.getElementById('updated');
+    if (!wrap) return;
+    if (!row || !row.questionsUpdatedAt) { wrap.hidden = true; return; }
+    text('updated-date', new Date(row.questionsUpdatedAt * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }));
+    wrap.hidden = false;
   }
 
   // One request, once: the promo is the same for the whole category, so switching state doesn't
