@@ -1,0 +1,108 @@
+/* Page styles for the /cdl1 prototype. Everything visual comes from the site's own tokens
+   (--accent, --highlight, --card, --fg, --muted, --border), so this reads as the same product; only
+   the layout and density are new. Prefixed .t1-* to keep it clearly separate from style.css while
+   the two pages are being compared. */
+
+body.t1 { background: var(--bg); color: var(--fg); }
+
+/* --- top bar ------------------------------------------------------------------------------- */
+.t1-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); background: var(--card);
+}
+.t1-logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--fg); }
+.t1-logo-mark { display: flex; }
+.t1-logo-word { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+.t1-logo-accent { color: var(--accent); }
+.t1-bar-note { font-size: 0.74rem; color: var(--muted); text-align: right; }
+
+.t1-main { width: 100%; max-width: 44rem; margin: 0 auto; padding: 0 1rem 2rem; }
+
+/* --- hero ---------------------------------------------------------------------------------- */
+.t1-hero { padding: 1.5rem 0 0.5rem; }
+.t1-hero h1 {
+  font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 1.5rem + 2.4vw, 2.9rem); line-height: 1.1; margin: 0; letter-spacing: -0.01em;
+}
+.t1-sub { color: var(--muted); font-size: 1.02rem; line-height: 1.5; margin: 0.7rem 0 0; max-width: 34rem; }
+
+.t1-state { display: flex; align-items: center; gap: 0.6rem; margin: 1.1rem 0 0; }
+.t1-state label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.t1-state select {
+  flex: 1; max-width: 16rem; padding: 0.55rem 0.7rem; border-radius: 10px;
+  border: 1.5px solid var(--border); background: var(--card); color: var(--fg); font-size: 1rem;
+}
+
+/* The exam's own format: the first thing a candidate checks, so it gets real visual weight. */
+.t1-facts {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+  margin: 1rem 0 0; padding: 0.85rem 0.5rem; border-radius: 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.t1-facts > div { text-align: center; padding: 0 0.35rem; }
+.t1-facts dt { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.t1-facts dd { margin: 0.25rem 0 0; font-size: 0.86rem; font-weight: 600; line-height: 1.3; }
+@media (max-width: 480px) {
+  .t1-facts { grid-template-columns: 1fr; text-align: left; }
+  .t1-facts > div { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; text-align: left; padding: 0.15rem 0.5rem; }
+  .t1-facts dd { margin: 0; }
+}
+
+.t1-endorse-label { margin: 1.1rem 0 0.5rem; font-size: 0.92rem; }
+.t1-endorse { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.t1-endorse li {
+  font-size: 0.78rem; font-weight: 600; padding: 0.3rem 0.65rem; border-radius: 999px;
+  color: var(--correct); background: color-mix(in srgb, var(--correct) 12%, transparent);
+}
+
+.t1-cta { margin: 1.3rem 0 0; }
+.t1-btn { display: inline-block; padding: 0.7rem 1.5rem; font-size: 1rem; font-weight: 600; text-decoration: none; border: 0; }
+.t1-price-line { margin: 0.8rem 0 0; font-size: 0.92rem; color: var(--muted); }
+.t1-price-line strong { color: var(--fg); font-size: 1.05rem; }
+.t1-price-line a { white-space: nowrap; }
+
+/* --- cards --------------------------------------------------------------------------------- */
+.t1-card {
+  margin: 1.5rem 0 0; padding: 1.1rem 1.1rem 1.3rem; border-radius: 16px;
+  background: var(--card); border: 1px solid var(--border);
+}
+.t1-card h2 { font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; margin: 0 0 0.35rem; }
+.t1-muted { color: var(--muted); font-size: 0.86rem; margin: 0.2rem 0 0; }
+.t1-question { font-size: 1.02rem; line-height: 1.45; margin: 0.8rem 0 0.9rem; }
+
+.t1-choices { display: flex; flex-direction: column; gap: 0.5rem; }
+.t1-choice {
+  display: flex; align-items: flex-start; gap: 0.6rem; width: 100%; text-align: left;
+  padding: 0.65rem 0.8rem; border-radius: 12px; border: 1.5px solid var(--border);
+  background: var(--surface-2); color: var(--fg); font-size: 0.95rem; line-height: 1.35; cursor: pointer;
+}
+.t1-choice:hover { border-color: var(--accent); }
+.t1-choice-key { font-weight: 700; color: var(--muted); }
+.t1-choice.is-correct { border-color: var(--correct); background: color-mix(in srgb, var(--correct) 14%, transparent); }
+.t1-choice.is-correct .t1-choice-key { color: var(--correct); }
+.t1-choice.is-wrong { border-color: var(--danger, #c0392b); background: color-mix(in srgb, var(--danger, #c0392b) 12%, transparent); }
+.t1-explain { margin: 0.9rem 0 0; font-size: 0.92rem; line-height: 1.5; color: var(--fg); }
+.t1-sample-after { margin: 1.1rem 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; font-size: 0.92rem; color: var(--muted); }
+
+/* --- breakdown bars ------------------------------------------------------------------------ */
+.t1-bars { list-style: none; margin: 0.9rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.t1-bars li { display: grid; grid-template-columns: 1fr 5rem 2.6rem; align-items: center; gap: 0.6rem; font-size: 0.86rem; }
+.t1-bar-track { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.t1-bar-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--highlight)); }
+.t1-bar-pct { font-weight: 700; text-align: right; }
+@media (max-width: 480px) {
+  .t1-bars li { grid-template-columns: 1fr 3.2rem; }
+  .t1-bar-track { grid-column: 1 / -1; }
+}
+
+.t1-guarantee p { margin: 0.5rem 0 0; font-size: 0.92rem; line-height: 1.5; }
+
+/* --- testimonials -------------------------------------------------------------------------- */
+.t1-testimonials { display: grid; gap: 0.8rem; margin: 1.5rem 0 0; }
+@media (min-width: 700px) { .t1-testimonials { grid-template-columns: 1fr 1fr; } }
+.t1-quote { margin: 0; padding: 1rem 1.1rem; border-radius: 16px; background: var(--card); border: 1px solid var(--border); }
+.t1-quote p { margin: 0; font-size: 0.92rem; line-height: 1.5; }
+.t1-quote cite { display: block; margin-top: 0.6rem; font-size: 0.8rem; color: var(--muted); font-style: normal; }
+
+.t1-foot { max-width: 44rem; margin: 2rem auto 0; padding: 1.2rem 1rem 2rem; border-top: 1px solid var(--border); }
+.t1-foot p { margin: 0.35rem 0 0; font-size: 0.78rem; color: var(--muted); }

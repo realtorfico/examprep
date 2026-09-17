@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Prototype of a rebuilt /cdl, for side-by-side review. noindex + canonical to the real page:
+     two CDL landing pages in the index would split /cdl's own ranking, and this one is not wired to
+     the app (static HTML, no app.js). Kept out of sitemap.xml as well.
+     See test/cdl1-landing.test.js for what this page is and is not allowed to contain. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.passexamhq.com/cdl">
+<title>CDL Exam Prep — Practice Test for Your State | PassExamHQ</title>
+<meta name="description" content="Practice questions built from your own state's official CDL handbook. All 50 states, instant access, one-time purchase.">
+<!-- Same design system as the rest of the site: hero.css carries the navy+gold tokens and hero
+     rules, style.min.css the rest. Both blocking, because everything on this page is already in the
+     HTML and there is no JS render to wait for. Versions track index.html (asserted by the test). -->
+<link rel="stylesheet" href="/css/hero.css?v=3">
+<link rel="stylesheet" href="/css/style.min.css?v=13">
+<link rel="stylesheet" href="/css/cdl1.css?v=1">
+<!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
+     text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
+<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-var-subset.woff2" crossorigin>
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<meta name="theme-color" content="#0f2a5f">
+<script defer src="/js/content/cdl.js?v=1"></script>
+<script defer src="/js/cdl1.js?v=1"></script>
+</head>
+<body class="t1">
+
+<header class="t1-bar">
+  <a class="t1-logo" href="/">
+    <span class="t1-logo-mark" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"></rect><path d="M9 16.8 13.4 21 23 11" stroke="var(--highlight)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </span>
+    <span class="t1-logo-word">PassExam<span class="t1-logo-accent">HQ</span></span>
+  </a>
+  <span class="t1-bar-note">All 50 states · One-time purchase</span>
+</header>
+
+<main class="t1-main">
+
+  <!-- Hero: the four things a CDL candidate is shopping for, before anything else. Order comes
+       straight from the review -- is this my state, what does the test look like, what's covered,
+       can I try it and what does it cost. -->
+  <section class="t1-hero">
+    <h1>CDL Exam Prep</h1>
+    <p class="t1-sub">Pass your state's CDL knowledge test with real practice questions built from your own state's official CDL handbook — all 50 states, instant access, one-time purchase.</p>
+
+    <div class="t1-state">
+      <label for="state">Your state</label>
+      <select id="state" name="state" autocomplete="address-level1">
+        <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option><option value="CA" selected>California</option><option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option>
+        <option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option>
+        <option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option>
+        <option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option>
+        <option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option>
+        <option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option>
+        <option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option>
+        <option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option>
+        <option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+      </select>
+    </div>
+
+    <!-- The real exam's own format, from the same catalog the site renders everywhere else. Server
+         rendered for California; swapped in place when the picker changes. -->
+    <dl class="t1-facts" id="facts">
+      <div><dt>Questions</dt><dd id="fact-questions">50 multiple choice (General Knowledge)</dd></div>
+      <div><dt>To pass</dt><dd id="fact-pass">40/50 correct (80%)</dd></div>
+      <div><dt>Time limit</dt><dd id="fact-time">Untimed</dd></div>
+    </dl>
+
+    <p class="t1-endorse-label">Covers the general knowledge test <strong>and</strong> every endorsement:</p>
+    <ul class="t1-endorse">
+      <li>Air brakes</li><li>Combination vehicles</li><li>Doubles/Triples</li>
+      <li>HazMat</li><li>Passenger</li><li>School bus</li><li>Tanker</li>
+    </ul>
+
+    <div class="t1-cta">
+      <a class="btn-primary t1-btn" href="#sample">Answer a free question now</a>
+      <p class="t1-price-line">
+        Full <span id="state-name">California</span> CDL access —
+        <strong id="price">$36.99</strong> one-time.
+        <a id="buy" href="/cdl/ca#/buy">See what's included →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- The sample question, immediately after the hero rather than three screens down. Filled from
+       /api/sample, preferring a General Knowledge question: it is 48% of the bank and every
+       candidate has to pass it, whereas the live page showed whichever question came back first
+       (a school-bus endorsement question on the day this was reviewed). -->
+  <section class="t1-card" id="sample">
+    <h2>Try one from the <span id="sample-state">California</span> bank</h2>
+    <p class="t1-muted" id="sample-topic">Loading a question…</p>
+    <p class="t1-question" id="sample-question"></p>
+    <div class="t1-choices" id="sample-choices"></div>
+    <p class="t1-explain" id="sample-explain" hidden></p>
+    <p class="t1-sample-after" id="sample-after" hidden>
+      <span id="sample-count-line"></span>
+      <a class="btn-primary t1-btn" id="buy2" href="/cdl/ca#/buy">Get full access — <span id="price2">$36.99</span></a>
+    </p>
+  </section>
+
+  <!-- What's on the test, per state, from the catalog's own breakdown. -->
+  <section class="t1-card" id="breakdown">
+    <h2>What the <span id="breakdown-state">California</span> bank covers</h2>
+    <p class="t1-muted">Weighted to the official handbook's own sections.</p>
+    <ul class="t1-bars" id="bars"></ul>
+  </section>
+
+  <section class="t1-card t1-guarantee">
+    <h2>Two guarantees</h2>
+    <p><strong>Pass or 50% back.</strong> Finish your track, sit the real exam, and if you don't pass we refund half.</p>
+    <p><strong>7-day refund.</strong> Changed your mind? Full refund within 7 days, no questions asked.</p>
+    <p class="t1-muted"><a href="/cdl#/guarantee">Read the guarantee →</a></p>
+  </section>
+
+  <section class="t1-testimonials">
+    <blockquote class="t1-quote">
+      <p>“Air brakes and combination vehicles were my weak spots. The topic breakdown showed me exactly where to focus.”</p>
+      <cite>Ray D., Illinois</cite>
+    </blockquote>
+    <blockquote class="t1-quote">
+      <p>“Studied on my phone between routes. Made it through general knowledge and both endorsements in about a week.”</p>
+      <cite>Tasha G., Ohio</cite>
+    </blockquote>
+  </section>
+
+</main>
+
+<footer class="t1-foot">
+  <p>Built from each state's official CDL handbook. Not affiliated with any state agency or the FMCSA.</p>
+  <p><a href="/cdl">Current CDL page</a> · <a href="/privacy">Privacy</a> · <a href="/cdl#/guarantee">Guarantee</a></p>
+</footer>
+
+</body>
+</html>
