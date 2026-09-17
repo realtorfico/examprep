@@ -8897,8 +8897,15 @@ function voiceAnswerChoice(transcript) {
 // Listening is continuous now, so it has to be stopped explicitly -- after an answer, after a final result
 // that wasn't one, and by a safety timer so a mic never stays open if nothing is ever heard.
 var VOICE_LISTEN_LIMIT_MS = 15000;
+// Chrome on Android sometimes drops a session with no result and no error -- voice answering worked on some
+// tries and not others (reported 2026-09-17). Those sessions are restarted automatically, up to this many
+// extra attempts, so the visitor doesn't have to keep tapping.
+var VOICE_EMPTY_RETRIES = 3;
 var voiceListenTimer = null;
+var voiceRetriesLeft = 0;
+var voiceStopRequested = false;
 function stopListening() {
+  voiceStopRequested = true;
   if (voiceListenTimer) { clearTimeout(voiceListenTimer); voiceListenTimer = null; }
   if (recognition) { try { recognition.stop(); } catch (e) { /* already stopped */ } }
 }
@@ -8970,6 +8977,11 @@ function setupMic() {
       : 'Voice input isn\'t working right now. You can tap an answer instead.';
   };
   recognition.onend = function () {
+    // Empty session (nothing heard, nothing refused) and the visitor hasn't stopped it: just listen again.
+    if (!voiceGotResult && !voiceGotError && !voiceStopRequested && voiceRetriesLeft > 0) {
+      voiceRetriesLeft--;
+      try { recognition.start(); return; } catch (e) { /* fall through to give up */ }
+    }
     if (voiceListenTimer) { clearTimeout(voiceListenTimer); voiceListenTimer = null; }
     isRecording = false;
     if (micBtn) { micBtn.textContent = '🎙️ Voice Answer'; micBtn.classList.remove('listening'); }
@@ -9848,6 +9860,8 @@ document.addEventListener('click', async function (e) {
       el.classList.add('listening');
       voiceGotResult = false;
       voiceGotError = false;
+      voiceStopRequested = false;
+      voiceRetriesLeft = VOICE_EMPTY_RETRIES;
       var micTranscriptEl = document.getElementById('mic-transcript');
       if (micTranscriptEl) micTranscriptEl.textContent = ''; // clear the previous attempt's message
       recognition.start();

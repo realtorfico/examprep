@@ -229,14 +229,68 @@ test('a partial result that is not an answer yet keeps listening and shows what 
   await settle();
 });
 
-test('listening that ends with nothing heard says so (no error event, no result)', async (t) => {
+// Reported 2026-09-17: voice answering works some tries and not others -- Chrome on Android drops a session
+// with no result and no error. Retry those automatically instead of making the visitor tap again.
+
+test('an empty session restarts listening automatically, without a message', async (t) => {
   const { document, recognition } = await bootQuiz(t, []);
   micButton(document).click();
-  recognition().onend();
+  const r = recognition();
+  r.onend();
   await settle();
+  assert.equal(r.started, 2, 'listening restarted');
+  assert.match(micButton(document).textContent, /Listening/, 'still shows as listening');
+  assert.equal(transcript(document), '', 'no "didn\'t catch that" yet');
+});
+
+test('after repeated empty sessions it gives up and says so', async (t) => {
+  const { document, recognition } = await bootQuiz(t, []);
+  micButton(document).click();
+  const r = recognition();
+  for (let i = 0; i < 6; i++) r.onend();
+  await settle();
+  assert.ok(r.started <= 4, 'retries are capped');
   assert.match(transcript(document), /catch that|didn't hear/i);
   assert.equal(micButton(document).textContent, '🎙️ Voice Answer');
 });
+
+test('guard: a session that produced an answer is not retried', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  const r = recognition();
+  hear(r, 'c');
+  await waitFor(() => answers.length === 1);
+  const startsAfterAnswer = r.started;
+  r.onend();
+  await settle();
+  assert.equal(r.started, startsAfterAnswer, 'no restart after answering');
+});
+
+test('guard: an error is not retried, and its message stays', async (t) => {
+  const { document, recognition } = await bootQuiz(t, []);
+  micButton(document).click();
+  const r = recognition();
+  r.onerror({ error: 'not-allowed' });
+  r.onend();
+  await settle();
+  assert.equal(r.started, 1, 'no restart after an error');
+  assert.match(transcript(document), /microphone/i);
+});
+
+test('guard: tapping the button to stop does not restart listening', async (t) => {
+  const { document, recognition } = await bootQuiz(t, []);
+  micButton(document).click();
+  const r = recognition();
+  micButton(document).click(); // tap again = stop
+  await settle();
+  assert.equal(r.started, 1, 'no restart when the visitor stopped it');
+  assert.equal(micButton(document).textContent, '🎙️ Voice Answer');
+  assert.match(transcript(document), /catch that|didn't hear/i, 'stopping with nothing heard still says so');
+});
+
+// Superseded by the retry tests above: a single empty session now restarts instead of giving up. The
+// "nothing heard" message is asserted there (retries exhausted) and in the stop guard below.
 
 test('guard: after a voice answer the mic zone gives way to the explanation, and onend adds no stray message', async (t) => {
   const answers = [];
