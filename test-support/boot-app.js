@@ -15,6 +15,39 @@ const { JSDOM } = require('jsdom');
 
 const JS_DIR = path.join(__dirname, '..', 'wwwroot', 'js');
 const SCRIPT_FILES = ['config.js', 'api.js', 'speech.js', 'app.js'];
+// Per-kind track content (wwwroot/js/content/*.js). In a browser app.js injects the one file the
+// current page needs and the rest at idle; jsdom won't fetch an injected <script src>, so these are
+// eval'd here instead, right after app.js and before any microtask runs -- which is exactly the
+// state app.js's loader checks for, so it short-circuits and never tries to inject anything.
+// Defaults to the whole catalog (every test written before the 2026-09-17 split assumed that);
+// pass trackContentSlugs to boot with only some kinds registered and exercise the partial state.
+const CONTENT_DIR = path.join(JS_DIR, 'content');
+// Catalog entries per slug, read and evaluated ONCE for the whole test run rather than eval'd into
+// every jsdom window. The catalog is ~215KB across 11 files and the suite boots a window per test,
+// so eval-per-boot dominated the run time (the full suite went from ~90s to over 290s). The cached
+// arrays are handed to the window as-is: app.js only ever reads them (buildHubExams does
+// Object.assign({}, registryTrack, content)), so there's nothing to isolate between boots.
+const contentCache = (() => {
+  const out = {};
+  for (const file of fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.js'))) {
+    const src = fs.readFileSync(path.join(CONTENT_DIR, file), 'utf8');
+    new Function('window', src)({ registerTrackContent: (slug, list) => { out[slug] = list; } });
+  }
+  return out;
+})();
+
+// Every catalog entry on disk, whether or not this boot registered its file.
+function allContentEntries() {
+  return Object.keys(contentCache).reduce((acc, slug) => acc.concat(contentCache[slug]), []);
+}
+
+function contentSlugsFor(slugs) {
+  const all = Object.keys(contentCache);
+  if (!slugs) return all;
+  // 'unrouted' rides along with any selection, same as in the browser (app.js always loads it).
+  const wanted = slugs.concat(['unrouted']);
+  return all.filter((slug) => wanted.indexOf(slug) !== -1);
+}
 
 const SHELL_HTML = `<!doctype html><html><head></head><body>
 <div id="site-header"></div>
@@ -43,7 +76,11 @@ const SHELL_HTML = `<!doctype html><html><head></head><body>
 // numeric fields (duration/question-count/pass-score/etc.) get placeholder-but-consistent values --
 // no test to date has needed the REAL mechanics numbers, only real state/kind/route resolution.
 function defaultTrackRegistryResponse(window) {
-  var content = window.HUB_EXAMS_CONTENT || [];
+  // Reads every content file on disk, NOT window.HUB_EXAMS_CONTENT: since the 2026-09-17 per-kind
+  // split, the window only holds the kinds this boot registered, while the real /track-registry
+  // response always lists every track. Deriving from the loaded subset would quietly shrink the
+  // registry to one kind and make "what happens to a track whose content hasn't loaded" untestable.
+  var content = allContentEntries();
   var tracks = content.filter(function (c) { return c.route && c.route !== '#'; }).map(function (c) {
     var parts = c.route.split('/'); // "/real-estate-broker/ny" -> ['', 'real-estate-broker', 'ny']
     var kindSlugPart = parts[1] || '';
@@ -101,7 +138,7 @@ function makeFetchStub(overrides, window) {
 // script file evals -- for stubbing a third-party global (window.Stripe, window.turnstile) that
 // app.js reads synchronously during its own top-level/boot-time code, which is too late to stub
 // once eval has already started reading it.
-async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup }) {
+async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup, trackContentSlugs }) {
   const dom = new JSDOM(SHELL_HTML, { url: url, runScripts: 'dangerously', pretendToBeVisual: true });
   const window = dom.window;
   // path=/ must match exactly what setStateCookie() itself always writes -- a cookie set with a
@@ -119,6 +156,9 @@ async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowS
   for (const file of SCRIPT_FILES) {
     const src = fs.readFileSync(path.join(JS_DIR, file), 'utf8');
     window.eval(src);
+  }
+  for (const slug of contentSlugsFor(trackContentSlugs)) {
+    window.registerTrackContent(slug, contentCache[slug]);
   }
 
   // boot()'s meaningful work (header/footer/route()) runs inside a .then() chained off

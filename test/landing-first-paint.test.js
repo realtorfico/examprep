@@ -216,6 +216,34 @@ test('the server hero ships the same mobile CTA button as the client hero', asyn
   assert.ok(server.includes('class="hub-hero-cta hub-hero-cta-early"'), 'server CTA wrapper should match the client wrapper, which is what CSS shows on mobile only');
 });
 
+// ---- 2a2. CDL's own hero copy -----------------------------------------------------------------
+
+// CDL is the paid-traffic destination and gets copy written for it rather than the generic per-kind
+// template: a headline that matches how people search ("CDL Exam Prep", not the registry's
+// "Commercial Driver (CDL) Exam Prep") and a subhead that says what the product actually is.
+// Requested by the user 2026-09-17. Kept in code, not the category-content CMS, so the worker can
+// server-render it at first paint -- hero_headline/hero_subhead are null for cdl in the API, and a
+// CMS value would arrive ~2s later and change the text under the visitor.
+const CDL_SUBHEAD = 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.';
+
+test('the CDL hero uses its own headline and subhead', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  assert.equal(document.getElementById('category-hero-headline').textContent.trim(), 'CDL Exam Prep');
+  assert.equal(document.getElementById('category-hero-subhead').textContent.trim(), CDL_SUBHEAD);
+});
+
+test('the server renders CDL\'s own copy too', () => {
+  const server = categoryHeroHtml('cdl');
+  assert.equal(tagText(server, 'category-hero-headline'), 'CDL Exam Prep');
+  assert.ok(server.includes(CDL_SUBHEAD.replace(/&/g, '&amp;')), 'the server hero should carry the same subhead, or the client render rewrites it');
+});
+
+test('other categories keep the generic per-kind copy', async (t) => {
+  const { document } = await bootCategory(t, 'notary');
+  assert.equal(document.getElementById('category-hero-headline').textContent.trim(), 'Notary Exam Prep');
+  assert.match(document.getElementById('category-hero-subhead').textContent, /^Practice questions for your state's notary exam/);
+});
+
 // ---- 2b. Server header == client header (this is what keeps CLS at zero) ----------------------
 
 // #site-header is an empty div until app.js fills it. Once the hero paints at ~0.8s, that late fill
@@ -409,11 +437,14 @@ test('apiFetch does not dedupe writes', async (t) => {
 
 // ---- 5. Subhead keeps acronyms in the case they are actually written in ------------------------
 
-test('the CDL subhead does not lowercase the acronym', async (t) => {
-  const { document } = await bootCategory(t, 'cdl');
-  const subhead = document.getElementById('category-hero-subhead').textContent;
-  assert.ok(subhead.includes('commercial driver (CDL)'), 'expected a sentence-cased kind with the acronym intact, got: ' + subhead);
-  assert.ok(!subhead.includes('(cdl)'), 'the live page printed "commercial driver (cdl) exam" on every CDL ad click');
+test('a kind with an acronym is not lowercased in the generic subhead', async (t) => {
+  // CDL was the page this bug was found on ("Practice questions for your state's commercial driver
+  // (cdl) exam", live on every CDL ad click) but it has its own hand-written copy now, and it is
+  // the only kind whose label carries a parenthesised acronym -- so assert the helper itself.
+  const { window } = await bootCategory(t, 'cdl');
+  assert.equal(window.sentenceKindLabel('Commercial Driver (CDL)'), 'commercial driver (CDL)');
+  assert.equal(window.sentenceKindLabel('Real Estate Salesperson'), 'real estate salesperson');
+  assert.equal(window.sentenceKindLabel('DAT'), 'DAT');
 });
 
 test('an all-caps exam kind keeps its case in the subhead', async (t) => {

@@ -1277,11 +1277,22 @@ function heroEscape(s) {
 function heroSentenceKind(kind) {
   return String(kind).replace(/[A-Z][a-z]+/g, (word) => word.toLowerCase());
 }
+// Mirrors app.js's CATEGORY_HERO_COPY: hand-written copy for the categories that have it, generic
+// per-kind template for the rest. See that map's comment for why this lives in code on both sides.
+const CATEGORY_HERO_COPY = {
+  cdl: {
+    headline: 'CDL Exam Prep',
+    subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
+  },
+};
 function categoryHeroHtml(slug) {
   const kind = CATEGORY_HERO[slug];
   if (!kind) return '';
-  const headline = (HERO_FULL_KIND_NAMES[kind] ? kind + ' (' + HERO_FULL_KIND_NAMES[kind] + ')' : kind) + ' Exam Prep';
-  const subhead = 'Practice questions for your state\'s ' + heroSentenceKind(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
+  const override = CATEGORY_HERO_COPY[slug];
+  const headline = override ? override.headline
+    : (HERO_FULL_KIND_NAMES[kind] ? kind + ' (' + HERO_FULL_KIND_NAMES[kind] + ')' : kind) + ' Exam Prep';
+  const subhead = override ? override.subhead
+    : 'Practice questions for your state\'s ' + heroSentenceKind(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
   return '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
     (HERO_INTL_SLUGS[slug] ? '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍 International</span>' : '') +
@@ -1294,6 +1305,17 @@ function categoryHeroHtml(slug) {
     '</div>';
 }
 // <<< SSR-HERO
+
+// Preload for the per-kind track content file app.js is about to ask for (wwwroot/js/content/*.js,
+// see the catalog comment in app.js). app.js injects the <script> itself once it boots; without
+// this the browser can't even start that fetch until then. as="script" so it lands in the same
+// cache bucket the injected tag will read. TRACK_CONTENT_VERSION must match app.js's copy --
+// test/track-content-split.test.js asserts that.
+const TRACK_CONTENT_VERSION = 1;
+function trackContentPreloadHtml(slug) {
+  if (!slug || !CATEGORY_HERO[slug]) return '';
+  return '<link rel="preload" as="script" href="/js/content/' + slug + '.js?v=' + TRACK_CONTENT_VERSION + '">';
+}
 
 // >>> SSR-HEADER
 // The site header, server-rendered into <div id="site-header">, for the same reason as the hero
@@ -1431,7 +1453,7 @@ async function ssrRibbonHtml(env, url, kind) {
 // request.cf geolocation, so app.js can honestly say "based on your location" for that one hit
 // instead of claiming the visitor saved a preference. A <meta> rather than a second cookie, so the
 // privacy page's "we set one cookie, pxq_state" stays true.
-function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState, headerHtml) {
+function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState, headerHtml, contentSlug) {
   const rewriter = new HTMLRewriter().on('head', {
     element(el) {
       el.append('<link rel="canonical" href="' + canonicalHref + '">', { html: true });
@@ -1460,6 +1482,7 @@ function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState, headerHt
       el.append('<meta name="twitter:description" content="' + escapeAttr(description) + '">', { html: true });
       el.append('<meta name="twitter:image" content="' + ogImage + '">', { html: true });
       if (geoState) el.append('<meta name="pxq-geo-state" content="' + escapeAttr(geoState) + '">', { html: true });
+      if (contentSlug) el.append(trackContentPreloadHtml(contentSlug), { html: true });
     },
   });
   if (heroHtml) {
@@ -1614,7 +1637,7 @@ export default {
       const ribbonHtml = (url.pathname === '/' || isCategoryPageRequest)
         ? await ssrRibbonHtml(env, url, categoryPageMatch ? (CATEGORY_HERO[categoryPageMatch[1]] || '') : '')
         : HEADER_RIBBON_FALLBACK;
-      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath], heroHtml, geoState, siteHeaderHtml(ribbonHtml));
+      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath], heroHtml, geoState, siteHeaderHtml(ribbonHtml), categoryPageMatch ? categoryPageMatch[1] : '');
     }
     return response;
   },
