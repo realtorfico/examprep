@@ -162,7 +162,8 @@ test('the freshness stamp says updated, not verified', () => {
   // about this wording; so is this page.
   assert.match(PAGE, /id="updated"/);
   assert.match(PAGE, /last updated/i);
-  assert.ok(!/verified/i.test(PAGE), 'do not upgrade "updated" to "verified"');
+  // Markup only: the page's own comment explains this rule and quotes the word.
+  assert.ok(!/verified/i.test(PAGE.replace(/<!--[\s\S]*?-->/g, '')), 'do not upgrade "updated" to "verified"');
   assert.match(PAGE_JS, /questionsUpdatedAt/);
   assert.match(PAGE, /<p class="t1-updated" id="updated" hidden>/, 'hidden until known -- an empty date would read as a broken claim');
 });
