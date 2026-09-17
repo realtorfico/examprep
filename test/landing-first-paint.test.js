@@ -358,17 +358,25 @@ test('the endorsements are named in the hero, not just as percentages further do
   }
 });
 
-test('the panel asks for a repaint when the resource counts have not landed yet', async (t) => {
-  // They are fetched at boot without gating the render, so on a first paint the map is usually
-  // empty. The old aggregate card got this repaint for free as a side effect of
-  // aggregateResourceStats(); this panel doesn't call it, and the dashes shipped to production
-  // before this test existed.
-  const { window } = await bootCategory(t, 'cdl');
-  assert.match(APP_JS_SRC, /if \(!Object\.keys\(RESOURCE_COUNTS\)\.length\) resourceCountsNeedRepaint = true;[\s\S]{0,400}category-inv-tables/,
-    'fillCategorySpecCounts must set the repaint flag before reading the counts');
-  assert.equal(typeof window.fillResourceCountSurfaces, 'function', 'and boot() must still have the repaint entry point');
-  assert.match(APP_JS_SRC, /categorySpecPanelHtml\(categoryPageState\.repTrack, kindSlug\(kind\)\)/,
-    'the repaint has to re-render THIS panel, not the card it replaced');
+test('the materials fill in, whenever the counts arrive', async (t) => {
+  // This shipped dashed twice. The counts are fetched at boot without gating the render, so whether
+  // they're in hand at render time is a race -- and boot()'s repaint flag loses it in the direction
+  // that matters: counts landing BEFORE the render means fillResourceCountSurfaces already ran and
+  // returned early, so nothing repaints. The fill awaits the memoized load instead.
+  assert.match(APP_JS_SRC, /await loadResourceCounts\(\);\s*\n\s*var counts = RESOURCE_COUNTS\[track\.examType\]/,
+    'fillCategorySpecCounts must await the counts rather than hope they are already there');
+
+  const { document } = await bootCategory(t, 'cdl', {
+    fetchOverrides: [
+      ['/resources/catalog', { counts: { ca_cdl: { tables: 5, decks: 3, cards: 30, audio: 3 } } }],
+      ['/questions/counts', { counts: [{ exam_type: 'ca_cdl', count: 467 }] }],
+    ],
+  });
+  const inv = [...document.querySelectorAll('.category-spec-inv li')].map((el) => el.textContent);
+  assert.match(inv.join(' | '), /467/, 'the bank size comes from /questions/counts');
+  assert.match(inv.join(' | '), /5/, 'quick-fact tables');
+  assert.match(inv.join(' | '), /30 cards/, 'and the decks carry their card count');
+  assert.ok(!inv.some((t) => t.trim().startsWith('—')), 'nothing should still be dashed once both responses are in: ' + inv.join(' | '));
 });
 
 test('the inventory is per state, and a dash until it is known', async (t) => {
