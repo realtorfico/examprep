@@ -20,6 +20,13 @@
 # against Google's documented CSP requirements. The inline gtag('js', ...)/gtag('config', ...) init
 # code lives in its own same-origin /js/gtag-init.js file instead of an inline <script> block, same
 # reasoning as turnstile-callback.js -- keeps this CSP free of 'unsafe-inline'.
+# 2026-09-17: brought in line with Google's full "Google Ads conversions & remarketing" list
+# (developers.google.com/tag-platform/security/guides/csp) after a live page load showed the
+# remarketing tag (googleads.g.doubleclick.net/pagead/viewthroughconversion, script-src) and the
+# conversion-measurement ping (ad.doubleclick.net/ccm/s/collect, connect-src/img-src) being blocked.
+# ad.doubleclick.net is also in img-src (not on Google's list) because the live page load showed the
+# ccm/collect ping falling back to an image request. Country domains (www.google.<TLD>) deliberately
+# omitted -- US-only campaign. See test/csp-google-ads.test.js.
 # *.clarity.ms/c.bing.com = Microsoft Clarity (session recordings/heatmaps, added 2026-09-10) --
 # per Microsoft's own CSP docs (learn.microsoft.com/clarity/setup-and-installation/clarity-csp),
 # Clarity load-balances across multiple a-z.clarity.ms subdomains in production, so a wildcard is
@@ -32,7 +39,7 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://js.stripe.com https://*.js.stripe.com https://www.googletagmanager.com https://*.clarity.ms https://c.bing.com; style-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.clarity.ms https://c.bing.com; media-src 'self'; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://api.stripe.com https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.clarity.ms https://c.bing.com; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://js.stripe.com https://*.js.stripe.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.clarity.ms https://c.bing.com; style-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google.com https://google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.clarity.ms https://c.bing.com; media-src 'self'; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://api.stripe.com https://www.googletagmanager.com https://www.google.com https://google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.clarity.ms https://c.bing.com; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://www.googletagmanager.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'
 
 /js/*
   Cache-Control: public, max-age=31536000, immutable
