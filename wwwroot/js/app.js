@@ -8038,6 +8038,13 @@ function mountStripePaymentElement() {
     return;
   }
   var payBtn = document.getElementById('stripe-pay-button');
+  // Promo codes only ever discount a full-track checkout -- the API ignores them on a topic purchase. In
+  // topic mode say so, or an applied code sits on "Checking…" (or a stale full-track "applied" line)
+  // forever. Switching back to full track remounts and the normal applied/error message replaces this.
+  if (buySelectedTopics !== null && buyPromoCode) {
+    var topicPromoNoteEl = document.getElementById('buy-promo-result');
+    if (topicPromoNoteEl) topicPromoNoteEl.innerHTML = '<p class="muted">Promo codes apply to full-track purchases only, not individual topics.</p>';
+  }
   // "Choose specific topics" is selected but nothing's checked yet -- this function has other
   // trigger points besides refreshBuyTopicPricing (email blur/input, the initial Stripe-SDK-ready
   // callback, Turnstile's own resolve callback), any of which could fire while in this state.

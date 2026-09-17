@@ -200,3 +200,99 @@ test('switching back to "Full track access" reverts to the normal full-price mou
   const orderSummary = document.getElementById('buy-order-summary-wrap');
   assert.match(orderSummary.textContent, /Full Access/);
 });
+
+// Promo codes only ever discount a FULL-track checkout (the API's à la carte branch returns before any
+// promo math). Found 2026-09-17: applying a code while buying specific topics left "Checking…" on screen
+// forever -- no discount, no explanation -- and the 9/16 CDL-only promo banner now advertises a code on
+// every CDL buy page, right above the topic picker.
+async function selectFirstTopic(window, document) {
+  const topicsRadio = document.querySelector('.buy-topic-picker input[value="topics"]');
+  topicsRadio.checked = true;
+  topicsRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+  await settle();
+  const gkCheckbox = document.querySelectorAll('.buy-topic-checkbox')[0];
+  gkCheckbox.checked = true;
+  gkCheckbox.dispatchEvent(new window.Event('change', { bubbles: true }));
+}
+
+async function applyPromo(window, document, code) {
+  const input = document.getElementById('buy-promo-input');
+  input.value = code;
+  input.dispatchEvent(new window.Event('input', { bubbles: true }));
+  document.querySelector('[data-act="apply-promo-code"]').click();
+}
+
+function topicModeOverrides(createIntentCalls) {
+  const GK = CA_CDL_BREAKDOWN.items[0].label;
+  return [
+    ['/track-key-breakdown', CA_CDL_BREAKDOWN],
+    ['/topic-pricing', () => ({ totalCents: 2199, items: [{ label: GK, priceCents: 2199 }] })],
+    ['/stripe/create-intent', (href, options) => {
+      const parsed = JSON.parse(options.body);
+      createIntentCalls.push(parsed);
+      // Mirrors the real API: a topic purchase ignores the promo; a full-track one discounts.
+      if (parsed.topics) return { clientSecret: 'cs_t_' + createIntentCalls.length, priceCents: 2199, pointsApplied: 0 };
+      return parsed.promoCode
+        ? { clientSecret: 'cs_f_' + createIntentCalls.length, priceCents: 2959, promoDiscountCents: 740, promoTitle: 'New CDL', pointsApplied: 0 }
+        : { clientSecret: 'cs_f_' + createIntentCalls.length, priceCents: 3699, pointsApplied: 0 };
+    }],
+  ];
+}
+
+test('applying a promo code while buying specific topics says promos are full-track only, instead of hanging on "Checking…"', async (t) => {
+  const createIntentCalls = [];
+  const { dom, window, document } = await bootBuyPage(topicModeOverrides(createIntentCalls));
+  t.after(() => dom.window.close());
+  await waitFor(() => document.getElementById('stripe-payment-element') !== null);
+  await waitFor(() => createIntentCalls.length === 1);
+  await selectFirstTopic(window, document);
+  await waitFor(() => createIntentCalls.length === 2, { timeout: 3000 });
+
+  await applyPromo(window, document, 'NEWCDL20');
+  await waitFor(() => createIntentCalls.length === 3, { timeout: 3000 });
+  await settle();
+
+  const result = document.getElementById('buy-promo-result').textContent;
+  assert.doesNotMatch(result, /Checking/, 'must not be left spinning');
+  assert.match(result, /full-track/i, 'must explain why no discount was applied');
+  assert.match(document.getElementById('buy-order-summary-wrap').textContent, /\$21\.99/, 'topic price unchanged -- no promo discount on topics');
+});
+
+test('a promo applied to the full track, then switching to specific topics, no longer claims it is applied', async (t) => {
+  const createIntentCalls = [];
+  const { dom, window, document } = await bootBuyPage(topicModeOverrides(createIntentCalls));
+  t.after(() => dom.window.close());
+  await waitFor(() => document.getElementById('stripe-payment-element') !== null);
+  await waitFor(() => createIntentCalls.length === 1);
+
+  await applyPromo(window, document, 'NEWCDL20');
+  await waitFor(() => createIntentCalls.length === 2, { timeout: 3000 });
+  await waitFor(() => /applied/.test(document.getElementById('buy-promo-result').textContent));
+
+  await selectFirstTopic(window, document);
+  await waitFor(() => createIntentCalls.length === 3, { timeout: 3000 });
+  await settle();
+
+  const result = document.getElementById('buy-promo-result').textContent;
+  assert.doesNotMatch(result, /applied/, 'the full-track discount must not still read as applied to a topic purchase');
+  assert.match(result, /full-track/i);
+});
+
+test('guard: switching back to the full track re-applies the promo discount', async (t) => {
+  const createIntentCalls = [];
+  const { dom, window, document } = await bootBuyPage(topicModeOverrides(createIntentCalls));
+  t.after(() => dom.window.close());
+  await waitFor(() => document.getElementById('stripe-payment-element') !== null);
+  await waitFor(() => createIntentCalls.length === 1);
+  await selectFirstTopic(window, document);
+  await waitFor(() => createIntentCalls.length === 2, { timeout: 3000 });
+  await applyPromo(window, document, 'NEWCDL20');
+  await waitFor(() => createIntentCalls.length === 3, { timeout: 3000 });
+
+  const fullRadio = document.querySelector('.buy-topic-picker input[value="full"]');
+  fullRadio.checked = true;
+  fullRadio.dispatchEvent(new window.Event('change', { bubbles: true }));
+  await waitFor(() => createIntentCalls.length === 4, { timeout: 3000 });
+  assert.equal(createIntentCalls[3].promoCode, 'NEWCDL20');
+  await waitFor(() => /applied/.test(document.getElementById('buy-promo-result').textContent));
+});
