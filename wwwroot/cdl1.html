@@ -22,7 +22,7 @@
 <!-- Blocking on purpose and deliberately tiny (~0.2KB): it reads the same localStorage key app.js
      uses, so a visitor who chose dark elsewhere on the site gets dark on the FIRST paint here. -->
 <script src="/js/theme-init.js?v=1"></script>
-<link rel="stylesheet" href="/css/cdl1.min.css?v=8">
+<link rel="stylesheet" href="/css/cdl1.min.css?v=9">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -32,7 +32,7 @@
 <!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
      Deferred scripts execute in document order, so the other way round throws and the per-state
      facts and coverage bars silently never render. -->
-<script defer src="/js/cdl1.js?v=9"></script>
+<script defer src="/js/cdl1.js?v=10"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
 </head>
 <body class="t1">
@@ -120,9 +120,12 @@
 
     <div class="t1-cta">
       <a class="btn-primary t1-btn" href="#sample">Answer a free question now</a>
+      <!-- No number here on purpose: the price is stated after the free question, so a visitor
+           judges the product before the figure (user's call, 2026-09-17). The hero still says the
+           purchase is one-time in the subhead, and this link goes to the same place -- nothing is
+           concealed, it is ordered. -->
       <p class="t1-price-line">
-        Full <span id="state-name">California</span> CDL access —
-        <strong id="price">$36.99</strong> one-time.
+        Full <span id="state-name">California</span> CDL access, one time, no subscription.
         <a id="buy" href="/cdl/ca#/buy">See what's included →</a>
       </p>
     </div>
@@ -150,8 +153,10 @@
          locked teaser. Kept low-prominence next to the sample -- it is proof of quality, not a
          second call to action competing with the buy CTA. -->
     <p class="t1-muted t1-resources"><a id="resources" href="/cdl/ca#/resources">Preview the free <span id="resources-state">California</span> resources →</a></p>
+    <!-- Where the price is first stated: after the visitor has answered a real question. -->
     <p class="t1-sample-after" id="sample-after" hidden>
       <span id="sample-count-line"></span>
+      <span class="t1-price-after">Full <span id="price-state">California</span> access is <strong id="price">$36.99</strong>, one time.</span>
       <a class="btn-primary t1-btn" id="buy2" href="/cdl/ca#/buy">Get full access — <span id="price2">$36.99</span></a>
     </p>
   </section>
@@ -226,7 +231,9 @@
 </main>
 
 <!-- Same buy action as the hero's price link, pinned once the hero scrolls away (phones only). -->
-<div class="t1-sticky" id="sticky">
+<!-- Hidden until the visitor has answered the free question, so the price isn't shown before it
+     (same reasoning as the hero). Revealed by cdl1.js, phones only via CSS. -->
+<div class="t1-sticky" id="sticky" hidden>
   <span class="t1-sticky-price">Full <span id="sticky-state">California</span> CDL access<strong id="price3">$36.99</strong></span>
   <a class="t1-sticky-buy" id="buy3" href="/cdl/ca#/buy">Get access</a>
 </div>

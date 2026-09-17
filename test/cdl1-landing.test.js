@@ -167,9 +167,26 @@ test('the endorsements are named on the first screen', () => {
   }
 });
 
-test('it states the price and that it is one-time', () => {
-  assert.match(PAGE, /id="price"/, 'the price element should be server-rendered, then confirmed from /api/pricing');
-  assert.match(PAGE, /one-time/i);
+test('the price is stated after the free question, not in the hero', () => {
+  // User's call, 2026-09-17: judge the product first, then the figure. Ordered, not concealed --
+  // the hero still says the purchase is one-time and links straight to the buy page, and the price
+  // appears the moment the visitor has answered a question.
+  const hero = PAGE.slice(0, PAGE.indexOf('id="sample"'));
+  assert.ok(!/\$\d/.test(hero), 'no price figure above the free question: ' + (hero.match(/\$\d[^<]*/) || [''])[0]);
+  assert.match(hero, /one time, no subscription/i, 'the hero should still be clear that it is not a subscription');
+  assert.match(hero, /id="buy"/, 'and still link to the buy page for anyone who wants the number now');
+
+  const after = PAGE.slice(PAGE.indexOf('id="sample-after"'));
+  assert.match(after, /id="price"/, 'the price belongs in the block revealed after answering');
+  assert.match(after, /one time/i);
+});
+
+test('the pinned bar carries the price, so it only appears after the question too', () => {
+  assert.match(PAGE, /<div class="t1-sticky" id="sticky" hidden>/);
+  assert.match(PAGE_JS, /sticky\.hidden = false/, 'revealed with the answer, not on load');
+  // And it must be revealed in the same place the answer is handled, not on a timer or scroll.
+  const reveal = PAGE_JS.slice(PAGE_JS.indexOf('after.hidden = false'), PAGE_JS.indexOf('after.hidden = false') + 400);
+  assert.match(reveal, /sticky/);
 });
 
 test('there is one primary call to action, not two competing ones', () => {

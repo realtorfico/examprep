@@ -128,7 +128,7 @@
     var entry = entryFor(stateCode);
     var name = STATE_NAMES[stateCode] || stateCode;
     currentState = stateCode;
-    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state', 'resources-state'].forEach(function (id) { text(id, name); });
+    ['state-name', 'sample-state', 'breakdown-state', 'kicker-state', 'seal-state', 'sticky-state', 'resources-state', 'price-state'].forEach(function (id) { text(id, name); });
     if (entry) {
       text('fact-questions', entry.questions);
       text('fact-pass', entry.passScore);
@@ -295,6 +295,11 @@
       }
       var after = document.getElementById('sample-after');
       if (after) after.hidden = false;
+      // The price is stated here, after a real question has been answered -- and only now does the
+      // pinned bar (which carries it too) appear. Nothing is hidden from someone who wants it:
+      // "See what's included" in the hero goes straight to the buy page.
+      var sticky = document.getElementById('sticky');
+      if (sticky) sticky.hidden = false;
     };
   }
 

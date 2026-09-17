@@ -321,3 +321,5 @@ body.t1 { background: var(--bg); color: var(--fg); }
 .t1-state.is-confirmed { border-color: color-mix(in srgb, var(--accent-deep-foreground) 22%, transparent); background: color-mix(in srgb, black 20%, transparent); }
 .t1-state.is-confirmed .t1-state-badge { color: color-mix(in srgb, var(--accent-deep-foreground) 70%, transparent); }
 .t1-state.is-confirmed .t1-state-note { display: none; }
+.t1-price-after { font-size: 0.92rem; color: var(--fg); }
+.t1-price-after strong { font-size: 1.05rem; }
