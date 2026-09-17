@@ -27,6 +27,10 @@
 # ad.doubleclick.net is also in img-src (not on Google's list) because the live page load showed the
 # ccm/collect ping falling back to an image request. Country domains (www.google.<TLD>) deliberately
 # omitted -- US-only campaign. See test/csp-google-ads.test.js.
+# Permissions-Policy microphone=(self), not microphone=() (2026-09-17): the quiz's 🎙️ Voice Answer uses the
+# browser's SpeechRecognition, which Chrome/Edge refuse with "not-allowed" when the page's own policy disables
+# the microphone -- verified in real Chrome against the live site. It had been () since the first commit.
+# See test/voice-answer.test.js.
 # *.clarity.ms/c.bing.com = Microsoft Clarity (session recordings/heatmaps, added 2026-09-10) --
 # per Microsoft's own CSP docs (learn.microsoft.com/clarity/setup-and-installation/clarity-csp),
 # Clarity load-balances across multiple a-z.clarity.ms subdomains in production, so a wildcard is
@@ -38,7 +42,7 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Permissions-Policy: geolocation=(), microphone=(self), camera=()
   Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://js.stripe.com https://*.js.stripe.com https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://*.clarity.ms https://c.bing.com; style-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google.com https://google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.clarity.ms https://c.bing.com; media-src 'self'; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://api.stripe.com https://www.googletagmanager.com https://www.google.com https://google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.clarity.ms https://c.bing.com; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://www.googletagmanager.com; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'self'
 
 /js/*

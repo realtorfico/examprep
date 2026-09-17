@@ -8889,6 +8889,18 @@ function setupMic() {
     });
     if (picked) submitAnswer(picked);
   };
+  // Without this a refused or failed start just silently reset the button -- which is how Chrome blocking the
+  // microphone through the site's own Permissions-Policy header went unnoticed from launch until 2026-09-17.
+  // onend still resets the button. See test/voice-answer.test.js.
+  recognition.onerror = function (event) {
+    var box = document.getElementById('mic-transcript');
+    if (!box || event.error === 'aborted') return;
+    box.textContent = (event.error === 'not-allowed' || event.error === 'service-not-allowed')
+      ? 'Microphone access is blocked. Allow microphone access for this site in your browser settings, then try again.'
+      : event.error === 'no-speech'
+      ? 'Didn\'t catch that. Tap Voice Answer and say A, B, C, or D.'
+      : 'Voice input isn\'t working right now. You can tap an answer instead.';
+  };
   recognition.onend = function () {
     isRecording = false;
     if (micBtn) { micBtn.textContent = '🎙️ Voice Answer'; micBtn.classList.remove('listening'); }
