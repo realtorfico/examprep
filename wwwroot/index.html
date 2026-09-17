@@ -32,12 +32,12 @@
      intermittent) before changing either line. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-var-subset.woff2" crossorigin>
-<link rel="preload" href="/css/style.min.css?v=16" as="style">
+<link rel="preload" href="/css/style.min.css?v=17" as="style">
 <!-- app.min.js renders every page. Measured 2026-09-17 on a throttled mobile profile, it was the
      LAST same-origin script to start downloading (2258ms), queued behind ~10 smaller ones, which
      is most of why /cdl showed nothing for ~2.8s. The preload lifts it out of that queue; keep its
      ?v= in lockstep with the <script> tag at the end of <body> or the bundle downloads twice. -->
-<link rel="preload" as="script" fetchpriority="high" href="/js/app.min.js?v=37">
+<link rel="preload" as="script" fetchpriority="high" href="/js/app.min.js?v=38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PassExamHQ</title>
 <meta name="description" content="Exam prep practice questions, timed to how you actually study.">
@@ -45,11 +45,11 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0f2a5f">
-<script defer src="/js/load-css.js?v=16"></script>
+<script defer src="/js/load-css.js?v=17"></script>
 <!-- Keeps the server-rendered hero CTA from being a dead button between ~1s (it paints) and ~3s
      (app.min.js runs and owns the handler). See js/early-cta.js. -->
 <script defer src="/js/early-cta.js?v=1"></script>
-<noscript><link rel="stylesheet" href="/css/style.min.css?v=16"></noscript>
+<noscript><link rel="stylesheet" href="/css/style.min.css?v=17"></noscript>
 <script src="/js/turnstile-callback.js?v=103"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit" async defer></script>
 </head>
@@ -63,6 +63,6 @@
 <script defer src="/js/config.js?v=103"></script>
 <script defer src="/js/api.js?v=104"></script>
 <script defer src="/js/speech.js?v=103"></script>
-<script defer src="/js/app.min.js?v=37"></script>
+<script defer src="/js/app.min.js?v=38"></script>
 </body>
 </html>
