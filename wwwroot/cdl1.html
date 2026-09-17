@@ -16,7 +16,7 @@
      2KB on the wire). It first shipped blocking on hero.css + the whole 86KB style.min.css, which
      cost it ~630ms of first paint for rules it does not use. Everything on the page is already in
      the HTML, so there is no JS render to wait for -- blocking here is correct, being big was not. -->
-<link rel="stylesheet" href="/css/cdl1.min.css?v=1">
+<link rel="stylesheet" href="/css/cdl1.min.css?v=2">
 <!-- Both fonts preloaded, for the reasons measured on the live page: Inter arriving late re-wraps
      text (CLS), Fraunces arriving late repaints the H1 and drags LCP with it. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
@@ -24,9 +24,17 @@
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <meta name="theme-color" content="#0f2a5f">
 <script defer src="/js/content/cdl.js?v=1"></script>
-<script defer src="/js/cdl1.js?v=1"></script>
+<script defer src="/js/cdl1.js?v=2"></script>
 </head>
 <body class="t1">
+
+<!-- Fixed-height, single-line promo band. Server-rendered with the guarantee tagline, swapped for
+     the live promo once /api/promotions answers -- same height either way, so a late promo can't
+     move the page. The real site's ribbon grows from 36px to ~90px on a phone when its promo lands,
+     which shifts everything below it. -->
+<div class="t1-promo" id="promo">
+  <a href="/cdl#/guarantee">🎯 <strong>Real practice, real guarantees</strong> — see our refund policy →</a>
+</div>
 
 <header class="t1-bar">
   <a class="t1-logo" href="/">
@@ -44,6 +52,7 @@
        straight from the review -- is this my state, what does the test look like, what's covered,
        can I try it and what does it cost. -->
   <section class="t1-hero">
+    <p class="t1-kicker">Commercial driver's license · <span id="kicker-state">California</span></p>
     <h1>CDL Exam Prep</h1>
     <p class="t1-sub">Pass your state's CDL knowledge test with real practice questions built from your own state's official CDL handbook — all 50 states, instant access, one-time purchase.</p>
 
@@ -92,6 +101,10 @@
         <a id="buy" href="/cdl/ca#/buy">See what's included →</a>
       </p>
     </div>
+    <p class="t1-seal">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3Z" stroke="var(--highlight)" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8.5 12.2 11 14.6l4.8-5" stroke="var(--highlight)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Written from the <span id="seal-state">California</span> CDL handbook — not a generic question bank.
+    </p>
   </section>
 
   <!-- The sample question, immediately after the hero rather than three screens down. Filled from
@@ -99,6 +112,7 @@
        candidate has to pass it, whereas the live page showed whichever question came back first
        (a school-bus endorsement question on the day this was reviewed). -->
   <section class="t1-card" id="sample">
+    <span class="t1-card-kicker">Free sample</span>
     <h2>Try one from the <span id="sample-state">California</span> bank</h2>
     <p class="t1-muted" id="sample-topic">Loading a question…</p>
     <p class="t1-question" id="sample-question"></p>
@@ -112,30 +126,44 @@
 
   <!-- What's on the test, per state, from the catalog's own breakdown. -->
   <section class="t1-card" id="breakdown">
+    <span class="t1-card-kicker">Coverage</span>
     <h2>What the <span id="breakdown-state">California</span> bank covers</h2>
     <p class="t1-muted">Weighted to the official handbook's own sections.</p>
     <ul class="t1-bars" id="bars"></ul>
   </section>
 
   <section class="t1-card t1-guarantee">
+    <span class="t1-card-kicker">No-risk</span>
     <h2>Two guarantees</h2>
-    <p><strong>Pass or 50% back.</strong> Finish your track, sit the real exam, and if you don't pass we refund half.</p>
-    <p><strong>7-day refund.</strong> Changed your mind? Full refund within 7 days, no questions asked.</p>
+    <div class="t1-guarantee-row">
+      <span class="t1-guarantee-icon" aria-hidden="true">🛡️</span>
+      <p><strong>Pass or 50% back.</strong> Finish your track, sit the real exam, and if you don't pass we refund half.</p>
+    </div>
+    <div class="t1-guarantee-row">
+      <span class="t1-guarantee-icon" aria-hidden="true">↩️</span>
+      <p><strong>7-day refund.</strong> Changed your mind? Full refund within 7 days, no questions asked.</p>
+    </div>
     <p class="t1-muted"><a href="/cdl#/guarantee">Read the guarantee →</a></p>
   </section>
 
   <section class="t1-testimonials">
     <blockquote class="t1-quote">
       <p>“Air brakes and combination vehicles were my weak spots. The topic breakdown showed me exactly where to focus.”</p>
-      <cite>Ray D., Illinois</cite>
+      <cite><span class="t1-avatar" aria-hidden="true">RD</span>Ray D., Illinois</cite>
     </blockquote>
     <blockquote class="t1-quote">
       <p>“Studied on my phone between routes. Made it through general knowledge and both endorsements in about a week.”</p>
-      <cite>Tasha G., Ohio</cite>
+      <cite><span class="t1-avatar" aria-hidden="true">TG</span>Tasha G., Ohio</cite>
     </blockquote>
   </section>
 
 </main>
+
+<!-- Same buy action as the hero's price link, pinned once the hero scrolls away (phones only). -->
+<div class="t1-sticky" id="sticky">
+  <span class="t1-sticky-price">Full <span id="sticky-state">California</span> CDL access<strong id="price3">$36.99</strong></span>
+  <a class="t1-sticky-buy" id="buy3" href="/cdl/ca#/buy">Get access</a>
+</div>
 
 <footer class="t1-foot">
   <p>Built from each state's official CDL handbook. Not affiliated with any state agency or the FMCSA.</p>

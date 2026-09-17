@@ -68,7 +68,8 @@ test('it blocks on exactly one small stylesheet', () => {
   for (const needed of ['--accent', '@font-face', '.t1-hero', '.btn-primary']) {
     assert.ok(generated.includes(needed), 'cdl1.min.css should carry ' + needed);
   }
-  assert.ok(generated.length < 14000, 'cdl1.min.css has grown to ' + generated.length + ' bytes');
+  // Cap is a tripwire, not a target: the point is that it stays a fraction of style.min.css's 86KB.
+  assert.ok(generated.length < 20000, 'cdl1.min.css has grown to ' + generated.length + ' bytes');
 });
 
 test('both fonts are preloaded here too', () => {
@@ -152,6 +153,42 @@ test('the free sample prefers a General Knowledge question', () => {
   // Falls back to the first question rather than showing nothing.
   assert.equal(pickSampleQuestion([questions[0], questions[2]]).id, 'a');
   assert.equal(pickSampleQuestion([]), null);
+});
+
+test('the promo band is server-rendered at a fixed height, with the guarantee tagline as its floor', () => {
+  // The live site's ribbon starts empty at its reserved 36px and grows to ~90px on a phone when the
+  // promo lands, shifting everything below it. Here the band always has content and a fixed height,
+  // so the swap can't move anything.
+  assert.match(PAGE, /<div class="t1-promo" id="promo">/);
+  assert.match(PAGE, /Real practice, real guarantees/, 'the band should never be empty while it waits');
+  const css = fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.css'), 'utf8');
+  assert.match(css, /\.t1-promo\s*\{[^}]*height:\s*2\.5rem/, 'a fixed height, not a min-height');
+  assert.match(css, /\.t1-promo\s*\{[^}]*white-space:\s*nowrap/, 'and one line, so promo length cannot change it');
+});
+
+test('the promo band renders the live promo with its code', () => {
+  const { promoBandHtml } = loadHelpers();
+  const html = promoBandHtml({ id: 1, title: 'First-time buyers: 20% off full CDL access', promoCode: 'NEWCDL20' });
+  assert.match(html, /First-time buyers: 20% off full CDL access/);
+  assert.match(html, /class="t1-promo-code">NEWCDL20</);
+  assert.match(html, /href="\/cdl\/ca#\/buy"/, 'and it should link to the state the visitor is looking at');
+});
+
+test('no promo means the tagline stays put', () => {
+  const { promoBandHtml } = loadHelpers();
+  assert.equal(promoBandHtml(null), '');
+  assert.equal(promoBandHtml({ id: 2 }), '', 'a promo with no title is not renderable either');
+});
+
+test('the promo is scoped to the CDL kind', () => {
+  assert.match(PAGE_JS, /placement=home&kind='\s*\+\s*encodeURIComponent\('Commercial Driver \(CDL\)'\)/, 'an unscoped fetch could show another track\'s promo on a CDL page');
+});
+
+test('the sticky buy bar is the same action, not a third competing CTA', () => {
+  assert.match(PAGE, /class="t1-sticky-buy"/);
+  assert.ok(!/class="[^"]*btn-primary[^"]*"[^>]*t1-sticky/.test(PAGE), 'it should not be styled as another primary CTA');
+  const css = fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.css'), 'utf8');
+  assert.match(css, /@media \(max-width: 680px\) \{ \.t1-sticky \{ display: flex/, 'phones only');
 });
 
 test('state facts come from the shared catalog, not a copy', () => {
