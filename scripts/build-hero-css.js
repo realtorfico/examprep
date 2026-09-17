@@ -66,11 +66,15 @@ function normalizeSelector(part) {
   return part.trim().replace(THEME_PREFIX, '').trim();
 }
 
+// Which selector set collect() is currently matching against: HERO_SELECTORS for hero.css, or
+// whatever extractRules()'s caller passed (scripts/build-cdl1-css.js).
+let activeSelectors = HERO_SELECTORS;
+
 function selectorMatches(prelude) {
   return prelude.split(',').some((part) => {
     const normalized = normalizeSelector(part);
     if (!normalized) return true; // a bare :root / themed :root block -- the token definitions
-    return HERO_SELECTORS.has(normalized);
+    return activeSelectors.has(normalized);
   });
 }
 
@@ -101,7 +105,30 @@ function parseBlocks(css) {
   return blocks;
 }
 
+// Pulls every rule matching `selectors` (plus the :root token blocks and @font-face) out of
+// style.css, preserving @media wrappers, and returns minified CSS. Shared with
+// scripts/build-cdl1-css.js, which needs the same extraction over a different selector set.
+function extractRules(styleCss, selectors) {
+  const previous = activeSelectors;
+  activeSelectors = selectors;
+  try {
+    return collect(styleCss);
+  } finally {
+    activeSelectors = previous;
+  }
+}
+
 function buildHeroCss(styleCss) {
+  return minify(collect(styleCss));
+}
+
+function minify(css) {
+  const result = new CleanCSS({}).minify(css);
+  if (result.errors.length) throw new Error(result.errors.join('\n'));
+  return result.styles;
+}
+
+function collect(styleCss) {
   const kept = [];
   for (const block of parseBlocks(styleCss)) {
     if (block.prelude.startsWith('@font-face')) {
@@ -123,10 +150,7 @@ function buildHeroCss(styleCss) {
     if (block.prelude.startsWith('@')) continue; // @keyframes/@supports: nothing the static hero needs
     if (selectorMatches(block.prelude)) kept.push(block.prelude + '{' + block.body.trim() + '}');
   }
-
-  const result = new CleanCSS({}).minify(kept.join('\n'));
-  if (result.errors.length) throw new Error(result.errors.join('\n'));
-  return result.styles;
+  return kept.join('\n');
 }
 
 function main() {
@@ -136,6 +160,6 @@ function main() {
   console.log(`hero.css: ${Buffer.byteLength(heroCss, 'utf8').toLocaleString()} bytes from style.css's ${Buffer.byteLength(styleCss, 'utf8').toLocaleString()}`);
 }
 
-module.exports = { buildHeroCss };
+module.exports = { buildHeroCss, extractRules, minify };
 
 if (require.main === module) main();

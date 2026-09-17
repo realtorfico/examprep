@@ -35,6 +35,7 @@ const CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'style.min.css');
 // Extracted from the same style.css source, so it's built here rather than maintained by hand --
 // see scripts/build-hero-css.js for why it exists at all.
 const { buildHeroCss } = require('./build-hero-css');
+const { buildCdl1Css } = require('./build-cdl1-css');
 const HERO_CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'hero.css');
 
 function report(label, before, after) {
@@ -57,6 +58,15 @@ async function main() {
   const heroCss = buildHeroCss(cssSrc);
   fs.writeFileSync(HERO_CSS_OUT, heroCss, 'utf8');
   report('style.css -> hero.css (critical subset)', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(heroCss, 'utf8'));
+
+  // The /cdl1 prototype's single blocking stylesheet: what it inherits from style.css plus its own
+  // page rules. See scripts/build-cdl1-css.js.
+  const cdl1Src = path.join(__dirname, '..', 'wwwroot', 'css', 'cdl1.css');
+  if (fs.existsSync(cdl1Src)) {
+    const cdl1Css = buildCdl1Css(cssSrc, fs.readFileSync(cdl1Src, 'utf8'));
+    fs.writeFileSync(path.join(__dirname, '..', 'wwwroot', 'css', 'cdl1.min.css'), cdl1Css, 'utf8');
+    report('style.css + cdl1.css -> cdl1.min.css', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(cdl1Css, 'utf8'));
+  }
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

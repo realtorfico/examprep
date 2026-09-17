@@ -48,18 +48,33 @@ test('no script blocks rendering', () => {
   }
 });
 
-test('the stylesheets it blocks on are the ones the site already serves, at the same versions', () => {
-  // Reuses the real design system rather than a private copy: hero.css for the tokens and hero
-  // rules, style.min.css for everything else. Versions must track index.html's or the page renders
-  // against stale CSS from cache.
-  for (const sheet of ['hero.css', 'style.min.css']) {
-    const onIndex = (INDEX.match(new RegExp(sheet.replace('.', '\\.') + '\\?v=(\\d+)')) || [])[1];
-    const onPage = (PAGE.match(new RegExp(sheet.replace('.', '\\.') + '\\?v=(\\d+)')) || [])[1];
-    assert.ok(onPage, sheet + ' should be linked on the prototype');
-    assert.equal(onPage, onIndex, sheet + ' version differs from index.html');
+test('it blocks on exactly one small stylesheet', () => {
+  // It first shipped blocking on hero.css + the whole 86KB style.min.css, which cost ~630ms of
+  // first paint (1,820ms vs /cdl's 1,190ms) for rules the page doesn't use.
+  const sheets = PAGE.match(/<link rel="stylesheet"[^>]*>/g) || [];
+  assert.equal(sheets.length, 1, 'expected one stylesheet, found: ' + sheets.join(' '));
+  assert.match(sheets[0], /\/css\/cdl1\.min\.css\?v=\d+/);
+  // A link tag, not a mention: the page's own comment explains why style.min.css isn't linked.
+  assert.ok(!/<link[^>]*style\.min\.css/.test(PAGE), 'the prototype must not block on the whole site stylesheet');
+
+  const generated = fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.min.css'), 'utf8');
+  const { buildCdl1Css } = require('../scripts/build-cdl1-css');
+  assert.equal(
+    generated,
+    buildCdl1Css(fs.readFileSync(path.join(WWWROOT, 'css', 'style.css'), 'utf8'), fs.readFileSync(path.join(WWWROOT, 'css', 'cdl1.css'), 'utf8')),
+    'wwwroot/css/cdl1.min.css is out of date -- run `npm run build`',
+  );
+  // It inherits the real tokens rather than copying values, and carries the fonts it preloads.
+  for (const needed of ['--accent', '@font-face', '.t1-hero', '.btn-primary']) {
+    assert.ok(generated.includes(needed), 'cdl1.min.css should carry ' + needed);
   }
-  assert.match(PAGE, /<link rel="preload" as="font"[^>]*inter-var-subset/, 'both fonts must be preloaded here too -- see index.html for the measurements');
+  assert.ok(generated.length < 14000, 'cdl1.min.css has grown to ' + generated.length + ' bytes');
+});
+
+test('both fonts are preloaded here too', () => {
+  assert.match(PAGE, /<link rel="preload" as="font"[^>]*inter-var-subset/, 'see index.html for the measurements behind this');
   assert.match(PAGE, /<link rel="preload" as="font"[^>]*fraunces-var-subset/);
+  assert.ok(INDEX.includes('inter-var-subset'), 'and the live page should still preload them');
 });
 
 // ---- What a CDL candidate came for, in the HTML itself ----------------------------------------
