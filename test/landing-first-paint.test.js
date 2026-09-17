@@ -258,14 +258,15 @@ test('app.js drops the reservation once it renders the real page', async (t) => 
   assert.equal(document.getElementById('app').classList.contains('app-ssr-reserve'), false, 'app.js should remove the reservation class when it renders, so the class never outlives the server-only state');
 });
 
-test('index.html preloads the two hero fonts', () => {
-  // Both are declared in hero.css, but the browser only discovers a @font-face URL when it applies
-  // the rule to text -- measured at 2127ms and 2710ms, well after the hero paints, so the headline
-  // rendered in a fallback face and then reflowed 4px (a 0.007 shift).
-  for (const font of ['inter-var-latin.woff2', 'fraunces-var-latin.woff2']) {
-    const pattern = new RegExp('<link rel="preload" as="font" type="font/woff2" href="/fonts/' + font.replace('.', '\\.') + '" crossorigin>');
-    assert.match(INDEX, pattern, font + ' should be preloaded (crossorigin is required for fonts, or the preload is fetched twice)');
-  }
+test('the hero fonts are deliberately not preloaded', () => {
+  // Measured both ways on 2026-09-17. Preloading them removed a 4px reflow when they swap in
+  // (0.007 CLS -- invisible), and cost ~420ms of first contentful paint: 113KB of high-priority
+  // font bytes ahead of everything else on a 1.6Mbps link took FCP from ~800ms to a consistent
+  // ~1220ms over three runs. This test exists so the "obvious" optimisation isn't re-added without
+  // re-measuring; hero.css's @font-face with font-display:swap is the right trade here.
+  assert.ok(!/rel="preload"[^>]*as="font"/.test(INDEX), 'a font preload is back in index.html -- re-measure FCP before keeping it');
+  const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
+  assert.match(heroCss, /font-display:\s*swap/, 'the hero fonts must stay font-display:swap, so text paints in a fallback face rather than waiting');
 });
 
 // ---- 3. The hero paints styled, and app.min.js stops being last in the queue -------------------

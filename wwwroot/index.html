@@ -17,13 +17,13 @@
      (~5.5KB, ~1.5KB on the wire) -- never edit it by hand, and rebuild it whenever style.css
      changes. style.min.css keeps its own non-blocking preload + deferred-attach path below. -->
 <link rel="stylesheet" href="/css/hero.css?v=2">
-<!-- The two variable fonts the hero uses (Fraunces for the H1, Inter for everything else). They're
-     declared in hero.css, but a @font-face URL is only discovered when the rule is applied to real
-     text -- measured arriving at 2127ms/2710ms, long after the hero painted, so the headline
-     rendered in a fallback face and then reflowed. crossorigin is required on a font preload (even
-     same-origin) or the browser fetches the file a second time. -->
-<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-latin.woff2" crossorigin>
-<link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-var-latin.woff2" crossorigin>
+<!-- The two variable fonts (Fraunces for the H1, Inter for the rest) are deliberately NOT preloaded.
+     Tried it 2026-09-17 to avoid a 4px reflow when they swap in (0.007 CLS): a font preload is
+     high-priority, and 113KB of it on a 1.6Mbps link pushed first contentful paint from ~800ms to a
+     consistent ~1220ms across three runs, for a shift too small to see. They load from hero.css's
+     @font-face instead, with font-display:swap, so the headline paints immediately in a fallback
+     face. Don't re-add these without re-measuring FCP. -->
+<!-- fonts: no preload, see above -->
 <link rel="preload" href="/css/style.min.css?v=12" as="style">
 <!-- app.min.js renders every page. Measured 2026-09-17 on a throttled mobile profile, it was the
      LAST same-origin script to start downloading (2258ms), queued behind ~10 smaller ones, which
