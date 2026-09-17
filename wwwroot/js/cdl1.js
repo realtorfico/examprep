@@ -64,6 +64,9 @@
   }
   var currentState = 'CA';
   window.pickSampleQuestion = pickSampleQuestion;
+  // Exposed for test/cdl1-landing.test.js: the empty-coverage-bars bug was invisible to every
+  // assertion on the markup, so the renderer itself is exercised directly.
+  window.renderStateForTest = function (stateCode) { renderState(stateCode); };
   window.promoBandHtml = promoBandHtml;
   window.stateFactsText = stateFactsText;
   window.buyHref = buyHref;

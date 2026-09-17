@@ -23,8 +23,11 @@
 <link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-var-subset.woff2" crossorigin>
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <meta name="theme-color" content="#0f2a5f">
+<!-- cdl1.js FIRST: it defines window.registerTrackContent, which content/cdl.js calls as it runs.
+     Deferred scripts execute in document order, so the other way round throws and the per-state
+     facts and coverage bars silently never render. -->
+<script defer src="/js/cdl1.js?v=3"></script>
 <script defer src="/js/content/cdl.js?v=1"></script>
-<script defer src="/js/cdl1.js?v=2"></script>
 </head>
 <body class="t1">
 

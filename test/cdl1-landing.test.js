@@ -191,6 +191,38 @@ test('the sticky buy bar is the same action, not a third competing CTA', () => {
   assert.match(css, /@media \(max-width: 680px\) \{ \.t1-sticky \{ display: flex/, 'phones only');
 });
 
+test('cdl1.js loads before the catalog it registers', () => {
+  // Deferred scripts run in document order. With content/cdl.js first, its
+  // window.registerTrackContent(...) call hits an undefined function and throws, and the coverage
+  // bars render empty -- which is exactly what shipped in the first version of this page.
+  assert.ok(
+    PAGE.indexOf('js/cdl1.js') < PAGE.indexOf('js/content/cdl.js'),
+    'cdl1.js defines the registrar, so it has to run first',
+  );
+});
+
+test('the coverage bars render from a catalog entry', () => {
+  // The bug above was invisible to every string assertion on the page, so exercise the renderer.
+  const html = [];
+  const bars = { innerHTML: '' };
+  const win = { addEventListener() {}, location: { pathname: '/cdl1' } };
+  const doc = {
+    addEventListener() {}, readyState: 'complete',
+    getElementById: (id) => (id === 'bars' ? bars : null),
+    querySelectorAll: () => [], querySelector: () => null,
+  };
+  new Function('window', 'document', PAGE_JS)(win, doc);
+  win.registerTrackContent('cdl', [{
+    examType: 'ca_cdl', route: '/cdl/ca', questions: '50 Multiple Choice', passScore: '40/50 (80%)', duration: 'Untimed',
+    breakdown: [['General Knowledge', '48%'], ['Air Brakes', '19%']],
+  }]);
+  win.renderStateForTest('CA');
+  assert.match(bars.innerHTML, /General Knowledge/);
+  assert.match(bars.innerHTML, /width:48%/);
+  assert.match(bars.innerHTML, /48%<\/span>/);
+  assert.ok(html.length === 0);
+});
+
 test('state facts come from the shared catalog, not a copy', () => {
   assert.match(PAGE_JS, /registerTrackContent/, 'cdl1.js should read js/content/cdl.js, the same catalog app.js uses');
   assert.match(PAGE, /js\/content\/cdl\.js\?v=\d+/, 'and the page should load it');
