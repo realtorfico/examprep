@@ -5505,7 +5505,8 @@ function aggregateResourceStats(examTypes) {
     }
     (RESOURCES[examType] || []).forEach(function (r) {
       if (r.type === 'table') tables++;
-      else if (r.type === 'flashcards') { decks++; cards += (r.flashcards || []).length; }
+      // cardCount: the public catalog no longer ships a paid deck's cards, just how many there are.
+      else if (r.type === 'flashcards') { decks++; cards += r.cardCount != null ? r.cardCount : (r.flashcards || []).length; }
       else if (r.type === 'audio') audio++;
       else if (r.type === 'video') video++;
     });
@@ -5676,12 +5677,19 @@ async function renderResources() {
   var loggedIn = isLoggedInForCurrentTrack();
   appEl.innerHTML = renderTabs('resources') + loadingSkeletonHtml(6);
 
-  // Logged-in sessions get everything signed; anonymous visitors only get the server's own
-  // free-sample allowlist signed (see FREE_RESOURCES in examprep-api) — nothing client-side
-  // decides what's actually unlockable.
+  // The server decides what's unlockable: a logged-in session gets its entitled content from
+  // /resources/content and signed media URLs from /resources/sign-batch (both scoped server-side
+  // to the account's track and owned topics); anonymous visitors only get the free files signed.
+  // The public catalog no longer carries any paid table/flashcard/link content (2026-09-16 --
+  // it used to, and the 🔒 here was display-only).
   var signedUrls = {};
   try {
     if (loggedIn) {
+      // Merged onto a copy of the rows by resource id, never into the shared RESOURCES cache, so
+      // paid content doesn't linger in memory after a logout.
+      var contentRes = await apiFetch('/resources/content');
+      var contentById = (contentRes && contentRes.items) || {};
+      items = items.map(function (r) { return (r.id && contentById[r.id]) ? Object.assign({}, r, contentById[r.id]) : r; });
       var filesToSign = items.filter(function (r) { return !r.url && r.file; }).map(function (r) { return r.file; });
       if (filesToSign.length) {
         var signRes = await apiFetch('/resources/sign-batch', { method: 'POST', body: { files: filesToSign } });
