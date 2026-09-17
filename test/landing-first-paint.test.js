@@ -347,13 +347,13 @@ test('app.js drops the reservation once it renders the real page', async (t) => 
   assert.equal(document.getElementById('app').classList.contains('app-ssr-reserve'), false, 'app.js should remove the reservation class when it renders, so the class never outlives the server-only state');
 });
 
-test('Inter is preloaded and Fraunces is not', () => {
-  // Measured all three ways on 2026-09-17 (see index.html's comment for the numbers). Inter swapping
-  // in re-wraps the header's promo ribbon, which moves the whole page: an intermittent CLS of 0.18.
-  // Fraunces only sets the H1, whose line count doesn't change against its Georgia fallback, and
-  // preloading it too cost ~240ms more FCP. Both halves of this are load-bearing.
+test('both hero fonts are preloaded', () => {
+  // Measured four ways on 2026-09-17 (index.html's comment has the numbers). Each font causes a
+  // different problem when it arrives after first paint: Inter re-wraps the header's promo ribbon
+  // (intermittent CLS 0.18), and Fraunces repaints the H1 -- the LCP element -- so LCP lands on
+  // that late paint instead of the first one, 1.2s becoming 3.3s.
   assert.match(INDEX, /<link rel="preload" as="font" type="font\/woff2" href="\/fonts\/inter-var-subset\.woff2" crossorigin>/, 'Inter must stay preloaded, or the promo ribbon re-wraps after paint');
-  assert.ok(!/as="font"[^>]*fraunces/.test(INDEX), 'preloading Fraunces costs FCP for no measured CLS gain -- re-measure before adding it');
+  assert.match(INDEX, /<link rel="preload" as="font" type="font\/woff2" href="\/fonts\/fraunces-var-subset\.woff2" crossorigin>/, 'Fraunces must stay preloaded, or the H1 repaints late and LCP follows it');
   const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
   assert.match(heroCss, /font-display:\s*swap/, 'the hero fonts must stay font-display:swap, so text paints in a fallback face rather than waiting');
 });

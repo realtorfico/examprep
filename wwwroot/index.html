@@ -17,17 +17,21 @@
      (~5.5KB, ~1.5KB on the wire) -- never edit it by hand, and rebuild it whenever style.css
      changes. style.min.css keeps its own non-blocking preload + deferred-attach path below. -->
 <link rel="stylesheet" href="/css/hero.css?v=3">
-<!-- Inter is preloaded; Fraunces is not. Measured three ways on 2026-09-17:
-     - neither preloaded: FCP ~980ms, but Inter swapping in re-wraps the header promo ribbon, which
-       moves the whole page -- an INTERMITTENT CLS of 0.18 (2 of 4 runs; the others 0.003, which is
-       what makes font-swap shifts easy to miss).
-     - both preloaded: CLS 0, FCP ~1220ms. A font preload is high-priority, so 113KB of font
-       outranks everything else on a 1.6Mbps link.
-     - Inter only, subset: the ribbon is stable and the H1's fallback (Georgia) doesn't change its
-       line count, so Fraunces can swap late without moving anything.
-     Both files are subset by scripts/build-fonts.js. Don't add a Fraunces preload without
-     re-measuring FCP, and don't drop this one without re-measuring CLS several times. -->
+<!-- Both fonts are preloaded. Measured four ways on /cdl (Pixel 7, 1.6Mbps, 4x CPU), 2026-09-17:
+     - neither preloaded:  FCP ~980ms, LCP ~3300ms, CLS up to 0.18 (intermittent)
+     - Inter only:         FCP ~1250ms, LCP ~3350ms, CLS 0
+     - both preloaded:     FCP ~1220ms, LCP ~1220ms, CLS 0   <- this
+     Two separate effects, and both need a preload to avoid:
+     - Inter arriving after first paint re-wraps the header's promo ribbon, moving the whole page.
+       That was the intermittent CLS -- 0.18 in 2 of 4 runs, 0.003 in the others.
+     - Fraunces arriving late repaints the H1, which is the LCP element, so LCP lands on THAT paint
+       instead of the first one: 1.2s becomes 3.3s even though the text was readable all along.
+     A font preload is high-priority, so this does cost the critical path ~240ms of FCP. It buys a
+     good LCP and a stable page, which is the better trade. Both files are subset by
+     scripts/build-fonts.js. Re-measure FCP, LCP and CLS (several runs -- font shifts are
+     intermittent) before changing either line. -->
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var-subset.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-var-subset.woff2" crossorigin>
 <link rel="preload" href="/css/style.min.css?v=13" as="style">
 <!-- app.min.js renders every page. Measured 2026-09-17 on a throttled mobile profile, it was the
      LAST same-origin script to start downloading (2258ms), queued behind ~10 smaller ones, which
