@@ -271,7 +271,11 @@ body.t1 { background: var(--bg); color: var(--fg); }
     gap: 1rem 2rem; align-content: start; padding: 2.2rem 2.2rem 2rem;
   }
   .t1-hero-copy { min-width: 0; grid-column: 1; grid-row: 1; }
-  .t1-hero-spec { min-width: 0; grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+  /* Row 1 only, NOT spanning: a spanning item's surplus height is distributed into the
+     intrinsically-sized rows it spans, which re-opened the gap under the CTA (69px measured) even
+     with an explicit 1fr last row. Unspanned, the right column simply hangs from row 1 and the
+     left column's rows hug their content. */
+  .t1-hero-spec { min-width: 0; grid-column: 2; grid-row: 1; align-self: start; }
   .t1-hero .t1-cta { grid-column: 1; grid-row: 2; margin-top: 0; align-self: start; }
   .t1-hero .t1-seal { grid-column: 1; grid-row: 3; margin-top: 0; align-self: start; }
   /* The facts/endorsements column gets its own panel edge so the split reads as deliberate. */
