@@ -2328,3 +2328,24 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   display: block; margin-top: 0.15rem; font-size: 0.66rem; text-transform: uppercase;
   letter-spacing: 0.05em; color: color-mix(in srgb, var(--accent-deep-foreground) 72%, transparent);
 }
+
+/* --- Category breakdown, phase 3 of the /cdl1 port --------------------------------------------
+   The bars were already here; this is the panel's treatment applied to them -- a navy-to-gold fill
+   so they read as part of the same page as the hero, and the percentage called out rather than
+   sitting at body weight. Scoped to .category-breakdown: .breakdown-* is shared with the track
+   page and the buy page's value column, which are not part of this change. */
+.category-breakdown .breakdown-bar { height: 9px; }
+.category-breakdown .breakdown-bar-fill {
+  background: linear-gradient(90deg, var(--accent), var(--highlight));
+}
+.category-breakdown .breakdown-row-top { align-items: baseline; gap: 0.75rem; }
+.category-breakdown .breakdown-row-top span:first-child { font-weight: 500; line-height: 1.3; }
+.category-breakdown .breakdown-row-top span:last-child {
+  font-weight: 700; font-size: 0.95rem; color: var(--highlight); font-variant-numeric: tabular-nums;
+}
+/* The sample and breakdown eyebrows match the hero panel's kickers, so the page reads as one
+   system rather than three sections with three label styles. */
+.category-breakdown .section-eyebrow,
+.category-sample .section-eyebrow {
+  font-size: 0.66rem; letter-spacing: 0.09em; color: var(--highlight);
+}

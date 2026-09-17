@@ -406,6 +406,17 @@ test('the emoji feature tiles are gone and testimonials are trimmed to two', asy
   assert.equal(document.querySelectorAll('.category-testimonial-card').length, 2, 'four quotes was a screen of them, three screens below the decision');
 });
 
+test('the coverage bars and eyebrows match the panel, without touching shared surfaces', () => {
+  // Phase 3 of the port. The bars already existed -- this is the panel's treatment applied to them.
+  assert.match(STYLE_CSS, /\.category-breakdown \.breakdown-bar-fill \{\s*background: linear-gradient\(90deg, var\(--accent\), var\(--highlight\)\)/);
+  assert.match(STYLE_CSS, /\.category-breakdown \.breakdown-row-top span:last-child \{[^}]*color: var\(--highlight\)/);
+  // Scoped, because .breakdown-* is also the track page's and the buy page's value column.
+  assert.ok(!/^\.breakdown-bar-fill \{[^}]*linear-gradient/m.test(STYLE_CSS), 'the gradient must not land on the bare .breakdown-bar-fill');
+  // And the sample question's own option buttons are deliberately left alone: they are the real
+  // quiz's buttons, and the sample exists to look like the quiz.
+  assert.ok(!/\.category-sample \.option-btn/.test(STYLE_CSS), 'restyling the sample buttons would make the preview differ from the quiz it previews');
+});
+
 // ---- 2b. Server header == client header (this is what keeps CLS at zero) ----------------------
 
 // #site-header is an empty div until app.js fills it. Once the hero paints at ~0.8s, that late fill
