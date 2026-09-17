@@ -1296,13 +1296,143 @@ function categoryHeroHtml(slug) {
 }
 // <<< SSR-HERO
 
+// >>> SSR-HEADER
+// The site header, server-rendered into <div id="site-header">, for the same reason as the hero
+// above -- except here the reason is layout shift rather than a blank screen.
+//
+// Server-rendering the hero (SSR-HERO) put real content on screen at ~0.8s instead of ~2.8s, and
+// that exposed a shift the empty page had been hiding: #site-header is an empty div until app.js's
+// renderSiteHeader() fills it at ~3s, at which point it goes from 1px to ~100-190px tall and shoves
+// the hero down. Measured on /cdl (Pixel 7, throttled): CLS 1.34, from #app moving 4px -> 101px ->
+// 152px in two steps.
+//
+// A CSS height reservation was the obvious fix and is not honest here: measured across widths and
+// promo states, the header is 98px (no promo, >=480px wide) to 212px (long promo at 360px), because
+// the promo ribbon's text wraps differently per width and per promo. Any constant would be wrong by
+// up to ~70px the next time the promo copy changes. So the header's real content -- including the
+// ribbon's real promo -- goes into the HTML instead, and the browser computes the height itself.
+//
+// Mirrors renderSiteHeader()'s LOGGED-OUT markup exactly (the ad-traffic case, and what every
+// first-time visitor gets). app.js re-renders the header from its own code once it boots; identical
+// markup means that swap is invisible. test/landing-first-paint.test.js diffs the two.
+//
+// Known, accepted differences, all of which only affect a returning visitor and none of which
+// change the row's height:
+//   - a logged-in visitor's re-render adds the profile menu and track badge inline in the same row;
+//   - a visitor who picked the dark theme gets '🌙 Dark' where this renders '☀️ Light' (the
+//     first-visit default, matching updateThemeButton()'s own logic);
+//   - "Refer & earn" points at /#tracks here, and at the visitor's own track once app.js knows of
+//     one -- an href change, not a layout change;
+//   - a visitor who dismissed the ribbon promo sees it until app.js removes it.
+const HEADER_LOGO_SVG = '<svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">' +
+  '<rect width="32" height="32" rx="7" fill="var(--accent)"></rect>' +
+  '<path d="M9 16.8 13.4 21 23 11" stroke="var(--highlight)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"></path>' +
+  '</svg>';
+// tracksHomeHref() resolves to '/#tracks' for a visitor with no track history -- which is every
+// visitor this markup is served to, since app.js re-renders for the rest.
+const HEADER_NAV_LINKS = '<a href="/#tracks">Refer &amp; earn</a>' +
+  '<a href="#/gift">Gift a track 🎁</a>' +
+  '<a href="/blog">Guides &amp; Tips</a>';
+const HEADER_NAV_CTA = '<a class="btn-secondary btn-sm" href="#/redeem">Redeem code</a>' +
+  '<a class="btn-primary btn-sm" href="/#tracks">Browse exams</a>';
+// What updateThemeButton() renders on a first visit: loadLocalPrefs() defaults theme to 'light',
+// and the button's label is the theme clicking it will switch TO -- so a fresh visitor sees Dark.
+const HEADER_THEME_BTN = '<button class="btn-secondary btn-sm" id="theme-toggle-btn" data-act="toggle-theme" data-next="dark" aria-label="Switch to Dark mode">🌙 <span class="theme-toggle-label">Dark</span></button>';
+const HEADER_LOGO = '<span class="site-logo">' +
+  '<span class="site-logo-icon">' + HEADER_LOGO_SVG + '</span>' +
+  '<span class="site-logo-text"><a href="/" class="site-logo-word">PassExam<span class="site-logo-accent">HQ</span></a>' +
+  '<span class="site-logo-tagline">Pass Exam - Or Your Money Back</span></span>' +
+  '</span>';
+// Static, and identical to app.js's promoRibbonFallbackHtml() -- no config values in it.
+const HEADER_RIBBON_FALLBACK = '<a class="promo-ribbon-fallback" href="#/guarantee">🎯 <strong>Real Practice, Real Guarantees</strong> — see our refund policy →</a>';
+
+// Mirrors app.js's applyPromoPlaceholders(). cfg is /config's body, or {} when it didn't load --
+// the numbers then match app.js's own pre-fetch defaults (50/80/50), so the text is the same either
+// way unless an admin has changed them.
+function headerPromoPlaceholders(text, cfg) {
+  const refundPct = Number.isFinite(cfg.refundFailurePercent) ? cfg.refundFailurePercent : 50;
+  const accuracyPct = Number.isFinite(cfg.accuracyPassPct) ? cfg.accuracyPassPct : 80;
+  const coveragePct = Number.isFinite(cfg.coveragePassPct) ? cfg.coveragePassPct : 50;
+  return String(text)
+    .replace(/\{\{refundPct\}\}/g, refundPct)
+    .replace(/\{\{accuracyPct\}\}/g, accuracyPct)
+    .replace(/\{\{coveragePct\}\}/g, coveragePct);
+}
+
+// Mirrors promoBannersHtml([promo], true, false) -- the ribbon variant: dismissible, no body text.
+function headerPromoRibbonHtml(promo, cfg) {
+  if (!promo) return HEADER_RIBBON_FALLBACK;
+  const codeChip = promo.promoCode
+    ? '<span class="badge promo-banner-code">Code: ' + heroEscape(promo.promoCode) +
+      (promo.requiredEmailDomain ? ' (requires ' + heroEscape(promo.requiredEmailDomain) + ' email)' : '') + '</span>'
+    : (promo.requiredEmailDomain
+      ? '<span class="badge promo-banner-code">No code needed — just enter a ' + heroEscape(promo.requiredEmailDomain) + ' email at checkout</span>'
+      : '');
+  const cta = (promo.ctaLabel && promo.ctaUrl)
+    ? '<a class="btn-primary btn-sm promo-banner-cta" href="' + heroEscape(promo.ctaUrl) + '">' + heroEscape(promo.ctaLabel) + '</a>'
+    : '';
+  const dismissBtn = '<button class="promo-banner-dismiss" type="button" data-act="dismiss-promo" data-promo-id="' + promo.id + '" aria-label="Dismiss">✕</button>';
+  return '<div class="promo-banner">' +
+    '<div class="promo-banner-body"><strong>' + heroEscape(headerPromoPlaceholders(promo.title, cfg)) + '</strong> ' +
+    codeChip + '</div>' +
+    cta + dismissBtn + '</div>';
+}
+
+function siteHeaderHtml(ribbonHtml) {
+  return '<div class="site-shell top-controls">' +
+    HEADER_LOGO +
+    '<nav class="site-nav" aria-label="Primary">' + HEADER_NAV_LINKS + '</nav>' +
+    '<div class="control-group">' +
+    '<div class="header-util-cluster">' +
+    '<div class="font-size-pill" role="group" aria-label="Font size">' +
+    '<button data-act="font-down">A-</button>' +
+    '<button data-act="font-up">A+</button>' +
+    '</div>' +
+    HEADER_THEME_BTN +
+    '</div>' +
+    '<div class="site-nav-cta">' + HEADER_NAV_CTA + '</div>' +
+    '<button class="header-menu-toggle" type="button" data-act="toggle-header-menu" aria-label="Open menu" aria-expanded="false">☰</button>' +
+    '</div>' +
+    '<div class="site-mobile-drawer" id="site-mobile-drawer">' +
+    '<nav aria-label="Mobile">' + HEADER_NAV_LINKS + '</nav>' +
+    '<div class="site-mobile-drawer-cta">' + HEADER_NAV_CTA + '</div>' +
+    '</div>' +
+    '</div>' +
+    '<div id="promo-ribbon-wrap" class="promo-ribbon">' + ribbonHtml + '</div>';
+}
+// <<< SSR-HEADER
+
+// Builds the ribbon with the promo the visitor will actually see, so the header's server-rendered
+// height is its real height. Only ever called for responses already marked private/no-store (the
+// homepage and category pages, where the geo branch sets a cookie) -- a promo-specific ribbon must
+// never land in an edge-cached HTML response, where it would outlive the promo. Every other HTML
+// page gets the static fallback ribbon, which is cache-safe.
+//
+// Best-effort by design: any failure falls back to the same static tagline app.js's own
+// fillPromoRibbon() catch path renders, so a slow or erroring API costs the page nothing.
+async function ssrRibbonHtml(env, url, kind) {
+  try {
+    const promoPath = '/promotions?placement=home' + (kind ? '&kind=' + encodeURIComponent(kind) : '');
+    const [promoRes, cfgRes] = await Promise.all([
+      env.API.fetch(new Request(new URL(promoPath, url.origin))),
+      env.API.fetch(new Request(new URL('/config', url.origin))),
+    ]);
+    const promos = promoRes.ok ? ((await promoRes.json()).promotions || []) : [];
+    const cfg = cfgRes.ok ? ((await cfgRes.json()) || {}) : {};
+    return headerPromoRibbonHtml(promos[0] || null, cfg);
+  } catch (e) {
+    return HEADER_RIBBON_FALLBACK;
+  }
+}
+
 // heroHtml: server-rendered first-paint content for <div id="app"> (see the SSR-HERO block above),
 // '' for any route that isn't a category landing page.
+// headerHtml: server-rendered <div id="site-header"> content (see the SSR-HEADER block above).
 // geoState: set only on a response whose pxq_state Set-Cookie this request just wrote from
 // request.cf geolocation, so app.js can honestly say "based on your location" for that one hit
 // instead of claiming the visitor saved a preference. A <meta> rather than a second cookie, so the
 // privacy page's "we set one cookie, pxq_state" stays true.
-function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState) {
+function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState, headerHtml) {
   const rewriter = new HTMLRewriter().on('head', {
     element(el) {
       el.append('<link rel="canonical" href="' + canonicalHref + '">', { html: true });
@@ -1335,6 +1465,9 @@ function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState) {
   });
   if (heroHtml) {
     rewriter.on('#app', { element(el) { el.setInnerContent(heroHtml, { html: true }); } });
+  }
+  if (headerHtml) {
+    rewriter.on('#site-header', { element(el) { el.setInnerContent(headerHtml, { html: true }); } });
   }
   if (meta) {
     rewriter
@@ -1468,7 +1601,13 @@ export default {
       // categoryHeroHtml() returns '' for anything that isn't a category landing page (/blog, a
       // track page, a guide), so this stays a no-op everywhere else.
       const heroHtml = categoryHeroHtml(categoryPageMatch ? categoryPageMatch[1] : '');
-      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath], heroHtml, geoState);
+      // The real promo only goes into pages the geo branch already marked private/no-store; every
+      // other HTML page gets the static fallback ribbon, which is safe to edge-cache. See
+      // ssrRibbonHtml()'s own comment.
+      const ribbonHtml = (url.pathname === '/' || isCategoryPageRequest)
+        ? await ssrRibbonHtml(env, url, categoryPageMatch ? (CATEGORY_HERO[categoryPageMatch[1]] || '') : '')
+        : HEADER_RIBBON_FALLBACK;
+      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath], heroHtml, geoState, siteHeaderHtml(ribbonHtml));
     }
     return response;
   },

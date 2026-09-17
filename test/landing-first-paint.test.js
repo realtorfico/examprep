@@ -54,17 +54,24 @@ const HERO_CSS_FILE = path.join(WWWROOT, 'css', 'hero.css');
 // its source as a string -- which would let the server hero drift from the client's without any
 // test noticing -- pull the hero builder out from between its sentinel comments and eval it, so the
 // equivalence tests below run the worker's REAL markup. Same trick keeps CATEGORY_HERO honest.
-function loadWorkerHero() {
-  const block = WORKER.match(/\/\/ >>> SSR-HERO[\s\S]*?\/\/ <<< SSR-HERO/);
-  assert.ok(block, '_worker.js should keep its hero builder between "// >>> SSR-HERO" and "// <<< SSR-HERO" markers, so this test can exercise it');
+function loadWorkerBlocks() {
+  const hero = WORKER.match(/\/\/ >>> SSR-HERO[\s\S]*?\/\/ <<< SSR-HERO/);
+  const header = WORKER.match(/\/\/ >>> SSR-HEADER[\s\S]*?\/\/ <<< SSR-HEADER/);
+  assert.ok(hero, '_worker.js should keep its hero builder between "// >>> SSR-HERO" and "// <<< SSR-HERO" markers, so this test can exercise it');
+  assert.ok(header, '_worker.js should keep its header builder between "// >>> SSR-HEADER" and "// <<< SSR-HEADER" markers');
   const exported = {};
-  // The block is deliberately self-contained (its own escape helper, no reference to the worker's
-  // other top-level consts) precisely so this eval exercises it faithfully.
-  new Function('exports', block[0] + '\nexports.CATEGORY_HERO = CATEGORY_HERO;\nexports.categoryHeroHtml = categoryHeroHtml;\n')(exported);
+  // Both blocks are deliberately self-contained (their own escape/case helpers, no reference to the
+  // worker's other top-level consts or to env) precisely so this eval exercises them faithfully.
+  new Function('exports', hero[0] + '\n' + header[0] +
+    '\nexports.CATEGORY_HERO = CATEGORY_HERO;' +
+    '\nexports.categoryHeroHtml = categoryHeroHtml;' +
+    '\nexports.siteHeaderHtml = siteHeaderHtml;' +
+    '\nexports.headerPromoRibbonHtml = headerPromoRibbonHtml;' +
+    '\nexports.HEADER_RIBBON_FALLBACK = HEADER_RIBBON_FALLBACK;\n')(exported);
   return exported;
 }
 
-const { CATEGORY_HERO, categoryHeroHtml } = loadWorkerHero();
+const { CATEGORY_HERO, categoryHeroHtml, siteHeaderHtml, headerPromoRibbonHtml, HEADER_RIBBON_FALLBACK } = loadWorkerBlocks();
 
 // Text of one element from an HTML string, by id -- the server hero is a string, not a DOM.
 function tagText(html, id) {
@@ -146,6 +153,67 @@ test('the server hero ships the same mobile CTA button as the client hero', asyn
   assert.ok(server.includes(clientBtn.className), 'server CTA classes should match the client CTA (' + clientBtn.className + ')');
   assert.ok(server.includes('>' + clientBtn.textContent.trim() + '<'), 'server CTA label should match the client CTA label');
   assert.ok(server.includes('class="hub-hero-cta hub-hero-cta-early"'), 'server CTA wrapper should match the client wrapper, which is what CSS shows on mobile only');
+});
+
+// ---- 2b. Server header == client header (this is what keeps CLS at zero) ----------------------
+
+// #site-header is an empty div until app.js fills it. Once the hero paints at ~0.8s, that late fill
+// shoved the hero down and took CLS from ~0 to 1.34 (measured on /cdl, 2026-09-17). A CSS height
+// reservation can't fix it honestly -- the header measures 98px to 212px depending on width and on
+// how the promo text wraps -- so the worker ships the header's real markup, including the real
+// promo, and the browser computes the height. These tests are what keep the two renders identical;
+// any divergence is a shift.
+const PROMO = {
+  id: 4242,
+  title: 'First-time buyers: {{refundPct}}% off full CDL access',
+  body: 'ignored in the ribbon variant',
+  promoCode: 'NEWCDL20',
+  requiredEmailDomain: null,
+  ctaLabel: null,
+  ctaUrl: null,
+  requiredTrackKind: 'Commercial Driver (CDL)',
+};
+
+test('the server header markup matches what app.js renders for a logged-out visitor', async (t) => {
+  const { document, window } = await bootCategory(t, 'cdl');
+  // app.js's own header render, with its ribbon filled by its own promo markup -- compared against
+  // the worker's. Both sides get the same promo and the same config defaults.
+  const clientRibbon = window.promoBannersHtml([PROMO], true, false);
+  const clientHeader = document.getElementById('site-header').innerHTML;
+  const serverHeader = siteHeaderHtml(clientRibbon);
+
+  // The ribbon's content differs by construction here (the boot harness stubs /promotions empty),
+  // so compare the header with its ribbon slot normalised away, then compare ribbons separately.
+  const stripRibbon = (html) => html.replace(/(<div id="promo-ribbon-wrap" class="promo-ribbon">)[\s\S]*?(<\/div>\s*)$/, '$1$2').trim();
+  assert.equal(stripRibbon(serverHeader), stripRibbon(clientHeader), 'server and client header rows must be identical markup, or app.js\'s re-render shifts the page');
+});
+
+test('the server ribbon markup matches app.js\'s own promo ribbon', async (t) => {
+  const { window } = await bootCategory(t, 'cdl');
+  const client = window.promoBannersHtml([PROMO], true, false);
+  const server = headerPromoRibbonHtml(PROMO, { refundFailurePercent: window.refundFailurePercent });
+  assert.equal(server, client, 'the ribbon is the tallest, most variable part of the header -- a mismatch here is a visible jump');
+});
+
+test('the server ribbon falls back to the same tagline app.js uses when there is no promo', async (t) => {
+  const { window } = await bootCategory(t, 'cdl');
+  assert.equal(headerPromoRibbonHtml(null, {}), window.promoRibbonFallbackHtml(), 'no-promo fallback must match too, or pages without a promo shift instead');
+  assert.equal(HEADER_RIBBON_FALLBACK, window.promoRibbonFallbackHtml());
+});
+
+test('promo placeholders resolve the same way on both sides', async (t) => {
+  const { window } = await bootCategory(t, 'cdl');
+  const server = headerPromoRibbonHtml(PROMO, { refundFailurePercent: 35, accuracyPassPct: 80, coveragePassPct: 50 });
+  assert.ok(server.includes('35% off'), 'the worker should substitute {{refundPct}} from /config, got: ' + server.slice(0, 160));
+  assert.ok(!server.includes('{{'), 'no placeholder should survive into the server-rendered ribbon');
+  // And app.js's own default, when /config hasn't answered, is what the worker falls back to.
+  assert.ok(headerPromoRibbonHtml(PROMO, {}).includes(window.refundFailurePercent + '% off'), 'with no config the worker should use app.js\'s own pre-fetch default');
+});
+
+test('the real promo ribbon only goes into pages that are not edge-cached', () => {
+  const handler = WORKER.slice(WORKER.indexOf('const ribbonHtml ='), WORKER.indexOf('const ribbonHtml =') + 400);
+  assert.match(handler, /url\.pathname === '\/' \|\| isCategoryPageRequest/, 'a promo-specific ribbon must only be injected on the responses already marked private/no-store, or a cached page would serve an expired promo');
+  assert.match(handler, /HEADER_RIBBON_FALLBACK/, 'every other HTML page should get the static, cache-safe fallback ribbon');
 });
 
 // ---- 3. The hero paints styled, and app.min.js stops being last in the queue -------------------
