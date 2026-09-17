@@ -52,7 +52,8 @@ async function bootQuiz(t, answers) {
       win.webkitSpeechRecognition = function FakeRecognition() {
         this.started = 0;
         this.start = () => { this.started++; };
-        this.stop = () => { if (this.onend) this.onend(); };
+        this.stopped = 0;
+        this.stop = () => { this.stopped++; if (this.onend) this.onend(); };
         recognizers.push(this);
       };
     },
@@ -125,9 +126,12 @@ test('any other recognition failure says voice input is not working and points t
 // for a letter ANYWHERE in the transcript -- so "see"/"the" matched nothing, "sea" picked A, and "number four"
 // picked B because "number" contains a b. Matching is now word-by-word, and nothing is ever silent.
 
-// Fires a result the way the browser does: results[0] is the alternatives list for one utterance.
-function hear(r, ...alternatives) {
-  r.onresult({ results: [Object.assign(alternatives.map((transcript) => ({ transcript })), { length: alternatives.length })] });
+// Fires a result the way the browser does: results[i] is the alternatives list for one utterance, with isFinal.
+function hear(r, ...alternatives) { fireResult(r, true, alternatives); }
+function hearPartial(r, ...alternatives) { fireResult(r, false, alternatives); }
+function fireResult(r, isFinal, alternatives) {
+  const utterance = Object.assign(alternatives.map((transcript) => ({ transcript })), { length: alternatives.length, isFinal });
+  r.onresult({ resultIndex: 0, results: Object.assign([utterance], { length: 1 }) });
 }
 
 const HEARD = [
@@ -182,6 +186,47 @@ test('speech that is not an answer at all is reported, not ignored', async (t) =
   assert.deepEqual(answers, []);
   assert.match(transcript(document), /what is the speed limit/i);
   assert.match(transcript(document), /say A, B, C, or D/i);
+});
+
+// Reported 2026-09-17 (Android): listening started, the answer was spoken, and the page still said "Didn't
+// catch that" -- i.e. the session ended with no result and no error. Chrome on Android does that with
+// continuous/non-interim recognition, so act on partial results as soon as one names a letter.
+
+test('recognition asks for continuous + interim results (a final-only session can end with nothing)', async (t) => {
+  const { document, recognition } = await bootQuiz(t, []);
+  micButton(document).click();
+  assert.equal(recognition().continuous, true);
+  assert.equal(recognition().interimResults, true);
+});
+
+test('a partial result naming a letter answers immediately and stops listening', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  const r = recognition();
+  hearPartial(r, 'bee');
+  await waitFor(() => answers.length === 1);
+  assert.equal(answers[0].choice, 'B');
+  assert.equal(r.stopped, 1, 'stops listening once it has the answer');
+  await waitFor(() => document.querySelector('.explanation-box'));
+  await settle();
+});
+
+test('a partial result that is not an answer yet keeps listening and shows what it is hearing', async (t) => {
+  const answers = [];
+  const { document, recognition } = await bootQuiz(t, answers);
+  micButton(document).click();
+  const r = recognition();
+  hearPartial(r, 'the answer');
+  await settle();
+  assert.deepEqual(answers, [], 'no answer submitted from a partial non-match');
+  assert.match(transcript(document), /hearing/i);
+  assert.equal(r.stopped, 0, 'still listening');
+  hear(r, 'the answer is d');
+  await waitFor(() => answers.length === 1);
+  assert.equal(answers[0].choice, 'D');
+  await waitFor(() => document.querySelector('.explanation-box'));
+  await settle();
 });
 
 test('listening that ends with nothing heard says so (no error event, no result)', async (t) => {

@@ -8894,6 +8894,15 @@ function voiceAnswerChoice(transcript) {
   return found.length > 1 ? 'ambiguous' : null;
 }
 
+// Listening is continuous now, so it has to be stopped explicitly -- after an answer, after a final result
+// that wasn't one, and by a safety timer so a mic never stays open if nothing is ever heard.
+var VOICE_LISTEN_LIMIT_MS = 15000;
+var voiceListenTimer = null;
+function stopListening() {
+  if (voiceListenTimer) { clearTimeout(voiceListenTimer); voiceListenTimer = null; }
+  if (recognition) { try { recognition.stop(); } catch (e) { /* already stopped */ } }
+}
+
 function setupMic() {
   var micBtn = document.querySelector('[data-act="mic-toggle"]');
   if (!micBtn) return;
@@ -8904,31 +8913,46 @@ function setupMic() {
     return;
   }
   recognition = new SpeechRecognition();
-  recognition.continuous = false;
+  // continuous + interim: a non-continuous, final-only session on Chrome for Android can end with no result
+  // and no error at all -- reported 2026-09-17 ("Listening…", answer spoken, "Didn't catch that"). Partial
+  // results arrive in that case, so answer off the first partial that names a letter and stop there.
+  recognition.continuous = true;
+  recognition.interimResults = true;
   recognition.lang = 'en-US';
   // Reads the alternatives the recognizer offers (maxAlternatives below) and takes the first one that names
   // exactly one answer -- so a mis-transcribed first guess ("sealed") can still resolve from a later one ("c").
   // Never silent: an utterance naming two letters, or none, says so instead of looking like nothing happened.
   recognition.onresult = function (event) {
-    var alternatives = event.results[0];
-    var heard = alternatives[0] ? alternatives[0].transcript : '';
+    var utterance = event.results[event.resultIndex || 0] || event.results[0] || [];
+    var heard = utterance[0] ? utterance[0].transcript : '';
     var picked = null;
     var sawAmbiguous = false;
-    for (var i = 0; i < alternatives.length && !picked; i++) {
-      var choice = voiceAnswerChoice(alternatives[i].transcript);
+    for (var i = 0; i < utterance.length && !picked; i++) {
+      var choice = voiceAnswerChoice(utterance[i].transcript);
       if (choice === 'ambiguous') sawAmbiguous = true;
-      else if (choice) { picked = choice; heard = alternatives[i].transcript; }
+      else if (choice) { picked = choice; heard = utterance[i].transcript; }
+    }
+    var box = document.getElementById('mic-transcript');
+    if (picked) {
+      voiceGotResult = true;
+      if (box) box.textContent = 'You said: "' + heard + '"';
+      stopListening();
+      submitAnswer(picked);
+      return;
+    }
+    // Nothing decided yet: only a FINAL result is a real "that wasn't an answer" -- an interim one just
+    // shows progress, so the visitor can see it's hearing them while they finish speaking.
+    if (!utterance.isFinal) {
+      if (box && heard) box.textContent = 'Hearing: "' + heard + '"…';
+      return;
     }
     voiceGotResult = true;
-    var box = document.getElementById('mic-transcript');
     if (box) {
-      box.textContent = picked
-        ? 'You said: "' + heard + '"'
-        : sawAmbiguous
+      box.textContent = sawAmbiguous
         ? 'Heard "' + heard + '" — say just one letter: A, B, C, or D.'
         : 'Heard "' + heard + '", which isn\'t an answer. Say A, B, C, or D.';
     }
-    if (picked) submitAnswer(picked);
+    stopListening();
   };
   recognition.maxAlternatives = 5;
   recognition.onstart = function () { voiceGotResult = false; voiceGotError = false; };
@@ -8946,6 +8970,7 @@ function setupMic() {
       : 'Voice input isn\'t working right now. You can tap an answer instead.';
   };
   recognition.onend = function () {
+    if (voiceListenTimer) { clearTimeout(voiceListenTimer); voiceListenTimer = null; }
     isRecording = false;
     if (micBtn) { micBtn.textContent = '🎙️ Voice Answer'; micBtn.classList.remove('listening'); }
     // A session can end with neither a result nor an error (nothing usable heard). Without this the button just
@@ -9826,8 +9851,10 @@ document.addEventListener('click', async function (e) {
       var micTranscriptEl = document.getElementById('mic-transcript');
       if (micTranscriptEl) micTranscriptEl.textContent = ''; // clear the previous attempt's message
       recognition.start();
+      if (voiceListenTimer) clearTimeout(voiceListenTimer);
+      voiceListenTimer = setTimeout(stopListening, VOICE_LISTEN_LIMIT_MS);
     } else {
-      recognition.stop();
+      stopListening();
     }
   } else if (act === 'dismiss-news') {
     localStorage.setItem('examprep_news_dismissed', SITE_NEWS.id);
