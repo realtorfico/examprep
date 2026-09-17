@@ -1232,7 +1232,77 @@ function setStateCookieHeader(headers, stateCode) {
 // so without this every page looks like a duplicate to a crawler), plus a per-route <title>/
 // <meta name="description"> override where SEO_META has one (category and track pages). Streaming
 // transform (HTMLRewriter), not a body rewrite -- no need to buffer/parse the whole HTML doc.
-function withSeoMeta(response, canonicalHref, meta) {
+// >>> SSR-HERO
+// The static top of a category landing page's hero, server-rendered into <div id="app"> so the
+// HTML itself carries readable content. Measured on /cdl (emulated Pixel 7, 1.6Mbps, 150ms RTT, 4x
+// CPU throttle, 2026-09-17): first contentful paint 2748ms, LCP 3840ms, nothing at all on screen
+// for the first ~2.8s, because every element in index.html's <body> is an empty div and app.min.js
+// -- which draws all of it -- couldn't start downloading until 2258ms. Ad clicks land here.
+//
+// app.js's renderCategoryPage() still owns this page: its own appEl.innerHTML assignment replaces
+// this markup wholesale once it boots. That means the two must produce the SAME eyebrow, H1,
+// subhead and CTA, or the swap shows up as a flash or a layout shift on the site's highest-traffic
+// pages (the 2026-09-09 CLS fix). test/landing-first-paint.test.js evals this block and diffs it
+// against a real client render, so changing one side without the other fails the tests.
+//
+// Deliberately stops after the mobile CTA: everything below it in the client hero (trust badges
+// with a config-driven refund percent, the state banner, the state picker) depends on runtime data
+// this worker doesn't have. Content that arrives later BELOW the server-rendered block pushes
+// nothing that is already on screen, so it costs no layout shift -- whereas guessing at it would.
+//
+// Self-contained on purpose (its own escape/case helpers, no reference to the worker's other
+// top-level consts) so the test can eval exactly this code rather than a reimplementation of it.
+const CATEGORY_HERO = {
+  'notary': 'Notary',
+  'driver': 'Driver',
+  'cdl': 'Commercial Driver (CDL)',
+  'motorcycle': 'Motorcycle',
+  'boating': 'Boating',
+  'real-estate-salesperson': 'Real Estate Salesperson',
+  'real-estate-broker': 'Real Estate Broker',
+  'mlo': 'Mortgage Loan Origination',
+  'act': 'ACT',
+  'dat': 'DAT',
+  'clt': 'CLT',
+  'oat': 'OAT',
+};
+// Mirrors app.js's FULL_KIND_NAMES (spelled-out names shown only in roomy headings like this H1).
+const HERO_FULL_KIND_NAMES = { DAT: 'Dental Admission Test', CLT: 'Classic Learning Test', OAT: 'Optometry Admission Test' };
+// Mirrors app.js's INTL_STUDENTS_ARTICLE_SLUGS / examTypeHasIntlExposure() gate on the same badge.
+const HERO_INTL_SLUGS = { act: true, dat: true, clt: true, oat: true };
+function heroEscape(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+// Mirrors app.js's sentenceKindLabel(): lowercase ordinary words, leave acronyms alone.
+function heroSentenceKind(kind) {
+  return String(kind).replace(/[A-Z][a-z]+/g, (word) => word.toLowerCase());
+}
+function categoryHeroHtml(slug) {
+  const kind = CATEGORY_HERO[slug];
+  if (!kind) return '';
+  const headline = (HERO_FULL_KIND_NAMES[kind] ? kind + ' (' + HERO_FULL_KIND_NAMES[kind] + ')' : kind) + ' Exam Prep';
+  const subhead = 'Practice questions for your state\'s ' + heroSentenceKind(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
+  return '<div class="hub-hero">' +
+    '<div class="hub-hero-copy">' +
+    '<span class="section-eyebrow">' + heroEscape(kind) + '</span>' +
+    (HERO_INTL_SLUGS[slug] ? '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍 International</span>' : '') +
+    '<h1 id="category-hero-headline">' + heroEscape(headline) + '</h1>' +
+    '<p id="category-hero-subhead">' + heroEscape(subhead) + '</p>' +
+    '<div class="hub-hero-cta hub-hero-cta-early">' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
+}
+// <<< SSR-HERO
+
+// heroHtml: server-rendered first-paint content for <div id="app"> (see the SSR-HERO block above),
+// '' for any route that isn't a category landing page.
+// geoState: set only on a response whose pxq_state Set-Cookie this request just wrote from
+// request.cf geolocation, so app.js can honestly say "based on your location" for that one hit
+// instead of claiming the visitor saved a preference. A <meta> rather than a second cookie, so the
+// privacy page's "we set one cookie, pxq_state" stays true.
+function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState) {
   const rewriter = new HTMLRewriter().on('head', {
     element(el) {
       el.append('<link rel="canonical" href="' + canonicalHref + '">', { html: true });
@@ -1260,8 +1330,12 @@ function withSeoMeta(response, canonicalHref, meta) {
       el.append('<meta name="twitter:title" content="' + escapeAttr(title) + '">', { html: true });
       el.append('<meta name="twitter:description" content="' + escapeAttr(description) + '">', { html: true });
       el.append('<meta name="twitter:image" content="' + ogImage + '">', { html: true });
+      if (geoState) el.append('<meta name="pxq-geo-state" content="' + escapeAttr(geoState) + '">', { html: true });
     },
   });
+  if (heroHtml) {
+    rewriter.on('#app', { element(el) { el.setInnerContent(heroHtml, { html: true }); } });
+  }
   if (meta) {
     rewriter
       .on('title', { element(el) { el.setInnerContent(meta.title); } })
@@ -1358,6 +1432,11 @@ export default {
     const categoryPageMatch = url.pathname.match(/^\/([a-z-]+)\/?$/);
     const isCategoryPageRequest = categoryPageMatch && KIND_SLUGS[categoryPageMatch[1]];
 
+    // Non-empty only when the geo branch below actually writes a pxq_state cookie on THIS response
+    // -- passed to withSeoMeta so app.js can tell "we detected this from your connection" apart
+    // from "you arrived with a cookie from some earlier visit". See categoryStateSource() there.
+    let geoState = '';
+
     if (url.pathname === '/' || isCategoryPageRequest) {
       // Best-effort geolocation-derived state cookie for a first-time visitor with no cookie yet.
       // Now genuinely load-bearing, not just "for next time": app.js's pickRepresentativeTrack()
@@ -1372,7 +1451,7 @@ export default {
       headers.set('Cache-Control', 'private, no-store');
       if (!parseCookie(request.headers.get('Cookie'), 'pxq_state')) {
         const region = request.cf && request.cf.country === 'US' ? request.cf.regionCode : null;
-        if (region && KNOWN_STATE_CODES.has(region)) setStateCookieHeader(headers, region);
+        if (region && KNOWN_STATE_CODES.has(region)) { setStateCookieHeader(headers, region); geoState = region; }
       }
       response = new Response(response.body, { status: response.status, headers });
     }
@@ -1386,7 +1465,10 @@ export default {
       // don't. Strip it for the lookup only -- every other route on this site is flat (single
       // wwwroot/index.html SPA shell) so this never affects them.
       const seoLookupPath = url.pathname.length > 1 ? url.pathname.replace(/\/$/, '') : url.pathname;
-      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath]);
+      // categoryHeroHtml() returns '' for anything that isn't a category landing page (/blog, a
+      // track page, a guide), so this stays a no-op everywhere else.
+      const heroHtml = categoryHeroHtml(categoryPageMatch ? categoryPageMatch[1] : '');
+      response = withSeoMeta(response, canonicalHref, SEO_META[seoLookupPath] || GUIDES_SEO_META[seoLookupPath], heroHtml, geoState);
     }
     return response;
   },

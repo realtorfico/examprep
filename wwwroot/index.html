@@ -2,12 +2,27 @@
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-1046929025"></script>
+<!-- fetchpriority="low": gtag.js is 160KB and was landing at 2826ms, competing for bandwidth with
+     app.min.js during the render it blocks. Conversion pings only need to fire before the visitor
+     leaves, not before the page draws. Turnstile's script is deliberately NOT deprioritised -- the
+     buy page waits on it. -->
+<script async fetchpriority="low" src="https://www.googletagmanager.com/gtag/js?id=AW-1046929025"></script>
 <script defer src="/js/gtag-init.js?v=1"></script>
 <!-- Microsoft Clarity (session recordings/heatmaps) -->
 <script defer src="/js/clarity-init.js?v=2"></script>
 <meta charset="UTF-8">
+<!-- Critical CSS for the server-rendered category hero (_worker.js injects it into #app). A plain
+     blocking stylesheet on purpose: it has to be applied at first paint or that server-rendered
+     headline paints unstyled and reflows. Generated from style.css by scripts/build-hero-css.js
+     (~5.5KB, ~1.5KB on the wire) -- never edit it by hand, and rebuild it whenever style.css
+     changes. style.min.css keeps its own non-blocking preload + deferred-attach path below. -->
+<link rel="stylesheet" href="/css/hero.css?v=1">
 <link rel="preload" href="/css/style.min.css?v=11" as="style">
+<!-- app.min.js renders every page. Measured 2026-09-17 on a throttled mobile profile, it was the
+     LAST same-origin script to start downloading (2258ms), queued behind ~10 smaller ones, which
+     is most of why /cdl showed nothing for ~2.8s. The preload lifts it out of that queue; keep its
+     ?v= in lockstep with the <script> tag at the end of <body> or the bundle downloads twice. -->
+<link rel="preload" as="script" fetchpriority="high" href="/js/app.min.js?v=28">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PassExamHQ</title>
 <meta name="description" content="Exam prep practice questions, timed to how you actually study.">
@@ -28,8 +43,8 @@
 <div id="report-issue-root"></div>
 <div id="suggestion-root"></div>
 <script defer src="/js/config.js?v=103"></script>
-<script defer src="/js/api.js?v=103"></script>
+<script defer src="/js/api.js?v=104"></script>
 <script defer src="/js/speech.js?v=103"></script>
-<script defer src="/js/app.min.js?v=27"></script>
+<script defer src="/js/app.min.js?v=28"></script>
 </body>
 </html>

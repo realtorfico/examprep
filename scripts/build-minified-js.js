@@ -31,6 +31,11 @@ const JS_SRC = path.join(__dirname, '..', 'wwwroot', 'js', 'app.js');
 const JS_OUT = path.join(__dirname, '..', 'wwwroot', 'js', 'app.min.js');
 const CSS_SRC = path.join(__dirname, '..', 'wwwroot', 'css', 'style.css');
 const CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'style.min.css');
+// Third artifact, added 2026-09-17: the critical stylesheet for the server-rendered category hero.
+// Extracted from the same style.css source, so it's built here rather than maintained by hand --
+// see scripts/build-hero-css.js for why it exists at all.
+const { buildHeroCss } = require('./build-hero-css');
+const HERO_CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'hero.css');
 
 function report(label, before, after) {
   console.log(`${label}: ${before.toLocaleString()} bytes -> ${after.toLocaleString()} bytes (${Math.round((1 - after / before) * 100)}% smaller)`);
@@ -48,6 +53,10 @@ async function main() {
   if (cssResult.errors.length) throw new Error(cssResult.errors.join('\n'));
   fs.writeFileSync(CSS_OUT, cssResult.styles, 'utf8');
   report('style.css', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(cssResult.styles, 'utf8'));
+
+  const heroCss = buildHeroCss(cssSrc);
+  fs.writeFileSync(HERO_CSS_OUT, heroCss, 'utf8');
+  report('style.css -> hero.css (critical subset)', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(heroCss, 'utf8'));
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

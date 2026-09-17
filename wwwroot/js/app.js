@@ -335,11 +335,40 @@ function closeHeaderMenuIfOpen() {
 function promotionsPath(placement, kind) {
   return '/promotions?placement=' + placement + (kind ? '&kind=' + encodeURIComponent(kind) : '');
 }
+// One /promotions request per distinct path per page render, shared between the renderers that
+// each independently need the same list: on a category page the header ribbon (fillPromoRibbon)
+// and the page's own promo card (fillCategoryPromotions) both ask for placement=home scoped to the
+// same kind, which on /cdl meant the identical request going out repeatedly on a single load
+// (measured 2026-09-17: three times, on the critical path of the site's top ad landing page).
+// apiFetch()'s own coalescing only catches requests that overlap in flight; these renderers run at
+// different moments, so they need this render-scoped memo instead.
+//
+// Scoped to one pathname, not to one route() call: the header ribbon fills during
+// renderSiteHeader(), BEFORE boot() calls route() for the first time, so clearing this in route()
+// would drop the entry between the two callers it exists to share (and did -- see the "at most
+// once" test). Keying on pathname keeps hash-route navigations within the same page load sharing
+// one request, while a real navigation to another category starts fresh. A rejected request drops
+// out immediately rather than sticking as a cached failure.
+var promotionsRequests = {};
+var promotionsRequestsPath = null;
+function fetchPromotions(placement, kind) {
+  if (promotionsRequestsPath !== location.pathname) {
+    promotionsRequests = {};
+    promotionsRequestsPath = location.pathname;
+  }
+  var path = promotionsPath(placement, kind);
+  if (!promotionsRequests[path]) {
+    var pending = apiFetch(path);
+    promotionsRequests[path] = pending;
+    pending.catch(function () { delete promotionsRequests[path]; });
+  }
+  return promotionsRequests[path];
+}
 function fillPromoRibbon() {
   var wrap = document.getElementById('promo-ribbon-wrap');
   if (!wrap) return;
   var pathKind = kindFromSlug((location.pathname.split('/')[1] || '').toLowerCase());
-  Promise.all([apiFetch(promotionsPath('home', pathKind)), loadSiteConfig()]).then(function (results) {
+  Promise.all([fetchPromotions('home', pathKind), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var dismissedIds = getDismissedPromoIds();
     var active = (r.promotions || []).filter(function (p) { return dismissedIds.indexOf(p.id) === -1; });
@@ -3851,6 +3880,16 @@ var FULL_KIND_NAMES = {
   OAT: 'Optometry Admission Test',
 };
 function fullKindLabel(kind) { return FULL_KIND_NAMES[kind] ? kind + ' (' + FULL_KIND_NAMES[kind] + ')' : kind; }
+// Lowercases a kind for mid-sentence use WITHOUT flattening its acronym: 'Commercial Driver (CDL)'
+// -> 'commercial driver (CDL)', 'DAT' -> 'DAT', 'Real Estate Salesperson' -> 'real estate
+// salesperson'. Only ordinary Capitalized-then-lowercase words are lowercased; an all-caps token
+// (CDL, DAT, ACT, CLT, OAT, MLO) is left exactly as written. Replaces the bare kind.toLowerCase()
+// the category hero subhead used to use, which printed "your state's commercial driver (cdl) exam"
+// on every CDL ad landing -- the paid destination. Keep in sync with _worker.js's own copy inside
+// its SSR-HERO block (test/landing-first-paint.test.js compares the two heroes string for string).
+function sentenceKindLabel(kind) {
+  return String(kind).replace(/[A-Z][a-z]+/g, function (word) { return word.toLowerCase(); });
+}
 
 // Per-track "international students" deep-dive article slugs -- these 4 national exam kinds are
 // the only ones where testing-location/eligibility questions genuinely differ track-to-track (a
@@ -4413,15 +4452,38 @@ function pickRepresentativeTrack(tracks) {
 function categoryStateDetectedBannerHtml(track, stateSource) {
   if (!track) return '';
   var stateName = escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode);
-  var isCookie = stateSource === 'cookie';
-  return '<div class="category-state-detected-banner' + (isCookie ? '' : ' category-state-detected-banner--unknown') + '" id="category-state-detected-banner">' +
-    '<span class="category-state-detected-badge">' + (isCookie ? '📍 Showing Your State' : '❓ Example State') + '</span>' +
-    '<span class="category-state-detected-text">' +
-    (isCookie
-      ? 'Based on your saved location, we\'re showing <strong>' + stateName + '</strong> exam info.'
-      : 'We couldn\'t detect your state, so <strong>' + stateName + '</strong> is shown as an example.') +
+  var isFallback = stateSource === 'fallback';
+  // Three claims, three different things we actually know -- see categoryStateSource() below.
+  // 'geo' is the ad-click case: _worker.js geo-set the cookie from request.cf on THIS request and
+  // stamped the state on the response, so "your location" is literally what happened. 'cookie' is
+  // a state carried in from an earlier session, where we can't tell a past explicit pick from a
+  // past geo hit, so the copy claims neither. Until 2026-09-17 both said "Based on your saved
+  // location", which was false for every first-time ad visitor -- they saved nothing, and a
+  // carrier IP one state over then told them we'd remembered a preference they never set.
+  var text;
+  if (stateSource === 'geo') text = 'Based on your location, we\'re showing <strong>' + stateName + '</strong> exam info.';
+  else if (stateSource === 'cookie') text = 'We\'re showing <strong>' + stateName + '</strong> exam info.';
+  else text = 'We couldn\'t detect your state, so <strong>' + stateName + '</strong> is shown as an example.';
+  return '<div class="category-state-detected-banner' + (isFallback ? ' category-state-detected-banner--unknown' : '') + '" id="category-state-detected-banner">' +
+    '<span class="category-state-detected-badge">' + (isFallback ? '❓ Example State' : '📍 Showing Your State') + '</span>' +
+    '<span class="category-state-detected-text">' + text +
     ' Not right? <button type="button" class="btn-link" data-act="focus-category-state-select">Pick your state below ↓</button></span>' +
     '</div>';
+}
+
+// Where the state currently on screen came from: 'geo' (detected from this request's connection --
+// _worker.js stamps <meta name="pxq-geo-state"> on exactly the response whose pxq_state Set-Cookie
+// it just wrote, so this is only ever true on the visitor's first hit), 'cookie' (a pxq_state from
+// an earlier session -- could be a past pick or a past geo hit, we can't tell which), or
+// 'fallback' (no usable signal at all, so the shown track is just first in list order -- an
+// outright guess). Deliberately a <meta> rather than a second cookie: the privacy page's "we set
+// one cookie, pxq_state" stays true.
+function categoryStateSource(track) {
+  var cookieState = getStateCookie();
+  if (!track || !cookieState || track.stateCode !== cookieState) return 'fallback';
+  var meta = document.querySelector('meta[name="pxq-geo-state"]');
+  var geoState = meta ? (meta.getAttribute('content') || '').toUpperCase() : '';
+  return geoState === track.stateCode ? 'geo' : 'cookie';
 }
 
 function categoryStateSelectHtml(tracks, selectedState) {
@@ -4677,10 +4739,8 @@ function renderCategoryPage(kind) {
   var hasFailGuarantee = repTrack ? repTrack.passPercent != null : true;
   // isDefaulted: true until the visitor explicitly uses the state picker THIS page load (cleared in
   // the pick-category-state handler) -- drives categoryStateDetectedBannerHtml() below. stateSource
-  // distinguishes a real cookie match ("cookie": geolocation or a past explicit pick) from the
-  // no-signal-at-all fallback to tracks[0] ("fallback") -- see that function's own header comment.
-  var cookieStateForBanner = getStateCookie();
-  var stateSource = (cookieStateForBanner && repTrack && repTrack.stateCode === cookieStateForBanner) ? 'cookie' : 'fallback';
+  // is 'geo' / 'cookie' / 'fallback' -- see categoryStateSource() for what each one actually knows.
+  var stateSource = categoryStateSource(repTrack);
   categoryPageState = { kind: kind, tracks: tracks, repTrack: repTrack, hasFailGuarantee: hasFailGuarantee, sampleQuestion: null, sampleSelected: null, sampleAnswered: null, tracksExpanded: false, isDefaulted: true, stateSource: stateSource };
   // hubScopedState drives the footer's "top state tracks" links (and the #/gift page) -- previously
   // forced null here unconditionally (see route()'s old comment), which meant the footer kept
@@ -4698,7 +4758,7 @@ function renderCategoryPage(kind) {
   // patches in afterward via fillCategoryContent() -- in place, never a second full-page replace.
   var content = null;
   var headline = fullKindLabel(kind) + ' Exam Prep';
-  var subhead = 'Practice questions for your state\'s ' + kind.toLowerCase() + ' exam, built from official handbooks. Instant access, no subscription.';
+  var subhead = 'Practice questions for your state\'s ' + sentenceKindLabel(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
   var selectedState = repTrack ? repTrack.stateCode : '';
   // True only when at least one track in this category has a real state_code -- false for a
   // single national track like ACT, whose state_code is the 'US' placeholder (same convention MLO
@@ -4779,7 +4839,7 @@ function renderCategoryPage(kind) {
 // card (and a new async layout shift) on every category page, not just the ones with their own promo.
 // Sits well below the hero, so an async fill here doesn't shift above-the-fold content.
 function fillCategoryPromotions(kind) {
-  Promise.all([apiFetch(promotionsPath('home', kind)), loadSiteConfig()]).then(function (results) {
+  Promise.all([fetchPromotions('home', kind), loadSiteConfig()]).then(function (results) {
     if (!categoryPageState || categoryPageState.kind !== kind) return; // navigated away
     var scoped = (results[0].promotions || []).filter(function (p) { return p.requiredTrackKind === kind; });
     var wrap = document.getElementById('category-promotions-wrap');
@@ -6747,7 +6807,7 @@ function renderTrackLanding() {
   // Same "home" promos the hub shows -- this page IS the funnel entry point for this specific
   // track, so a discount visible on the unscoped hub should be visible here too -- plus any promo
   // scoped to this track's kind (e.g. the CDL-only first-time-customer code).
-  Promise.all([apiFetch(promotionsPath('home', exam.examKind)), loadSiteConfig()]).then(function (results) {
+  Promise.all([fetchPromotions('home', exam.examKind), loadSiteConfig()]).then(function (results) {
     var r = results[0];
     var wrap = document.getElementById('track-landing-promotions-wrap');
     if (wrap) wrap.innerHTML = promoBannersHtml(r.promotions || [], false);
@@ -9134,8 +9194,11 @@ function trackPageview() {
       // visitor (📍 real detection vs ❓ first-in-list guess) -- captured here too, added
       // 2026-09-10, so "why did this visitor see state X" is answerable straight from the tracked
       // path instead of needing a manual registry-order cross-check.
-      var cookieStateForTracking = getStateCookie();
-      var srcForTracking = (cookieStateForTracking && repTrackForTracking.stateCode === cookieStateForTracking) ? 'cookie' : 'fallback';
+      // Shares categoryStateSource() with the banner so the two can't drift, but keeps this
+      // field's original two-value vocabulary: 'geo' and 'cookie' are both "we had a real signal"
+      // as far as the admin Visitors table is concerned, and rows recorded since 2026-09-10 all
+      // use cookie/fallback -- a third value here would split that column's history for no gain.
+      var srcForTracking = categoryStateSource(repTrackForTracking) === 'fallback' ? 'fallback' : 'cookie';
       path += '?state=' + repTrackForTracking.stateCode + '&src=' + srcForTracking;
     }
   }
