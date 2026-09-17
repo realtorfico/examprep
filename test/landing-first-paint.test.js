@@ -347,15 +347,32 @@ test('app.js drops the reservation once it renders the real page', async (t) => 
   assert.equal(document.getElementById('app').classList.contains('app-ssr-reserve'), false, 'app.js should remove the reservation class when it renders, so the class never outlives the server-only state');
 });
 
-test('the hero fonts are deliberately not preloaded', () => {
-  // Measured both ways on 2026-09-17. Preloading them removed a 4px reflow when they swap in
-  // (0.007 CLS -- invisible), and cost ~420ms of first contentful paint: 113KB of high-priority
-  // font bytes ahead of everything else on a 1.6Mbps link took FCP from ~800ms to a consistent
-  // ~1220ms over three runs. This test exists so the "obvious" optimisation isn't re-added without
-  // re-measuring; hero.css's @font-face with font-display:swap is the right trade here.
-  assert.ok(!/rel="preload"[^>]*as="font"/.test(INDEX), 'a font preload is back in index.html -- re-measure FCP before keeping it');
+test('Inter is preloaded and Fraunces is not', () => {
+  // Measured all three ways on 2026-09-17 (see index.html's comment for the numbers). Inter swapping
+  // in re-wraps the header's promo ribbon, which moves the whole page: an intermittent CLS of 0.18.
+  // Fraunces only sets the H1, whose line count doesn't change against its Georgia fallback, and
+  // preloading it too cost ~240ms more FCP. Both halves of this are load-bearing.
+  assert.match(INDEX, /<link rel="preload" as="font" type="font\/woff2" href="\/fonts\/inter-var-subset\.woff2" crossorigin>/, 'Inter must stay preloaded, or the promo ribbon re-wraps after paint');
+  assert.ok(!/as="font"[^>]*fraunces/.test(INDEX), 'preloading Fraunces costs FCP for no measured CLS gain -- re-measure before adding it');
   const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
   assert.match(heroCss, /font-display:\s*swap/, 'the hero fonts must stay font-display:swap, so text paints in a fallback face rather than waiting');
+});
+
+test('the site serves the subset fonts, not the full downloads', () => {
+  // scripts/build-fonts.js writes <name>-var-subset.woff2 next to the original download. The
+  // originals stay in the repo as the source for re-subsetting; nothing should reference them.
+  const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
+  for (const sheet of [STYLE_CSS, heroCss]) {
+    assert.ok(!/-var-latin\.woff2/.test(sheet), 'a stylesheet still points at an unsubset font file');
+    assert.match(sheet, /inter-var-subset\.woff2/);
+    assert.match(sheet, /fraunces-var-subset\.woff2/);
+  }
+  for (const font of ['inter-var-subset.woff2', 'fraunces-var-subset.woff2']) {
+    const file = path.join(WWWROOT, 'fonts', font);
+    assert.ok(fs.existsSync(file), font + ' is missing -- run node scripts/build-fonts.js');
+    // Inter is on the critical path (preloaded); keep an eye on both.
+    assert.ok(fs.statSync(file).size < 70 * 1024, font + ' has grown to ' + Math.round(fs.statSync(file).size / 1024) + 'KB');
+  }
 });
 
 // ---- 3. The hero paints styled, and app.min.js stops being last in the queue -------------------

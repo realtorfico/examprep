@@ -12,6 +12,7 @@
     "clean-css": "^5.3.3",
     "jsdom": "^25.0.1",
     "playwright": "^1.62.1",
+    "subset-font": "^2.7.0",
     "terser": "^5.51.2"
   }
 }

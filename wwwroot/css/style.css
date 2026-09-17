@@ -6,14 +6,14 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  src: url('/fonts/inter-var-subset.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Fraunces';
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url('/fonts/fraunces-var-latin.woff2') format('woff2');
+  src: url('/fonts/fraunces-var-subset.woff2') format('woff2');
 }
 
 :root {
