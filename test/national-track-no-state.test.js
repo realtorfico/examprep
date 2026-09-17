@@ -137,22 +137,28 @@ test('homepage category card for a state-based category (control case) still lin
     'a real multi-state category should still link to its category landing page -- guards against the ACT fix over-applying');
 });
 
-test('category page stats card omits the "State Tracks" tile for a national track', async (t) => {
+// These two used to assert on the hero's "State Tracks" tile, part of the aggregate stats card that
+// was replaced by the per-state spec panel on 2026-09-17 (see categorySpecPanelHtml in app.js).
+// The bug they guard is unchanged -- code assuming every track has a real state_code -- so they now
+// check it against the surfaces that exist: a national track shows no state picker and never
+// renders the 'US' placeholder as a state name, while a multi-state category still gets its picker.
+test('a national track shows no state picker and never prints its US placeholder', async (t) => {
   const { dom, document } = await bootApp({ url: 'https://passexamhq.com/act' });
   t.after(() => dom.window.close());
 
-  const labels = [...document.querySelectorAll('.outcome-tile-label')].map((el) => el.textContent);
-  assert.ok(!labels.includes('State Tracks'),
-    'a single national track has no meaningful "State Tracks" count to show (always 1 by definition, and the label itself is wrong)');
+  assert.equal(document.getElementById('category-state-select'), null,
+    'a single national track has no state to pick -- the picker assumes states exist');
+  const heroText = document.querySelector('.hub-hero').textContent;
+  assert.ok(!/\bUS\b/.test(heroText), 'the US placeholder must never surface as a state name: ' + heroText.slice(0, 120));
+  assert.ok(document.querySelector('.category-spec'), 'it should still get the spec panel');
 });
 
-test('category page stats card (control case) still shows "State Tracks" for a real multi-state category', async (t) => {
+test('a real multi-state category still gets its state picker (control case)', async (t) => {
   const { dom, document } = await bootApp({ url: 'https://passexamhq.com/notary' });
   t.after(() => dom.window.close());
 
-  const labels = [...document.querySelectorAll('.outcome-tile-label')].map((el) => el.textContent);
-  assert.ok(labels.includes('State Tracks'),
-    'a real multi-state category should still show its State Tracks count -- guards against the ACT fix over-applying');
+  assert.ok(document.getElementById('category-state-select'),
+    'guards against the ACT fix over-applying and hiding the picker everywhere');
 });
 
 test('buy page for a national track is reachable and does not show a raw state code in its breadcrumb', async (t) => {

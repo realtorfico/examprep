@@ -2275,3 +2275,56 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .hub-hero-panel .hub-hero-seal { color: color-mix(in srgb, var(--accent-deep-foreground) 72%, transparent); }
 .hub-hero-seal svg { flex-shrink: 0; }
+
+/* --- Category hero spec panel -----------------------------------------------------------------
+   The hero's second column (2026-09-17): the exam's own format, the endorsements, and what the
+   visitor gets -- all for the state on screen. Replaces the old aggregate "Real Coverage" card.
+   Client-rendered (it needs the state), so these rules stay out of hero.css: they apply to content
+   that arrives with app.js, below the server-rendered copy on a phone, so nothing above it moves. */
+.category-spec {
+  padding: 1.1rem 1.15rem 1.25rem; border-radius: var(--radius-2xl);
+  background: color-mix(in srgb, black 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-deep-foreground) 14%, transparent);
+  color: var(--accent-deep-foreground);
+}
+.category-spec-facts { display: grid; gap: 0.4rem; margin: 0; }
+.category-spec-fact {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+  padding: 0.5rem 0.7rem; border-radius: var(--radius-lg);
+  background: color-mix(in srgb, black 22%, transparent);
+}
+.category-spec-fact dt {
+  font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--highlight);
+}
+.category-spec-fact dd { margin: 0; font-size: 0.86rem; font-weight: 600; text-align: right; line-height: 1.25; }
+
+.category-spec-chips-label {
+  margin: 1rem 0 0.5rem; font-size: 0.8rem;
+  color: color-mix(in srgb, var(--accent-deep-foreground) 80%, transparent);
+}
+.category-spec-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.category-spec-chips li {
+  font-size: 0.74rem; font-weight: 600; padding: 0.26rem 0.6rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-deep-foreground) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-deep-foreground) 16%, transparent);
+}
+
+/* Per-state materials. The em dash is the loading AND the empty state: a track with nothing
+   recorded says nothing rather than claiming "0 audio lessons". */
+.category-spec-inv {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
+  margin: 1rem 0 0; padding: 0; list-style: none;
+}
+.category-spec-inv li {
+  padding: 0.5rem 0.65rem; border-radius: var(--radius-lg);
+  background: color-mix(in srgb, black 22%, transparent);
+}
+.category-spec-inv strong {
+  display: block; font-family: 'Fraunces', Georgia, serif; font-size: 1.15rem; line-height: 1.1;
+  color: var(--highlight); font-variant-numeric: tabular-nums;
+}
+.category-spec-inv span {
+  display: block; margin-top: 0.15rem; font-size: 0.66rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: color-mix(in srgb, var(--accent-deep-foreground) 72%, transparent);
+}

@@ -2190,6 +2190,12 @@ var CATEGORY_HERO_COPY = {
     subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
     kicker: 'Commercial driver\'s license',
     seal: 'Written from your state\'s official CDL handbook — not a generic question bank.',
+    // Named in the hero's spec panel: the endorsements are what CDL candidates shop hardest for,
+    // and they were previously only visible as topic percentages three screens down. Client-side
+    // only -- _worker.js's copy of this map carries just the headline/subhead/kicker/seal it
+    // server-renders.
+    chipsLabel: 'Covers the general knowledge test and every endorsement:',
+    chips: ['Air brakes', 'Combination vehicles', 'Doubles/Triples', 'HazMat', 'Passenger', 'School bus', 'Tanker'],
   },
 };
 
@@ -2842,8 +2848,12 @@ function categoryFeatureTilesHtml(tiles) {
   }).join('') + '</section>';
 }
 
+// Two, not four (2026-09-17). The CMS holds four per category and the page printed all of them, a
+// full screen of quotes three screens below the decision. Two make the point; the rest were length.
+// The track page keeps its own set, which is where someone still weighing the purchase ends up.
 function categoryTestimonialsHtml(testimonials) {
   if (!testimonials || !testimonials.length) return '';
+  testimonials = testimonials.slice(0, 2);
   return '<section class="category-testimonials">' +
     '<p class="section-eyebrow">What test-takers say</p><h2 class="comparison-heading">Passed on the first try</h2>' +
     '<div class="category-testimonial-grid">' + testimonials.map(function (t) {
@@ -2969,65 +2979,76 @@ function drawCategorySampleQuestion() {
 // distinguishing check as every other national-track fix in this file, not just an activeCount===1
 // check, since a real state-based category early in its rollout (genuinely only 1 state live so
 // far) should still show its (accurate, if small) "State Tracks" count.
-function categoryStatsHtml(tracks, articleCount, resourceStats, hasFailGuarantee) {
-  var activeCount = tracks.length;
-  var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
-  var tiles = hasRealStates ? [{ value: activeCount, label: 'State Tracks' }] : [];
-  // Replaces the old "States Covered" tile (redundant with State Tracks -- this site has one track
-  // per state, so the two numbers were always identical) with a real per-category article count.
-  // Same "only show if real" gate as the resource tiles below -- several categories (Boating/CDL/
-  // Motorcycle, as of this build) have no long-tail SEO articles yet.
-  if (articleCount) tiles.push({ value: articleCount, label: 'Articles & Guides' });
-  // Same "only show if real" rule as the homepage's own resource tiles (fillReadinessCard) -- many
-  // categories (Driver/CDL/Motorcycle/Boating) have no Key Facts Digest content yet, and a bare
-  // "0 Quick-Fact Tables" would read as a broken page, not an honest gap.
-  if (resourceStats && (resourceStats.tables || resourceStats.decks)) {
-    tiles.push({ value: resourceStats.tables, label: 'Quick-Fact Tables' });
-    tiles.push({ value: resourceStats.decks, label: 'Flashcard Decks' });
-  }
-  // Audio Lessons tile -- same "only show if real" gate as tables/decks above, and the same
-  // independent-gate pattern as the homepage's own Audio Lessons tile (fillReadinessCard) so a
-  // category with audio but no tables/decks yet (or vice versa) still shows what's real.
-  if (resourceStats && resourceStats.audio) {
-    tiles.push({ value: resourceStats.audio, label: 'Audio Lessons' });
-  }
-  return '<div class="hub-readiness-card">' +
-    '<p class="hub-readiness-label"><span class="hub-hero-highlight">Real Coverage</span>, Not Marketing Copy</p>' +
-    '<div class="hub-readiness-top-row">' +
-    '<div class="outcome-tile hub-readiness-question-count" id="category-question-count-tile"></div>' +
-    // Omitted (not swapped for a substitute stat) when the category has no real pass/fail
-    // guarantee to visualize (ACT/DAT/CLT/OAT) -- fillCategoryStatsRadial() safely no-ops when
-    // this wrap doesn't exist.
-    (hasFailGuarantee ? '<div class="hub-readiness-radial-wrap" id="category-stats-radial-wrap"></div>' : '') +
-    '</div>' +
-    '<div class="hub-readiness-tiles">' + tiles.map(function (t) {
-      return '<div class="outcome-tile"><div class="outcome-tile-value">' + Number(t.value || 0).toLocaleString() + '</div><div class="outcome-tile-label">' + t.label + '</div></div>';
-    }).join('') +
-    '</div></div>';
-}
 
-// Rendered separately from categoryStatsHtml() and only after loadSiteConfig() resolves (not at
 // first paint) -- refundFailurePercent defaults to a placeholder 50 until then, and unlike the
 // .js-refund-pct text spans elsewhere, an SVG arc's shape can't be live-patched after the fact, so
 // painting it early risks silently freezing on a stale default for the rest of the pageview.
-function fillCategoryStatsRadial() {
-  var wrap = document.getElementById('category-stats-radial-wrap');
-  if (wrap) wrap.innerHTML = radialProgressSvg(refundFailurePercent, { size: 108, strokeWidth: 10, label: 'Refund If You Fail', color: 'var(--highlight)' });
-}
 
 // Real per-category question-bank size, summed from the public /questions/counts endpoint (a
 // per-exam_type breakdown) -- never a fabricated/estimated figure. Best-effort: the tile just
 // stays empty (not a fake number) if the fetch fails.
-async function fillCategoryQuestionCount(tracks) {
-  var tile = document.getElementById('category-question-count-tile');
-  if (!tile || !tracks.length) return;
+// The hero's second column: the exam's own format, what's covered, and what the visitor gets --
+// all for the state actually on screen. Replaces the old "Real Coverage, Not Marketing Copy" card
+// (2026-09-17), which led with a category-wide total ("33,175 practice questions (across all
+// states)") plus a State Tracks count and an Articles & Guides count: numbers about the catalog
+// rather than about the exam this visitor is sitting. The figures here are per state and come from
+// the same sources the track page reads -- the catalog for format, RESOURCE_COUNTS for materials,
+// /questions/counts for the bank size.
+//
+// Values render as an em dash until their fetch lands, and a track with nothing recorded keeps the
+// dash rather than claiming a zero -- same rule as the homepage's "only show if real" tiles.
+function categorySpecPanelHtml(track, slug) {
+  if (!track) return '';
+  var copy = CATEGORY_HERO_COPY[slug];
+  var fact = function (label, value) {
+    return '<div class="category-spec-fact"><dt>' + label + '</dt><dd>' + escapeHtml(value || '—') + '</dd></div>';
+  };
+  var facts = (track.questions || track.passScore || track.duration)
+    ? '<dl class="category-spec-facts">' +
+      fact('Questions', track.questions) +
+      fact('To pass', track.passScore) +
+      fact('Time limit', track.duration) +
+      '</dl>'
+    : '';
+  var chips = (copy && copy.chips && copy.chips.length)
+    ? '<p class="category-spec-chips-label">' + escapeHtml(copy.chipsLabel || 'Also covered:') + '</p>' +
+      '<ul class="category-spec-chips">' + copy.chips.map(function (c) {
+        return '<li>' + escapeHtml(c) + '</li>';
+      }).join('') + '</ul>'
+    : '';
+  var inv = function (id, label) {
+    return '<li><strong id="' + id + '">—</strong><span>' + label + '</span></li>';
+  };
+  return '<div class="category-spec">' +
+    facts + chips +
+    '<ul class="category-spec-inv">' +
+    inv('category-inv-questions', 'practice questions') +
+    inv('category-inv-tables', 'quick-fact tables') +
+    inv('category-inv-decks', 'flashcard decks') +
+    inv('category-inv-audio', 'audio lessons') +
+    '</ul>' +
+    '</div>';
+}
+
+// Fills the spec panel's inventory for the state on screen: the question bank from
+// /questions/counts, the rest from the RESOURCE_COUNTS map already loaded at boot.
+async function fillCategorySpecCounts(track) {
+  if (!track) return;
+  var set = function (id, value) {
+    var el = document.getElementById(id);
+    if (el && value) el.textContent = String(value);
+  };
+  var counts = RESOURCE_COUNTS[track.examType];
+  if (counts) {
+    set('category-inv-tables', counts.tables);
+    set('category-inv-decks', counts.decks ? counts.decks + (counts.cards ? ' (' + counts.cards + ' cards)' : '') : 0);
+    set('category-inv-audio', counts.audio);
+  }
   try {
     var res = await apiFetch('/questions/counts');
-    var countByExamType = {};
-    (res.counts || []).forEach(function (row) { countByExamType[row.exam_type] = row.count; });
-    var total = tracks.reduce(function (sum, t) { return sum + (countByExamType[t.examType] || 0); }, 0);
-    tile.innerHTML = '<div class="outcome-tile-value">' + total.toLocaleString() + '</div><div class="outcome-tile-label">Practice Questions<br>(across all states)</div>';
-  } catch (e) { /* best-effort -- tile just stays empty */ }
+    var row = (res.counts || []).filter(function (c) { return c.exam_type === track.examType; })[0];
+    if (row && row.count) set('category-inv-questions', row.count.toLocaleString());
+  } catch (e) { /* best-effort -- the dash stays */ }
 }
 
 function renderCategoryPage(kind) {
@@ -3136,12 +3157,11 @@ function renderCategoryPage(kind) {
 
   // The hero's second column (stats), a sibling of .hub-hero-copy inside .hub-hero.
   var heroStatsHtml =
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), hasFailGuarantee) + '</div>';
+    '<div id="category-stats-wrap">' + categorySpecPanelHtml(repTrack, slug) + '</div>';
 
   // The rest of the page, after .hub-hero.
   var pageBodyHtml =
     trustStripHtml() +
-    '<div id="category-feature-tiles-wrap">' + categoryFeatureTilesHtml(content && content.featureTiles) + '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
     '<div id="category-promotions-wrap" class="promotions-wrap"></div>' +
     '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
@@ -3182,12 +3202,10 @@ function renderCategoryPage(kind) {
     var pendingSampleEl = document.getElementById('category-sample');
     if (pendingSampleEl) pendingSampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  fillCategoryQuestionCount(tracks);
+  fillCategorySpecCounts(repTrack);
   loadSiteConfig().then(function () {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
-    fillCategoryStatsRadial();
   });
-  fillCategoryArticleCount(kind, tracks);
   fillCategoryContent(kind, slug, repTrack);
   fillCategoryPromotions(kind);
 }
@@ -3230,22 +3248,9 @@ function fillCategoryContent(kind, slug, repTrack) {
 
 // Article count comes from a separate lightweight fetch (loadBlogCounts, not part of boot()) so it
 // patches the stats card in place once it lands, same "arrives late, repaint don't reflow" posture
-// as fillCategoryQuestionCount/fillCategoryStatsRadial above -- rather than blocking first paint on
+// rather than blocking first paint on
 // a third fetch. Best-effort: several categories (Boating/CDL/Motorcycle, as of this build) have no
 // long-tail articles yet, so a 0 here correctly leaves the tile absent, not "0 Articles."
-function fillCategoryArticleCount(kind, tracks) {
-  var catWrap = document.getElementById('category-stats-wrap');
-  if (!catWrap) return;
-  loadBlogCounts().then(function (bc) {
-    var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
-    if (!articleCount) return;
-    var wrap = document.getElementById('category-stats-wrap');
-    if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-    wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), categoryPageState.hasFailGuarantee);
-    fillCategoryQuestionCount(tracks);
-    loadSiteConfig().then(fillCategoryStatsRadial);
-  }).catch(function () { /* best-effort -- tile just stays absent */ });
-}
 
 var CATEGORY_ICONS = {
   'Notary': '📝', 'Driver': '🚗', 'Commercial Driver (CDL)': '🚛', 'Motorcycle': '🏍️',
@@ -3714,7 +3719,7 @@ function fillReadinessCard() {
       size: 108, strokeWidth: 10, label: 'Pass Rate', color: 'var(--highlight)',
     });
     // Question count paired with the radial in its own top row, same layout as the category
-    // pages' stats card (categoryStatsHtml) -- left blank (not a fabricated "0+") if the count
+    // pages' spec panel -- left blank (not a fabricated "0+") if the count
     // didn't come back, same best-effort posture as that card's own question-count tile.
     var questionCountHtml = s.totalQuestions != null
       ? '<div class="outcome-tile-value">' + Number(s.totalQuestions).toLocaleString() + '+</div>' +
@@ -3915,10 +3920,9 @@ function fillResourceCountSurfaces() {
       var articleCount = (bc && bc.kindCounts && bc.kindCounts[kindSlug(kind)]) || 0;
       var wrap = document.getElementById('category-stats-wrap');
       if (!wrap || !categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-      wrap.innerHTML = categoryStatsHtml(tracks, articleCount, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), categoryPageState.hasFailGuarantee);
-      fillCategoryQuestionCount(tracks);
-      loadSiteConfig().then(fillCategoryStatsRadial);
-    }).catch(function () { /* best-effort -- stats card just keeps its current content */ });
+      wrap.innerHTML = categorySpecPanelHtml(categoryPageState.repTrack, kindSlug(kind));
+      fillCategorySpecCounts(categoryPageState.repTrack);
+    }).catch(function () { /* best-effort -- the panel keeps its current content */ });
   }
 
   // Track landing: the strip always renders now (it carries the Practice Questions tile even for
@@ -4049,7 +4053,7 @@ function trackResourceStatsHtml(examType) {
 
 // Real live practice-question-pool size for this one track, from the same public
 // /questions/counts endpoint the category page's own Practice Questions tile uses (see
-// fillCategoryQuestionCount above) -- never a fabricated/estimated figure. Best-effort: the
+// fillCategorySpecCounts above) -- never a fabricated/estimated figure. Best-effort: the
 // tile just stays empty (not a fake number) if the fetch fails or the track has no questions yet.
 async function fillTrackQuestionCount(examType) {
   var tile = document.getElementById('track-question-count-tile');

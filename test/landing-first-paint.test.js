@@ -333,6 +333,57 @@ test('the worker marks its hero so the client knows to keep it', () => {
   assert.ok(categoryHeroHtml('cdl').includes('data-ssr-hero="1"'));
 });
 
+// ---- 2a4. The hero's spec panel (phase 2 of the /cdl1 port) -----------------------------------
+
+// The hero's second column used to be an aggregate card: "33,175 practice questions (across all
+// states)", a State Tracks count and an Articles & Guides count -- figures about the catalog rather
+// than about the exam the visitor is sitting. It now carries that state's own format, the
+// endorsements by name, and that state's materials.
+test('the hero spec panel shows the state\'s own exam format', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  const spec = document.querySelector('.category-spec');
+  assert.ok(spec, 'the hero should have a spec panel');
+  const labels = [...spec.querySelectorAll('.category-spec-fact dt')].map((el) => el.textContent);
+  assert.deepEqual(labels, ['Questions', 'To pass', 'Time limit']);
+  const values = [...spec.querySelectorAll('.category-spec-fact dd')].map((el) => el.textContent);
+  assert.ok(values.every((v) => v && v !== '—'), 'the facts should come from the catalog, not render as dashes: ' + values.join(' | '));
+});
+
+test('the endorsements are named in the hero, not just as percentages further down', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  const chips = [...document.querySelectorAll('.category-spec-chips li')].map((el) => el.textContent);
+  for (const endorsement of ['Air brakes', 'Combination vehicles', 'Doubles/Triples', 'HazMat', 'Passenger', 'School bus', 'Tanker']) {
+    assert.ok(chips.includes(endorsement), 'missing endorsement chip: ' + endorsement);
+  }
+});
+
+test('the inventory is per state, and a dash until it is known', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  const items = [...document.querySelectorAll('.category-spec-inv li')].map((el) => el.textContent);
+  assert.equal(items.length, 4, 'questions, tables, decks, audio');
+  assert.ok(items.some((t) => /practice questions/.test(t)));
+  // The old card's giveaway phrasing is gone.
+  assert.ok(!document.body.textContent.includes('across all states'), 'the hero should no longer lead with a category-wide total');
+  assert.ok(!document.body.textContent.includes('Real Coverage'), 'the "Real Coverage, Not Marketing Copy" card is gone');
+});
+
+test('the emoji feature tiles are gone and testimonials are trimmed to two', async (t) => {
+  const { document } = await bootCategory(t, 'cdl', {
+    fetchOverrides: [['/category-content', {
+      categories: [{
+        slug: 'cdl', hero_headline: null, hero_subhead: null,
+        featureTiles: [{ icon: '📘', title: 'Built on handbooks', body: 'x' }],
+        testimonials: [
+          { quote: 'One', author: 'A' }, { quote: 'Two', author: 'B' },
+          { quote: 'Three', author: 'C' }, { quote: 'Four', author: 'D' },
+        ],
+      }],
+    }]],
+  });
+  assert.equal(document.querySelector('.category-feature-tiles'), null, 'the tiles repeated the trust chips directly above them');
+  assert.equal(document.querySelectorAll('.category-testimonial-card').length, 2, 'four quotes was a screen of them, three screens below the decision');
+});
+
 // ---- 2b. Server header == client header (this is what keeps CLS at zero) ----------------------
 
 // #site-header is an empty div until app.js fills it. Once the hero paints at ~0.8s, that late fill
