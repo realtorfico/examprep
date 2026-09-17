@@ -1284,7 +1284,6 @@ function categoryHeroHtml(slug) {
   const subhead = 'Practice questions for your state\'s ' + heroSentenceKind(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
   return '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
-    '<span class="section-eyebrow">' + heroEscape(kind) + '</span>' +
     (HERO_INTL_SLUGS[slug] ? '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍 International</span>' : '') +
     '<h1 id="category-hero-headline">' + heroEscape(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + heroEscape(subhead) + '</p>' +

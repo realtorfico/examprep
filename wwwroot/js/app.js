@@ -4784,7 +4784,9 @@ function renderCategoryPage(kind) {
     renderNewsBanner(kind) +
     '<div class="hub-hero">' +
     '<div class="hub-hero-copy">' +
-    '<span class="section-eyebrow">' + escapeHtml(kind) + '</span>' +
+    // No eyebrow here: it printed the kind ("Commercial Driver (CDL)") directly above an H1 that
+    // already says the same words, costing a line of the phone's first screen for no information.
+    // Removed 2026-09-17 with the first-paint work; _worker.js's SSR hero matches.
     (examTypeHasIntlExposure(slug) ? internationalBadgeHtml() : '') +
     '<h1 id="category-hero-headline">' + escapeHtml(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + escapeHtml(subhead) + '</p>' +
@@ -4830,6 +4832,14 @@ function renderCategoryPage(kind) {
     guaranteeCtaBandHtml(hasFailGuarantee);
 
   if (repTrack) loadCategorySampleQuestion();
+  // Replays a tap on the server-rendered hero CTA that happened before this bundle loaded -- see
+  // js/early-cta.js, which records it. Consumed (not just read) so it can't fire again on a later
+  // render. Runs after the markup above is in place, so #category-sample exists to scroll to.
+  if (window.__pendingHeroCta) {
+    window.__pendingHeroCta = false;
+    var pendingSampleEl = document.getElementById('category-sample');
+    if (pendingSampleEl) pendingSampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   fillCategoryQuestionCount(tracks);
   loadSiteConfig().then(function () {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });

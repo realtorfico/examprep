@@ -140,10 +140,71 @@ for (const slug of ['cdl', 'notary', 'dat']) {
       document.getElementById('category-hero-subhead').textContent.trim(),
       'server and client subhead must match exactly',
     );
-    const clientEyebrow = document.querySelector('.hub-hero-copy .section-eyebrow').textContent.trim();
-    assert.ok(server.includes('>' + clientEyebrow + '<'), 'server hero should carry the same eyebrow text as the client (' + clientEyebrow + ')');
+    assert.equal(
+      document.querySelector('.hub-hero-copy .section-eyebrow'),
+      null,
+      'the eyebrow above the H1 repeated the H1 word for word; it was removed 2026-09-17 to give the offer and CTA that space on a phone',
+    );
+    assert.ok(!server.includes('section-eyebrow'), 'the server hero must not reintroduce the eyebrow either');
   });
 }
+
+// ---- 2d. The server-rendered CTA works before app.min.js has loaded ---------------------------
+
+// The hero's practice button is on screen at ~1s but app.min.js, which owns every data-act
+// handler, doesn't run until ~3s. A tap in that 2-second window did nothing at all -- the worst
+// possible impression on the page this whole change exists to fix. js/early-cta.js is a ~0.5KB
+// deferred script that records the click; app.js replays it once the page is really rendered.
+test('index.html loads the early CTA script before the bundle', () => {
+  assert.match(INDEX, /<script defer src="\/js\/early-cta\.js\?v=\d+"><\/script>/, 'early-cta.js should load with defer from <head>, so it runs long before app.min.js');
+  // Against the <script> tag, not the preload <link> -- the preload is deliberately near the top
+  // of <head>, well before this.
+  assert.ok(
+    INDEX.indexOf('early-cta.js') < INDEX.indexOf('<script defer src="/js/app.min.js'),
+    'it must come before app.min.js\'s script tag in document order',
+  );
+});
+
+test('the early CTA script records a click on the server-rendered button', () => {
+  const src = fs.readFileSync(path.join(WWWROOT, 'js', 'early-cta.js'), 'utf8');
+  const window = { location: { pathname: '/cdl' } };
+  const listeners = {};
+  const doc = {
+    addEventListener: (type, fn) => { listeners[type] = fn; },
+    readyState: 'loading',
+  };
+  new Function('window', 'document', src)(window, doc);
+  assert.ok(listeners.click, 'early-cta.js should attach a click listener');
+
+  // A click on the CTA is recorded...
+  let defaultPrevented = false;
+  const target = { closest: (sel) => (sel.includes('scroll-to-category-sample') ? target : null) };
+  listeners.click({ target, preventDefault: () => { defaultPrevented = true; } });
+  assert.equal(window.__pendingHeroCta, true, 'the click should be recorded for app.js to replay');
+  assert.equal(defaultPrevented, true, 'and the dead click should not do anything else in the meantime');
+
+  // ...and a click on anything else is ignored.
+  window.__pendingHeroCta = false;
+  listeners.click({ target: { closest: () => null }, preventDefault: () => {} });
+  assert.equal(window.__pendingHeroCta, false, 'unrelated clicks must pass straight through');
+});
+
+test('app.js replays a CTA click that happened before it loaded', async (t) => {
+  const { document, window } = await bootApp({
+    url: 'https://passexamhq.com/cdl',
+    windowSetup: (w) => {
+      w.__pendingHeroCta = true;
+      // jsdom has no layout, so scrollIntoView is a no-op stub -- record what it was called on.
+      w.Element.prototype.scrollIntoView = function () { w.__lastScrollIntoViewId = this.id; };
+    },
+  });
+  t.after(() => window.close());
+  await waitFor(() => document.getElementById('category-hero-headline'));
+  await settle();
+
+  assert.equal(window.__pendingHeroCta, false, 'app.js should consume the pending click rather than leaving it to fire again on the next render');
+  assert.ok(window.__lastScrollIntoViewId === 'category-sample', 'app.js should scroll to the sample widget, the same thing the button does once it is live (got: ' + window.__lastScrollIntoViewId + ')');
+});
 
 test('the server hero ships the same mobile CTA button as the client hero', async (t) => {
   const { document } = await bootCategory(t, 'cdl');
