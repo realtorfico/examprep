@@ -259,12 +259,17 @@ body.t1 { background: var(--bg); color: var(--fg); }
 @media (min-width: 900px) {
   .t1-main { max-width: 68rem; padding-bottom: 2rem; }
 
+  /* Explicit placement, not auto-flow: with three siblings in the copy column (pitch, CTA, seal)
+     auto-flow put the CTA in a second row and stretched the pitch column, leaving a dead gap
+     between the subhead and the button. */
   .t1-hero {
-    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2rem;
-    align-items: start; padding: 2.2rem 2.2rem 2rem;
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.2rem 2rem;
+    align-content: start; padding: 2.2rem 2.2rem 2rem;
   }
-  .t1-hero-copy { min-width: 0; }
-  .t1-hero-spec { min-width: 0; }
+  .t1-hero-copy { min-width: 0; grid-column: 1; grid-row: 1; }
+  .t1-hero-spec { min-width: 0; grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+  .t1-hero .t1-cta { grid-column: 1; grid-row: 2; margin-top: 0; align-self: start; }
+  .t1-hero .t1-seal { grid-column: 1; grid-row: 3; margin-top: 0; align-self: start; }
   /* The facts/endorsements column gets its own panel edge so the split reads as deliberate. */
   .t1-hero-spec {
     padding: 1.1rem 1.15rem 1.25rem; border-radius: var(--radius-2xl);
