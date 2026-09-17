@@ -22,7 +22,13 @@
 
   // js/content/cdl.js calls this as it loads (same contract as app.js's own registerTrackContent).
   var catalog = [];
-  window.registerTrackContent = function (slug, entries) { catalog = catalog.concat(entries); };
+  var started = false;
+  window.registerTrackContent = function (slug, entries) {
+    catalog = catalog.concat(entries);
+    // If the page has already rendered (either script order, or a catalog that arrives late), fill
+    // in the parts that needed it rather than leaving an empty coverage card.
+    if (started) renderState(currentState);
+  };
 
   function entryFor(stateCode) {
     var examType = String(stateCode).toLowerCase() + '_cdl';
@@ -202,12 +208,17 @@
   }
 
   function start() {
+    started = true;
     var select = document.getElementById('state');
     if (!select) return;
     select.addEventListener('change', function () { renderState(select.value); });
     renderState(select.value || 'CA');
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
+  // Wait unless the document is fully done. A deferred script runs at "the end" of parsing, when
+  // readyState is ALREADY 'interactive' -- so a `=== 'loading'` check takes the else branch and
+  // start() runs before the other deferred scripts, i.e. before content/cdl.js has registered the
+  // catalog. That shipped once and rendered the coverage card empty.
+  if (document.readyState === 'complete') start();
+  else document.addEventListener('DOMContentLoaded', start);
 })();

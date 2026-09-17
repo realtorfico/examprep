@@ -201,6 +201,40 @@ test('cdl1.js loads before the catalog it registers', () => {
   );
 });
 
+test('startup waits for the other deferred scripts', () => {
+  // A deferred script runs when readyState is already 'interactive', so anything that only waits on
+  // 'loading' starts before its siblings -- here, before content/cdl.js registers the catalog. That
+  // shipped once and rendered the coverage card empty on the live page.
+  for (const readyState of ['loading', 'interactive']) {
+    let deferredTo = null;
+    let gotElement = false;
+    const doc = {
+      readyState,
+      addEventListener: (type) => { deferredTo = type; },
+      getElementById: () => { gotElement = true; return null; },
+      querySelectorAll: () => [], querySelector: () => null,
+    };
+    new Function('window', 'document', PAGE_JS)({ addEventListener() {}, location: { pathname: '/cdl1' } }, doc);
+    assert.equal(deferredTo, 'DOMContentLoaded', 'with readyState=' + readyState + ' it must wait');
+    assert.equal(gotElement, false, 'and must not have started rendering yet');
+  }
+});
+
+test('a catalog registered after the first render still fills the page', () => {
+  // Belt and braces for the same class of bug: whatever the script order, the coverage bars appear.
+  const bars = { innerHTML: '' };
+  const doc = {
+    readyState: 'complete', addEventListener() {},
+    getElementById: (id) => (id === 'bars' ? bars : (id === 'state' ? { value: 'CA', addEventListener() {} } : null)),
+    querySelectorAll: () => [], querySelector: () => null,
+  };
+  const win = { addEventListener() {}, location: { pathname: '/cdl1' }, fetch: () => Promise.reject(new Error('no network in this test')) };
+  new Function('window', 'document', PAGE_JS)(win, doc);
+  assert.equal(bars.innerHTML, '', 'nothing to render before the catalog arrives');
+  win.registerTrackContent('cdl', [{ examType: 'ca_cdl', route: '/cdl/ca', breakdown: [['General Knowledge', '48%']] }]);
+  assert.match(bars.innerHTML, /General Knowledge/, 'registering the catalog should re-render what needed it');
+});
+
 test('the coverage bars render from a catalog entry', () => {
   // The bug above was invisible to every string assertion on the page, so exercise the renderer.
   const html = [];
