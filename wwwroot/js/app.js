@@ -990,15 +990,70 @@ async function renderTerms() {
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
 }
 
+// Rewritten 2026-09-17 (owner-approved wording, drafts/misc/privacy_page_draft_2026-09-17.md): the old page
+// never mentioned Google Ads remarketing (Google requires disclosure), Microsoft Clarity, or the site_visits
+// analytics. test/privacy-page.test.js fails if a new third-party script host or cookie isn't named here.
 function renderPrivacy() {
+  var ext = function (href, label) {
+    return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+  };
   appEl.innerHTML = '<div class="narrow-page"><h1>Privacy</h1>' +
-    '<p class="muted">We store the minimum needed to run your account: your access code\'s redemption status, ' +
-    'your quiz progress, and your theme/font preferences. We only collect an email address if you choose to ' +
-    'provide one — for an optional backup copy of your access code at purchase, or to take part in the referral ' +
-    'program. If you refer a friend, we use their name/email only to send a one-time confirmation email on your ' +
-    'behalf; if you\'re referred by a friend, the same applies to you. We never sell or share this data. ' +
-    'Payments are processed by Stripe directly; we don\'t see or store your payment details. Contact whoever ' +
-    'issued your code with any privacy questions.</p>' +
+    '<p class="muted">Last updated: September 17, 2026</p>' +
+
+    '<h2>What we collect</h2>' +
+    '<p class="muted"><strong>Your account and study progress.</strong> Your access code and its status, the tracks ' +
+    'or topics you\'ve bought, your quiz, exam and study-resource progress, your settings (theme, font size, quiz ' +
+    'options), and an exam date if you choose to add one.</p>' +
+    '<p class="muted"><strong>Information you give us.</strong> Your email address, and anything else you type in, when you:</p>' +
+    '<ul class="muted">' +
+    '<li>buy a track (to send your receipt and access code)</li>' +
+    '<li>enter your email at checkout, even if you don\'t finish buying (we may send you a reminder)</li>' +
+    '<li>ask for a reminder, join a waitlist for your state, or verify a promo code</li>' +
+    '<li>join the referral program, refer a friend, or send a gift (we use your friend\'s name and email only to ' +
+    'send the invitation or gift and to credit referral points)</li>' +
+    '<li>submit a refund claim, issue report, suggestion, or testimonial</li>' +
+    '</ul>' +
+    '<p class="muted"><strong>How you use the site.</strong> When you visit, we record a random visitor ID kept in ' +
+    'your browser, the pages you view, how long you stay, how many times you click, the site or ad that sent you ' +
+    '(including ad campaign details and Google\'s click ID), your IP address and the approximate location it ' +
+    'indicates (country, region, city), and your device and browser type. To protect the site, we also log blocked ' +
+    'attempts to reach content without access, including the IP address.</p>' +
+
+    '<h2>Cookies and browser storage</h2>' +
+    '<p class="muted">We set one cookie, <code>pxq_state</code>, which remembers your state (from your approximate ' +
+    'location, or the state you pick) so we show the right exam content. It lasts one year. We also keep your ' +
+    'settings, your visitor ID, and any referral or partner code in your browser\'s local storage. Google and ' +
+    'Microsoft Clarity set their own cookies, described below.</p>' +
+
+    '<h2>Services we use</h2>' +
+    '<ul class="muted">' +
+    '<li><strong>Stripe</strong> processes payments. We never see or store your card details.</li>' +
+    '<li><strong>Cloudflare</strong> hosts the site, protects it from abuse (including the Turnstile check at ' +
+    'checkout and on some forms), and provides basic traffic analytics.</li>' +
+    '<li><strong>Resend</strong> delivers our emails.</li>' +
+    '<li><strong>Google Ads</strong> tells us whether our ads lead to purchases, and may show our ads to people who ' +
+    'have visited this site when they later use Google or its partner sites and apps (remarketing). Google uses ' +
+    'cookies and similar technologies to do this. You can turn off personalized ads in ' +
+    ext('https://myadcenter.google.com/', 'My Ad Center') + ', and read ' +
+    ext('https://policies.google.com/technologies/partner-sites', 'how Google uses information from sites that use its services') + '.</li>' +
+    '<li><strong>Microsoft Clarity</strong> records how visitors interact with pages (clicks, scrolling, mouse ' +
+    'movement) so we can see what\'s confusing and improve the site. See the ' +
+    ext('https://privacy.microsoft.com/privacystatement', 'Microsoft Privacy Statement') + '.</li>' +
+    '</ul>' +
+
+    '<h2>How we use it</h2>' +
+    '<p class="muted">To give you access to what you bought, save your progress, send the emails described above ' +
+    '(including study reminders and tips related to your purchase), understand and improve the site, measure our ' +
+    'advertising, and prevent fraud and abuse.</p>' +
+
+    '<h2>What we don\'t do</h2>' +
+    '<p class="muted">We don\'t sell your personal information. We share it only with the services above, as needed ' +
+    'to run the site and our advertising.</p>' +
+
+    '<h2>Your choices</h2>' +
+    '<p class="muted">You can block or clear cookies in your browser, turn off personalized ads through Google, or ' +
+    '<a href="#/contact">contact us</a> to see or delete the information we hold about you, or to stop non-essential emails.</p>' +
+
     '<button class="btn-secondary btn-sm" data-act="go-back">← Back</button></div>';
 }
 
