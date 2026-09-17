@@ -1293,7 +1293,10 @@ function categoryHeroHtml(slug) {
     : (HERO_FULL_KIND_NAMES[kind] ? kind + ' (' + HERO_FULL_KIND_NAMES[kind] + ')' : kind) + ' Exam Prep';
   const subhead = override ? override.subhead
     : 'Practice questions for your state\'s ' + heroSentenceKind(kind) + ' exam, built from official handbooks. Instant access, no subscription.';
-  return '<div class="hub-hero">' +
+  // data-ssr-hero marks this markup as the server's: app.js keeps these nodes and fills in around
+  // them rather than replacing #app wholesale, then removes the attribute. Replacing them made the
+  // browser record a second, larger LCP candidate at ~3.6s for the same words in the same place.
+  return '<div class="hub-hero" data-ssr-hero="1">' +
     '<div class="hub-hero-copy">' +
     (HERO_INTL_SLUGS[slug] ? '<span class="badge-international" title="International students: eligibility and testing-location details differ here -- see the linked guide">🌍 International</span>' : '') +
     '<h1 id="category-hero-headline">' + heroEscape(headline) + '</h1>' +

@@ -3072,10 +3072,13 @@ function renderCategoryPage(kind) {
   // more defensive choice if that ever stops being true.
   var hasRealStates = tracks.some(function (t) { return t.stateCode !== 'US'; });
 
-  appEl.innerHTML =
-    renderNewsBanner(kind) +
-    '<div class="hub-hero">' +
-    '<div class="hub-hero-copy">' +
+  // The hero's static top -- eyebrow-less H1, subhead, and the mobile-first practice button. This
+  // is exactly what _worker.js server-renders into #app (its SSR-HERO block), so when that markup
+  // is already on screen the branch below keeps those nodes instead of rebuilding them: replacing
+  // them destroyed the paragraph the visitor had been reading since ~1.2s and created a new one a
+  // hair larger, which the browser recorded as a second, larger LCP candidate at ~3.6s. Same words,
+  // same position, different node. See test/landing-first-paint.test.js.
+  var heroTopHtml =
     // No eyebrow here: it printed the kind ("Commercial Driver (CDL)") directly above an H1 that
     // already says the same words, costing a line of the phone's first screen for no information.
     // Removed 2026-09-17 with the first-paint work; _worker.js's SSR hero matches.
@@ -3089,7 +3092,12 @@ function renderCategoryPage(kind) {
     // test/ad-landing-first-screen.test.js.
     '<div class="hub-hero-cta hub-hero-cta-early">' +
     '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
-    '</div>' +
+    '</div>';
+
+  // Everything below the server-rendered top, still inside .hub-hero-copy: the badges, the state
+  // banner and picker, the waitlist prompt and the later CTA. All of it depends on runtime data the
+  // worker doesn't have, which is where its hero stops.
+  var heroCopyRestHtml =
     '<div class="hub-trust-badges">' +
     '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
     '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
@@ -3108,10 +3116,14 @@ function renderCategoryPage(kind) {
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
-    '</div>' +
-    '</div>' +
-    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), hasFailGuarantee) + '</div>' +
-    '</div>' +
+    '</div>';
+
+  // The hero's second column (stats), a sibling of .hub-hero-copy inside .hub-hero.
+  var heroStatsHtml =
+    '<div id="category-stats-wrap">' + categoryStatsHtml(tracks, 0, aggregateResourceStats(tracks.map(function (t) { return t.examType; })), hasFailGuarantee) + '</div>';
+
+  // The rest of the page, after .hub-hero.
+  var pageBodyHtml =
     trustStripHtml() +
     '<div id="category-feature-tiles-wrap">' + categoryFeatureTilesHtml(content && content.featureTiles) + '</div>' +
     '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
@@ -3122,6 +3134,28 @@ function renderCategoryPage(kind) {
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     '<div id="category-testimonials-wrap">' + categoryTestimonialsHtml(content && content.testimonials) + '</div>' +
     guaranteeCtaBandHtml(hasFailGuarantee);
+
+  // Keep the worker's hero if it's on screen; otherwise render the page the usual way. Both paths
+  // must end up with identical markup -- asserted by diffing the two in
+  // test/landing-first-paint.test.js -- so every later querySelector in this file behaves the same.
+  var ssrHero = appEl.querySelector('.hub-hero[data-ssr-hero]');
+  var ssrHeroCopy = ssrHero && ssrHero.querySelector('.hub-hero-copy');
+  if (ssrHeroCopy) {
+    ssrHero.removeAttribute('data-ssr-hero'); // consumed: a later re-render takes the full path
+    ssrHeroCopy.insertAdjacentHTML('beforeend', heroCopyRestHtml);
+    ssrHero.insertAdjacentHTML('beforeend', heroStatsHtml);
+    ssrHero.insertAdjacentHTML('afterend', pageBodyHtml);
+    var newsHtml = renderNewsBanner(kind);
+    if (newsHtml) ssrHero.insertAdjacentHTML('beforebegin', newsHtml);
+  } else {
+    appEl.innerHTML =
+      renderNewsBanner(kind) +
+      '<div class="hub-hero">' +
+      '<div class="hub-hero-copy">' + heroTopHtml + heroCopyRestHtml + '</div>' +
+      heroStatsHtml +
+      '</div>' +
+      pageBodyHtml;
+  }
 
   if (repTrack) loadCategorySampleQuestion();
   // Replays a tap on the server-rendered hero CTA that happened before this bundle loaded -- see

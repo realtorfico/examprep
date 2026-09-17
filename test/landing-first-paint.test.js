@@ -244,6 +244,68 @@ test('other categories keep the generic per-kind copy', async (t) => {
   assert.match(document.getElementById('category-hero-subhead').textContent, /^Practice questions for your state's notary exam/);
 });
 
+// ---- 2a3. The client keeps the server's hero instead of rebuilding it -------------------------
+
+// Replacing all of #app on boot destroyed the paragraph the visitor had been reading since ~1.2s
+// and built a new one. The rebuilt node is a hair larger (28,400px² vs 27,384px², a line-wrap
+// difference), so the browser recorded a NEW, larger LCP candidate at ~3.6s -- same words, same
+// place, different DOM node. Measured on /cdl: LCP 3.2-4.4s in most runs, 1.2s when the two boxes
+// happened to come out the same size, which is why it looked intermittent.
+const SSR_HERO = '<div class="hub-hero" data-ssr-hero="1"><div class="hub-hero-copy">' +
+  '<h1 id="category-hero-headline">CDL Exam Prep</h1>' +
+  '<p id="category-hero-subhead">' + CDL_SUBHEAD + '</p>' +
+  '<div class="hub-hero-cta hub-hero-cta-early">' +
+  '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
+  '</div></div></div>';
+
+async function bootWithSsrHero(t, slug) {
+  const booted = await bootApp({ url: 'https://passexamhq.com/' + slug, appHtml: SSR_HERO });
+  t.after(() => booted.dom.window.close());
+  await waitFor(() => booted.document.getElementById('category-state-select'));
+  await settle();
+  return booted;
+}
+
+test('the server-rendered headline and subhead survive the client render', async (t) => {
+  const { document } = await bootApp({ url: 'https://passexamhq.com/cdl', appHtml: SSR_HERO });
+  t.after(() => document.defaultView.close());
+  const before = document.getElementById('category-hero-subhead');
+  const beforeH1 = document.getElementById('category-hero-headline');
+  await waitFor(() => document.getElementById('category-state-select'));
+  await settle();
+
+  assert.equal(document.getElementById('category-hero-subhead'), before, 'the subhead node itself must be the same element -- a replacement is a second LCP candidate');
+  assert.equal(document.getElementById('category-hero-headline'), beforeH1, 'and so must the H1');
+});
+
+test('the hydrated page still renders everything the full render does', async (t) => {
+  const { document } = await bootWithSsrHero(t, 'cdl');
+  for (const id of ['category-state-select', 'category-stats-wrap', 'category-tracks-grid-wrap', 'category-breakdown-wrap', 'category-testimonials-wrap', 'category-sample', 'category-hero-track-link-wrap']) {
+    assert.ok(document.getElementById(id), 'hydrated page is missing #' + id);
+  }
+  assert.ok(document.querySelector('.hub-trust-badges'), 'the trust badges should be appended into the server-rendered hero copy');
+  assert.ok(document.querySelector('.hub-hero-btn-late'), 'and the later CTA');
+  assert.equal(document.querySelectorAll('.hub-hero').length, 1, 'there must be exactly one hero, not the server\'s plus a new one');
+  assert.equal(document.querySelector('.hub-hero').getAttribute('data-ssr-hero'), null, 'the marker should be consumed, so a later re-render takes the normal path');
+});
+
+test('hydrated and full renders produce the same hero markup', async (t) => {
+  // The strong guarantee: whatever order the pieces go in, both paths end up identical, so CSS and
+  // every querySelector in app.js behave the same either way.
+  const hydrated = await bootWithSsrHero(t, 'cdl');
+  const full = await bootCategory(t, 'cdl');
+  const normalise = (html) => html.replace(/ data-ssr-hero="1"/, '');
+  assert.equal(
+    normalise(hydrated.document.querySelector('.hub-hero').outerHTML),
+    normalise(full.document.querySelector('.hub-hero').outerHTML),
+  );
+});
+
+test('the worker marks its hero so the client knows to keep it', () => {
+  assert.match(WORKER, /data-ssr-hero="1"/, '_worker.js should mark the hero it renders');
+  assert.ok(categoryHeroHtml('cdl').includes('data-ssr-hero="1"'));
+});
+
 // ---- 2b. Server header == client header (this is what keeps CLS at zero) ----------------------
 
 // #site-header is an empty div until app.js fills it. Once the hero paints at ~0.8s, that late fill

@@ -138,8 +138,15 @@ function makeFetchStub(overrides, window) {
 // script file evals -- for stubbing a third-party global (window.Stripe, window.turnstile) that
 // app.js reads synchronously during its own top-level/boot-time code, which is too late to stub
 // once eval has already started reading it.
-async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup, trackContentSlugs }) {
-  const dom = new JSDOM(SHELL_HTML, { url: url, runScripts: 'dangerously', pretendToBeVisual: true });
+// appHtml: markup already inside <div id="app"> when the scripts run -- what _worker.js
+// server-renders into a category page (see its SSR-HERO block). app.js is supposed to keep that
+// markup and fill in around it rather than replacing it, so tests that care about the difference
+// need to boot with it present.
+async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup, trackContentSlugs, appHtml }) {
+  const dom = new JSDOM(
+    appHtml ? SHELL_HTML.replace('<div id="app"></div>', '<div id="app">' + appHtml + '</div>') : SHELL_HTML,
+    { url: url, runScripts: 'dangerously', pretendToBeVisual: true },
+  );
   const window = dom.window;
   // path=/ must match exactly what setStateCookie() itself always writes -- a cookie set with a
   // different (or default) path is a DIFFERENT cookie to a real browser (and to jsdom, correctly),
