@@ -1464,7 +1464,15 @@ function withSeoMeta(response, canonicalHref, meta, heroHtml, geoState, headerHt
     },
   });
   if (heroHtml) {
-    rewriter.on('#app', { element(el) { el.setInnerContent(heroHtml, { html: true }); } });
+    rewriter.on('#app', {
+      element(el) {
+        el.setInnerContent(heroHtml, { html: true });
+        // Holds a viewport of height while the hero is the only thing in #app, so the footer
+        // starts below the fold instead of sliding down as app.js fills the real page in. app.js's
+        // route() drops the class as it renders. See style.css's #app.app-ssr-reserve.
+        el.setAttribute('class', 'app-ssr-reserve');
+      },
+    });
   }
   if (headerHtml) {
     rewriter.on('#site-header', { element(el) { el.setInnerContent(headerHtml, { html: true }); } });

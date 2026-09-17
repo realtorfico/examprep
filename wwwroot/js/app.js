@@ -257,6 +257,13 @@ function renderSiteHeader() {
   // in that cluster and the main cause of the header wrapping badly on phones and on a narrowed
   // desktop window (see user report 2026-08-19). The util cluster now only ever holds font/theme,
   // small enough to never wrap on its own.
+  // Whatever the ribbon is showing right now survives this rebuild. It starts out server-rendered
+  // with the real promo (see the SSR-HEADER block in _worker.js), and fillPromoRibbon() below
+  // replaces it with identical markup once its own fetch lands -- but in between, writing an empty
+  // wrap here collapsed the ribbon to its reserved 2.25rem, so the whole page jumped up ~54px and
+  // then back down. Re-rendering the header (a log-in, a theme change) must not blank it either.
+  var existingRibbon = document.getElementById('promo-ribbon-wrap');
+  var ribbonHtml = existingRibbon ? existingRibbon.innerHTML : '';
   document.getElementById('site-header').innerHTML =
     '<div class="site-shell top-controls">' +
     logo +
@@ -283,7 +290,7 @@ function renderSiteHeader() {
     '<div class="site-mobile-drawer-cta">' + navCtaHtml + '</div>' +
     '</div>' +
     '</div>' +
-    '<div id="promo-ribbon-wrap" class="promo-ribbon"></div>';
+    '<div id="promo-ribbon-wrap" class="promo-ribbon">' + ribbonHtml + '</div>';
   updateThemeButton();
   fillPromoRibbon();
 }
@@ -9322,6 +9329,11 @@ function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
                             // per session), so it needs to close itself independently.
+  // _worker.js marks #app with this class when it server-renders the category hero into it, so CSS
+  // can hold a viewport of height while the hero is the ONLY thing in there -- otherwise the
+  // footer, visible at first paint below a ~320px #app, slides as the real page fills in. Dropped
+  // here, in the same task as the render below, so there's one layout rather than two.
+  document.getElementById('app').classList.remove('app-ssr-reserve');
   trackPageview();
 
   // Category-first: there's no more bare /{state} route to derive hubScopedState from (old

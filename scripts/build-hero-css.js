@@ -39,6 +39,7 @@ const HERO_SELECTORS = new Set([
   'html',
   'body',
   '#app',
+  '#app.app-ssr-reserve', // the first-paint height reservation: must apply before style.min.css attaches
   'h1',
   '.hub-hero',
   '.hub-hero h1',

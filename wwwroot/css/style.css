@@ -198,6 +198,14 @@ body {
      empty margins, but stops at 1680px so text/forms never stretch to an unreadable width. */
   #app { max-width: min(90vw, 1680px); }
 }
+/* Set by _worker.js only while #app holds nothing but the server-rendered category hero (~320px).
+   Without it the site footer, which sits right below #app, is visible at first paint and then
+   slides as app.js fills the real page in -- worth 0.40 of measured CLS on /cdl. One viewport of
+   reserved height puts the footer below the fold from the start, which is where it ends up anyway.
+   Safe in the other direction too: once app.js has rendered, #app is the entire page and always
+   taller than 100vh, so dropping the class (route(), app.js) never pulls content upward.
+   Added 2026-09-17 alongside the server-rendered hero -- see test/landing-first-paint.test.js. */
+#app.app-ssr-reserve { min-height: 100vh; }
 
 h1, h2 { line-height: 1.15; margin: 0; font-family: 'Fraunces', Georgia, 'Times New Roman', serif; letter-spacing: -0.01em; }
 .muted { color: var(--muted); }

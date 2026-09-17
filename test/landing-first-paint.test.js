@@ -216,6 +216,58 @@ test('the real promo ribbon only goes into pages that are not edge-cached', () =
   assert.match(handler, /HEADER_RIBBON_FALLBACK/, 'every other HTML page should get the static, cache-safe fallback ribbon');
 });
 
+// ---- 2c. The client re-render must not undo the server's work ---------------------------------
+
+// Server-rendering the header fixed the hero being shoved DOWN, and uncovered the mirror image:
+// renderSiteHeader() rebuilds the header with an EMPTY ribbon (fillPromoRibbon's fetch fills it a
+// beat later), so on a server-rendered page the ribbon collapsed from its real height to the
+// reserved 2.25rem and everything jumped UP 54px, then back down when the fetch landed. Measured
+// as two more shifts, 0.40 and 0.88. The ribbon's current content has to survive a header
+// re-render.
+test('a header re-render keeps the ribbon that is already on screen', async (t) => {
+  const { document, window } = await bootCategory(t, 'cdl');
+  const wrap = document.getElementById('promo-ribbon-wrap');
+  assert.ok(wrap, 'the header should have a ribbon wrap after the first render');
+  const sentinel = '<div class="promo-banner"><strong>SERVER RENDERED PROMO</strong></div>';
+  wrap.innerHTML = sentinel;
+
+  window.renderSiteHeader();
+
+  const after = document.getElementById('promo-ribbon-wrap');
+  assert.ok(after, 'the ribbon wrap should still exist after a re-render');
+  assert.equal(after.innerHTML, sentinel, 'a header re-render must not blank a ribbon that already has content -- that collapse is a visible jump');
+});
+
+// The footer is a real, visible element at first paint: #app holds only the server-rendered hero
+// (~320px), so on a phone the footer sits at ~838px, inside the viewport, and then slides as #app
+// fills to its real ~5100px. Reserving a viewport's worth of height for #app while it holds only
+// the server hero puts the footer below the fold from the start, where it ends up anyway. Safe in
+// both directions: once app.js renders, #app is the whole page and always taller than 100vh.
+test('the worker marks #app as holding only the server-rendered hero', () => {
+  assert.match(WORKER, /setAttribute\('class', 'app-ssr-reserve'\)|app-ssr-reserve/, '_worker.js should mark #app so CSS can reserve a viewport of height for the server-only render');
+});
+
+test('style.css reserves a viewport of height for the server-only render', () => {
+  assert.match(STYLE_CSS, /#app\.app-ssr-reserve\s*\{[^}]*min-height:\s*100vh/, 'style.css should carry the #app.app-ssr-reserve reservation');
+  const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
+  assert.match(heroCss, /app-ssr-reserve/, 'the reservation must be in hero.css too -- it has to apply at the very first paint, before style.min.css attaches');
+});
+
+test('app.js drops the reservation once it renders the real page', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  assert.equal(document.getElementById('app').classList.contains('app-ssr-reserve'), false, 'app.js should remove the reservation class when it renders, so the class never outlives the server-only state');
+});
+
+test('index.html preloads the two hero fonts', () => {
+  // Both are declared in hero.css, but the browser only discovers a @font-face URL when it applies
+  // the rule to text -- measured at 2127ms and 2710ms, well after the hero paints, so the headline
+  // rendered in a fallback face and then reflowed 4px (a 0.007 shift).
+  for (const font of ['inter-var-latin.woff2', 'fraunces-var-latin.woff2']) {
+    const pattern = new RegExp('<link rel="preload" as="font" type="font/woff2" href="/fonts/' + font.replace('.', '\\.') + '" crossorigin>');
+    assert.match(INDEX, pattern, font + ' should be preloaded (crossorigin is required for fonts, or the preload is fetched twice)');
+  }
+});
+
 // ---- 3. The hero paints styled, and app.min.js stops being last in the queue -------------------
 
 test('index.html loads hero.css as a blocking stylesheet', () => {
