@@ -5718,9 +5718,11 @@ async function renderResources() {
     // they're logged in, same "show all, lock what's ineligible" treatment as everywhere else in
     // this feature -- resourcesRowsCache already drives a real badge + "Unlock →" CTA for the
     // logged-out case, so folding topic ownership in here is all that's needed; nothing else about
-    // this row's rendering has to change. Untagged/"General Reference" resources (r.topic falsy)
-    // aren't tied to any purchasable topic, so they're never gated by ownership.
-    var ownsTopic = !accountOwnedTopics || !r.topic || accountOwnedTopics.indexOf(r.topic) !== -1;
+    // this row's rendering has to change. Untagged and "General Reference" resources aren't tied to any
+    // purchasable topic, so they're never gated by ownership. (The old check only looked for a falsy
+    // topic, but every General Reference row carries that literal string, so they were locked for every
+    // topic buyer until 2026-09-16. The server applies the same rule -- see resourceAvailableTo.)
+    var ownsTopic = !accountOwnedTopics || !r.topic || r.topic === 'General Reference' || accountOwnedTopics.indexOf(r.topic) !== -1;
     var unlocked = (loggedIn && ownsTopic) || !!r.free;
     var url = unlocked ? (r.url || (r.file ? (API_BASE + signedUrls[r.file]) : null)) : null;
     return {

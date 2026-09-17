@@ -18,6 +18,7 @@ const PUBLIC_CATALOG = {
       { id: 'ca_cdl:paid-deck', type: 'flashcards', title: 'Air Brake Deck', desc: 'Cards.', topic: TOPIC, free: false },
       { id: 'ca_cdl:paid-pdf', type: 'pdf', title: 'Paid Handbook PDF', desc: 'Link.', topic: TOPIC, free: false },
       { id: 'ca_cdl:other-table', type: 'table', title: 'Other Topic Table', desc: 'Specs.', topic: OTHER_TOPIC, free: false },
+      { id: 'ca_cdl:general-table', type: 'table', title: 'General Reference Table', desc: 'Orientation.', topic: 'General Reference', free: false },
       { id: 'ca_cdl:free-table', type: 'table', title: 'Free Table', desc: 'Free.', topic: TOPIC, free: true,
         table: { headers: ['Fact', 'Value'], rows: [['Free fact', 'FREE-ROW-VALUE']] } },
     ],
@@ -29,6 +30,7 @@ const CONTENT_RESPONSE = {
     'ca_cdl:paid-deck': { flashcards: [{ front: 'PAID-CARD-FRONT', back: 'PAID-CARD-BACK', source: 'fixture' }] },
     'ca_cdl:paid-pdf': { url: 'https://example.com/paid-handbook.pdf' },
     'ca_cdl:other-table': { table: { headers: ['Spec', 'Value'], rows: [['Other', 'OTHER-TOPIC-ROW-VALUE']] } },
+    'ca_cdl:general-table': { table: { headers: ['Fact', 'Value'], rows: [['Class system', 'GENERAL-REFERENCE-ROW-VALUE']] } },
     'ca_cdl:free-table': { table: { headers: ['Fact', 'Value'], rows: [['Free fact', 'FREE-ROW-VALUE']] } },
   },
 };
@@ -134,4 +136,24 @@ test('à la carte buyer: an un-owned topic row stays locked and never renders it
   assert.match(row.textContent, /Locked/);
   assert.equal(row.querySelector('[data-act="toggle-resource-media"]'), null, 'no open button on a locked row');
   assert.ok(!document.body.textContent.includes('OTHER-TOPIC-ROW-VALUE'));
+});
+
+test('à la carte buyer: a paid General Reference resource is unlocked (not tied to any purchasable topic) and opens', async (t) => {
+  const { dom, window, document } = await bootApp({
+    url: 'https://passexamhq.com/cdl/ca#/resources',
+    localStorageItems: { examprep_token: 'test-token-abc' },
+    fetchOverrides: [
+      ['/prefs', { examType: 'ca_cdl', ownedTopics: [TOPIC] }],
+      ['/resources/progress', { items: [] }],
+      ['/resources/sign-batch', { urls: {} }],
+      ['/resources/content', CONTENT_RESPONSE],
+      ['/resources/catalog', PUBLIC_CATALOG],
+    ],
+  });
+  t.after(() => dom.window.close());
+  await waitFor(() => rowFor(document, 'General Reference Table') !== null);
+  await settle();
+  assert.doesNotMatch(rowFor(document, 'General Reference Table').textContent, /Locked/, 'General Reference must not be locked for a topic buyer');
+  await openRow(window, document, 'General Reference Table');
+  assert.ok(document.body.textContent.includes('GENERAL-REFERENCE-ROW-VALUE'));
 });
