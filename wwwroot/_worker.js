@@ -1443,20 +1443,59 @@ function siteHeaderHtml(ribbonHtml) {
 //
 // Best-effort by design: any failure falls back to the same static tagline app.js's own
 // fillPromoRibbon() catch path renders, so a slow or erroring API costs the page nothing.
+// >>> SSR-CACHE
+// The two subrequests below sit in front of the HTML response on every no-store page -- the
+// category landing pages, which are the Google Ads destinations. Nothing in either is
+// per-visitor: the home-placement promo and the refund percentage are the same for everyone for
+// minutes at a time, so they are cached at the edge instead of re-fetched per request.
+//
+// TTL is deliberately short. The client re-fetches /promotions itself after boot and reconciles
+// the ribbon, so a minute of staleness in the server-rendered copy is invisible; a longer TTL
+// would mean a newly activated promo code takes real time to appear in the first paint.
+//
+// The key is namespaced under /__ssr-cache/ rather than being the API path itself: /promotions and
+// /config are also real routes the browser fetches, and caching a server-side copy (with
+// server-side headers) under those exact URLs would put it in the way of the client's own request.
+// Error responses are never cached -- a 503 under a 60s TTL would hand the same failure to every
+// visitor for the next minute.
+const SSR_CACHE_TTL_SECONDS = 60;
+
+async function ssrApiJson(env, url, path) {
+  const keyUrl = new URL('/__ssr-cache' + path, url.origin).toString();
+  const key = new Request(keyUrl, { method: 'GET' });
+  try {
+    const cache = caches.default;
+    const hit = await cache.match(key);
+    if (hit) return await hit.json();
+    const res = await env.API.fetch(new Request(new URL(path, url.origin)));
+    if (!res.ok) return null;
+    const body = await res.text();
+    const cacheable = new Response(body, {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + SSR_CACHE_TTL_SECONDS },
+    });
+    await cache.put(key, cacheable);
+    return JSON.parse(body);
+  } catch (e) {
+    return null; // every caller has its own fallback -- see ssrRibbonHtml
+  }
+}
+// <<< SSR-CACHE
+
 async function ssrRibbonHtml(env, url, kind) {
   try {
     const promoPath = '/promotions?placement=home' + (kind ? '&kind=' + encodeURIComponent(kind) : '');
-    const [promoRes, cfgRes] = await Promise.all([
-      env.API.fetch(new Request(new URL(promoPath, url.origin))),
-      env.API.fetch(new Request(new URL('/config', url.origin))),
+    const [promoData, cfg] = await Promise.all([
+      ssrApiJson(env, url, promoPath),
+      ssrApiJson(env, url, '/config'),
     ]);
-    const promos = promoRes.ok ? ((await promoRes.json()).promotions || []) : [];
-    const cfg = cfgRes.ok ? ((await cfgRes.json()) || {}) : {};
-    return headerPromoRibbonHtml(promos[0] || null, cfg);
+    const promos = (promoData && promoData.promotions) || [];
+    return headerPromoRibbonHtml(promos[0] || null, cfg || {});
   } catch (e) {
     return HEADER_RIBBON_FALLBACK;
   }
 }
+
 
 // heroHtml: server-rendered first-paint content for <div id="app"> (see the SSR-HERO block above),
 // '' for any route that isn't a category landing page.
