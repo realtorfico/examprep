@@ -420,11 +420,11 @@ var SITE_YEAR = 2026; // static — Date.now() isn't reliably available in this 
 // Also seeds progressAccuracyPassPct/progressCoveragePassPct (declared further down, alongside
 // the Progress tab) so logged-out pages like Buy can quote them too -- the Progress tab's own
 // /progress fetch still re-syncs them for a logged-in user, this is just the pre-login source.
-// The Purchase conversion in the Google Ads account whose tag the page loads (AW-18460635935, see
-// gtag-init.js). EMPTY on purpose: that account replaced the original one (AW-1046929025) on
-// 2026-09-18 and has no Purchase conversion action yet. The old account's label would point at a tag
-// this page no longer loads, so nothing fires until the new label goes here ('AW-18460635935/<label>').
-var GOOGLE_ADS_PURCHASE_SEND_TO = '';
+// The "Purchase (1)" conversion action in the Google Ads account whose tag the page loads
+// (AW-18460635935, see gtag-init.js), which replaced the original account (AW-1046929025) on
+// 2026-09-18. Only the send_to is taken from Google's event snippet -- its click-handler wrapper and
+// fixed 36.99 value don't apply here, since this fires on a completed purchase with the real amount.
+var GOOGLE_ADS_PURCHASE_SEND_TO = 'AW-18460635935/jF5zCJS-1_wcEJ_m2-JE';
 
 // Fires the Google Ads "Purchase" conversion (GOOGLE_ADS_PURCHASE_SEND_TO), added 2026-09-08
 // for the paid search campaigns. Called ONLY from the two genuine-money paths (Stripe purchase and
