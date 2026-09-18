@@ -2477,3 +2477,75 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   display: grid; gap: 0.3rem; font-size: 0.7rem; text-transform: uppercase;
   letter-spacing: 0.07em; color: var(--hero-quiet);
 }
+
+/* --- Hero panel: breathing room ---------------------------------------------------------------
+   Second pass on the crowding (user: "can't you at least give some vertical spaces... make it
+   similar to /cdl1"). The structural fix is in app.js -- every state control moved to the side
+   column -- and this gives the two columns the prototype's rhythm: real padding, a visible gap
+   between blocks, and the side column's controls grouped as their own card. */
+.hub-hero-panel {
+  display: grid; gap: 1.5rem; padding: 1.8rem 1.35rem 1.7rem;
+}
+.hub-hero-panel .hub-hero-copy { display: grid; gap: 0; align-content: start; }
+.hub-hero-panel .hub-hero-kicker { margin: 0 0 0.75rem; }
+.hub-hero-panel #category-hero-subhead { margin: 0.85rem 0 0; }
+.hub-hero-panel .hub-hero-seal { margin: 1.15rem 0 0; }
+.hub-hero-panel .hub-hero-cta { margin: 1.6rem 0 0; gap: 0.7rem; }
+.hub-hero-panel .hub-hero-cta-early { margin: 1.4rem 0 0; }
+
+/* The side column: the state row and the spec panel as two cards with air between them. */
+.hub-hero-side { display: grid; gap: 0.9rem; align-content: start; min-width: 0; }
+.hub-hero-side #category-state-row-wrap {
+  display: grid; gap: 0.7rem;
+  padding: 1rem 1.05rem 1.1rem; border-radius: var(--radius-2xl);
+  background: color-mix(in srgb, black 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-deep-foreground) 14%, transparent);
+}
+/* Inside that card the banner needs no box of its own -- the card IS the box. */
+.hub-hero-panel #category-state-row-wrap .category-state-detected-banner {
+  background: transparent; border: 0; padding: 0; margin: 0;
+}
+.hub-hero-panel .category-state-select { width: 100%; }
+.hub-hero-panel .category-waitlist-prompt { margin: 0; }
+.hub-hero-panel .category-spec { padding: 1.15rem 1.2rem 1.3rem; }
+.hub-hero-panel .category-spec-facts { gap: 0.5rem; }
+.hub-hero-panel .category-spec-chips-label { margin: 1.15rem 0 0.55rem; }
+.hub-hero-panel .category-spec-inv { margin: 1.15rem 0 0; gap: 0.5rem; }
+
+@media (min-width: 900px) {
+  .hub-hero-panel {
+    grid-template-columns: 1.08fr 0.92fr; gap: 2.4rem;
+    padding: 2.4rem 2.4rem 2.2rem; align-items: start;
+  }
+  .hub-hero-panel .hub-hero-copy { grid-column: 1; }
+  .hub-hero-side { grid-column: 2; }
+}
+
+/* --- The state picker as a real control -------------------------------------------------------
+   User: "the drop-down with values looks horrible". Two separate problems. The field itself was a
+   light form input sitting on a dark panel, with the browser's default arrow. And the popup LIST is
+   drawn by the OS, so it stayed light no matter what the field looked like -- `color-scheme: dark`
+   is what makes the native list render dark, and the option rules cover the browsers that ignore
+   it. The panel is navy in both themes, so this is correct in light mode too. */
+.hub-hero-panel .category-state-select {
+  appearance: none; -webkit-appearance: none;
+  color-scheme: dark;
+  width: 100%; padding: 0.65rem 2.4rem 0.65rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid color-mix(in srgb, var(--accent-deep-foreground) 26%, transparent);
+  background-color: color-mix(in srgb, black 30%, transparent);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23e8edf7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  color: var(--accent-deep-foreground);
+  font-size: 0.95rem; font-weight: 600; font-family: inherit; cursor: pointer;
+}
+.hub-hero-panel .category-state-select:hover {
+  border-color: color-mix(in srgb, var(--accent-deep-foreground) 42%, transparent);
+}
+.hub-hero-panel .category-state-select:focus-visible {
+  outline: 2px solid var(--hero-gold); outline-offset: 1px; border-color: transparent;
+}
+.hub-hero-panel .category-state-select option {
+  background-color: var(--accent-deep); color: var(--accent-deep-foreground); font-weight: 500;
+}

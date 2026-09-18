@@ -3118,18 +3118,28 @@ function renderCategoryPage(kind) {
   //   - "Preview Free Resources": moved next to the free sample, which is where someone who wants
   //     to try before buying is already looking.
   // What's left is one question (which state), one action, and one link onward.
+  // Left column, below the server-rendered copy: the action, and one link onward. The state row,
+  // the picker and the waitlist prompt moved to the side column on 2026-09-17 -- eight stacked
+  // elements in one column is what made the hero read as crowded, and grouping every "which exam am
+  // I looking at" control on the right is what the prototype does.
   var heroCopyRestHtml =
-    (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
-    (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
-    (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>';
 
-  // The hero's second column (stats), a sibling of .hub-hero-copy inside .hub-hero.
-  var heroStatsHtml =
-    '<div id="category-stats-wrap">' + categorySpecPanelHtml(repTrack, slug) + '</div>';
+  // The side column: which state, then what that state's exam looks like and what comes with it.
+  // Two wrappers on purpose -- the state row holds the <select> that fires the change event, so
+  // re-rendering the spec panel on a pick must not pull the picker out from under the visitor.
+  var heroSideHtml =
+    '<div class="hub-hero-side">' +
+    '<div id="category-state-row-wrap">' +
+    (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
+    (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
+    '</div>' +
+    '<div id="category-stats-wrap">' + categorySpecPanelHtml(repTrack, slug) + '</div>' +
+    '</div>';
 
   // The rest of the page, after .hub-hero.
   // What the category page keeps, after the 2026-09-17 consolidation. Everything removed here was
@@ -3157,7 +3167,7 @@ function renderCategoryPage(kind) {
   if (ssrHeroCopy) {
     ssrHero.removeAttribute('data-ssr-hero'); // consumed: a later re-render takes the full path
     ssrHeroCopy.insertAdjacentHTML('beforeend', heroCopyRestHtml);
-    ssrHero.insertAdjacentHTML('beforeend', heroStatsHtml);
+    ssrHero.insertAdjacentHTML('beforeend', heroSideHtml);
     ssrHero.insertAdjacentHTML('afterend', pageBodyHtml);
     var newsHtml = renderNewsBanner(kind);
     if (newsHtml) ssrHero.insertAdjacentHTML('beforebegin', newsHtml);
@@ -3166,7 +3176,7 @@ function renderCategoryPage(kind) {
       renderNewsBanner(kind) +
       '<div class="hub-hero hub-hero-panel">' +
       '<div class="hub-hero-copy">' + heroTopHtml + heroCopyRestHtml + '</div>' +
-      heroStatsHtml +
+      heroSideHtml +
       '</div>' +
       pageBodyHtml;
   }

@@ -331,3 +331,17 @@ body.t1 { background: var(--bg); color: var(--fg); }
 .t1-state.is-confirmed .t1-state-note { display: none; }
 .t1-price-after { font-size: 0.92rem; color: var(--fg); }
 .t1-price-after strong { font-size: 1.05rem; }
+
+/* The state picker as a real control -- see the matching block in style.css for why color-scheme
+   matters here: the popup list is drawn by the OS and stays light without it. */
+.t1-state select {
+  appearance: none; -webkit-appearance: none;
+  color-scheme: dark;
+  padding: 0.65rem 2.4rem 0.65rem 0.8rem;
+  background-color: color-mix(in srgb, black 30%, transparent);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23e8edf7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.85rem center;
+  cursor: pointer;
+}
+.t1-state select:hover { border-color: color-mix(in srgb, var(--accent-deep-foreground) 45%, transparent); }
+.t1-state select option { background-color: var(--accent-deep); color: var(--accent-deep-foreground); font-weight: 500; }
