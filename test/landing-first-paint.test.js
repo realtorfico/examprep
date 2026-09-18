@@ -581,9 +581,12 @@ test('the site serves the subset fonts, not the full downloads', () => {
 
 // ---- 3. The hero paints styled, and app.min.js stops being last in the queue -------------------
 
-test('index.html loads hero.css as a blocking stylesheet', () => {
-  assert.match(INDEX, /<link rel="stylesheet" href="\/css\/hero\.css\?v=\d+">/, 'the server-rendered hero needs its critical CSS applied at first paint, so this one must be a plain blocking <link> (not the preload + deferred-attach path style.min.css uses)');
-  assert.ok(fs.existsSync(HERO_CSS_FILE), 'wwwroot/css/hero.css should exist');
+test('index.html carries the critical CSS in the document itself', () => {
+  // Was a blocking <link> to /css/hero.css until 2026-09-17, when PageSpeed flagged it as the
+  // page's only render-blocking request. Now inlined, allowed by a CSP hash rather than
+  // 'unsafe-inline' -- see test/critical-css-inline.test.js for the hash and its drift guard.
+  assert.match(INDEX, /<!-- BEGIN-CRITICAL-CSS[^>]*--><style>@/, 'the server-rendered hero needs its critical CSS applied at first paint, with no request in front of it');
+  assert.ok(fs.existsSync(HERO_CSS_FILE), 'wwwroot/css/hero.css should still be generated -- it is the input to the hash');
 });
 
 test('index.html preloads app.min.js at high priority, at the version it actually loads', () => {
