@@ -177,6 +177,84 @@ test('CSS: on mobile the promo ribbon is one slim line, not three', () => {
     'which needs a positioned parent');
 });
 
+// ---- The page ends with one calm card, not a second hero ---------------------------------------
+
+test('the category page closes with the light guarantee card, not the navy band', async (t) => {
+  // User, 2026-09-17: "since we already have a hero box at the top, maybe that bottom hero should be
+  // replaced with what you already had on the /cdl1 page". Two reasons beyond the repetition: the
+  // band said the guarantee twice (a paragraph, then two cards repeating it), and on the category
+  // page its cards were styled with the light --surface-2 fill while inheriting the band's cream
+  // text -- the live page had two near-illegible cards.
+  const { document } = await bootCategory(t, 'cdl');
+  assert.equal(document.querySelector('.category-guarantee .guarantee-band'), null, 'the navy band is gone from this page');
+  const card = document.querySelector('.category-norisk');
+  assert.ok(card, 'expected the No-Risk card');
+  assert.match(card.textContent, /Two guarantees/);
+  assert.equal(card.querySelectorAll('.category-norisk-row').length, 2, 'pass-or-back, and the 7-day refund');
+  assert.ok(card.querySelector('a[href="#/guarantee"]'), 'and the link to the full terms');
+});
+
+test('the card states the real conditions, not just the headline number', async (t) => {
+  const { document } = await bootCategory(t, 'cdl');
+  const card = document.querySelector('.category-norisk');
+  assert.match(card.textContent, /180 days/, 'the window the refund actually has');
+  for (const cls of ['js-refund-pct', 'js-accuracy-pct', 'js-coverage-pct']) {
+    assert.ok(card.querySelector('.' + cls), 'the figures must come from config, not be hardcoded: ' + cls);
+  }
+});
+
+test('config patches every figure in the card, not only the refund percent', async (t) => {
+  const { document } = await bootCategory(t, 'cdl', {
+    // Field names as /config actually returns them -- see loadSiteConfig().
+    fetchOverrides: [['/config', { refundFailurePercent: 60, accuracyPassPct: 81, coveragePassPct: 91 }]],
+  });
+  await settle();
+  const card = document.querySelector('.category-norisk');
+  assert.equal(card.querySelector('.js-refund-pct').textContent, '60');
+  assert.equal(card.querySelector('.js-accuracy-pct').textContent, '81', 'the accuracy threshold was never swept on this page');
+  assert.equal(card.querySelector('.js-coverage-pct').textContent, '91');
+});
+
+test('a scored exam gets only the refund it actually has', async (t) => {
+  const { document } = await bootCategory(t, 'act', {
+    fetchOverrides: [['/track-registry', { tracks: [{
+      examType: 'act', stateCode: 'US', examKind: 'ACT', shortName: 'ACT',
+      active: true, isExamRequired: true, questionCount: 215, durationSec: 10800,
+      passPercent: null, minCorrect: null, mechanicsNote: '',
+    }] }]],
+  });
+  const card = document.querySelector('.category-norisk');
+  assert.ok(card, 'the card still renders');
+  assert.equal(card.querySelectorAll('.category-norisk-row').length, 1, 'just the 7-day refund');
+  assert.ok(!/don't pass/i.test(card.textContent), 'got: ' + card.textContent);
+  assert.ok(!/Two guarantees/.test(card.textContent), 'and it does not claim two of them');
+});
+
+test('the navy band is untouched on the pages that still use it', async (t) => {
+  // guaranteeCtaBandHtml() also renders on track landing, #/gift and #/refer -- this change is the
+  // category page only.
+  const booted = await bootApp({ url: 'https://passexamhq.com/cdl/ca' });
+  t.after(() => booted.dom.window.close());
+  await waitFor(() => booted.document.querySelector('.guarantee-band, nav.tabs'));
+  await settle();
+  assert.ok(booted.document.querySelector('.guarantee-band'), 'the track landing page keeps the band');
+});
+
+// ---- Room to breathe in the hero ---------------------------------------------------------------
+
+test('CSS: the hero blocks are separated, not stacked tight', () => {
+  // User, 2026-09-17: "can we increase the vertical gaps between different sections on that hero
+  // box, eg. above 'Covers the general ...', above 'See what's included ...' button."
+  const gap = (re, min) => {
+    const m = CSS.match(re);
+    assert.ok(m, 'missing rule: ' + re);
+    assert.ok(parseFloat(m[1]) >= min, re + ' should be at least ' + min + 'rem, got ' + m[1]);
+  };
+  gap(/\.hub-hero-panel \.hub-hero-cta \{[^}]*gap:\s*([\d.]+)rem/, 1);
+  gap(/\.category-hero-coverage \.category-spec-chips-label \{[^}]*margin-top:\s*([\d.]+)rem/, 1.5);
+  gap(/\.category-hero-proof \{[^}]*margin:\s*([\d.]+)rem/, 1.2);
+});
+
 // ---- Everything above still follows the state picker -------------------------------------------
 
 test('switching state re-renders the proof line with the new state\'s count', async (t) => {

@@ -3222,7 +3222,7 @@ function renderCategoryPage(kind) {
     '<div id="category-next-step-wrap">' + categoryNextStepHtml(repTrack) + '</div>' +
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     '<div id="category-testimonials-wrap">' + categoryTestimonialsHtml(content && content.testimonials) + '</div>' +
-    '<div class="category-guarantee">' + guaranteeCtaBandHtml(hasFailGuarantee) + '</div>';
+    '<div class="category-guarantee">' + categoryGuaranteeCardHtml(hasFailGuarantee) + '</div>';
 
   // Keep the worker's hero if it's on screen; otherwise render the page the usual way. Both paths
   // must end up with identical markup -- asserted by diffing the two in
@@ -3259,6 +3259,10 @@ function renderCategoryPage(kind) {
   fillCategoryPrice(repTrack);
   loadSiteConfig().then(function () {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
+    // The closing guarantee card names the accuracy/coverage thresholds too, so this page has to
+    // sweep those spans as well -- it only ever patched the refund percent.
+    document.querySelectorAll('.js-accuracy-pct').forEach(function (el) { el.textContent = progressAccuracyPassPct; });
+    document.querySelectorAll('.js-coverage-pct').forEach(function (el) { el.textContent = progressCoveragePassPct; });
   });
   fillCategoryContent(kind, slug, repTrack);
 }
@@ -3671,6 +3675,44 @@ function howItWorksHtml() {
 // hasFailGuarantee is falsy for scored, non-pass/fail national exams (ACT/DAT/CLT/OAT --
 // track_registry.pass_percent IS NULL) -- there's no "failing" a composite-scored exam, so those
 // tracks only ever get the always-valid 7-day refund, not the "pass or X% back" claim.
+// The category page's own closing guarantee: the /cdl1 prototype's "No-Risk" card rather than
+// guaranteeCtaBandHtml()'s full-width navy band, which the rest of the site still uses. The band
+// was a second hero at the foot of a page that already opens with one (user, 2026-09-17), it stated
+// the guarantee twice over (a paragraph, then two cards repeating it), and on this page its cards
+// carried the light --surface-2 fill while inheriting the band's cream text -- two unreadable boxes
+// on the live page.
+// Conditions: the percentages are config-driven spans (swept in renderCategoryPage once /config
+// lands, same as the FAQ's), and the accuracy/coverage thresholds are named rather than glossed as
+// "study the track" -- they are what the refund actually turns on. See the #/guarantee page.
+function categoryGuaranteeCardHtml(hasFailGuarantee) {
+  var row = function (icon, label, body) {
+    return '<div class="category-norisk-row">' +
+      '<span class="category-norisk-icon" aria-hidden="true">' + icon + '</span>' +
+      '<p><strong>' + label + '</strong> ' + body + '</p></div>';
+  };
+  var sevenDay = row('↩️', '7-day refund.', 'Changed your mind? Full refund within 7 days of purchase, no questions asked.');
+  if (!hasFailGuarantee) {
+    // Scored, not pass/fail (ACT/DAT/CLT/OAT): there is no real exam to fail, so there is one
+    // guarantee here, and the heading says so.
+    return '<section class="category-norisk">' +
+      '<span class="section-eyebrow">No-risk</span>' +
+      '<h2>Our guarantee</h2>' + sevenDay +
+      '<p class="category-norisk-more"><a href="#/guarantee">Read the guarantee →</a></p>' +
+      '</section>';
+  }
+  return '<section class="category-norisk">' +
+    '<span class="section-eyebrow">No-risk</span>' +
+    '<h2>Two guarantees</h2>' +
+    row('🛡️', 'Pass or <span class="js-refund-pct">' + refundFailurePercent + '</span>% back.',
+      'Keep your Progress tab above <span class="js-accuracy-pct">' + progressAccuracyPassPct +
+      '</span>% accuracy and <span class="js-coverage-pct">' + progressCoveragePassPct +
+      '</span>% coverage, sit the real exam within 180 days, and if you don\'t pass we refund ' +
+      '<span class="js-refund-pct">' + refundFailurePercent + '</span>% of what you paid.') +
+    sevenDay +
+    '<p class="category-norisk-more"><a href="#/guarantee">Read the guarantee →</a></p>' +
+    '</section>';
+}
+
 function guaranteeCtaBandHtml(hasFailGuarantee) {
   if (!hasFailGuarantee) {
     return '<section class="guarantee-band">' +

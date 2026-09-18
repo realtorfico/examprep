@@ -2465,7 +2465,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-hero-panel .hub-hero-kicker { margin: 0 0 0.75rem; }
 .hub-hero-panel #category-hero-subhead { margin: 0.85rem 0 0; }
 .hub-hero-panel .hub-hero-seal { margin: 1.15rem 0 0; }
-.hub-hero-panel .hub-hero-cta { margin: 1.6rem 0 0; gap: 0.7rem; }
+.hub-hero-panel .hub-hero-cta { margin: 1.6rem 0 0; gap: 1.15rem; }
 .hub-hero-panel .hub-hero-cta-early { margin: 1.4rem 0 0; }
 
 /* The side column: the state row and the spec panel as two cards with air between them. */
@@ -2551,7 +2551,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    its own "%" -- the live line read "... questions · 50" / "% refunded if you don't pass". Inline
    text with margins on the separator instead. */
 .category-hero-proof {
-  margin: 1rem 0 0; font-size: 0.95rem; font-weight: 600; max-width: 34rem; line-height: 1.55;
+  margin: 1.5rem 0 0; font-size: 0.95rem; font-weight: 600; max-width: 34rem; line-height: 1.55;
 }
 .category-hero-proof strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; }
 .category-hero-proof-sep { opacity: 0.45; margin: 0 0.45rem; }
@@ -2563,7 +2563,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* The coverage chips, moved here from the spec panel. Held to the copy's measure so they wrap like
    the sentence above them rather than running the full width of the panel. */
 .category-hero-coverage { max-width: 34rem; }
-.category-hero-coverage .category-spec-chips-label { margin-top: 1.1rem; }
+.category-hero-coverage .category-spec-chips-label { margin-top: 1.75rem; }
 
 /* The state note: no longer a bordered callout above the picker (the badge it carried was also
    flagged as too flashy), just a line under the control it's talking about. */
@@ -2605,3 +2605,34 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   .category-hero-proof { font-size: 0.9rem; }
   .category-hero-proof-sep { margin: 0 0.3rem; }
 }
+
+/* ---- The category page's closing guarantee card ----------------------------------------------
+   Replaces guaranteeCtaBandHtml()'s navy band on this page only (the band stays on track landing,
+   #/gift and #/refer). A page that opens with a navy hero panel does not want a second one at the
+   foot, and the band's category-scoped cards were cream text on a light fill -- unreadable. This
+   is the /cdl1 prototype's No-Risk card: a plain surface, one row per guarantee. */
+.category-norisk {
+  margin: 1.75rem 0 0; padding: 1.35rem 1.4rem 1.25rem;
+  border-radius: var(--radius-2xl);
+  background: var(--card); border: 1px solid var(--border);
+  max-width: 34rem;
+}
+.category-norisk h2 { font-size: 1.25rem; margin: 0.35rem 0 0.9rem; }
+.category-norisk-row { display: flex; gap: 0.7rem; align-items: flex-start; margin-top: 0.85rem; }
+.category-norisk-row:first-of-type { margin-top: 0; }
+.category-norisk-icon {
+  flex-shrink: 0; width: 1.85rem; height: 1.85rem; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.category-norisk-row p { margin: 0; font-size: 0.92rem; line-height: 1.55; }
+.category-norisk-row strong { display: block; }
+.category-norisk-more { margin: 1.1rem 0 0; font-size: 0.9rem; }
+
+/* ---- Hero panel: one more pass on the vertical rhythm ----------------------------------------
+   User, 2026-09-17: "can we increase the vertical gaps between different sections on that hero
+   box, eg. above 'Covers the general ...', above 'See what's included ...' button." Each block in
+   the copy column now clears the one above it by roughly its own line height, so the panel reads
+   as four steps (what it is -> act -> proof -> what's covered) rather than one dense stack. */
+
+.category-hero-coverage .category-spec-chips { gap: 0.45rem; }
