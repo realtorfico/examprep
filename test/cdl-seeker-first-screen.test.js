@@ -73,6 +73,17 @@ test('the first screen says how big the bank is and what happens if you fail', a
   assert.match(proof.textContent, /refund/i, 'and the risk reversal, which was three screens down');
 });
 
+test('CSS: the proof line is inline text, so the refund figure cannot wrap away from its %', () => {
+  // Shipped broken for one deploy: the line was a flex container, which makes every inline child a
+  // flex item -- including the <span class="js-refund-pct">50</span> that carries the figure. The
+  // live line read "467 California practice questions · 50" / "% refunded if you don't pass".
+  const rule = CSS.match(/\.category-hero-proof\s*\{[^}]*\}/g) || [];
+  assert.ok(rule.length, 'expected a .category-hero-proof rule');
+  for (const r of rule) {
+    assert.ok(!/display:\s*(flex|inline-flex|grid)/.test(r), 'the proof line must stay inline text: ' + r);
+  }
+});
+
 test('the proof line renders before its count arrives, so it cannot shift the hero', async (t) => {
   // Same trap as the spec panel's inventory: the number is fetched, the line is not. It must exist
   // at first render with a placeholder, or the count landing pushes everything below it down.

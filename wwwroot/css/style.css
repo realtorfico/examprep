@@ -2546,12 +2546,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    the bank was or what happens if you fail, and the state was asked for three times over. These
    rules carry the two blocks that moved into the copy column, and quiet the state note down to a
    footnote under the picker it refers to. */
+/* Deliberately NOT a flex container: the refund percentage is its own <span> (.js-refund-pct, so
+   the real figure can be patched in when /config lands), and as a flex item it wrapped away from
+   its own "%" -- the live line read "... questions · 50" / "% refunded if you don't pass". Inline
+   text with margins on the separator instead. */
 .category-hero-proof {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.45rem;
-  margin: 1rem 0 0; font-size: 0.95rem; font-weight: 600; max-width: 34rem;
+  margin: 1rem 0 0; font-size: 0.95rem; font-weight: 600; max-width: 34rem; line-height: 1.55;
 }
 .category-hero-proof strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; }
-.category-hero-proof-sep { opacity: 0.45; }
+.category-hero-proof-sep { opacity: 0.45; margin: 0 0.45rem; }
 .hub-hero-panel .category-hero-proof {
   color: color-mix(in srgb, var(--accent-deep-foreground) 86%, transparent);
 }
@@ -2593,6 +2596,12 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
     position: absolute; top: 50%; right: 0.35rem; transform: translateY(-50%);
     font-size: 0.85rem; padding: 0.15rem 0.3rem;
   }
-  /* The proof number leads the line on a phone, where it is the only figure above the fold. */
-  .category-hero-proof { font-size: 0.9rem; gap: 0.35rem; }
+  /* The onward link was a full outlined pill wrapping to two lines directly under the gold CTA --
+     two buttons of similar weight, one decision. A plain link on a phone. */
+  .hub-hero-panel .hub-hero-cta .btn-secondary {
+    background: transparent; border-color: transparent; box-shadow: none;
+    padding-left: 0; padding-right: 0; justify-content: flex-start; text-align: left;
+  }
+  .category-hero-proof { font-size: 0.9rem; }
+  .category-hero-proof-sep { margin: 0 0.3rem; }
 }
