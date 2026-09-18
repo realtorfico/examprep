@@ -66,7 +66,7 @@ for (const [directive, origins] of Object.entries(GOOGLE_ADS_REQUIRED)) {
 }
 
 test('site CSP allows the exact Google Ads requests a live page load was seen being blocked', () => {
-  assert.ok(allows(site, 'script-src', 'https://googleads.g.doubleclick.net/pagead/viewthroughconversion/1046929025/'), 'remarketing tag script');
+  assert.ok(allows(site, 'script-src', 'https://googleads.g.doubleclick.net/pagead/viewthroughconversion/18460635935/'), 'remarketing tag script');
   assert.ok(allows(site, 'connect-src', 'https://ad.doubleclick.net/ccm/s/collect'), 'conversion measurement ping (fetch)');
   assert.ok(allows(site, 'img-src', 'https://ad.doubleclick.net/ccm/s/collect'), 'conversion measurement ping (image fallback)');
 });
