@@ -2623,13 +2623,15 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    a font the device already has, so this costs no bytes, needs no font-src change in _headers and
    adds no third-party request to disclose on the privacy page itself.
 
-   Segoe UI and Roboto are in the list where the drop file had only the Apple names, so a Windows or
-   Android reader gets their own system font rather than falling through to Helvetica/Arial -- same
-   intent, applied per platform. Scoped to .static-doc (added by those seven renderers in
-   app-deep.js) rather than to .narrow-page, which the profile, redeem, refer and unsubscribe pages
-   share and which should stay in the brand face. */
+   The list is the drop file's, verbatim. Segoe UI and Roboto were added at first and then taken
+   back out on 2026-09-17: on Windows Chrome -- what the user is reading this on -- Segoe UI matched
+   and won, so the page looked nothing like the file they had picked, which falls through the Apple
+   names to Arial there. Matching the sample matters more than giving each platform its own UI font.
+   Scoped to .static-doc (added by those seven renderers in app-deep.js) rather than to
+   .narrow-page, which the profile, redeem, refer and unsubscribe pages share and which should stay
+   in the brand face. */
 .static-doc {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons',
     'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 0;
 }
