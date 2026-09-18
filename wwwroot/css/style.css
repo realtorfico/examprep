@@ -2615,3 +2615,37 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
    as four steps (what it is -> act -> proof -> what's covered) rather than one dense stack. */
 
 .category-hero-coverage .category-spec-chips { gap: 0.45rem; }
+
+/* ---- The document pages' typeface -------------------------------------------------------------
+   The reader-facing document pages -- Terms, Privacy, About, FAQ, Guarantee, Pass rates, Changelog
+   -- set in the platform's own UI font instead of the site's Inter/Fraunces pairing. From the
+   user's drop file (temp/goodfont.html, Apple's stack). Nothing is downloaded: every name here is
+   a font the device already has, so this costs no bytes, needs no font-src change in _headers and
+   adds no third-party request to disclose on the privacy page itself.
+
+   Segoe UI and Roboto are in the list where the drop file had only the Apple names, so a Windows or
+   Android reader gets their own system font rather than falling through to Helvetica/Arial -- same
+   intent, applied per platform. Scoped to .static-doc (added by those seven renderers in
+   app-deep.js) rather than to .narrow-page, which the profile, redeem, refer and unsubscribe pages
+   share and which should stay in the brand face. */
+.static-doc {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: 0;
+}
+/* Headings too, matching the drop file: a legal page reads as a document, not as a display page.
+   Weight is carried explicitly because Fraunces' own weight axis no longer applies here. */
+.static-doc h1, .static-doc h2, .static-doc h3, .static-doc h4 {
+  font-family: inherit; font-weight: 600; letter-spacing: -0.01em;
+}
+.static-doc h1 { font-size: 1.75rem; }
+.static-doc h2 { font-size: 1.15rem; margin-top: 1.6rem; }
+/* The body copy on these pages is almost entirely .muted paragraphs; give them document line
+   spacing and a slightly stronger colour than the site-wide muted, which is tuned for short labels
+   rather than for pages someone actually reads end to end. */
+.static-doc p, .static-doc li {
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+}
+.static-doc ul { padding-left: 1.15rem; }
+.static-doc li { margin-bottom: 0.35rem; }

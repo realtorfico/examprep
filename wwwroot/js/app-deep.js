@@ -19,7 +19,7 @@ async function renderTerms() {
   var pageTrack = activeTrackForPath(window.location.pathname);
   if (pageTrack) await loadTrackContent(pageTrack.examType);
   var compliance = pageTrack ? trackCompliance(pageTrack.examType) : { orgLine: HUB_FOOTER_ORG_LINE, termsParagraph2: HUB_TERMS_PARAGRAPH2 };
-  appEl.innerHTML = '<div class="narrow-page"><h1>Terms of Use</h1>' +
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Terms of Use</h1>' +
     '<p class="muted">PassExamHQ provides original, independently-authored practice questions for exam preparation purposes only. ' +
     'It is not affiliated with, authorized by, sponsored by, or endorsed by ' + compliance.orgLine + ' ' +
     'or any other government agency. All official state trademarks, examination names, and statutory references are used purely ' +
@@ -45,7 +45,7 @@ function renderPrivacy() {
   var ext = function (href, label) {
     return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
   };
-  appEl.innerHTML = '<div class="narrow-page"><h1>Privacy</h1>' +
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Privacy</h1>' +
     '<p class="muted">Last updated: September 17, 2026</p>' +
 
     '<h2>What we collect</h2>' +
@@ -106,7 +106,7 @@ function renderPrivacy() {
 }
 
 function renderAbout() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>About PassExamHQ</h1>' +
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>About PassExamHQ</h1>' +
     '<p class="muted">PassExamHQ builds independent practice question banks for state and national licensing ' +
     'exams — driver\'s license and CDL knowledge tests, motorcycle endorsements, notary public exams, real ' +
     'estate licensing, boating safety, and more — each one built directly from the current official handbook ' +
@@ -263,7 +263,7 @@ function refreshFaqDynamicSpans() {
 }
 
 function renderFaq() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Frequently Asked Questions</h1>' +
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Frequently Asked Questions</h1>' +
     '<p class="muted">Quick answers on buying, your access code, studying, and the guarantee. Still stuck? ' +
     '<a href="#/contact">Contact us</a> or use the chat bubble in the corner.</p>' +
     FAQ_CATEGORIES.map(function (cat) {
@@ -544,7 +544,7 @@ function renderContact() {
 // /stats/public pass rate, correctly framed as practice-exam performance, not a claim about real
 // official exam outcomes we have no way to measure).
 function renderGuarantee() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Our Guarantee</h1>' + loadingSkeletonHtml(6) + '</div>';
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Our Guarantee</h1>' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([loadSiteConfig(), apiFetch('/stats/public').catch(function () { return null; })]).then(function (results) {
     var stats = results[1];
     var passRateNote = (stats && stats.passRate != null)
@@ -705,7 +705,7 @@ function renderEmbedGenerator() {
 // more directly comparable than they actually are. Same suppression rule/threshold, but the UI
 // copy never states the number, matching the pass-rate table's own existing copy.
 function renderPassRates() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Pass Rate Transparency</h1>' + loadingSkeletonHtml(6) + '</div>';
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Pass Rate Transparency</h1>' + loadingSkeletonHtml(6) + '</div>';
   Promise.all([
     apiFetch('/stats/public').catch(function () { return null; }),
     apiFetch('/stats/pass-rates-by-category').catch(function () { return null; }),
@@ -822,7 +822,7 @@ function changelogValueLabel(field, value) {
 }
 
 function renderChangelog() {
-  appEl.innerHTML = '<div class="narrow-page"><h1>Exam Mechanics Changelog</h1>' + loadingSkeletonHtml(8) + '</div>';
+  appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Exam Mechanics Changelog</h1>' + loadingSkeletonHtml(8) + '</div>';
   apiFetch('/changelog').then(function (res) {
     var items = (res && res.items) || [];
     var rows = items.map(function (it) {
