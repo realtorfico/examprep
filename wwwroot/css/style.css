@@ -2635,19 +2635,36 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
     'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 0;
 }
-/* Headings too, matching the drop file: a legal page reads as a document, not as a display page.
-   Weight is carried explicitly because Fraunces' own weight axis no longer applies here. */
+/* Sizes, weights, colours and line spacing are the drop file's too, not just the family -- the user
+   compared the two pages side by side and the family was the one thing that already matched
+   (2026-09-17: "do that so i can compare apples to apples"). So: 16px body at the sample's near-black
+   #1d1d1f, 24px/400 headings, its link blue, and line-height left at normal rather than the 1.6 a
+   document would usually want. */
 .static-doc h1, .static-doc h2, .static-doc h3, .static-doc h4 {
-  font-family: inherit; font-weight: 600; letter-spacing: -0.01em;
+  font-family: inherit; font-weight: 400; letter-spacing: normal;
 }
-.static-doc h1 { font-size: 1.75rem; }
-.static-doc h2 { font-size: 1.15rem; margin-top: 1.6rem; }
-/* The body copy on these pages is almost entirely .muted paragraphs; give them document line
-   spacing and a slightly stronger colour than the site-wide muted, which is tuned for short labels
-   rather than for pages someone actually reads end to end. */
-.static-doc p, .static-doc li {
-  line-height: 1.6;
-  color: color-mix(in srgb, var(--fg) 82%, transparent);
-}
+.static-doc h1 { font-size: 24px; margin-bottom: 30px; }
+.static-doc h2 { font-size: 19px; margin-top: 30px; }
+.static-doc h3, .static-doc h4 { font-size: 17px; }
+.static-doc p, .static-doc li { font-size: 16px; line-height: normal; }
 .static-doc ul { padding-left: 1.15rem; }
 .static-doc li { margin-bottom: 0.35rem; }
+
+/* The sample is a light-only page, so its ink is applied only in the light theme; the dark theme
+   keeps the site's own foreground, or these pages would be near-black text on a navy ground. */
+:root[data-theme="light"] .static-doc,
+:root:not([data-theme="dark"]) .static-doc,
+:root[data-theme="light"] .static-doc p,
+:root:not([data-theme="dark"]) .static-doc p,
+:root[data-theme="light"] .static-doc li,
+:root:not([data-theme="dark"]) .static-doc li,
+:root[data-theme="light"] .static-doc h1,
+:root:not([data-theme="dark"]) .static-doc h1,
+:root[data-theme="light"] .static-doc h2,
+:root:not([data-theme="dark"]) .static-doc h2 {
+  color: #1d1d1f;
+}
+:root[data-theme="light"] .static-doc a,
+:root:not([data-theme="dark"]) .static-doc a {
+  color: #0066cc;
+}
