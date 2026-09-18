@@ -42,9 +42,11 @@ test('category page for a national track still links to the real track route, no
   const track = findActTrack(window);
   assert.notEqual(track.route, '#', 'ACT\'s route must be a real path, not the inactive-scaffold placeholder');
 
-  const trackCardLink = document.querySelector('.category-current-track-grid a');
-  assert.ok(trackCardLink, 'expected the single-track card to render');
-  assert.equal(trackCardLink.getAttribute('href'), track.route);
+  // The single-track card was removed from this page on 2026-09-17 (it duplicated the state page's
+  // buy card); the next-step CTA is the link that replaced it.
+  const nextStep = document.querySelector('.category-next-step-cta');
+  assert.ok(nextStep, 'expected the next-step CTA to render');
+  assert.equal(nextStep.getAttribute('href'), track.route);
 
   const heroLink = document.querySelector('#category-hero-track-link-wrap a');
   assert.ok(heroLink, 'expected the hero "view full track details" link to render');
@@ -93,16 +95,14 @@ test('a real state track (control case) still shows its breadcrumb state name an
     'a real state track should still show the "pick your state" hint -- guards against the ACT fix over-suppressing it');
 });
 
-test('category page breakdown and sample-question subheads do not claim a national track "varies by state"', async (t) => {
+test('the sample-question subhead does not claim a national track varies by state', async (t) => {
   const { dom, document } = await bootApp({ url: 'https://passexamhq.com/act' });
   t.after(() => dom.window.close());
 
-  const breakdownSubhead = document.querySelector('.category-breakdown p.muted');
-  assert.ok(breakdownSubhead, 'expected the breakdown section to render (ACT has a real breakdown array)');
-  assert.doesNotMatch(breakdownSubhead.textContent, /vary by state/i,
+  // The curriculum breakdown left this page in the 2026-09-17 consolidation (it is the state page's
+  // content). Checking the whole page instead, so the false claim can't reappear anywhere on it.
+  assert.doesNotMatch(document.body.textContent, /vary by state/i,
     'a single national track has no per-state variation -- this claim is simply false for it');
-  assert.doesNotMatch(breakdownSubhead.textContent, /\bNational\b/,
-    'should not fall back to the generic STATE_LABELS.US "National" label for a nationwide breakdown');
 
   const sampleSubhead = document.getElementById('category-sample-subhead');
   assert.ok(sampleSubhead, 'expected the sample-question widget to render');

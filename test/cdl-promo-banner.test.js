@@ -26,20 +26,22 @@ function promotionsResponder(requests) {
   };
 }
 
-test('/cdl category page: ribbon and in-page card show the CDL promo, requested with the CDL kind', async (t) => {
+// The in-page promo card was removed from the category page on 2026-09-17 (the header ribbon
+// already carries the same code -- it was one of the duplications that pass cleared). What still
+// matters, and is what this always really guarded, is that the CDL-scoped promo reaches the ribbon
+// and that the request carries the CDL kind.
+test('/cdl category page: the ribbon shows the CDL promo, requested with the CDL kind', async (t) => {
   const requests = [];
   const { dom, document } = await bootApp({
     url: 'https://passexamhq.com/cdl',
     fetchOverrides: [['/promotions', promotionsResponder(requests)]],
   });
   t.after(() => dom.window.close());
-  await waitFor(() => document.getElementById('category-promotions-wrap').textContent.indexOf('NEWCDL20') !== -1);
-
-  const card = document.getElementById('category-promotions-wrap');
-  assert.match(card.textContent, /20% off full CDL track access/);
-  assert.doesNotMatch(card.textContent, /Student Discount/, 'unscoped promos stay in the ribbon only, not duplicated as a category card');
-
   await waitFor(() => document.getElementById('promo-ribbon-wrap').textContent.indexOf('NEWCDL20') !== -1);
+
+  const ribbon = document.getElementById('promo-ribbon-wrap');
+  assert.match(ribbon.textContent, /20% off full CDL track access/);
+  assert.equal(document.getElementById('category-promotions-wrap'), null, 'the in-page card is gone: the ribbon says this already');
   assert.ok(requests.length > 0);
   requests.forEach((href) => assert.match(href, /kind=Commercial%20Driver%20\(CDL\)|kind=Commercial%20Driver%20%28CDL%29/));
 });
@@ -57,7 +59,7 @@ test('/cdl/ca track landing page shows the CDL promo in its price card', async (
   });
 });
 
-test('/notary category page never shows the CDL promo and renders no category promo card', async (t) => {
+test('/notary category page never shows the CDL promo', async (t) => {
   const requests = [];
   const { dom, document } = await bootApp({
     url: 'https://passexamhq.com/notary',
@@ -66,7 +68,7 @@ test('/notary category page never shows the CDL promo and renders no category pr
   t.after(() => dom.window.close());
   await waitFor(() => document.getElementById('promo-ribbon-wrap').textContent.indexOf('Student Discount') !== -1);
   await settle();
-  assert.equal(document.getElementById('category-promotions-wrap').innerHTML, '');
+  assert.equal(document.getElementById('category-promotions-wrap'), null, 'no in-page promo card on any category page now');
   assert.doesNotMatch(document.body.textContent, /NEWCDL20/);
   requests.forEach((href) => assert.match(href, /kind=Notary/));
 });

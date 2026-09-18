@@ -2398,3 +2398,40 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .hub-hero-panel .category-waitlist-prompt,
 .hub-hero-panel .category-waitlist-prompt summary { color: color-mix(in srgb, var(--accent-deep-foreground) 76%, transparent); }
+
+/* --- Category page: next step + tighter guarantee ---------------------------------------------
+   Consolidation pass, 2026-09-17. The page used to carry a full copy of the state page's buy card;
+   it now carries one line and one button, and the guarantee band gets the compact treatment the
+   /cdl1 prototype used (kicker, two rows, no second column of cards). */
+.category-next-step {
+  margin: 1.5rem 0 0; padding: 1.2rem 1.25rem 1.35rem;
+  border-radius: var(--radius-2xl); background: var(--card); border: 1px solid var(--border);
+  display: grid; gap: 0.45rem; justify-items: start;
+}
+.category-next-step h2 { font-size: 1.2rem; margin: 0; }
+.category-next-step p { margin: 0; font-size: 0.9rem; }
+.category-next-step-cta { margin-top: 0.4rem; padding: 0.7rem 1.4rem; font-weight: 700; text-decoration: none; }
+
+/* The band's own layout is a two-column marketing block; on this page it sits below the decision,
+   so it reads better as a compact card. Scoped -- the band is shared with the track and guarantee
+   pages, which keep the full treatment. */
+.category-guarantee .guarantee-band {
+  display: grid; gap: 0.8rem; margin: 1.5rem 0 0; padding: 1.15rem 1.2rem 1.3rem;
+  border-radius: var(--radius-2xl);
+}
+.category-guarantee .guarantee-band-badge {
+  background: transparent; padding: 0; color: var(--highlight);
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em;
+}
+.category-guarantee .guarantee-band h2 { font-size: 1.2rem; margin: 0.25rem 0 0; }
+.category-guarantee .guarantee-band-copy > p { font-size: 0.9rem; margin: 0.4rem 0 0; }
+.category-guarantee .guarantee-band-cards { display: grid; gap: 0.6rem; margin: 0; }
+.category-guarantee .guarantee-band-card {
+  padding: 0.8rem 0.9rem; border-radius: var(--radius-lg);
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.category-guarantee .guarantee-band-card h3 { font-size: 0.95rem; margin: 0; }
+.category-guarantee .guarantee-band-card p { font-size: 0.86rem; margin: 0.25rem 0 0; }
+@media (min-width: 800px) {
+  .category-guarantee .guarantee-band-cards { grid-template-columns: 1fr 1fr; }
+}

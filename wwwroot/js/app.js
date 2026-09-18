@@ -2697,41 +2697,6 @@ function trackDescExcerpt(description) {
 // this specific state+category's OWN real data (duration/questions/passScore/description already
 // exist per-track in HUB_EXAMS -- no new content needed, this was the compact-card's gap, not a
 // content gap). 2026-08-31 visual pass, mirrors the homepage cards' final look.
-function categoryCurrentTrackHtml() {
-  var track = categoryPageState.repTrack;
-  if (!track) return '<p class="muted">No states are live for this category yet — check back soon.</p>';
-  fillHubPricing([track]);
-  var points = [
-    track.duration ? 'Format: ' + track.duration : '',
-    track.questions ? track.questions : '',
-    track.passScore ? 'Passing score: ' + track.passScore : '',
-  ].filter(Boolean);
-  return '<div class="exam-track-grid category-card-grid category-current-track-grid">' +
-    '<div class="exam-track-card is-active category-nav-card">' +
-    '<a class="category-nav-card-link" href="' + track.route + '">' +
-    '<div class="exam-track-body">' +
-    '<div class="category-nav-card-icon">' + (CATEGORY_ICONS[track.examKind] || '📚') + '</div>' +
-    '<div class="category-nav-card-content">' +
-    '<h3>' + escapeHtml(track.shortName || track.title) +
-    ' <span class="exam-track-price" data-price-for="' + track.examType + '">…</span></h3>' +
-    '<p class="category-nav-card-desc">' + escapeHtml(trackDescExcerpt(trackDescription(track.examType))) + '</p>' +
-    (points.length ? '<ul class="category-nav-card-points">' + points.map(function (p) { return '<li>' + escapeHtml(p) + '</li>'; }).join('') + '</ul>' : '') +
-    (track.active ? '<span class="category-nav-card-statecount"><span class="pulse-dot"></span> Active — start now</span>' : '') +
-    '</div></div>' +
-    '</a>' +
-    // Quick-buy CTA (added 2026-09-02) -- lets an already-decided visitor skip straight to
-    // checkout instead of going through the track detail page first (which is still the default
-    // path via the card link above, and still matters for a first-time visitor who hasn't seen
-    // sample questions/the guarantee yet). Navigates to the track's own route with #/buy appended
-    // rather than just setting location.hash while staying on this category pathname -- #/buy is
-    // only handled by renderTrackApp()'s dispatch, which route() only reaches once the pathname
-    // itself has resolved to a real track (see the delegated click handler's own comment on this).
-    '<div class="exam-track-footer category-nav-card-footer">' +
-    '<a class="category-nav-card-link exam-track-view-link" href="' + track.route + '">View details &amp; pricing →</a>' +
-    '<button type="button" class="btn-primary btn-sm" data-act="category-quick-buy" data-track-route="' + track.route + '">Buy now</button>' +
-    '</div>' +
-    '</div></div>';
-}
 
 function categoryActiveTracks(kind) {
   return HUB_EXAMS.filter(function (e) { return e.examKind === kind && e.active; });
@@ -2861,26 +2826,23 @@ function categoryTestimonialsHtml(testimonials) {
     }).join('') + '</div></section>';
 }
 
-function categoryBreakdownHtml(track) {
-  if (!track || !track.breakdown || !track.breakdown.length) return '';
-  return '<section class="category-breakdown">' +
-    '<p class="section-eyebrow">Curriculum coverage</p>' +
-    '<h2 class="comparison-heading">What\'s Inside the Question Bank</h2>' +
-    // stateCode==='US' is the national single-track placeholder (ACT, and MLO if it ever
-    // activates) -- "exact topics and weighting vary by state" is simply false for a track with no
-    // state variation at all, so that clause is dropped rather than naming a fake state.
-    (track.stateCode !== 'US'
-      ? '<p class="muted">Shown for ' + escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' — exact topics and weighting vary by state.</p>'
-      : '<p class="muted">The same nationwide breakdown for every test-taker.</p>') +
-    (track.sections ? examOutlineTableHtml(track) : '<div class="breakdown-list">' + track.breakdown.map(function (b) {
-      var pct = parseInt(b[1], 10) || 0;
-      return '<div class="breakdown-row"><div class="breakdown-row-top"><span>' + escapeHtml(b[0]) + '</span><span>' + escapeHtml(b[1]) + '</span></div>' +
-        '<div class="breakdown-bar"><div class="breakdown-bar-fill pct-' + pct + '"></div></div></div>';
-    }).join('') + '</div>') +
-    (BREAKDOWN_EXCLUSION_NOTES[track.examType] ? '<p class="breakdown-exclusion-note">ℹ️ ' + escapeHtml(BREAKDOWN_EXCLUSION_NOTES[track.examType]) + '</p>' : '') +
-    '<div class="category-breakdown-cta"><a class="btn-secondary" href="' + track.route + '">See full ' + escapeHtml(track.shortName || '') + ' track details →</a></div>' +
+// Replaces the category page's copy of the buy card (2026-09-17). That card carried the price, the
+// feature list and a Buy now button -- all of which are the STATE page's, where the purchase, the
+// resources and the study hub actually live. Sending someone to two versions of the same card was
+// the biggest of the duplications found in that session's page map. One line, one button.
+//
+// The price deliberately isn't repeated here: it's on the card this replaces a click away, and
+// stating it in two places was one of the repeats that pass got rid of.
+function categoryNextStepHtml(track) {
+  if (!track) return '';
+  var name = escapeHtml(track.shortName || track.title || '');
+  return '<section class="category-next-step">' +
+    '<h2>Ready for the ' + name + ' bank?</h2>' +
+    '<p class="muted">Full access, the mock exam, your progress and every resource live on the ' + name + ' page.</p>' +
+    '<a class="btn-primary category-next-step-cta" href="' + escapeHtml(track.route || '/') + '">Open the ' + name + ' track →</a>' +
     '</section>';
 }
+
 
 // Split out so pick-category-state can refresh it in step with the question itself -- it used to
 // be baked into categorySampleWidgetHtml()'s one-time render, so picking a new state changed the
@@ -3167,16 +3129,22 @@ function renderCategoryPage(kind) {
     '<div id="category-stats-wrap">' + categorySpecPanelHtml(repTrack, slug) + '</div>';
 
   // The rest of the page, after .hub-hero.
+  // What the category page keeps, after the 2026-09-17 consolidation. Everything removed here was
+  // saying something this page (or the state's own track page) already said:
+  //   - trustStripHtml(): the same four claims as the trust badges directly above it in the hero.
+  //   - the "Your <kind> Track" card (price, features, Buy now): that IS the track page's buy card,
+  //     duplicated. Replaced by one line and a button to that state's page, which is where the
+  //     purchase, the resources and the study hub live.
+  //   - the second promo card: the header ribbon already carries the same code.
+  //   - the curriculum breakdown: the hero's spec column names every endorsement, and the
+  //     percentage table is the track page's own content.
+  // See the page map from that session for the full ownership split.
   var pageBodyHtml =
-    trustStripHtml() +
-    '<div class="hub-section-header" id="tracks"><h2>Your ' + escapeHtml(kind) + ' Track</h2></div>' +
-    '<div id="category-promotions-wrap" class="promotions-wrap"></div>' +
-    '<div id="category-tracks-grid-wrap">' + categoryCurrentTrackHtml() + '</div>' +
     categorySampleWidgetHtml() +
-    '<div id="category-breakdown-wrap">' + categoryBreakdownHtml(repTrack) + '</div>' +
+    '<div id="category-next-step-wrap">' + categoryNextStepHtml(repTrack) + '</div>' +
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     '<div id="category-testimonials-wrap">' + categoryTestimonialsHtml(content && content.testimonials) + '</div>' +
-    guaranteeCtaBandHtml(hasFailGuarantee);
+    '<div class="category-guarantee">' + guaranteeCtaBandHtml(hasFailGuarantee) + '</div>';
 
   // Keep the worker's hero if it's on screen; otherwise render the page the usual way. Both paths
   // must end up with identical markup -- asserted by diffing the two in
@@ -3214,7 +3182,6 @@ function renderCategoryPage(kind) {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
   });
   fillCategoryContent(kind, slug, repTrack);
-  fillCategoryPromotions(kind);
 }
 
 // Full promo card(s) for promos scoped to THIS category only (e.g. the CDL-only first-time-customer
@@ -3222,14 +3189,6 @@ function renderCategoryPage(kind) {
 // deliberately left out -- they already get the header ribbon, and adding them here would put a new
 // card (and a new async layout shift) on every category page, not just the ones with their own promo.
 // Sits well below the hero, so an async fill here doesn't shift above-the-fold content.
-function fillCategoryPromotions(kind) {
-  Promise.all([fetchPromotions('home', kind), loadSiteConfig()]).then(function (results) {
-    if (!categoryPageState || categoryPageState.kind !== kind) return; // navigated away
-    var scoped = (results[0].promotions || []).filter(function (p) { return p.requiredTrackKind === kind; });
-    var wrap = document.getElementById('category-promotions-wrap');
-    if (wrap && scoped.length) wrap.innerHTML = promoBannersHtml(scoped, false);
-  }).catch(function () { /* best-effort -- page still works without it */ });
-}
 
 // Patches in the /category-content-derived copy (hero headline/subhead, feature tiles,
 // testimonials) once the fetch resolves, rather than blocking first paint on it -- see the
@@ -8142,10 +8101,21 @@ document.addEventListener('change', function (e) {
     }
     var heroLinkWrap = document.getElementById('category-hero-track-link-wrap');
     if (heroLinkWrap) heroLinkWrap.innerHTML = categoryHeroTrackLinkHtml(newRepTrack);
-    var tracksWrap = document.getElementById('category-tracks-grid-wrap');
-    if (tracksWrap) tracksWrap.innerHTML = categoryCurrentTrackHtml();
-    var breakdownWrap = document.getElementById('category-breakdown-wrap');
-    if (breakdownWrap) breakdownWrap.innerHTML = categoryBreakdownHtml(newRepTrack);
+    // The track card and the curriculum breakdown were removed from this page on 2026-09-17 (both
+    // were the state page's content); what needs re-pointing on a state change is the next-step CTA.
+    var nextStepWrap = document.getElementById('category-next-step-wrap');
+    if (nextStepWrap) nextStepWrap.innerHTML = categoryNextStepHtml(newRepTrack);
+    // The hero's spec panel is entirely per-state -- the exam's format, and that state's own
+    // question bank and materials. Missing from this handler on 2026-09-17 meant picking Texas left
+    // California's "50 Multiple Choice", "40/50 to pass" and "467 practice questions" on screen:
+    // the page quietly lied about the state the visitor had just chosen. Every state-dependent
+    // section added to this page has to be re-rendered here, and asserted in
+    // test/category-page-state-sync.test.js.
+    var specWrap = document.getElementById('category-stats-wrap');
+    if (specWrap) {
+      specWrap.innerHTML = categorySpecPanelHtml(newRepTrack, kindSlug(categoryPageState.kind));
+      fillCategorySpecCounts(newRepTrack);
+    }
     var sampleSubhead = document.getElementById('category-sample-subhead');
     if (sampleSubhead) sampleSubhead.innerHTML = categorySampleSubheadHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');

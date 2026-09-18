@@ -308,7 +308,9 @@ test('the server-rendered headline and subhead survive the client render', async
 
 test('the hydrated page still renders everything the full render does', async (t) => {
   const { document } = await bootWithSsrHero(t, 'cdl');
-  for (const id of ['category-state-select', 'category-stats-wrap', 'category-tracks-grid-wrap', 'category-breakdown-wrap', 'category-testimonials-wrap', 'category-sample', 'category-hero-track-link-wrap']) {
+  // The track card and curriculum breakdown left this page in the 2026-09-17 consolidation (both
+  // were the state page's content); the next-step CTA replaced them.
+  for (const id of ['category-state-select', 'category-stats-wrap', 'category-next-step-wrap', 'category-testimonials-wrap', 'category-sample', 'category-hero-track-link-wrap']) {
     assert.ok(document.getElementById(id), 'hydrated page is missing #' + id);
   }
   assert.ok(document.querySelector('.hub-trust-badges'), 'the trust badges should be appended into the server-rendered hero copy');
