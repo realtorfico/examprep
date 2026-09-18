@@ -25,10 +25,10 @@ jobs:
   regenerate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
       - name: Regenerate SEO meta + sitemap
         run: node scripts/generate-seo-meta.js
       - name: Commit and push if changed

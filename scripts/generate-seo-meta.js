@@ -1,9 +1,10 @@
 // Generates the per-route SEO metadata (title + truncated description) that _worker.js injects
 // into the SPA shell's <title>/<meta name="description"> for every active track page, plus writes
-// wwwroot/sitemap.xml. Title/description/route come from HUB_EXAMS_CONTENT in wwwroot/js/app.js
-// (content-only since the 2026-08-30 track_registry migration); `active` status is no longer a
-// field on those objects at all (it lives in D1 now, the whole point of that migration) -- fetched
-// live from the public /track-registry endpoint instead. This script mechanically derives both
+// wwwroot/sitemap.xml. Title/route come from the track catalog in wwwroot/js/content/*.js (it lived
+// in app.js's HUB_EXAMS_CONTENT until the 2026-09-17 content split -- reading app.js after that found
+// zero tracks, and a run would have dropped ~290 track pages; see loadTracks), descriptions from D1
+// via /track-content; `active` status is no longer a field on those objects at all (it lives in D1
+// now) -- fetched live from the public /track-registry endpoint instead. This script mechanically derives both
 // outputs rather than hand-duplicating title/description text a second time (which would just be
 // one more thing to drift out of sync, like the quote-style bug normalize-hub-exams-quotes.js
 // exists to fix).
@@ -13,14 +14,16 @@
 // brand-new track_registry row, make sure it's actually deployed/live before running this, or the
 // new route will be silently excluded from SEO_META/sitemap.xml this pass (rerun once it's live).
 //
-// Run after adding/changing any HUB_EXAMS_CONTENT entry (new track, retitled description) or
-// flipping a track's active status in admin, before deploying:
+// Runs daily from .github/workflows/regenerate-seo-meta.yml. By hand, after adding/changing a track
+// (new track, retitled description) or flipping a track's active status in admin:
 //   node scripts/generate-seo-meta.js
 // It rewrites the SEO_META block inside _worker.js (between the SEO_META_START/END markers) and
-// regenerates wwwroot/sitemap.xml in place. Idempotent.
+// regenerates wwwroot/sitemap.xml in place. Idempotent. It refuses to write if either would shrink
+// sharply (assertNoLargeDrop), and on any failure prints a GitHub ::error annotation, so the
+// workflow's failure email says what went wrong -- the job logs need repo admin rights to read.
 const fs = require('fs');
 const path = require('path');
-const appJsPath = path.join(__dirname, '..', 'wwwroot', 'js', 'app.js');
+const contentDir = path.join(__dirname, '..', 'wwwroot', 'js', 'content');
 const workerPath = path.join(__dirname, '..', 'wwwroot', '_worker.js');
 const sitemapPath = path.join(__dirname, '..', 'wwwroot', 'sitemap.xml');
 const SITE_ORIGIN = 'https://passexamhq.com';
@@ -82,6 +85,29 @@ const CATEGORY_META = {
     title: 'Real Estate Managing Broker Exam Prep | PassExamHQ',
     description: 'Practice questions for your state managing broker upgrade exam, covering supervisory duties and brokerage law.',
   },
+  // The national single-track exams (added 2026-09-18 -- they went live 9/8-9/15, after this list
+  // was written, so their landing pages never reached the sitemap). Descriptions are the site's own
+  // category blurbs (CATEGORY_DESCRIPTIONS in app.js), cut to their first clause.
+  'act': {
+    label: 'ACT',
+    title: 'ACT Exam Prep — Practice Questions | PassExamHQ',
+    description: 'Prepare for the ACT, the national college-entrance exam used alongside the SAT for admissions decisions.',
+  },
+  'clt': {
+    label: 'CLT',
+    title: 'CLT (Classic Learning Test) Exam Prep | PassExamHQ',
+    description: 'Prepare for the CLT, a classical-education-focused alternative to the SAT and ACT accepted at hundreds of colleges nationwide.',
+  },
+  'dat': {
+    label: 'DAT',
+    title: 'DAT (Dental Admission Test) Exam Prep | PassExamHQ',
+    description: 'Prepare for the DAT, the national admissions exam used by dental schools across the U.S. and Canada.',
+  },
+  'oat': {
+    label: 'OAT',
+    title: 'OAT (Optometry Admission Test) Exam Prep | PassExamHQ',
+    description: 'Prepare for the OAT, the national admissions exam used by optometry schools across the U.S.',
+  },
   'mlo': {
     label: 'Mortgage Loan Origination',
     title: 'NMLS SAFE MLO Exam Prep | PassExamHQ',
@@ -101,61 +127,53 @@ function escapeXml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ---- Extract active HUB_EXAMS entries (route/title/description), string/comment-aware ----
-function findMatchingBracket(s, openIdx) {
-  let depth = 0, inLineComment = false, inSingle = false, inDouble = false;
-  for (let i = openIdx; i < s.length; i++) {
-    const ch = s[i], prev = s[i - 1];
-    if (inLineComment) { if (ch === '\n') inLineComment = false; continue; }
-    if (inSingle) { if (ch === "'" && prev !== '\\') inSingle = false; continue; }
-    if (inDouble) { if (ch === '"' && prev !== '\\') inDouble = false; continue; }
-    if (ch === '/' && s[i + 1] === '/') { inLineComment = true; continue; }
-    if (ch === "'") { inSingle = true; continue; }
-    if (ch === '"') { inDouble = true; continue; }
-    if (ch === '[' || ch === '{') depth++;
-    else if (ch === ']' || ch === '}') { depth--; if (depth === 0) return i; }
+// ---- Every routed track in the catalog (wwwroot/js/content/*.js) ----
+// Each file is one call, window.registerTrackContent(slug, [entries]) -- the same thing the browser
+// and test-support/boot-app.js run, so this reads exactly what the site ships. Entries whose route
+// is '#' (not a page, e.g. MLO while inactive) are skipped.
+function loadTracks() {
+  const tracks = [];
+  for (const file of fs.readdirSync(contentDir).filter((f) => f.endsWith('.js')).sort()) {
+    const src = fs.readFileSync(path.join(contentDir, file), 'utf8');
+    new Function('window', src)({
+      registerTrackContent(slug, entries) {
+        entries.forEach((e) => {
+          if (!e.examType || !e.route || e.route === '#') return;
+          tracks.push({ examType: e.examType, route: e.route, title: e.title || '', description: '' }); // description filled from D1 below
+        });
+      },
+    });
   }
-  throw new Error('no matching bracket found');
+  return tracks;
 }
-const appSrc = fs.readFileSync(appJsPath, 'utf8');
-const startMarker = 'var HUB_EXAMS_CONTENT = [';
-const startIdx = appSrc.indexOf(startMarker);
-if (startIdx === -1) throw new Error("could not find 'var HUB_EXAMS_CONTENT = [' in app.js -- did the content array get renamed again?");
-const arrayStart = startIdx + startMarker.length - 1;
-const arrayEnd = findMatchingBracket(appSrc, arrayStart);
-const arrayInner = appSrc.slice(arrayStart + 1, arrayEnd);
-const objects = [];
-{
-  let inLineComment = false, inSingle = false, inDouble = false, depth = 0, objStart = -1;
-  for (let i = 0; i < arrayInner.length; i++) {
-    const ch = arrayInner[i], prev = arrayInner[i - 1];
-    if (inLineComment) { if (ch === '\n') inLineComment = false; continue; }
-    if (inSingle) { if (ch === "'" && prev !== '\\') inSingle = false; continue; }
-    if (inDouble) { if (ch === '"' && prev !== '\\') inDouble = false; continue; }
-    if (ch === '/' && arrayInner[i + 1] === '/') { inLineComment = true; continue; }
-    if (ch === "'") { inSingle = true; continue; }
-    if (ch === '"') { inDouble = true; continue; }
-    if (ch === '{') { if (depth === 0) objStart = i; depth++; }
-    else if (ch === '}') { depth--; if (depth === 0) objects.push(arrayInner.slice(objStart, i + 1)); }
+
+// A run that would shrink the sitemap or SEO_META by more than 10% is almost certainly this script
+// reading the wrong thing (exactly what happened after the content split), not ~30 pages retired in
+// a day. Refuse, loudly, rather than publish it. A real mass retirement can be written by hand.
+function assertNoLargeDrop(label, before, after) {
+  if (before > 0 && after < before * 0.9) {
+    throw new Error(label + ' would drop from ' + before + ' to ' + after + ' -- refusing to write. ' +
+      'If that many pages really were retired, update the files by hand.');
   }
 }
-function field(obj, name) {
-  const m = obj.match(new RegExp(name + ":\\s*(['\"])((?:\\\\.|(?!\\1).)*)\\1"));
-  if (!m) return null;
-  // m[2] is the raw source text between the quotes, backslash-escapes still literal (e.g.
-  // "Driver\'s" as the 4 characters D-r-i-v-e-r-\-'-s) -- decode before returning so callers get
-  // the true string value, not source syntax. escapeForJs()/escapeXml() re-escape for wherever
-  // this value ends up next; skipping this step double-escapes (see 2026-08-24 SEO-meta bug).
-  return m[2].replace(/\\(.)/g, (_, c) => c);
+
+const USER_AGENT = 'PassExamHQ-seo-regen (+https://github.com/realtorfico/examprep)';
+// Up to 3 tries with a short backoff. The message carries the HTTP status, since it ends up in the
+// workflow's failure annotation (a 403 here from CI would mean Cloudflare is blocking the runner).
+async function fetchJson(url) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' } });
+      if (!res.ok) throw new Error('fetching ' + url + ' failed: HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      lastError = e;
+      if (attempt < 3) await new Promise((r) => setTimeout(r, attempt * 1500));
+    }
+  }
+  throw lastError;
 }
-const allTracks = [];
-objects.forEach((obj) => {
-  const examType = field(obj, 'examType');
-  const route = field(obj, 'route');
-  const title = field(obj, 'title');
-  if (!examType || !route || route === '#') return;
-  allTracks.push({ examType, route, title, description: '' }); // description filled from D1 below
-});
 
 // Track descriptions moved out of app.js into D1 (track_content.description) on 2026-09-05 -- at
 // ~917 B/track they were the largest per-track cost in the JS bundle. Fetched here per-track from
@@ -164,43 +182,43 @@ objects.forEach((obj) => {
 // called it from the client. Slow-ish (a few hundred small requests) but this is a manual build
 // step, not a request path.
 async function fillDescriptions(tracks, origin) {
-  const CONCURRENCY = 12;
-  let cursor = 0, failed = 0;
+  const CONCURRENCY = 6;
+  let cursor = 0;
+  const failed = [];
   async function worker() {
     while (cursor < tracks.length) {
       const t = tracks[cursor++];
+      let why = 'empty description';
       try {
-        const r = await fetch(origin + '/api/track-content?examType=' + encodeURIComponent(t.examType));
-        const body = await r.json();
+        const body = await fetchJson(origin + '/api/track-content?examType=' + encodeURIComponent(t.examType));
         t.description = (body.content && body.content.description) || '';
-      } catch (e) { failed++; }
-      if (!t.description) failed++;
+      } catch (e) { why = e.message; }
+      if (!t.description) failed.push(t.examType + ' (' + why + ')');
     }
   }
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
-  if (failed) {
+  if (failed.length) {
     // Loud, not silent: a missing description would otherwise quietly ship an empty <meta
     // description> for that route, which is exactly the kind of SEO regression nobody notices.
-    throw new Error(failed + ' track description(s) could not be fetched -- refusing to write ' +
-      'SEO_META with empty descriptions. Check the API is reachable and track_content is populated.');
+    throw new Error(failed.length + ' track description(s) could not be fetched -- refusing to write ' +
+      'SEO_META with empty descriptions. First few: ' + failed.slice(0, 5).join('; '));
   }
 }
 
-(async () => {
+async function main() {
   // active status is no longer a field on HUB_EXAMS_CONTENT objects at all -- it lives in D1 (see
   // reference_track_registry_architecture) -- fetch the live, currently-deployed value instead of
   // a source-code literal, same principle as everything else this migration touched.
-  const res = await fetch(TRACK_REGISTRY_URL);
-  if (!res.ok) throw new Error(`fetching ${TRACK_REGISTRY_URL} failed: HTTP ${res.status}`);
-  const registryData = await res.json();
+  const registryData = await fetchJson(TRACK_REGISTRY_URL);
   const activeByExamType = {};
   (registryData.tracks || []).forEach((t) => { activeByExamType[t.examType] = t.active; });
 
+  const allTracks = loadTracks();
   const tracks = allTracks.filter((t) => activeByExamType[t.examType] === true);
   await fillDescriptions(tracks, SITE_ORIGIN);
   const missingFromRegistry = allTracks.filter((t) => !(t.examType in activeByExamType));
   if (missingFromRegistry.length) {
-    console.log('NOTE:', missingFromRegistry.length, 'HUB_EXAMS_CONTENT entries have no matching track_registry row yet (excluded from SEO_META/sitemap this run):', missingFromRegistry.map((t) => t.examType).join(', '));
+    console.log('NOTE:', missingFromRegistry.length, 'catalog entries have no matching track_registry row yet (excluded from SEO_META/sitemap this run):', missingFromRegistry.map((t) => t.examType).join(', '));
   }
 
   // route is '/{kind-slug}/{state}' -- kind-slug is everything up to the last '/'.
@@ -209,9 +227,7 @@ async function fillDescriptions(tracks, origin) {
   // ---- Blog posts (DB-backed, published via admin -- see schema.sql's blog_posts comment) ----
   // Fetched live same as track_registry above, so a newly-published post gets real SEO_META and a
   // sitemap entry on the next daily regen run without a code change of its own.
-  const blogRes = await fetch(BLOG_LIST_URL);
-  if (!blogRes.ok) throw new Error(`fetching ${BLOG_LIST_URL} failed: HTTP ${blogRes.status}`);
-  const blogData = await blogRes.json();
+  const blogData = await fetchJson(BLOG_LIST_URL);
   const blogPosts = blogData.posts || [];
 
   // ---- Write SEO_META block into _worker.js ----
@@ -238,14 +254,15 @@ ${blogPostMetaEntries}
 };`;
 
   let workerSrc = fs.readFileSync(workerPath, 'utf8');
+  const previousSitemap = fs.existsSync(sitemapPath) ? fs.readFileSync(sitemapPath, 'utf8') : '';
   const START = '// SEO_META_START';
   const END = '// SEO_META_END';
   const startPos = workerSrc.indexOf(START);
   const endPos = workerSrc.indexOf(END);
   if (startPos === -1 || endPos === -1) throw new Error('SEO_META_START/END markers not found in _worker.js');
+  const countEntries = (block) => (block.match(/^\s*'\/[^']*':/gm) || []).length;
+  assertNoLargeDrop('SEO_META entries', countEntries(workerSrc.slice(startPos, endPos)), countEntries(seoMetaBlock));
   workerSrc = workerSrc.slice(0, startPos) + START + '\n' + seoMetaBlock + '\n' + workerSrc.slice(endPos);
-  fs.writeFileSync(workerPath, workerSrc, 'utf8');
-  console.log('SEO_META entries written:', tracks.length + Object.keys(CATEGORY_META).length);
 
   // ---- Write sitemap.xml ----
   // Category pages with zero active tracks (e.g. mlo today) are excluded -- a near-empty page isn't
@@ -256,12 +273,27 @@ ${blogPostMetaEntries}
     .concat(GUIDE_URLS.map((u) => SITE_ORIGIN + u))
     .concat(blogPosts.length ? [SITE_ORIGIN + '/blog'] : [])
     .concat(blogPosts.map((p) => SITE_ORIGIN + '/blog/' + p.slug));
+  assertNoLargeDrop('sitemap.xml URLs', (previousSitemap.match(/<loc>/g) || []).length, urls.length);
   const sitemapXml =
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => '  <url><loc>' + escapeXml(u) + '</loc></url>').join('\n')}
 </urlset>
 `;
+  fs.writeFileSync(workerPath, workerSrc, 'utf8');
+  console.log('SEO_META entries written:', tracks.length + Object.keys(CATEGORY_META).length + blogPosts.length + 1);
   fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
   console.log('sitemap.xml URLs written:', urls.length);
-})();
+}
+
+// Only when run directly (node scripts/generate-seo-meta.js / the workflow) -- requiring it, as the
+// tests do, must not fetch or write anything.
+if (require.main === module) {
+  main().catch((e) => {
+    // A GitHub Actions error annotation: shows in the run summary and the failure email.
+    console.log('::error title=SEO meta regen failed::' + String(e && e.message || e).replace(/\r?\n/g, ' '));
+    process.exit(1);
+  });
+}
+
+module.exports = { loadTracks, assertNoLargeDrop, CATEGORY_META };
