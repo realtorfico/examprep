@@ -2435,3 +2435,45 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 800px) {
   .category-guarantee .guarantee-band-cards { grid-template-columns: 1fr 1fr; }
 }
+
+/* --- Hero panel: calmer ------------------------------------------------------------------------
+   User feedback, 2026-09-17: the hero was crowded and the gold too loud, especially in dark mode.
+   Two changes here. The panel lost four elements (see heroCopyRestHtml in app.js). And the gold is
+   now spent in one place -- the CTA -- with everything that used to borrow it (fact labels,
+   inventory figures, the state badge) moved to the panel's own foreground at reduced opacity.
+   --hero-gold is a softened gold used for the remaining text accents; on a dark ground the raw
+   token reads as a highlighter pen. */
+.hub-hero-panel {
+  --hero-gold: color-mix(in srgb, var(--highlight) 78%, var(--accent-deep-foreground));
+  --hero-quiet: color-mix(in srgb, var(--accent-deep-foreground) 62%, transparent);
+}
+.hub-hero-panel .hub-hero-kicker { color: var(--hero-gold); font-weight: 600; }
+/* The CTA keeps the solid gold: it is the one thing on the panel that should shout. Softer glow. */
+.hub-hero-panel .btn-primary { box-shadow: 0 8px 20px -14px color-mix(in srgb, var(--highlight) 55%, transparent); }
+.hub-hero-panel .hub-hero-seal { color: var(--hero-quiet); }
+.hub-hero-panel .hub-hero-seal svg { color: var(--hero-quiet); }
+
+/* Spec panel: labels and figures in the panel's own foreground rather than gold. */
+.category-spec-fact dt { color: var(--hero-quiet); }
+.category-spec-inv strong { color: var(--accent-deep-foreground); }
+.category-spec-inv span { color: var(--hero-quiet); }
+.category-spec-chips-label { color: var(--hero-quiet); }
+
+/* The state row: an outlined chip, not a solid gold pill, and one row instead of a banner plus a
+   separate labelled select. */
+.hub-hero-panel .category-state-detected-banner {
+  background: color-mix(in srgb, black 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent-deep-foreground) 20%, transparent);
+  padding: 0.6rem 0.75rem; margin: 0.9rem 0 0.5rem;
+}
+.hub-hero-panel .category-state-detected-badge {
+  background: transparent; color: var(--hero-gold);
+  border: 1px solid color-mix(in srgb, var(--hero-gold) 45%, transparent);
+  font-weight: 700; font-size: 0.64rem; padding: 0.15rem 0.5rem;
+}
+.hub-hero-panel .category-state-detected-text { font-size: 0.86rem; }
+/* The picker's own label is redundant next to a row that already says what state is shown. */
+.hub-hero-panel .category-state-select-label {
+  display: grid; gap: 0.3rem; font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--hero-quiet);
+}

@@ -89,7 +89,7 @@ test('guard: a dismissed announcement stays dismissed on its own category page',
 
 // ---- 2. Practice button on the first screen ----------------------------------------------------
 
-test('/cdl hero has a "Start Free Practice Test" button right under the subheadline, ahead of badges and state picker', async (t) => {
+test('/cdl hero has a "Start Free Practice Test" button right under the subheadline, ahead of the state picker', async (t) => {
   const { document } = await boot(t, 'https://passexamhq.com/cdl');
   await waitFor(() => document.getElementById('category-hero-subhead'));
   const early = document.getElementById('category-hero-subhead').nextElementSibling;
@@ -97,8 +97,14 @@ test('/cdl hero has a "Start Free Practice Test" button right under the subheadl
   const btn = early.querySelector('button[data-act="scroll-to-category-sample"]');
   assert.ok(btn, 'wired to the same free-sample scroll as the existing button');
   assert.equal(btn.textContent.trim(), 'Start Free Practice Test');
-  const badges = document.querySelector('.hub-hero .hub-trust-badges');
-  assert.ok(early.compareDocumentPosition(badges) & 4, 'early CTA comes before the trust badges');
+  // The trust badges left the hero on 2026-09-17 (the seal and the guarantee card already made
+  // those claims, and the hero read as crowded). The state picker is what the CTA now has to
+  // precede: the point of this test is that the practice button is reachable without scrolling
+  // past the page's form controls.
+  const picker = document.querySelector('.hub-hero .category-state-select-label');
+  assert.ok(picker, 'expected the state picker in the hero');
+  assert.ok(early.compareDocumentPosition(picker) & 4, 'early CTA comes before the state picker');
+  assert.equal(document.querySelector('.hub-hero .hub-trust-badges'), null, 'and the badges are gone from the hero');
 });
 
 test('clicking the early practice button scrolls to the free sample question', async (t) => {

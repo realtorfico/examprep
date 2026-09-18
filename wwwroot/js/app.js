@@ -2797,12 +2797,18 @@ function categoryWaitlistPromptHtml(kind, tracks) {
 // tracks/breakdown wraps) so pick-category-state can refresh it without a full page re-render.
 function categoryHeroTrackLinkHtml(track) {
   if (!track) return '<button class="btn-secondary hub-hero-btn" type="button" data-act="scroll-to-tracks">View Your Track</button>';
-  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>' +
-    // Parity with the "Try Free Sample" question CTA, but for the free resources tab instead --
-    // #/resources needs no login (see renderResources()'s own comment: anonymous visitors get the
-    // server's free-sample allowlist signed), so this is a real, working preview the moment a
-    // state is picked, not a locked teaser.
-    '<a class="btn-secondary hub-hero-btn" href="' + track.route + '#/resources">Preview Free Resources →</a>';
+  // One link out of the hero, not two. The free-resources preview moved down beside the sample
+  // question on 2026-09-17 (see categorySampleWidgetHtml): #/resources needs no login, so it is a
+  // real preview rather than a teaser, and it belongs where someone is already trying things out.
+  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
+}
+
+// The free-resources preview, shown next to the free sample question. Anonymous visitors get the
+// server's free-sample allowlist signed (see renderResources()), so this opens real content.
+function categoryResourcesLinkHtml(track) {
+  if (!track) return '';
+  return '<p class="category-sample-resources"><a href="' + track.route + '#/resources">Preview the free ' +
+    escapeHtml(track.shortName || '') + ' resources →</a></p>';
 }
 
 function categoryFeatureTilesHtml(tiles) {
@@ -2867,6 +2873,7 @@ function categorySampleWidgetHtml() {
     '<h2 class="comparison-heading">Interactive Sample Question <span class="badge locked-preview-badge-live">Live</span></h2>' +
     '<p class="muted" id="category-sample-subhead">' + categorySampleSubheadHtml(track) + '</p>' +
     '<div id="category-sample-question-wrap"><p class="muted">Loading…</p></div>' +
+    '<div id="category-sample-resources-wrap">' + categoryResourcesLinkHtml(track) + '</div>' +
     '</section>';
 }
 
@@ -3103,19 +3110,15 @@ function renderCategoryPage(kind) {
   // Everything below the server-rendered top, still inside .hub-hero-copy: the badges, the state
   // banner and picker, the waitlist prompt and the later CTA. All of it depends on runtime data the
   // worker doesn't have, which is where its hero stops.
+  // Thinned out on 2026-09-17 after the panel landed and the hero read as crowded: it was carrying
+  // eleven separate elements. Gone from here:
+  //   - the four trust badges: "2026 Handbook Aligned" is the seal two lines above, "50% Refund If
+  //     You Fail" is the guarantee card at the foot of the page, and the other two are features
+  //     the spec panel and the state page already list.
+  //   - "Preview Free Resources": moved next to the free sample, which is where someone who wants
+  //     to try before buying is already looking.
+  // What's left is one question (which state), one action, and one link onward.
   var heroCopyRestHtml =
-    '<div class="hub-trust-badges">' +
-    '<span class="hub-trust-badge">✓ 2026 Handbook Aligned</span>' +
-    '<span class="hub-trust-badge">✓ Voice-Enabled Practice</span>' +
-    '<span class="hub-trust-badge">✓ Instant Access</span>' +
-    // Reassurance early, ahead of asking the visitor to engage with the sample question below --
-    // not a replacement for the full guaranteeCtaBandHtml() band, which stays at the bottom of the
-    // page as the closing note. .js-refund-pct is patched by the loadSiteConfig() sweep already
-    // running at the end of this function, same as every other refund-percent mention on the site.
-    // Omitted entirely (not swapped for a substitute claim) for a scored, non-pass/fail category
-    // (ACT/DAT/CLT/OAT) -- there's no "failing" a composite-scored exam to refund against.
-    (hasFailGuarantee ? '<span class="hub-trust-badge">✓ <span class="js-refund-pct">' + refundFailurePercent + '</span>% Refund If You Fail</span>' : '') +
-    '</div>' +
     (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
     (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
     (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
@@ -8116,6 +8119,8 @@ document.addEventListener('change', function (e) {
       specWrap.innerHTML = categorySpecPanelHtml(newRepTrack, kindSlug(categoryPageState.kind));
       fillCategorySpecCounts(newRepTrack);
     }
+    var resourcesWrap = document.getElementById('category-sample-resources-wrap');
+    if (resourcesWrap) resourcesWrap.innerHTML = categoryResourcesLinkHtml(newRepTrack);
     var sampleSubhead = document.getElementById('category-sample-subhead');
     if (sampleSubhead) sampleSubhead.innerHTML = categorySampleSubheadHtml(newRepTrack);
     var sampleWrap = document.getElementById('category-sample-question-wrap');

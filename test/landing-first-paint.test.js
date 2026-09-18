@@ -313,7 +313,11 @@ test('the hydrated page still renders everything the full render does', async (t
   for (const id of ['category-state-select', 'category-stats-wrap', 'category-next-step-wrap', 'category-testimonials-wrap', 'category-sample', 'category-hero-track-link-wrap']) {
     assert.ok(document.getElementById(id), 'hydrated page is missing #' + id);
   }
-  assert.ok(document.querySelector('.hub-trust-badges'), 'the trust badges should be appended into the server-rendered hero copy');
+  // The trust badges left the hero on 2026-09-17; the state row is what now gets appended into the
+  // server-rendered copy, which is the thing this assertion is really for -- that hydration fills
+  // in around the server's markup instead of replacing it.
+  assert.ok(document.querySelector('.hub-hero .category-state-detected-banner, .hub-hero .category-state-select-label'),
+    'the state row should be appended into the server-rendered hero copy');
   assert.ok(document.querySelector('.hub-hero-btn-late'), 'and the later CTA');
   assert.equal(document.querySelectorAll('.hub-hero').length, 1, 'there must be exactly one hero, not the server\'s plus a new one');
   assert.equal(document.querySelector('.hub-hero').getAttribute('data-ssr-hero'), null, 'the marker should be consumed, so a later re-render takes the normal path');
