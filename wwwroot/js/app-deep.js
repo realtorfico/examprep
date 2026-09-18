@@ -46,7 +46,7 @@ function renderPrivacy() {
     return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
   };
   appEl.innerHTML = '<div class="narrow-page static-doc"><h1>Privacy</h1>' +
-    '<p class="muted">Last updated: September 17, 2026</p>' +
+    '<p class="muted">Last updated: September 18, 2026</p>' +
 
     '<h2>What we collect</h2>' +
     '<p class="muted"><strong>Your account and study progress.</strong> Your access code and its status, the tracks ' +
@@ -57,6 +57,8 @@ function renderPrivacy() {
     '<li>buy a track (to send your receipt and access code)</li>' +
     '<li>enter your email at checkout, even if you don\'t finish buying (we may send you a reminder)</li>' +
     '<li>ask for a reminder, join a waitlist for your state, or verify a promo code</li>' +
+    '<li>ask us to email you a link to free practice questions (and, only if you tick the box for them, occasional ' +
+    'study tips and offers, each with a way to unsubscribe)</li>' +
     '<li>join the referral program, refer a friend, or send a gift (we use your friend\'s name and email only to ' +
     'send the invitation or gift and to credit referral points)</li>' +
     '<li>submit a refund claim, issue report, suggestion, or testimonial</li>' +

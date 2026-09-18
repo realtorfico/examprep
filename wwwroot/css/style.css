@@ -723,6 +723,23 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 }
 .exit-intent-status { margin: 0; }
 
+/* CDL "email me the free practice link" card + its desktop exit popup (see studyLinkCardHtml in
+   app.js). Plain like .buy-reminder-card: a fallback for someone not starting today, not a CTA
+   competing with Try-a-question or Get Instant Access. Rendered in the same pass as the page around
+   it, so it never shifts anything. */
+.study-link-card { display: flex; flex-direction: column; gap: 0.5rem; margin: 1.25rem 0; }
+.study-link-title { margin: 0; font-size: 1.1rem; }
+.study-link-intro { margin: 0; font-size: 0.9rem; }
+.study-link-form { display: flex; flex-direction: column; gap: 0.5rem; text-align: left; }
+.study-link-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+/* Keeps the global input look and its 1rem size -- anything under 16px makes iOS zoom on focus. */
+.study-link-row input { flex: 1; width: auto; min-width: 12rem; }
+.study-link-optin { display: flex; gap: 0.45rem; align-items: flex-start; font-size: 0.82rem; color: var(--muted); cursor: pointer; }
+.study-link-optin input { margin: 0.15rem 0 0; flex: none; }
+.study-link-turnstile:empty { display: none; }
+.study-link-status { margin: 0; font-size: 0.85rem; }
+.study-link-done { margin: 0; font-weight: 600; }
+
 /* Post-purchase one-time nudge for whoever skipped buy-referral-source-wrap at checkout -- same
    plain/low-key treatment as .buy-reminder-card, for the same reason (a secondary ask, not
    competing with the real post-purchase CTAs). */

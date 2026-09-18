@@ -2426,6 +2426,7 @@ function renderCategoryPage(kind) {
   var pageBodyHtml =
     categorySampleWidgetHtml() +
     '<div id="category-next-step-wrap">' + categoryNextStepHtml(repTrack) + '</div>' +
+    studyLinkCardHtml(repTrack, 'category_card') +
     '<p class="category-guide-link"><a href="/guides/' + kindSlug(kind) + '-requirements-by-state">See ' + escapeHtml(kind) + ' exam requirements for every state →</a></p>' +
     '<div id="category-testimonials-wrap">' + categoryTestimonialsHtml(content && content.testimonials) + '</div>' +
     '<div class="category-guarantee">' + categoryGuaranteeCardHtml(hasFailGuarantee) + '</div>';
@@ -4426,6 +4427,7 @@ function renderTrackLanding() {
     '</div>' +
     '</div>' +
     trackLandingSampleWidgetHtml() +
+    studyLinkCardHtml(exam, 'track_card') +
     '<section class="track-landing-preview-section">' +
     '<h2>Preview the study hub</h2>' +
     '<p class="muted">Here\'s what Quiz, Exam, and Progress look like inside this track — unlock to start.</p>' +
@@ -5663,6 +5665,189 @@ document.addEventListener('click', function (e) {
 });
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && document.getElementById('exit-intent-modal')) closeExitIntentModal();
+});
+
+// ---- CDL "email me the free practice link" (phase 1 of the CDL email capture, 2026-09-18) --------
+// Chosen over extending the buy-page popup above to /cdl: 87% of CDL landings are phones, where the
+// only trigger a popup can use is a timer, and a timed popup covering the page counts against it in
+// mobile search and in Google Ads' landing-page experience -- on a campaign already limited by ad
+// rank. So it's an inline card on /cdl and every /cdl/{state} track page, plus, on the track pages
+// only, a desktop-only popup when the cursor leaves through the top. Never on /cdl itself (the Ads
+// landing page), never on a touch device, at most once a session, and not after the visitor already
+// asked. The email it sends is built server-side (see the API's handleStudyLinkSubmit); the consent
+// box below is separate, unticked unless ticked, and only recorded -- nothing sends offers until the
+// promo pipeline (unsubscribe link, postal address) exists. See test/study-link-capture.test.js.
+var STUDY_LINK_CATEGORY_SLUGS = { cdl: true };
+// Must match STUDY_LINK_OPT_IN_TEXT in the API -- it's stored as the record of what was agreed to.
+var STUDY_LINK_OPT_IN_TEXT = 'Also send me occasional study tips and offers. Unsubscribe anytime.';
+var STUDY_LINK_EXIT_SESSION_KEY = 'pxq_study_link_exit_shown';
+var STUDY_LINK_SENT_SESSION_KEY = 'pxq_study_link_sent';
+// A cursor that crosses the top edge in the first seconds is someone reaching for a tab they already
+// had open, not someone leaving this page.
+var STUDY_LINK_EXIT_MIN_DWELL_MS = 8000;
+var studyLinkPageShownAt = 0;
+var studyLinkWidgetIds = []; // Turnstile widgets rendered into these forms, removed on route change
+
+function studyLinkOfferedFor(track) {
+  return !!(track && STUDY_LINK_CATEGORY_SLUGS[kindSlug(track.examKind)]);
+}
+
+function sessionFlag(key, set) {
+  try {
+    if (set) sessionStorage.setItem(key, '1');
+    return !!sessionStorage.getItem(key);
+  } catch (ignored) { return false; } // private mode etc.
+}
+
+function studyLinkFormHtml(source) {
+  return '<form class="study-link-form" data-act="study-link-submit" data-source="' + source + '">' +
+    '<div class="study-link-row">' +
+    '<input type="email" name="email" placeholder="you@example.com" autocomplete="email" aria-label="Your email" required>' +
+    '<button class="btn-primary btn-sm" type="submit">Email me the link</button>' +
+    '</div>' +
+    '<label class="study-link-optin"><input type="checkbox" name="marketingOptIn"> ' + STUDY_LINK_OPT_IN_TEXT + '</label>' +
+    // appearance: interaction-only (see mountStudyLinkTurnstile) -- takes no room unless Cloudflare
+    // actually needs the visitor to click something.
+    '<div class="study-link-turnstile"></div>' +
+    '<p class="study-link-status error-text" hidden></p>' +
+    '</form>';
+}
+
+// '' unless this page's track is one the card is offered for. source: 'category_card' | 'track_card'.
+function studyLinkCardHtml(track, source) {
+  if (!studyLinkOfferedFor(track)) return '';
+  studyLinkPageShownAt = Date.now();
+  return '<section class="card study-link-card" id="study-link-card">' +
+    '<h2 class="study-link-title">Not ready to start today?</h2>' +
+    '<p class="muted study-link-intro">We\'ll email you a link to your state\'s free practice questions, so you can pick up where you left off.</p>' +
+    studyLinkFormHtml(source) +
+    '</section>';
+}
+
+// The track the form is for, read at submit time: on /cdl that's whichever state the picker is on now.
+function studyLinkTrackFor(source) {
+  if (source === 'category_card') return categoryPageState ? categoryPageState.repTrack : null;
+  return trackByExamType(state.examType);
+}
+
+function mountStudyLinkTurnstile(form) {
+  if (form.getAttribute('data-widget-id') || TURNSTILE_SITE_KEY.indexOf('REPLACE') !== -1) return;
+  if (window.loadTurnstile) window.loadTurnstile(); // js/turnstile.js -- api.js loads on demand
+  if (!(window.turnstileReady && window.turnstile)) return;
+  var id = window.turnstile.render(form.querySelector('.study-link-turnstile'), {
+    sitekey: TURNSTILE_SITE_KEY,
+    theme: resolvedColorScheme(),
+    appearance: 'interaction-only',
+    callback: function () {},
+  });
+  form.setAttribute('data-widget-id', id);
+  studyLinkWidgetIds.push(id);
+}
+
+// Polls ~10s for this form's own widget token -- by id, never turnstile.getResponse() with no id,
+// since the card and the popup can both have a widget on the same page.
+function studyLinkTurnstileToken(form) {
+  return new Promise(function (resolve) {
+    var attemptsLeft = 50;
+    (function poll() {
+      mountStudyLinkTurnstile(form);
+      var id = form.getAttribute('data-widget-id');
+      var token = '';
+      if (id && window.turnstile) { try { token = window.turnstile.getResponse(id) || ''; } catch (ignored) { token = ''; } }
+      if (token || attemptsLeft-- <= 0) { resolve(token); return; }
+      setTimeout(poll, 200);
+    })();
+  });
+}
+
+// Every widget belongs to a form that route() is about to throw away. Left registered, a later
+// page's plain turnstile.getResponse() (waitForTurnstileToken) could read this one's token instead.
+function removeStudyLinkTurnstiles() {
+  studyLinkWidgetIds.forEach(function (id) {
+    try { if (window.turnstile && window.turnstile.remove) window.turnstile.remove(id); } catch (ignored) { /* already gone */ }
+  });
+  studyLinkWidgetIds = [];
+}
+
+async function submitStudyLink(form) {
+  var source = form.getAttribute('data-source');
+  var track = studyLinkTrackFor(source);
+  var emailEl = form.querySelector('input[name="email"]');
+  var email = emailEl ? emailEl.value.trim() : '';
+  var statusEl = form.querySelector('.study-link-status');
+  var btn = form.querySelector('button[type="submit"]');
+  if (!email || !track) return;
+  btn.disabled = true;
+  statusEl.hidden = true;
+  var turnstileToken = await studyLinkTurnstileToken(form);
+  try {
+    await apiFetch('/study-link', {
+      method: 'POST',
+      body: {
+        email: email,
+        examType: track.examType,
+        source: source,
+        marketingOptIn: form.querySelector('input[name="marketingOptIn"]').checked,
+        turnstileToken: turnstileToken,
+      },
+    });
+  } catch (err) {
+    btn.disabled = false;
+    var widgetId = form.getAttribute('data-widget-id');
+    try { if (widgetId && window.turnstile) window.turnstile.reset(widgetId); } catch (ignored) { /* already gone */ }
+    statusEl.hidden = false;
+    statusEl.textContent = err && err.message === 'invalid_email'
+      ? 'That email address doesn\'t look right. Please check it and try again.'
+      : 'Something went wrong. Please try again.';
+    return;
+  }
+  sessionFlag(STUDY_LINK_SENT_SESSION_KEY, true);
+  // Both copies -- the card and, if it's open, the popup -- so neither still offers to send it.
+  var doneHtml = '<p class="study-link-done">✓ Sent. Check your inbox for your free <strong>' +
+    escapeHtml(track.shortName || track.title) + '</strong> practice link.</p>';
+  document.querySelectorAll('.study-link-form').forEach(function (f) { f.outerHTML = doneHtml; });
+}
+
+function maybeShowStudyLinkExitModal(e) {
+  if (e.clientY > 0) return; // only the "leaving via the top" case
+  var cardForm = document.querySelector('#study-link-card .study-link-form[data-source="track_card"]');
+  if (!cardForm) return; // not on a CDL track page (so never on /cdl), or already asked
+  if (!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
+  if (Date.now() - studyLinkPageShownAt < STUDY_LINK_EXIT_MIN_DWELL_MS) return;
+  if (document.getElementById('study-link-exit-modal') || document.getElementById('exit-intent-modal')) return;
+  if (sessionFlag(STUDY_LINK_SENT_SESSION_KEY) || sessionFlag(STUDY_LINK_EXIT_SESSION_KEY)) return;
+  sessionFlag(STUDY_LINK_EXIT_SESSION_KEY, true);
+  var typed = cardForm.querySelector('input[name="email"]').value.trim();
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="exit-intent-overlay" id="study-link-exit-modal">' +
+    '<div class="card exit-intent-card">' +
+    '<button class="exit-intent-dismiss" type="button" data-act="dismiss-study-link-exit" aria-label="Dismiss">✕</button>' +
+    '<p class="exit-intent-title">Want the free questions by email?</p>' +
+    '<p class="muted">We\'ll send you a link to your state\'s free practice questions, so you can pick up where you left off.</p>' +
+    studyLinkFormHtml('track_exit') +
+    '</div>' +
+    '</div>');
+  var modalEmail = document.querySelector('#study-link-exit-modal input[name="email"]');
+  if (modalEmail) modalEmail.value = typed;
+}
+
+function closeStudyLinkExitModal() {
+  var modal = document.getElementById('study-link-exit-modal');
+  if (modal) modal.remove();
+}
+
+document.addEventListener('mouseleave', maybeShowStudyLinkExitModal);
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'study-link-exit-modal') closeStudyLinkExitModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('study-link-exit-modal')) closeStudyLinkExitModal();
+});
+// Mounting on first focus rather than at render keeps Turnstile's api.js off the landing page for
+// anyone who never touches the form (see js/turnstile.js).
+document.addEventListener('focusin', function (e) {
+  var form = e.target && e.target.closest && e.target.closest('.study-link-form');
+  if (form) mountStudyLinkTurnstile(form);
 });
 
 // Lets someone comparison-shop other active tracks' pricing without leaving the buy flow --
@@ -7045,6 +7230,8 @@ function route() {
   closeHeaderMenuIfOpen(); // runs on every hash/pathname change -- the drawer isn't re-rendered
                             // by a route change (renderSiteHeader() only runs a handful of times
                             // per session), so it needs to close itself independently.
+  closeStudyLinkExitModal(); // lives on <body>, outside #app, so a route change doesn't clear it
+  removeStudyLinkTurnstiles();
   // _worker.js marks #app with this class when it server-renders the category hero into it, so CSS
   // can hold a viewport of height while the hero is the ONLY thing in there -- otherwise the
   // footer, visible at first paint below a ~320px #app, slides as the real page fills in. Dropped
@@ -7449,6 +7636,9 @@ document.addEventListener('submit', async function (e) {
       exitIntentForm.querySelector('button[type="submit"]'),
       closeExitIntentModal
     );
+  } else if (act === 'study-link-submit') {
+    e.preventDefault();
+    await submitStudyLink(e.target);
   }
 });
 
@@ -7588,6 +7778,8 @@ document.addEventListener('click', async function (e) {
     toggleSuggestionPanel();
   } else if (act === 'dismiss-exit-intent') {
     closeExitIntentModal();
+  } else if (act === 'dismiss-study-link-exit') {
+    closeStudyLinkExitModal();
   } else if (act === 'listen') {
     speak(questionReadText(state.question));
   } else if (act === 'answer') {

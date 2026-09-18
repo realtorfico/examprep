@@ -27,7 +27,7 @@ const text = (el) => el.textContent.replace(/\s+/g, ' ');
 
 test('privacy page has a last-updated date and all six sections', async (t) => {
   const page = await privacyPage(t);
-  assert.match(text(page), /Last updated: September 17, 2026/);
+  assert.match(text(page), /Last updated: September 18, 2026/);
   const headings = Array.from(page.querySelectorAll('h2')).map((h) => h.textContent.trim());
   assert.deepEqual(headings, ['What we collect', 'Cookies and browser storage', 'Services we use', 'How we use it', "What we don't do", 'Your choices']);
 });
