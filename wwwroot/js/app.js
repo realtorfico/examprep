@@ -7126,8 +7126,24 @@ function route() {
   else renderHub();
 }
 
-window.addEventListener('hashchange', route);
+// A "#/faq"-style route names no element, so the browser leaves the window wherever it was -- a
+// footer link rendered the new page while the visitor was still looking at the bottom of it. Only
+// "#/" routes: a plain anchor like "#tracks" does its own scrolling (see renderHub). Back to a
+// hash-less page still gets the browser's own scroll restoration.
+function scrollToTopForHashRoute() {
+  if ((location.hash || '').indexOf('#/') === 0) window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', function () {
+  scrollToTopForHashRoute();
+  route();
+});
 window.addEventListener('popstate', route);
+// Clicking the link for the route already on screen fires no hashchange at all, so the same
+// "stuck at the bottom" happened when, say, the footer's FAQ link was clicked from the FAQ page.
+document.addEventListener('click', function (e) {
+  var link = e.target.closest && e.target.closest('a[href^="#/"]');
+  if (link && link.getAttribute('href') === location.hash) scrollToTopForHashRoute();
+});
 
 // ---- Answer handling (shared by click + voice) -----------------------------
 
