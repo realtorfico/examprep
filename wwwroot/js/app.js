@@ -2776,7 +2776,11 @@ function categoryStateSelectHtml(tracks, selectedState) {
 function categoryWaitlistPromptHtml(kind, tracks) {
   var activeCodes = {};
   tracks.forEach(function (t) { activeCodes[t.stateCode] = true; });
-  var missing = Object.keys(STATE_LABELS).filter(function (code) { return !activeCodes[code]; })
+  // 'US' is the national-track placeholder, not a state (STATE_LABELS.US is 'National'). Leaving it
+  // in meant a category with all 50 real states -- CDL, Driver, Notary -- still had one "missing"
+  // entry, so the page asked "don't see your state?" and offered to notify the visitor when
+  // National launches. Reported by the user 2026-09-17.
+  var missing = Object.keys(STATE_LABELS).filter(function (code) { return code !== 'US' && !activeCodes[code]; })
     .sort(function (a, b) { return STATE_LABELS[a].localeCompare(STATE_LABELS[b]); });
   if (!missing.length) return '';
   var options = missing.map(function (code) { return '<option value="' + code + '">' + escapeHtml(STATE_LABELS[code]) + '</option>'; }).join('');

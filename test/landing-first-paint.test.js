@@ -725,3 +725,29 @@ test('with no state signal at all the banner still says it is only an example', 
   assert.ok(banner, 'the fallback banner should show');
   assert.ok(/as an example/.test(banner.textContent), 'expected the existing example wording, got: ' + banner.textContent);
 });
+
+// ---- The waitlist prompt only when states are genuinely missing --------------------------------
+
+test('a category with all 50 states offers no "get notified" prompt', async (t) => {
+  // STATE_LABELS carries the 'US' national-track placeholder ("National"), and it was counted as a
+  // missing state -- so CDL, with all 50 real states live, still asked "Don't see your state?" and
+  // offered to notify the visitor when National launched. User-reported, 2026-09-17.
+  const { document, window } = await bootCategory(t, 'cdl');
+  const states = window.HUB_EXAMS.filter((e) => e.examKind === 'Commercial Driver (CDL)' && e.stateCode !== 'US');
+  assert.ok(states.length >= 50, 'fixture should have all 50 CDL states, has ' + states.length);
+  assert.equal(document.querySelector('.category-waitlist-prompt'), null,
+    'nothing is missing, so there is nothing to be notified about');
+});
+
+test('a category that really is missing states still offers the prompt', async (t) => {
+  // Boating is live in a subset of states, so this is the control case: the fix must not remove the
+  // prompt everywhere.
+  const { document, window } = await bootCategory(t, 'boating');
+  const covered = new Set(window.HUB_EXAMS.filter((e) => e.examKind === 'Boating').map((e) => e.stateCode));
+  const missing = Object.keys(window.STATE_LABELS).filter((c) => c !== 'US' && !covered.has(c));
+  assert.ok(missing.length > 0, 'fixture should have states without a boating track');
+  const prompt = document.querySelector('.category-waitlist-prompt');
+  assert.ok(prompt, 'a category with real gaps should still offer the waitlist');
+  const options = [...prompt.querySelectorAll('option')].map((o) => o.value).filter(Boolean);
+  assert.ok(!options.includes('US'), 'and "National" must never be offered as a state to wait for');
+});
