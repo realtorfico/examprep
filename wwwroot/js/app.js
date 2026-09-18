@@ -2740,11 +2740,14 @@ function categoryStateDetectedBannerHtml(track, stateSource) {
   if (stateSource === 'geo') text = 'Based on your location, we\'re showing <strong>' + stateName + '</strong> exam info.';
   else if (stateSource === 'cookie') text = 'We\'re showing <strong>' + stateName + '</strong> exam info.';
   else text = 'We couldn\'t detect your state, so <strong>' + stateName + '</strong> is shown as an example.';
-  return '<div class="category-state-detected-banner' + (isFallback ? ' category-state-detected-banner--unknown' : '') + '" id="category-state-detected-banner">' +
-    '<span class="category-state-detected-badge">' + (isFallback ? '❓ Example State' : '📍 Showing Your State') + '</span>' +
-    '<span class="category-state-detected-text">' + text +
-    ' Not right? <button type="button" class="btn-link" data-act="focus-category-state-select">Pick your state below ↓</button></span>' +
-    '</div>';
+  // Reshaped 2026-09-17: this was a bordered callout with an amber "📍 Showing Your State" badge
+  // and a "Pick your state below ↓" link, stacked ABOVE the picker and its own "Select your state"
+  // label -- three elements and two pieces of chrome to ask one question. The user flagged the
+  // amber badge as too flashy in the same pass. It's now one quiet line directly under the picker,
+  // which is the thing it's telling you to use. The three claims are unchanged.
+  return '<p class="category-state-detected-banner' + (isFallback ? ' category-state-detected-banner--unknown' : '') + '" id="category-state-detected-banner">' +
+    '<span class="category-state-detected-text">' + text + ' Not right? Pick another state above.</span>' +
+    '</p>';
 }
 
 // Where the state currently on screen came from: 'geo' (detected from this request's connection --
@@ -2769,7 +2772,7 @@ function categoryStateSelectHtml(tracks, selectedState) {
         return '<option value="' + t.stateCode + '"' + (t.stateCode === selectedState ? ' selected' : '') + '>' + escapeHtml(STATE_LABELS[t.stateCode] || t.stateCode) + '</option>';
       })
   );
-  return '<label class="category-state-select-label">Select your state' +
+  return '<label class="category-state-select-label">Your state' +
     '<select id="category-state-select" class="category-state-select" data-act="pick-category-state">' + options.join('') + '</select></label>';
 }
 
@@ -2807,7 +2810,8 @@ function categoryHeroTrackLinkHtml(track) {
   // One link out of the hero, not two. The free-resources preview moved down beside the sample
   // question on 2026-09-17 (see categorySampleWidgetHtml): #/resources needs no login, so it is a
   // real preview rather than a teaser, and it belongs where someone is already trying things out.
-  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">View full ' + escapeHtml(track.shortName || '') + ' track details →</a>';
+  // "Track" is our word for a state's course, not a word a CDL seeker uses -- 2026-09-17.
+  return '<a class="btn-secondary hub-hero-btn" href="' + track.route + '">See what\'s included for ' + escapeHtml(track.shortName || '') + ' →</a>';
 }
 
 // The free-resources preview, shown next to the free sample question. Anonymous visitors get the
@@ -2992,6 +2996,38 @@ function drawCategorySampleQuestion() {
 //
 // Values render as an em dash until their fetch lands, and a track with nothing recorded keeps the
 // dash rather than claiming a zero -- same rule as the homepage's "only show if real" tiles.
+// The endorsement/section chips, which moved out of the spec panel and into the hero's copy column
+// on 2026-09-17. Two reasons: on desktop the left column ended at the CTA and left ~400px of empty
+// navy beside a full right column, and "is my endorsement in here" is a question about what the
+// product covers -- it reads as part of the sentence above it, not as a spec-sheet row.
+function categoryCoverageChipsHtml(slug) {
+  var copy = CATEGORY_HERO_COPY[slug];
+  if (!copy || !copy.chips || !copy.chips.length) return '';
+  return '<p class="category-spec-chips-label">' + escapeHtml(copy.chipsLabel || 'Also covered:') + '</p>' +
+    '<ul class="category-spec-chips">' + copy.chips.map(function (c) {
+      return '<li>' + escapeHtml(c) + '</li>';
+    }).join('') + '</ul>';
+}
+
+// One line of proof directly under the hero CTA: how big this state's bank is, and what happens if
+// they fail. Both were real answers the page only gave three screens down (the inventory in the
+// side panel, below the fold on a phone; the guarantee band at the foot). The count is filled by
+// fillCategorySpecCounts() from the same /questions/counts response the panel uses -- the line
+// renders with a dash first so a late count can't push the hero down.
+// hasFailGuarantee is false for the scored, non-pass/fail exams (ACT/DAT/CLT/OAT, passPercent IS
+// NULL): there is no "fail the real exam" there, so the line offers the 7-day refund instead --
+// same split guaranteeCtaBandHtml() already makes.
+function categoryHeroProofHtml(track, hasFailGuarantee) {
+  if (!track) return '';
+  var stateName = track.stateCode && track.stateCode !== 'US' ? escapeHtml(STATE_LABELS[track.stateCode] || track.stateCode) + ' ' : '';
+  var risk = hasFailGuarantee
+    ? '<span class="js-refund-pct">' + refundFailurePercent + '</span>% refunded if you don\'t pass'
+    : 'Full refund within 7 days';
+  return '<p class="category-hero-proof">' +
+    '<strong id="category-hero-qcount">—</strong> ' + stateName + 'practice questions' +
+    '<span class="category-hero-proof-sep">·</span>' + risk + '</p>';
+}
+
 function categorySpecPanelHtml(track, slug) {
   if (!track) return '';
   var copy = CATEGORY_HERO_COPY[slug];
@@ -3005,17 +3041,11 @@ function categorySpecPanelHtml(track, slug) {
       fact('Time limit', track.duration) +
       '</dl>'
     : '';
-  var chips = (copy && copy.chips && copy.chips.length)
-    ? '<p class="category-spec-chips-label">' + escapeHtml(copy.chipsLabel || 'Also covered:') + '</p>' +
-      '<ul class="category-spec-chips">' + copy.chips.map(function (c) {
-        return '<li>' + escapeHtml(c) + '</li>';
-      }).join('') + '</ul>'
-    : '';
   var inv = function (id, label) {
     return '<li><strong id="' + id + '">—</strong><span>' + label + '</span></li>';
   };
   return '<div class="category-spec">' +
-    facts + chips +
+    facts +
     '<ul class="category-spec-inv">' +
     inv('category-inv-questions', 'practice questions') +
     inv('category-inv-tables', 'quick-fact tables') +
@@ -3049,7 +3079,10 @@ async function fillCategorySpecCounts(track) {
   try {
     var res = await apiFetch('/questions/counts');
     var row = (res.counts || []).filter(function (c) { return c.exam_type === track.examType; })[0];
-    if (row && row.count) set('category-inv-questions', row.count.toLocaleString());
+    if (row && row.count) {
+      set('category-inv-questions', row.count.toLocaleString());
+      set('category-hero-qcount', row.count.toLocaleString()); // the hero's proof line, same number
+    }
   } catch (e) { /* best-effort -- the dash stays */ }
 }
 
@@ -3152,7 +3185,11 @@ function renderCategoryPage(kind) {
     '<div class="hub-hero-cta">' +
     '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try a free question</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
-    '</div>';
+    '</div>' +
+    // Added 2026-09-17: the proof line, then what's covered. Both belong beside the copy -- see
+    // categoryHeroProofHtml() and categoryCoverageChipsHtml() for why each moved here.
+    '<div id="category-hero-proof-wrap">' + categoryHeroProofHtml(repTrack, hasFailGuarantee) + '</div>' +
+    '<div class="category-hero-coverage">' + categoryCoverageChipsHtml(slug) + '</div>';
 
   // The side column: which state, then what that state's exam looks like and what comes with it.
   // Two wrappers on purpose -- the state row holds the <select> that fires the change event, so
@@ -3160,8 +3197,10 @@ function renderCategoryPage(kind) {
   var heroSideHtml =
     '<div class="hub-hero-side">' +
     '<div id="category-state-row-wrap">' +
-    (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
+    // Picker first, then the line about where this state came from: it reads as a footnote to the
+    // control it refers to, instead of a callout the visitor has to get past to reach the control.
     (tracks.length && hasRealStates ? categoryStateSelectHtml(tracks, selectedState) : '') +
+    (tracks.length && hasRealStates && repTrack && categoryPageState.isDefaulted ? categoryStateDetectedBannerHtml(repTrack, stateSource) : '') +
     (hasRealStates ? categoryWaitlistPromptHtml(kind, tracks) : '') +
     '</div>' +
     '<div id="category-stats-wrap">' + categorySpecPanelHtml(repTrack, slug) + '</div>' +
@@ -8141,6 +8180,10 @@ document.addEventListener('change', function (e) {
     }
     var heroLinkWrap = document.getElementById('category-hero-track-link-wrap');
     if (heroLinkWrap) heroLinkWrap.innerHTML = categoryHeroTrackLinkHtml(newRepTrack);
+    // The hero's proof line names the state and carries that state's bank size -- both wrong the
+    // moment the picker moves. (The chips beside it are per-category, not per-state, so they stay.)
+    var proofWrap = document.getElementById('category-hero-proof-wrap');
+    if (proofWrap) proofWrap.innerHTML = categoryHeroProofHtml(newRepTrack, categoryPageState.hasFailGuarantee);
     // The track card and the curriculum breakdown were removed from this page on 2026-09-17 (both
     // were the state page's content); what needs re-pointing on a state change is the next-step CTA.
     var nextStepWrap = document.getElementById('category-next-step-wrap');

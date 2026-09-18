@@ -2564,3 +2564,60 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 @media (min-width: 900px) {
   .hub-hero-panel #category-hero-subhead { font-size: 1.2rem; }
 }
+
+/* ---- The CDL-seeker first screen, 2026-09-17 --------------------------------------------------
+   Read the live page as someone who lands from an ad: the left column of the desktop hero ended at
+   the CTA (≈400px of empty navy beside a full right column), nothing above the fold said how big
+   the bank was or what happens if you fail, and the state was asked for three times over. These
+   rules carry the two blocks that moved into the copy column, and quiet the state note down to a
+   footnote under the picker it refers to. */
+.category-hero-proof {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.45rem;
+  margin: 1rem 0 0; font-size: 0.95rem; font-weight: 600; max-width: 34rem;
+}
+.category-hero-proof strong { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; }
+.category-hero-proof-sep { opacity: 0.45; }
+.hub-hero-panel .category-hero-proof {
+  color: color-mix(in srgb, var(--accent-deep-foreground) 86%, transparent);
+}
+.hub-hero-panel .category-hero-proof strong { color: var(--hero-gold); }
+
+/* The coverage chips, moved here from the spec panel. Held to the copy's measure so they wrap like
+   the sentence above them rather than running the full width of the panel. */
+.category-hero-coverage { max-width: 34rem; }
+.category-hero-coverage .category-spec-chips-label { margin-top: 1.1rem; }
+
+/* The state note: no longer a bordered callout above the picker (the badge it carried was also
+   flagged as too flashy), just a line under the control it's talking about. */
+.hub-hero-panel .category-state-detected-banner,
+.hub-hero-panel .category-state-detected-banner--unknown {
+  display: block; background: transparent; border: 0; border-radius: 0;
+  padding: 0; margin: 0.5rem 0 0;
+}
+.hub-hero-panel .category-state-detected-text {
+  display: block; font-size: 0.82rem; font-weight: 400; line-height: 1.45;
+  color: color-mix(in srgb, var(--accent-deep-foreground) 70%, transparent);
+}
+.hub-hero-panel .category-state-detected-text strong {
+  font-weight: 700; color: color-mix(in srgb, var(--accent-deep-foreground) 92%, transparent);
+}
+
+@media (max-width: 600px) {
+  /* The promo ribbon ate the top ~200px of the phone -- a discount, in type larger than the page's
+     own subhead, before the visitor knew what was being sold. Three rows because the title inherits
+     .promo-banner-body strong at 1.05rem, the code chip wrapped, and the ✕ took a row of its own.
+     One slim line now; .promo-ribbon's 2.25rem min-height already reserved roughly this much, so
+     the ribbon also stops overshooting its own CLS reservation. */
+  .promo-ribbon .promo-banner {
+    position: relative; padding: 0.4rem 2rem 0.4rem 0.75rem; gap: 0.3rem; row-gap: 0.15rem;
+  }
+  .promo-ribbon .promo-banner-body { font-size: 0.72rem; min-width: 0; }
+  .promo-ribbon .promo-banner-body strong { font-size: 0.78rem; }
+  .promo-ribbon .promo-banner-code { font-size: 0.66rem; padding: 0.1rem 0.4rem; margin-left: 0.3rem; }
+  .promo-ribbon .promo-banner-dismiss {
+    position: absolute; top: 50%; right: 0.35rem; transform: translateY(-50%);
+    font-size: 0.85rem; padding: 0.15rem 0.3rem;
+  }
+  /* The proof number leads the line on a phone, where it is the only figure above the fold. */
+  .category-hero-proof { font-size: 0.9rem; gap: 0.35rem; }
+}
