@@ -2604,6 +2604,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-norisk-row p { margin: 0; font-size: 0.92rem; line-height: 1.55; }
 .category-norisk-row strong { display: block; }
 .category-norisk-more { margin: 1.1rem 0 0; font-size: 0.9rem; }
+/* Centred once there is room: the testimonials above it run the full width, so a 34rem card
+   pinned left read as an orphan with half the row empty. */
+@media (min-width: 800px) { .category-norisk { margin-inline: auto; } }
 
 /* ---- Hero panel: one more pass on the vertical rhythm ----------------------------------------
    User, 2026-09-17: "can we increase the vertical gaps between different sections on that hero
