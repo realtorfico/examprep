@@ -2187,9 +2187,12 @@ function sentenceKindLabel(kind) {
 var CATEGORY_HERO_COPY = {
   cdl: {
     headline: 'CDL Exam Prep',
-    subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
+    // Short on purpose: this is the sentence a visitor reads in the two seconds they give the page,
+    // so it carries the job the site does and nothing else. The terms it used to carry ("all 50
+    // states, instant access, one-time purchase") are on screen anyway -- the state picker, the
+    // spec panel and the price line each say one of them, and better.
+    subhead: 'Practice questions for your state\'s CDL knowledge test, written from that state\'s own official handbook.',
     kicker: 'Commercial driver\'s license',
-    seal: 'Written from your state\'s official CDL handbook — not a generic question bank.',
     // Named in the hero's spec panel: the endorsements are what CDL candidates shop hardest for,
     // and they were previously only visible as topic percentages three screens down. Client-side
     // only -- _worker.js's copy of this map carries just the headline/subhead/kicker/seal it
@@ -3114,12 +3117,12 @@ function renderCategoryPage(kind) {
     '<h1 id="category-hero-headline">' + escapeHtml(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + escapeHtml(subhead) + '</p>' +
     // Mobile-only (CSS shows it under 600px): a practice button on the first screen of the ad landing
-    // page, right under the subheadline -- on a phone the "Try Free Sample" button below sits under the
+    // page, right under the subheadline -- on a phone the "Try a free question" button below sits under the
     // badges, state banner and state picker, well past the first screen. That one gets
     // .hub-hero-btn-late so mobile shows the button once, here. Added 2026-09-17, see
     // test/ad-landing-first-screen.test.js.
     '<div class="hub-hero-cta hub-hero-cta-early">' +
-    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try a free question</button>' +
     '</div>' +
     // Deliberately state-free wording ("your state's"), so the server and the client render the
     // same sentence -- the worker doesn't know the state, and swapping in a state name after boot
@@ -3147,7 +3150,7 @@ function renderCategoryPage(kind) {
   // I looking at" control on the right is what the prototype does.
   var heroCopyRestHtml =
     '<div class="hub-hero-cta">' +
-    '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try Free Sample</button>' +
+    '<button class="btn-primary hub-hero-btn hub-hero-btn-late" type="button" data-act="scroll-to-category-sample">Try a free question</button>' +
     '<div id="category-hero-track-link-wrap">' + categoryHeroTrackLinkHtml(repTrack) + '</div>' +
     '</div>';
 

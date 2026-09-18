@@ -1282,9 +1282,8 @@ function heroSentenceKind(kind) {
 const CATEGORY_HERO_COPY = {
   cdl: {
     headline: 'CDL Exam Prep',
-    subhead: 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.',
+    subhead: 'Practice questions for your state\'s CDL knowledge test, written from that state\'s own official handbook.',
     kicker: 'Commercial driver\'s license',
-    seal: 'Written from your state\'s official CDL handbook — not a generic question bank.',
   },
 };
 const HERO_SEAL_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
@@ -1309,7 +1308,7 @@ function categoryHeroHtml(slug) {
     '<h1 id="category-hero-headline">' + heroEscape(headline) + '</h1>' +
     '<p id="category-hero-subhead">' + heroEscape(subhead) + '</p>' +
     '<div class="hub-hero-cta hub-hero-cta-early">' +
-    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Start Free Practice Test</button>' +
+    '<button class="btn-primary hub-hero-btn" type="button" data-act="scroll-to-category-sample">Try a free question</button>' +
     '</div>' +
     (override && override.seal
       ? '<p class="hub-hero-seal">' + HERO_SEAL_SVG + '<span>' + heroEscape(override.seal) + '</span></p>'

@@ -4,7 +4,7 @@
 // "500+ new California Notary questions" announcement above the CDL headline, no practice button anywhere
 // on the first screen, and the 💡/🐞 floating buttons sitting on top of the hero text. Three fixes:
 // 1. Site announcements (SITE_NEWS) carry a kind and show only on that kind's category + track pages.
-// 2. Category pages get a "Start Free Practice Test" button right under the subheadline on mobile
+// 2. Category pages get a "Try a free question" button right under the subheadline on mobile
 //    (the existing "Try Free Sample" button further down is hidden there so it isn't shown twice).
 // 3. On mobile, the 💡 suggestion and 🐞 issue-report buttons stay hidden on the visitor's first screen,
 //    until they scroll past half a screen or navigate in-app (the 💬 help chat stays put).
@@ -89,14 +89,14 @@ test('guard: a dismissed announcement stays dismissed on its own category page',
 
 // ---- 2. Practice button on the first screen ----------------------------------------------------
 
-test('/cdl hero has a "Start Free Practice Test" button right under the subheadline, ahead of the state picker', async (t) => {
+test('/cdl hero has a "Try a free question" button right under the subheadline, ahead of the state picker', async (t) => {
   const { document } = await boot(t, 'https://passexamhq.com/cdl');
   await waitFor(() => document.getElementById('category-hero-subhead'));
   const early = document.getElementById('category-hero-subhead').nextElementSibling;
   assert.ok(early && early.classList.contains('hub-hero-cta-early'), 'the element right after the subheadline is the early CTA');
   const btn = early.querySelector('button[data-act="scroll-to-category-sample"]');
   assert.ok(btn, 'wired to the same free-sample scroll as the existing button');
-  assert.equal(btn.textContent.trim(), 'Start Free Practice Test');
+  assert.equal(btn.textContent.trim(), 'Try a free question');
   // The trust badges left the hero on 2026-09-17 (the seal and the guarantee card already made
   // those claims, and the hero read as crowded). The state picker is what the CTA now has to
   // precede: the point of this test is that the practice button is reachable without scrolling

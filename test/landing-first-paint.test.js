@@ -225,7 +225,10 @@ test('the server hero ships the same mobile CTA button as the client hero', asyn
 // Requested by the user 2026-09-17. Kept in code, not the category-content CMS, so the worker can
 // server-render it at first paint -- hero_headline/hero_subhead are null for cdl in the API, and a
 // CMS value would arrive ~2s later and change the text under the visitor.
-const CDL_SUBHEAD = 'Pass your state\'s CDL knowledge test with real practice questions built from your own state\'s official CDL handbook — all 50 states, instant access, one-time purchase.';
+// Shortened on 2026-09-17: the old 27-word version carried terms ("all 50 states, instant access,
+// one-time purchase") that the state picker, the spec panel and the price line each state better,
+// and a glance only reads the first sentence anyway.
+const CDL_SUBHEAD = 'Practice questions for your state\'s CDL knowledge test, written from that state\'s own official handbook.';
 
 test('the CDL hero uses its own headline and subhead', async (t) => {
   const { document } = await bootCategory(t, 'cdl');
@@ -240,22 +243,24 @@ test('the category hero is a panel, and the homepage hero is left alone', async 
   const server = categoryHeroHtml('cdl');
   assert.match(server, /class="hub-hero hub-hero-panel"/, 'the server hero should carry the panel variant');
   assert.match(server, /class="hub-hero-kicker">Commercial driver's license</, 'the kicker spells out what the H1 abbreviates');
-  assert.match(server, /class="hub-hero-seal"/, 'and the seal names where the questions come from');
+  // The seal is gone: it said the same thing as the subhead ("written from the official handbook"),
+  // and the hero's job on a glance is one sentence, not two saying it twice.
+  assert.ok(!server.includes('hub-hero-seal'), 'the seal duplicated the subhead and was removed');
 
   const { document } = await bootCategory(t, 'cdl');
   assert.ok(document.querySelector('.hub-hero.hub-hero-panel'), 'the client render should match');
   assert.ok(document.querySelector('.hub-hero-kicker'));
-  assert.ok(document.querySelector('.hub-hero-seal'));
+  assert.equal(document.querySelector('.hub-hero-seal'), null, 'and the client render drops it too');
 
   // The panel rules have to be in the blocking sheet or the first paint is an unstyled hero.
   const heroCss = fs.readFileSync(HERO_CSS_FILE, 'utf8');
-  for (const rule of ['.hub-hero-panel', '.hub-hero-kicker', '.hub-hero-seal']) {
+  for (const rule of ['.hub-hero-panel', '.hub-hero-kicker', '#category-hero-subhead']) {
     assert.ok(heroCss.includes(rule), 'hero.css should carry ' + rule);
   }
   assert.ok(!/\.hub-hero\s*\{[^}]*radial-gradient/.test(STYLE_CSS), 'the panel background must not be attached to plain .hub-hero -- that is the homepage hero too');
 });
 
-test('a category without its own copy gets no empty kicker or seal', async (t) => {
+test('a category without its own copy gets no empty kicker', async (t) => {
   const server = categoryHeroHtml('notary');
   assert.ok(!server.includes('hub-hero-kicker'), 'a kicker that repeats the headline is not worth a line');
   assert.ok(!server.includes('hub-hero-seal'));

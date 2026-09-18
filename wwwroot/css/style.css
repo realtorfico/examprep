@@ -2553,3 +2553,14 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 /* The price, stated after the free question (the hero deliberately carries none). */
 .category-next-step-price { margin: 0.2rem 0 0; font-size: 1.05rem; font-weight: 700; }
 .category-next-step-price .muted { font-size: 0.86rem; font-weight: 400; }
+
+/* The subhead is the sentence a visitor actually reads in their first two seconds -- it was set at
+   body size and dimmed to 82%, which is how a page ends up looking like it says nothing. Bigger,
+   brighter, and held to a readable measure. It is also the LCP element. */
+.hub-hero-panel #category-hero-subhead {
+  font-size: 1.12rem; line-height: 1.45; max-width: 34rem;
+  color: color-mix(in srgb, var(--accent-deep-foreground) 92%, transparent);
+}
+@media (min-width: 900px) {
+  .hub-hero-panel #category-hero-subhead { font-size: 1.2rem; }
+}
