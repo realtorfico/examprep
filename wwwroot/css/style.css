@@ -2549,3 +2549,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .hub-hero-panel .category-state-select option {
   background-color: var(--accent-deep); color: var(--accent-deep-foreground); font-weight: 500;
 }
+
+/* The price, stated after the free question (the hero deliberately carries none). */
+.category-next-step-price { margin: 0.2rem 0 0; font-size: 1.05rem; font-weight: 700; }
+.category-next-step-price .muted { font-size: 0.86rem; font-weight: 400; }

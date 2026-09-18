@@ -751,3 +751,31 @@ test('a category that really is missing states still offers the prompt', async (
   const options = [...prompt.querySelectorAll('option')].map((o) => o.value).filter(Boolean);
   assert.ok(!options.includes('US'), 'and "National" must never be offered as a state to wait for');
 });
+
+// ---- The price has to be somewhere ------------------------------------------------------------
+
+test('the page states a price, after the free question and not in the hero', async (t) => {
+  // Removing the duplicated track card took the price off /cdl entirely for a few hours. The user's
+  // ordering call stands -- judge the product, then see the figure -- so it belongs with the
+  // next-step block that follows the sample, and nowhere above it.
+  const { document } = await bootCategory(t, 'cdl', {
+    fetchOverrides: [[/\/pricing\?/, { examType: 'ca_cdl', priceCents: 3699, currency: 'USD' }]],
+  });
+  const price = document.getElementById('category-next-step-price');
+  assert.ok(price, 'the next-step block should carry the price line');
+  assert.equal(price.textContent, '$36.99', 'filled from /pricing for the state on screen');
+
+  const hero = document.querySelector('.hub-hero').textContent;
+  assert.ok(!/\$\d/.test(hero), 'no price figure in the hero: ' + (hero.match(/\$\d[^\s]*/) || [''])[0]);
+  const sampleAt = document.body.innerHTML.indexOf('id="category-sample"');
+  const priceAt = document.body.innerHTML.indexOf('id="category-next-step-price"');
+  assert.ok(sampleAt > -1 && priceAt > sampleAt, 'the price should come after the free question');
+});
+
+test('a failed pricing fetch leaves the line blank rather than guessing', async (t) => {
+  const { document } = await bootCategory(t, 'cdl', {
+    fetchOverrides: [[/\/pricing\?/, () => ({ status: 500, body: { error: 'nope' } })]],
+  });
+  assert.equal(document.getElementById('category-next-step-price').textContent, '',
+    'better no number than a stale or invented one');
+});

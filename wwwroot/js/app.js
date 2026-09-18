@@ -2846,11 +2846,30 @@ function categoryTestimonialsHtml(testimonials) {
 function categoryNextStepHtml(track) {
   if (!track) return '';
   var name = escapeHtml(track.shortName || track.title || '');
+  // The price lives here and nowhere earlier: the user's call was to state it after the free
+  // question rather than in the hero, so someone judges the product before the figure. Removing the
+  // old track card took the price off the page entirely for a few hours -- hence this line, and the
+  // test that fails if no price appears anywhere on the page.
+  // Filled by fillCategoryPrice() from /pricing for the state on screen; the blank stays if that
+  // fetch fails rather than showing a guessed or stale number.
   return '<section class="category-next-step">' +
     '<h2>Ready for the ' + name + ' bank?</h2>' +
     '<p class="muted">Full access, the mock exam, your progress and every resource live on the ' + name + ' page.</p>' +
+    '<p class="category-next-step-price">' +
+    '<span data-price-for="' + escapeHtml(track.examType) + '" id="category-next-step-price"></span>' +
+    ' <span class="muted">one time, no subscription</span></p>' +
     '<a class="btn-primary category-next-step-cta" href="' + escapeHtml(track.route || '/') + '">Open the ' + name + ' track →</a>' +
     '</section>';
+}
+
+// One /pricing call for the state on screen. Same best-effort pattern as fillHubPricing: a failed
+// fetch leaves the line blank rather than blocking the render or printing a placeholder price.
+function fillCategoryPrice(track) {
+  if (!track) return;
+  apiFetch('/pricing?examType=' + encodeURIComponent(track.examType)).then(function (p) {
+    var el = document.getElementById('category-next-step-price');
+    if (el && p && p.priceCents) el.textContent = '$' + (p.priceCents / 100).toFixed(2);
+  }).catch(function () { /* the line stays blank */ });
 }
 
 
@@ -3195,6 +3214,7 @@ function renderCategoryPage(kind) {
     if (pendingSampleEl) pendingSampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   fillCategorySpecCounts(repTrack);
+  fillCategoryPrice(repTrack);
   loadSiteConfig().then(function () {
     document.querySelectorAll('.js-refund-pct').forEach(function (el) { el.textContent = refundFailurePercent; });
   });
@@ -8121,7 +8141,7 @@ document.addEventListener('change', function (e) {
     // The track card and the curriculum breakdown were removed from this page on 2026-09-17 (both
     // were the state page's content); what needs re-pointing on a state change is the next-step CTA.
     var nextStepWrap = document.getElementById('category-next-step-wrap');
-    if (nextStepWrap) nextStepWrap.innerHTML = categoryNextStepHtml(newRepTrack);
+    if (nextStepWrap) { nextStepWrap.innerHTML = categoryNextStepHtml(newRepTrack); fillCategoryPrice(newRepTrack); }
     // The hero's spec panel is entirely per-state -- the exam's format, and that state's own
     // question bank and materials. Missing from this handler on 2026-09-17 meant picking Texas left
     // California's "50 Multiple Choice", "40/50 to pass" and "467 practice questions" on screen:
