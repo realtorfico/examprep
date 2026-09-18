@@ -274,6 +274,6 @@ function main() {
     ` (inlined into index.html${inlined ? '' : ', unchanged'}${rehashed ? ', CSP hash updated' : ''})`);
 }
 
-module.exports = { buildHeroCss, extractRules, minify, cspHash };
+module.exports = { buildHeroCss, extractRules, minify, cspHash, inlineIntoIndex, setCspHash };
 
 if (require.main === module) main();

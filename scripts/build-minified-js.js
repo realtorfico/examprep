@@ -23,18 +23,24 @@
 // this step doesn't break anything, it just means the live site keeps serving the last-built
 // minified bundle instead of your latest source edit, so don't skip it.
 const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 const { minify } = require('terser');
 const CleanCSS = require('clean-css');
 
 const JS_SRC = path.join(__dirname, '..', 'wwwroot', 'js', 'app.js');
 const JS_OUT = path.join(__dirname, '..', 'wwwroot', 'js', 'app.min.js');
+// The deep bundle (js/app-deep.js): the static/legal/marketing routes, fetched on demand. Its
+// minified artifact is hashed and the hash written into app.min.js, so a changed deep bundle busts
+// its own cache -- there is no ?v= for it in index.html, because index.html never references it.
+const DEEP_SRC = path.join(__dirname, '..', 'wwwroot', 'js', 'app-deep.js');
+const DEEP_OUT = path.join(__dirname, '..', 'wwwroot', 'js', 'app-deep.min.js');
 const CSS_SRC = path.join(__dirname, '..', 'wwwroot', 'css', 'style.css');
 const CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'style.min.css');
 // Third artifact, added 2026-09-17: the critical stylesheet for the server-rendered category hero.
 // Extracted from the same style.css source, so it's built here rather than maintained by hand --
 // see scripts/build-hero-css.js for why it exists at all.
-const { buildHeroCss } = require('./build-hero-css');
+const { buildHeroCss, inlineIntoIndex, setCspHash } = require('./build-hero-css');
 const { buildCdl1Css } = require('./build-cdl1-css');
 const HERO_CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'hero.css');
 
@@ -43,8 +49,19 @@ function report(label, before, after) {
 }
 
 async function main() {
+  // Deep bundle first: app.min.js embeds its content hash.
+  const deepSrc = fs.readFileSync(DEEP_SRC, 'utf8');
+  const deepResult = await minify(deepSrc, { compress: true, mangle: true, format: { comments: false } });
+  if (deepResult.error) throw deepResult.error;
+  fs.writeFileSync(DEEP_OUT, deepResult.code, 'utf8');
+  report('app-deep.js', Buffer.byteLength(deepSrc, 'utf8'), Buffer.byteLength(deepResult.code, 'utf8'));
+  const deepHash = crypto.createHash('sha256').update(deepResult.code, 'utf8').digest('hex').slice(0, 12);
+
   const jsSrc = fs.readFileSync(JS_SRC, 'utf8');
-  const jsResult = await minify(jsSrc, { compress: true, mangle: true, format: { comments: false } });
+  // The placeholder stays in the SOURCE (app.js is what every edit and every test reads); only the
+  // minified artifact carries the real hash.
+  if (!jsSrc.includes('DEEP_BUNDLE_HASH')) throw new Error('app.js lost its DEEP_BUNDLE_HASH placeholder');
+  const jsResult = await minify(jsSrc.replace('DEEP_BUNDLE_HASH', deepHash), { compress: true, mangle: true, format: { comments: false } });
   if (jsResult.error) throw jsResult.error;
   fs.writeFileSync(JS_OUT, jsResult.code, 'utf8');
   report('app.js', Buffer.byteLength(jsSrc, 'utf8'), Buffer.byteLength(jsResult.code, 'utf8'));
@@ -57,7 +74,11 @@ async function main() {
 
   const heroCss = buildHeroCss(cssSrc);
   fs.writeFileSync(HERO_CSS_OUT, heroCss, 'utf8');
-  report('style.css -> hero.css (critical subset)', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(heroCss, 'utf8'));
+  // ...and into index.html, with its CSP hash: the critical CSS is inlined, not linked, so this is
+  // the step that keeps the document and the policy in step with style.css.
+  inlineIntoIndex(heroCss.trim());
+  setCspHash(heroCss.trim());
+  report('style.css -> hero.css (inlined, CSP hashed)', Buffer.byteLength(cssSrc, 'utf8'), Buffer.byteLength(heroCss, 'utf8'));
 
   // The /cdl1 prototype's single blocking stylesheet: what it inherits from style.css plus its own
   // page rules. See scripts/build-cdl1-css.js.

@@ -15,6 +15,12 @@ const { JSDOM } = require('jsdom');
 
 const JS_DIR = path.join(__dirname, '..', 'wwwroot', 'js');
 const SCRIPT_FILES = ['config.js', 'api.js', 'speech.js', 'app.js'];
+// js/app-deep.js is fetched on demand in a browser (the static/legal/marketing routes and the
+// blog -- see app.js's loadDeepBundle). JSDOM won't fetch an injected <script src>, so it is
+// eval'd here right after app.js and registerDeep() runs, which is the state a real page is in
+// once the bundle has landed. Boot with deepBundle: false to get the state BEFORE that -- what a
+// landing-page visitor has, and what the lazy-path tests need.
+const DEEP_SCRIPT = 'app-deep.js';
 // Per-kind track content (wwwroot/js/content/*.js). In a browser app.js injects the one file the
 // current page needs and the rest at idle; jsdom won't fetch an injected <script src>, so these are
 // eval'd here instead, right after app.js and before any microtask runs -- which is exactly the
@@ -138,11 +144,15 @@ function makeFetchStub(overrides, window) {
 // script file evals -- for stubbing a third-party global (window.Stripe, window.turnstile) that
 // app.js reads synchronously during its own top-level/boot-time code, which is too late to stub
 // once eval has already started reading it.
+// deepBundle: false boots WITHOUT js/app-deep.js eval'd -- the state a real visitor is in before
+// the on-demand fetch lands, so a test can assert the router's loading skeleton and the injected
+// <script> rather than the rendered page. Defaults to true (bundle present), which is what every
+// test written before the 2026-09-17 split assumed.
 // appHtml: markup already inside <div id="app"> when the scripts run -- what _worker.js
 // server-renders into a category page (see its SSR-HERO block). app.js is supposed to keep that
 // markup and fill in around it rather than replacing it, so tests that care about the difference
 // need to boot with it present.
-async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup, trackContentSlugs, appHtml }) {
+async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowSetup, trackContentSlugs, appHtml, deepBundle }) {
   const dom = new JSDOM(
     appHtml ? SHELL_HTML.replace('<div id="app"></div>', '<div id="app">' + appHtml + '</div>') : SHELL_HTML,
     { url: url, runScripts: 'dangerously', pretendToBeVisual: true },
@@ -164,6 +174,7 @@ async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowS
     const src = fs.readFileSync(path.join(JS_DIR, file), 'utf8');
     window.eval(src);
   }
+  if (deepBundle !== false) window.eval(fs.readFileSync(path.join(JS_DIR, DEEP_SCRIPT), 'utf8'));
   for (const slug of contentSlugsFor(trackContentSlugs)) {
     window.registerTrackContent(slug, contentCache[slug]);
   }
@@ -176,7 +187,12 @@ async function bootApp({ url, cookie, localStorageItems, fetchOverrides, windowS
   // before their own awaited fetch resolves -- don't treat that placeholder itself as "rendered",
   // or a slow-to-settle stub could let a test read the page mid-loading-state.
   await waitFor(() => {
-    var text = window.document.getElementById('app').textContent.trim();
+    var appNode = window.document.getElementById('app');
+    var text = appNode.textContent.trim();
+    // With the deep bundle deliberately withheld, a deep route's finished state IS the loading
+    // skeleton (see app.js's renderDeepRoute) -- and a skeleton is all <div>s, no text, so the
+    // text check below would wait out its timeout on a page that had rendered exactly as intended.
+    if (deepBundle === false && appNode.querySelector('.skeleton-wrap, .skeleton-line')) return true;
     return text.length > 0 && text !== 'Loading…';
   });
   // The main render is up once the marker above is true, but a couple of fire-and-forget follow-up
