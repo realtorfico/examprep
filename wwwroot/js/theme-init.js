@@ -4,7 +4,7 @@
 // ('examprep_theme'), so the choice carries across pages.
 //
 // Its own file rather than an inline <script> for the usual reason here: _headers pins script-src
-// to 'self' with no 'unsafe-inline' (see turnstile-callback.js).
+// to 'self' with no 'unsafe-inline' (see turnstile.js).
 try {
   var t = localStorage.getItem('examprep_theme');
   if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);

@@ -19,7 +19,7 @@
 # beacon request fail silently with no console error, so this was invisible without cross-checking
 # against Google's documented CSP requirements. The inline gtag('js', ...)/gtag('config', ...) init
 # code lives in its own same-origin /js/gtag-init.js file instead of an inline <script> block, same
-# reasoning as turnstile-callback.js -- keeps this CSP free of 'unsafe-inline'.
+# reasoning as turnstile.js -- keeps this CSP free of 'unsafe-inline'.
 # 2026-09-17: brought in line with Google's full "Google Ads conversions & remarketing" list
 # (developers.google.com/tag-platform/security/guides/csp) after a live page load showed the
 # remarketing tag (googleads.g.doubleclick.net/pagead/viewthroughconversion, script-src) and the

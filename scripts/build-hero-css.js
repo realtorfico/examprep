@@ -3,7 +3,7 @@
 //
 // Why a separate file rather than a few inlined rules: _headers pins style-src to 'self' with no
 // 'unsafe-inline', so an inline <style> block would be silently dropped, exactly like an inline
-// <script> (see turnstile-callback.js's header for the same reasoning). And why blocking rather
+// <script> (see turnstile.js's header for the same reasoning). And why blocking rather
 // than the preload + deferred-attach dance style.min.css uses (load-css.js): that trick's safety
 // argument was written down as "this page has zero visible content before app.js renders anything
 // -- there's no flash-of-unstyled-content risk". Server-rendering the hero makes that false, so
@@ -38,6 +38,50 @@ const CSS_OUT = path.join(__dirname, '..', 'wwwroot', 'css', 'hero.css');
 const HERO_SELECTORS = new Set([
   'html',
   'body',
+  // ---- The server-rendered HEADER (siteHeaderHtml in _worker.js) -------------------------------
+  // Added 2026-09-17. Without these the header painted unstyled -- nav links one per line, the
+  // mobile drawer printing a second copy of them, ~337px tall -- and collapsed to 108px when
+  // style.min.css attached, moving the whole page up 229px (Lighthouse CLS 0.242, 3 runs of 3,
+  // confirmed in the trace). Only the rules that decide its HEIGHT are here; colour and hover
+  // polish can still land with the deferred sheet. See test/header-first-paint.test.js.
+  '#site-header',
+  '#site-header, #site-footer',
+  '.site-shell',
+  '.top-controls',
+  '.control-group',
+  '.site-nav',
+  '.site-nav a',
+  '.site-nav, .site-nav-cta',
+  '.site-nav-cta',
+  '.site-mobile-drawer',
+  '.header-menu-toggle',
+  '.header-menu-toggle, .site-mobile-drawer, .site-mobile-drawer.open',
+  '.site-logo',
+  '.site-logo-icon',
+  '.site-logo-text',
+  '.site-logo-word',
+  '.site-logo-tagline',
+  '.header-util-cluster',
+  '.font-size-pill',
+  '.font-size-pill button',
+  '.btn-sm',
+  '.badge',
+  // The promo ribbon lives in the same server-rendered header, and its min-height is what stops
+  // the client's own /promotions fetch from shifting the page when it swaps the content.
+  '.promo-ribbon',
+  '.promo-banner',
+  '.promo-banner-body',
+  '.promo-banner-body strong',
+  '.promo-banner-code',
+  '.promo-banner-cta',
+  '.promo-banner-dismiss',
+  '.promo-ribbon-fallback',
+  '.promo-ribbon .promo-banner',
+  '.promo-ribbon .promo-banner-body',
+  '.promo-ribbon .promo-banner-body strong',
+  '.promo-ribbon .promo-banner-cta',
+  '.promo-ribbon .promo-banner-code',
+  '.promo-ribbon .promo-banner-dismiss',
   '#app',
   '#app.app-ssr-reserve', // the first-paint height reservation: must apply before style.min.css attaches
   'h1',

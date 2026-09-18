@@ -19,7 +19,7 @@
 // The standard rel="preload" + onload="" swap trick (skip this script entirely, just flip the
 // preloaded link's rel via an inline onload) isn't usable here -- it needs an inline onload=""
 // attribute, which this site's CSP script-src (deliberately kept free of 'unsafe-inline', see
-// turnstile-callback.js/gtag-init.js/clarity-init.js for the same reasoning) would silently block,
+// turnstile.js/gtag-init.js/clarity-init.js for the same reasoning) would silently block,
 // leaving the page with no styles applied at all and no visible error. This external-script
 // attach is the CSP-safe equivalent.
 //

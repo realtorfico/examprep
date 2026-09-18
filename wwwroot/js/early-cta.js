@@ -9,7 +9,7 @@
 // rendered yet -- it just records that the visitor asked, and app.js replays the click once the
 // real page is on screen (see the __pendingHeroCta check in renderCategoryPage).
 //
-// Its own file rather than an inline <script> for the same reason as turnstile-callback.js and
+// Its own file rather than an inline <script> for the same reason as turnstile.js and
 // gtag-init.js: _headers pins script-src to 'self' with no 'unsafe-inline'.
 (function () {
   document.addEventListener('click', function (e) {

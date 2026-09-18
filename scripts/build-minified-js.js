@@ -6,7 +6,7 @@
 // touching. This script only produces SEPARATE deploy artifacts; it never overwrites the sources.
 //
 // Deliberately NOT minified: config.js, api.js, speech.js, gtag-init.js, clarity-init.js,
-// turnstile-callback.js -- all under 1KB each, so minifying them saves a few hundred bytes total,
+// turnstile.js -- all under 1KB each, so minifying them saves a few hundred bytes total,
 // immaterial to load time. Also not minified/touched: the third-party scripts (gtag.js, Turnstile,
 // Clarity, Cloudflare Insights) -- we don't serve those files, so there's nothing here to minify.
 //

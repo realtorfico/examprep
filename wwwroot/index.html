@@ -16,7 +16,7 @@
      headline paints unstyled and reflows. Generated from style.css by scripts/build-hero-css.js
      (~5.5KB, ~1.5KB on the wire) -- never edit it by hand, and rebuild it whenever style.css
      changes. style.min.css keeps its own non-blocking preload + deferred-attach path below. -->
-<link rel="stylesheet" href="/css/hero.css?v=10">
+<link rel="stylesheet" href="/css/hero.css?v=11">
 <!-- Both fonts are preloaded. Measured four ways on /cdl (Pixel 7, 1.6Mbps, 4x CPU), 2026-09-17:
      - neither preloaded:  FCP ~980ms, LCP ~3300ms, CLS up to 0.18 (intermittent)
      - Inter only:         FCP ~1250ms, LCP ~3350ms, CLS 0
@@ -37,7 +37,7 @@
      LAST same-origin script to start downloading (2258ms), queued behind ~10 smaller ones, which
      is most of why /cdl showed nothing for ~2.8s. The preload lifts it out of that queue; keep its
      ?v= in lockstep with the <script> tag at the end of <body> or the bundle downloads twice. -->
-<link rel="preload" as="script" fetchpriority="high" href="/js/app.min.js?v=53">
+<link rel="preload" as="script" fetchpriority="high" href="/js/app.min.js?v=54">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PassExamHQ</title>
 <meta name="description" content="Exam prep practice questions, timed to how you actually study.">
@@ -50,8 +50,12 @@
      (app.min.js runs and owns the handler). See js/early-cta.js. -->
 <script defer src="/js/early-cta.js?v=1"></script>
 <noscript><link rel="stylesheet" href="/css/style.min.css?v=33"></noscript>
-<script src="/js/turnstile-callback.js?v=103"></script>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit" async defer></script>
+<!-- Turnstile on demand: the api.js tag used to load here on every page (27.3 KiB, 23.8 KiB of it
+     unused on /cdl, and in the critical request chain) for the benefit of four views that actually
+     mount a widget. js/turnstile.js defines the onTurnstileLoad callback and injects api.js when
+     something needs it -- or on the visitor's first tap, whichever comes first. See
+     test/turnstile-lazy-load.test.js. -->
+<script defer src="/js/turnstile.js?v=1"></script>
 </head>
 <body>
 <div id="site-header"></div>
@@ -63,6 +67,6 @@
 <script defer src="/js/config.js?v=103"></script>
 <script defer src="/js/api.js?v=104"></script>
 <script defer src="/js/speech.js?v=103"></script>
-<script defer src="/js/app.min.js?v=53"></script>
+<script defer src="/js/app.min.js?v=54"></script>
 </body>
 </html>

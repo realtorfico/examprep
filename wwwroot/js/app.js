@@ -2037,7 +2037,7 @@ function registerTrackContent(slug, entries) {
 window.registerTrackContent = registerTrackContent;
 
 // Injects one content file. A <script> tag rather than fetch+eval because CSP pins script-src to
-// 'self' with no 'unsafe-eval' (see turnstile-callback.js's header for the same constraint).
+// 'self' with no 'unsafe-eval' (see turnstile.js's header for the same constraint).
 // Best-effort: a failed load resolves rather than rejecting, and buildHubExams() below still
 // produces a usable route and name for every track whose content is missing.
 function loadTrackContentFile(slug) {
@@ -3881,6 +3881,8 @@ function renderRedeem(error) {
 // since the redeem view can be shown before that callback lands.
 function renderTurnstileWidget(attemptsLeft) {
   if (TURNSTILE_SITE_KEY.indexOf('REPLACE') !== -1) return;
+  // api.js is no longer in the document head -- ask for it before polling for it (js/turnstile.js).
+  if (window.loadTurnstile) window.loadTurnstile();
   attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s of retrying, then give up quietly
   if (window.turnstileReady && window.turnstile) {
     var el = document.querySelector('#turnstile-container');
@@ -6004,6 +6006,7 @@ function loadStripeSdk(callback) {
 // token) before it can mount the Payment Element, this polls briefly rather than firing the
 // create-intent call too early and failing closed. Mirrors renderTurnstileWidget's own retry loop.
 function waitForTurnstileToken(callback, attemptsLeft) {
+  if (window.loadTurnstile) window.loadTurnstile(); // see js/turnstile.js -- loaded on demand now
   attemptsLeft = attemptsLeft === undefined ? 50 : attemptsLeft; // ~10s, then give up and let the server reject
   var token = '';
   try { token = (window.turnstileReady && window.turnstile) ? window.turnstile.getResponse() : ''; }

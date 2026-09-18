@@ -614,7 +614,11 @@ test('hero.css carries the design tokens and the hero rules, and stays small', (
   }
   // It is a blocking stylesheet on the critical path of every ad landing page: if it ever grows to
   // style.min.css's size it has stopped being a critical subset and is just blocking render again.
-  assert.ok(heroCss.length < 12000, 'hero.css has grown to ' + heroCss.length + ' bytes -- keep the critical subset small');
+  // Ceiling raised from 12000 on 2026-09-17, when the server-rendered header's layout rules joined
+  // the hero's: painting the header unstyled and then collapsing it moved the page up 229px (see
+  // test/header-first-paint.test.js). Still the only guard against this file quietly becoming a
+  // copy of style.css, so it blocks the first paint of every landing page for a reason.
+  assert.ok(heroCss.length < 16000, 'hero.css has grown to ' + heroCss.length + ' bytes -- keep the critical subset small');
 });
 
 // ---- 4. No duplicate API calls on the landing page ---------------------------------------------
