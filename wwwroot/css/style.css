@@ -1858,17 +1858,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   background: color-mix(in srgb, var(--muted) 12%, var(--card));
   border-color: var(--border);
 }
-.category-state-detected-badge {
-  flex-shrink: 0; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
-  padding: 0.25rem 0.6rem; border-radius: 999px; background: var(--highlight); color: #1a1203;
-}
-.category-state-detected-banner--unknown .category-state-detected-badge {
-  background: var(--muted); color: var(--card);
-}
 .category-state-detected-text { flex: 1; min-width: 14rem; font-size: 0.92rem; font-weight: 600; }
 .category-state-detected-text strong { color: var(--accent); }
 .category-state-detected-banner--unknown .category-state-detected-text strong { color: inherit; }
-.category-state-detected-text .btn-link { font-size: 0.92rem; font-weight: 700; }
 
 .news-flash-banner {
   display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
@@ -2380,14 +2372,9 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
   color: color-mix(in srgb, var(--accent-deep-foreground) 88%, transparent);
 }
 .hub-hero-panel .category-state-detected-text strong { color: var(--accent-deep-foreground); }
-.hub-hero-panel .category-state-detected-badge { justify-self: start; }
 .hub-hero-panel .category-state-detected-banner--unknown {
   background: color-mix(in srgb, black 20%, transparent);
   border-color: color-mix(in srgb, var(--accent-deep-foreground) 22%, transparent);
-}
-.hub-hero-panel .category-state-detected-banner--unknown .category-state-detected-badge {
-  background: color-mix(in srgb, var(--accent-deep-foreground) 24%, transparent);
-  color: var(--accent-deep-foreground);
 }
 
 /* 3. The state picker's label and the waitlist summary, same problem: dark text on the panel. */
@@ -2459,20 +2446,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 .category-spec-inv span { color: var(--hero-quiet); }
 .category-spec-chips-label { color: var(--hero-quiet); }
 
-/* The state row: an outlined chip, not a solid gold pill, and one row instead of a banner plus a
-   separate labelled select. */
-.hub-hero-panel .category-state-detected-banner {
-  background: color-mix(in srgb, black 16%, transparent);
-  border-color: color-mix(in srgb, var(--accent-deep-foreground) 20%, transparent);
-  padding: 0.6rem 0.75rem; margin: 0.9rem 0 0.5rem;
-}
-.hub-hero-panel .category-state-detected-badge {
-  background: transparent; color: var(--hero-gold);
-  border: 1px solid color-mix(in srgb, var(--hero-gold) 45%, transparent);
-  font-weight: 700; font-size: 0.64rem; padding: 0.15rem 0.5rem;
-}
-.hub-hero-panel .category-state-detected-text { font-size: 0.86rem; }
-/* The picker's own label is redundant next to a row that already says what state is shown. */
+/* The state row. The banner's own treatment is further down (it became a footnote under the
+   picker on 2026-09-17); what's left here is the picker's label. */
 .hub-hero-panel .category-state-select-label {
   display: grid; gap: 0.3rem; font-size: 0.7rem; text-transform: uppercase;
   letter-spacing: 0.07em; color: var(--hero-quiet);

@@ -8464,9 +8464,6 @@ document.addEventListener('click', async function (e) {
   } else if (act === 'scroll-to-category-sample') {
     var sampleEl = document.getElementById('category-sample');
     if (sampleEl) sampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else if (act === 'focus-category-state-select') {
-    var categoryStateSelectEl = document.getElementById('category-state-select');
-    if (categoryStateSelectEl) { categoryStateSelectEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); categoryStateSelectEl.focus(); }
   } else if (act === 'toggle-theme') {
     var nextTheme = el.getAttribute('data-next');
     var local = loadLocalPrefs();
