@@ -290,6 +290,18 @@ function renderFaq() {
   injectJsonLd('faq-jsonld', { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqEntities });
 }
 
+// /api/blog returns published_at as an ISO-8601 string ('2026-09-08T04:13:41.488Z'). Three places
+// here multiplied it by 1000 as if it were Unix seconds, which is NaN for a string -- and
+// new Date(NaN).toISOString() THROWS, so renderBlogPost's catch reported every one of the 621
+// published posts as "this article doesn't exist". Accepts either shape now: a number is seconds
+// (or milliseconds when it is large enough to be one), a string is parsed as a date, and anything
+// unreadable returns null so the caller leaves the date out instead of printing 'Invalid Date'.
+function blogDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  var date = typeof value === 'number' ? new Date(value < 1e12 ? value * 1000 : value) : new Date(value);
+  return isNaN(date.getTime()) ? null : date;
+}
+
 // Educational blog/guide content (/blog, /blog/{slug} -- real pathname routes, not hash routes,
 // so _worker.js can inject per-post SEO meta and sitemap.xml can list them; see route()'s own
 // comment on why). Admin-authored via the DB-backed blog_posts table (see the API's schema.sql
@@ -328,7 +340,7 @@ function blogListItemsHtml(posts, activeKind, activeState) {
           (INTL_STUDENTS_ARTICLE_SLUGS[p.kind] === p.slug ? internationalBadgeHtml() : '') +
           '<h2><a href="' + href + '">' + escapeHtml(p.title) + '</a></h2>' +
           '<p class="muted blog-list-meta">' + (p.state_code ? escapeHtml(p.state_code) + ' · ' : '') +
-          (p.published_at ? new Date(p.published_at * 1000).toLocaleDateString() : '') + '</p>' +
+          (blogDate(p.published_at) ? blogDate(p.published_at).toLocaleDateString() : '') + '</p>' +
           '<p class="blog-list-excerpt">' + escapeHtml(p.excerpt) + '</p>' +
           '<a class="blog-read-more" href="' + href + '">Read more →</a>' +
           '</article>';
@@ -480,7 +492,7 @@ function renderBlogPost(slug) {
       (INTL_STUDENTS_ARTICLE_SLUGS[post.kind] === post.slug ? internationalBadgeHtml() : '') +
       '<h1>' + escapeHtml(post.title) + '</h1>' +
       '<p class="muted blog-post-meta">' + (post.state_code ? escapeHtml(post.state_code) + ' · ' : '') +
-      (post.published_at ? new Date(post.published_at * 1000).toLocaleDateString() + ' · ' : '') + readMins + ' min read</p>' +
+      (blogDate(post.published_at) ? blogDate(post.published_at).toLocaleDateString() + ' · ' : '') + readMins + ' min read</p>' +
       '<div class="blog-post-body">' + post.body_html + '</div>' +
       '<div class="blog-post-cta-box">' +
       '<p>Ready to put this into practice?</p>' +
@@ -491,10 +503,17 @@ function renderBlogPost(slug) {
     injectJsonLd('blog-post-jsonld', {
       '@context': 'https://schema.org', '@type': 'Article',
       headline: post.title, description: post.seo_description || post.excerpt,
-      datePublished: post.published_at ? new Date(post.published_at * 1000).toISOString() : undefined,
+      datePublished: blogDate(post.published_at) ? blogDate(post.published_at).toISOString() : undefined,
     });
-  }).catch(function () {
-    appEl.innerHTML = '<div class="narrow-page"><h1>Not found</h1><p class="muted">This article doesn\'t exist or isn\'t published.</p><a href="/blog">← Back to Guides &amp; Tips</a></div>';
+  }).catch(function (err) {
+    // Deliberately NOT the not-found copy. This branch is a failed request or a render exception,
+    // and reporting that as "this article doesn't exist" is exactly what hid the published_at crash
+    // (see blogDate) for as long as it lasted: every post page looked like missing content rather
+    // than a bug, on a page nobody would think to check.
+    console.error('blog post render failed', err);
+    appEl.innerHTML = '<div class="narrow-page"><h1>Could not load this article</h1>' +
+      '<p class="muted">Something went wrong loading it — please try again shortly.</p>' +
+      '<a href="/blog">← Back to Guides &amp; Tips</a></div>';
   });
 }
 
