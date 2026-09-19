@@ -85,6 +85,7 @@ const HERO_SELECTORS = new Set([
   '.promo-ribbon .promo-banner-dismiss',
   '#app',
   '#app.app-ssr-reserve', // the first-paint height reservation: must apply before style.min.css attaches
+  '#app:empty', // the same, for pages with no server-rendered hero (track pages)
   'h1',
   '.hub-hero',
   '.hub-hero-panel',

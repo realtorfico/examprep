@@ -33,6 +33,6 @@
 (function () {
   var link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = '/css/style.min.css?v=37';
+  link.href = '/css/style.min.css?v=38';
   document.head.appendChild(link);
 })();

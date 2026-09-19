@@ -206,6 +206,11 @@ body {
    taller than 100vh, so dropping the class (route(), app.js) never pulls content upward.
    Added 2026-09-17 alongside the server-rendered hero -- see test/landing-first-paint.test.js. */
 #app.app-ssr-reserve { min-height: 100vh; }
+/* Same reservation for pages with no server-rendered hero (track pages like /cdl/tx): #app arrives
+   empty, and without this the footer painted at y~540 and was shoved off-screen once the page
+   rendered -- CLS 0.41-0.89 desktop, 1.38-1.47 throttled phone (2026-09-19). No view ever leaves
+   #app empty after rendering, so this only holds the space until the first render. */
+#app:empty { min-height: 100vh; }
 
 h1, h2 { line-height: 1.15; margin: 0; font-family: 'Fraunces', Georgia, 'Times New Roman', serif; letter-spacing: -0.01em; }
 .muted { color: var(--muted); }

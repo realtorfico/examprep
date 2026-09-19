@@ -84,6 +84,15 @@ test('the embed widget CSP is untouched', () => {
   assert.ok(!scoped.includes('sha256-'), 'the widget does not inline anything');
 });
 
+// Track pages (/cdl/tx etc.) get no server-rendered hero, so no app-ssr-reserve: #app arrives empty, the
+// footer painted at y~540 and was then shoved off-screen when renderTrackLanding filled the page. Measured
+// 2026-09-19 on /cdl/tx: CLS 0.41-0.89 desktop, 1.38-1.47 on a throttled phone; 0.04-0.07 and 0.013-0.017
+// with this rule. It has to be in the inlined block, since style.min.css attaches too late to help.
+test('an empty #app reserves one viewport at first paint', () => {
+  assert.match(STYLE_CSS, /#app:empty\s*\{\s*min-height:\s*100vh;?\s*\}/, 'the rule lives in style.css');
+  assert.ok(inlineCriticalCss().includes('#app:empty{min-height:100vh}'), 'and is in the inlined critical CSS');
+});
+
 test('hero.css is still generated, for the tests that read it', () => {
   // Nothing links to it any more, but it is the artefact the header/hero first-paint tests assert
   // against and the input to the hash, so the build still writes it.
